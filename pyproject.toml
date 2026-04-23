@@ -1,0 +1,22 @@
+[project]
+name = "stackme"
+version = "0.1.0"
+description = "StackMe: Engineering Hub for Logs & Codegen"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.0.0",
+    "flask-cors>=4.0.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.8",
+]

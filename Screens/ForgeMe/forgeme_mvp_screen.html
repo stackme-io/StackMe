@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForgeMe — MVP Screen</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f5f3;
+    --color-background-info: #E6F1FB;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b6b6b;
+    --color-text-tertiary: #9e9e9e;
+    --color-text-info: #185FA5;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.22);
+    --color-border-info: #378ADD;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', monospace;
+  }
+  body { font-family: var(--font-sans); background: #f0eeea; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+  .page { max-width: 660px; width: 100%; padding: 2rem 1.5rem 3rem; background: var(--color-background-primary); border-radius: 16px; }
+  .brand { font-size: 13px; font-weight: 500; color: var(--color-text-info); letter-spacing: 0.04em; margin-bottom: 1.5rem; }
+  .headline { font-size: 26px; font-weight: 500; color: var(--color-text-primary); line-height: 1.25; margin-bottom: 0.5rem; }
+  .sub { font-size: 15px; color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.6; }
+
+  .level-row { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); background: var(--color-background-primary); margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
+  .level-row.active { border-color: #1a1a1a; border-width: 1.5px; }
+  .level-row.locked { opacity: 0.4; cursor: default; }
+  .level-row.wip { opacity: 0.55; cursor: default; }
+  .level-num { font-size: 12px; color: var(--color-text-tertiary); min-width: 32px; }
+  .level-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .level-desc { font-size: 12px; color: var(--color-text-secondary); flex: 2; }
+  .stars { display: flex; gap: 3px; margin-left: 4px; }
+  .star { font-size: 13px; color: var(--color-text-tertiary); }
+  .star.earned { color: #27a047; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .badge-active { background: #E6F1FB; color: #0C447C; }
+  .badge-wip { background: var(--color-background-secondary); color: var(--color-text-tertiary); font-style: italic; }
+  .badge-done { background: #EAF3DE; color: #27500A; }
+
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.75rem 0; }
+
+  .run-block { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .run-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .run-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .run-meta { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .run-meta span { margin-right: 12px; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #1a1a1a; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 20px; font-size: 14px; cursor: pointer; margin-left: 8px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+
+  .manifest-wrap { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+  .manifest-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; cursor: pointer; background: var(--color-background-primary); user-select: none; }
+  .manifest-header:hover { background: var(--color-background-secondary); }
+  .manifest-htitle { font-size: 13px; font-weight: 500; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+  .manifest-hint { font-size: 12px; color: var(--color-text-tertiary); }
+  .manifest-preview { padding: 14px 16px; background: var(--color-background-secondary); border-top: 0.5px solid var(--color-border-tertiary); display: none; }
+  .manifest-preview.open { display: block; }
+  .code-block { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.7; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 12px; }
+  .manifest-dl { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-info); cursor: pointer; border: 0.5px solid var(--color-border-info); border-radius: var(--border-radius-md); padding: 6px 12px; text-decoration: none; }
+  .manifest-dl:hover { background: var(--color-background-info); }
+
+  .checklist { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+  .checklist-header { padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--color-text-primary); background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .check-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; background: var(--color-background-primary); transition: background 0.1s; }
+  .check-row:last-child { border-bottom: none; }
+  .check-row:hover { background: var(--color-background-secondary); }
+  .check-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .check-box.checked { background: #27a047; border-color: #27a047; }
+  .check-label { font-size: 13px; color: var(--color-text-primary); flex: 1; }
+  .check-sub { font-size: 11px; color: var(--color-text-tertiary); }
+
+  .next-hint { font-size: 13px; color: var(--color-text-secondary); padding: 12px 16px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 1.75rem; display: flex; align-items: center; gap: 10px; }
+  .progress-bar { height: 3px; background: var(--color-background-secondary); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; background: #1a1a1a; width: 20%; transition: width 0.3s; }
+  .footer-row { display: flex; gap: 16px; font-size: 12px; color: var(--color-text-tertiary); flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand">ForgeMe</div>
+  <div class="headline">Test how your system breaks in production</div>
+  <p class="sub">Generate controlled bad data. Run it through your pipeline. Find weaknesses before your users do.</p>
+
+  <div class="level-row active">
+    <span class="level-num">Lvl 1</span>
+    <span class="level-name">The Latecomer</span>
+    <span class="level-desc">Out-of-order arrival</span>
+    <div class="stars">
+      <span class="star" id="s1a">★</span>
+      <span class="star" id="s1b">★</span>
+      <span class="star" id="s1c">★</span>
+    </div>
+    <span class="badge badge-active">Active</span>
+  </div>
+  <div class="level-row wip">
+    <span class="level-num">Lvl 2</span>
+    <span class="level-name">Ghost of the Past</span>
+    <span class="level-desc">Deep late arrival</span>
+    <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+    <span class="badge badge-wip">In development</span>
+  </div>
+  <div class="level-row wip">
+    <span class="level-num">Lvl 3</span>
+    <span class="level-name">Double Trouble</span>
+    <span class="level-desc">Deterministic duplicates</span>
+    <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+    <span class="badge badge-wip">In development</span>
+  </div>
+  <div class="level-row wip">
+    <span class="level-num">Lvl 4</span>
+    <span class="level-name">Data Zombie</span>
+    <span class="level-desc">Schema drift & corruption</span>
+    <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+    <span class="badge badge-wip">In development</span>
+  </div>
+  <div class="level-row wip">
+    <span class="level-num">Lvl 5</span>
+    <span class="level-name">Chaos Storm</span>
+    <span class="level-desc">Everything, at once, under load</span>
+    <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+    <span class="badge badge-wip">In development</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="run-block">
+    <div class="run-label">Level 1 · Out-of-order events</div>
+    <div class="run-title">The Latecomer</div>
+    <div class="run-meta">
+      <span>Shuffles timestamps</span><span>1–5s delays</span><span>Seed: forge-42a8c1</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="runTest(this)">Generate dataset</button>
+      <button class="btn-secondary">JSON &nbsp;/&nbsp; CSV</button>
+    </div>
+    <div id="seed-line" style="font-size: 12px; color: var(--color-text-tertiary); display:none;">
+      Run again with same seed: <span style="font-family: var(--font-mono); color: var(--color-text-secondary);">forge-42a8c1</span>
+    </div>
+  </div>
+
+  <div class="manifest-wrap" id="manifest-section" style="display:none">
+    <div class="manifest-header" onclick="toggleManifest()">
+      <span class="manifest-htitle">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:0.6"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 7h6M4 4.5h6M4 9.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Anomaly Manifest
+      </span>
+      <span class="manifest-hint" id="mtoggle">Show what was injected ▾</span>
+    </div>
+    <div class="manifest-preview" id="manifest-body">
+      <div class="code-block">
+        {<br>
+        &nbsp;&nbsp;"scenario": "out_of_order",<br>
+        &nbsp;&nbsp;"seed": "forge-42a8c1",<br>
+        &nbsp;&nbsp;"events_total": 1000,<br>
+        &nbsp;&nbsp;"anomalies_injected": 87,<br>
+        &nbsp;&nbsp;"anomaly_rate": "8.7%",<br>
+        &nbsp;&nbsp;"delay_window_sec": [1, 5],<br>
+        &nbsp;&nbsp;"affected_ids": ["evt_0012", "evt_0045", "...+85 more"]<br>
+        }
+      </div>
+      <a class="manifest-dl" href="#">⬇ Download manifest.json</a>
+    </div>
+  </div>
+
+  <div class="checklist" id="checklist-section" style="display:none">
+    <div class="checklist-header">What did your pipeline catch? <span style="font-weight:400; color: var(--color-text-tertiary);">— mark what passed</span></div>
+    <div class="check-row" onclick="toggleCheck(this, 0)">
+      <div class="check-box" id="cb0"></div>
+      <div>
+        <div class="check-label">Reordering detected</div>
+        <div class="check-sub">System sorted events correctly by event_time</div>
+      </div>
+    </div>
+    <div class="check-row" onclick="toggleCheck(this, 1)">
+      <div class="check-box" id="cb1"></div>
+      <div>
+        <div class="check-label">Buffer handled delay window</div>
+        <div class="check-sub">No events dropped within 1–5s window</div>
+      </div>
+    </div>
+    <div class="check-row" onclick="toggleCheck(this, 2)">
+      <div class="check-box" id="cb2"></div>
+      <div>
+        <div class="check-label">Output count matches input</div>
+        <div class="check-sub">1,000 events in → 1,000 events out</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="next-nudge" style="display:none; margin-bottom: 1.75rem;">
+    <div class="next-hint">
+      → <span>Ghost of the Past is next — the one that breaks systems <em>silently</em>, no errors in logs.</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="footer-row">
+    <span>No setup</span><span>Any pipeline</span><span>JSON / CSV</span><span>Runs locally</span><span>No data collected</span>
+  </div>
+</div>
+
+<script>
+  let checks = [false, false, false];
+
+  function runTest(btn) {
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '⬇ Download dataset.json';
+      document.getElementById('seed-line').style.display = 'block';
+      document.getElementById('manifest-section').style.display = 'block';
+      document.getElementById('checklist-section').style.display = 'block';
+      document.getElementById('next-nudge').style.display = 'block';
+    }, 1100);
+  }
+
+  function toggleManifest() {
+    const body = document.getElementById('manifest-body');
+    const t = document.getElementById('mtoggle');
+    body.classList.toggle('open');
+    t.textContent = body.classList.contains('open') ? 'Hide ▴' : 'Show what was injected ▾';
+  }
+
+  function toggleCheck(row, i) {
+    checks[i] = !checks[i];
+    const box = document.getElementById('cb' + i);
+    if (checks[i]) {
+      box.classList.add('checked');
+      box.innerHTML = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    } else {
+      box.classList.remove('checked');
+      box.innerHTML = '';
+    }
+    updateStars();
+  }
+
+  function updateStars() {
+    const done = checks.filter(Boolean).length;
+    ['s1a','s1b','s1c'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.className = 'star' + (i < done ? ' earned' : '');
+    });
+    const pb = document.getElementById('pbar');
+    if (pb) pb.style.width = (20 + done * 5) + '%';
+  }
+</script>
+</body>
+</html>
