@@ -128,3 +128,54 @@ def serialize_dataset(df: pd.DataFrame, format: str) -> str:
         return f"INSERT INTO {table} ({columns}) VALUES\n  {inserts};"
 
     raise ValueError(f"Неизвестный формат: {format}")
+
+def detect_anomalies(df: pd.DataFrame) -> list[AnomalyRecord]:
+    """
+    Detects anomalies in an uploaded dataset.
+    Checks for: outliers (IQR method), missing values, duplicate rows.
+    """
+    anomalies: list[AnomalyRecord] = []
+    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+
+    # Outliers via IQR
+    for col in numeric_cols:
+        q1 = df[col].quantile(0.25)
+        q3 = df[col].quantile(0.75)
+        iqr = q3 - q1
+        lower = q1 - 1.5 * iqr
+        upper = q3 + 1.5 * iqr
+
+        outlier_mask = (df[col] < lower) | (df[col] > upper)
+        for idx in df[outlier_mask].index.tolist():
+            anomalies.append(AnomalyRecord(
+                row_index=int(idx),
+                column=col,
+                anomaly_type="outlier",
+                original_value=str(df.at[idx, col]),
+                description=f"Value {df.at[idx, col]} is outside IQR range [{lower:.2f}, {upper:.2f}]"
+            ))
+
+    # Missing values
+    for col in df.columns:
+        missing_mask = df[col].isna()
+        for idx in df[missing_mask].index.tolist():
+            anomalies.append(AnomalyRecord(
+                row_index=int(idx),
+                column=col,
+                anomaly_type="missing",
+                original_value=None,
+                description=f"Missing value in column '{col}'"
+            ))
+
+    # Duplicate rows
+    duplicate_mask = df.duplicated(keep='first')
+    for idx in df[duplicate_mask].index.tolist():
+        anomalies.append(AnomalyRecord(
+            row_index=int(idx),
+            column="*",
+            anomaly_type="duplicate",
+            original_value=None,
+            description=f"Row {idx} is a duplicate"
+        ))
+
+    return anomalies

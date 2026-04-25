@@ -51,3 +51,8 @@ class GenerateResponse(BaseModel):
     anomalies_count: int
     anomalies: list[AnomalyInfo]
     data: str  # сами данные в виде строки (JSON, CSV или SQL)
+
+class AnalyzeResponse(BaseModel):
+    rows_total: int
+    anomalies_count: int
+    anomalies: list[AnomalyInfo]
