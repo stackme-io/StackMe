@@ -89,3 +89,24 @@ export async function runQuery(sql: string): Promise<any[]> {
     worker!.postMessage({ type: 'QUERY', id, sql })
   })
 }
+
+export async function loadAnomalyIndex(anomalyRowIndexes: number[]): Promise<void> {
+  getWorker()
+  await waitForReady()
+
+  const json = JSON.stringify(anomalyRowIndexes.map(i => ({ row_index: i })))
+
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID()
+    pendingLoads.set(id, (error) => {
+      if (error) reject(new Error(error))
+      else resolve()
+    })
+    worker!.postMessage({
+      type: 'LOAD_JSON',
+      id,
+      jsonData: json,
+      tableName: 'anomaly_index',
+    })
+  })
+}

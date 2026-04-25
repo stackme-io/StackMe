@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import apiClient from '../../api/client'
-import { loadJSON, runQuery } from '../../shared/analytics'
+import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 
 type DataFormat = 'json' | 'csv' | 'sql'
+type FilterMode = 'all' | 'anomalies'
 
 interface AnomalyInfo {
   row_index: number
@@ -36,37 +37,78 @@ export default function ForgeMePage() {
   const [anomalyRate, setAnomalyRate] = useState(0.05)
   const [result, setResult] = useState<GenerateResponse | null>(null)
   const [tableData, setTableData] = useState<any[]>([])
+  const [filterMode, setFilterMode] = useState<FilterMode>('all')
   const [loading, setLoading] = useState(false)
+  const [filterLoading, setFilterLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-    const handleSubmit = async () => {
-      setLoading(true)
-      setError(null)
-      setResult(null)
-      setTableData([])
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError(null)
+    setResult(null)
+    setTableData([])
+    setFilterMode('all')
+
+    try {
+      const response = await apiClient.post<GenerateResponse>('/forge-me/generate', {
+        prompt,
+        format,
+        rows,
+        anomaly_rate: anomalyRate,
+      })
+      setResult(response.data)
+
+      if (format === 'json') {
+          await loadJSON(response.data.data, 'sensor_data')
+          await loadAnomalyIndex(response.data.anomalies.map(a => a.row_index))
+          const data = await runQuery('SELECT * FROM sensor_data')
+          setTableData(data)
+      }
+
+    } catch (err) {
+      setError('Ошибка при запросе к API. Проверь что бэкенд запущен.')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+    const handleFilter = async (mode: FilterMode) => {
+      if (!result) return
+      setFilterLoading(true)
+      setFilterMode(mode)
 
       try {
-        const response = await apiClient.post<GenerateResponse>('/forge-me/generate', {
-          prompt,
-          format,
-          rows,
-          anomaly_rate: anomalyRate,
-        })
-        setResult(response.data)
-
-        if (format === 'json') {
-          await loadJSON(response.data.data, 'sensor_data')
+        if (mode === 'all') {
           const data = await runQuery('SELECT * FROM sensor_data')
-          console.log('timestamp raw value:', data[0].timestamp, typeof data[0].timestamp)
+          setTableData(data)
+        } else {
+          const data = await runQuery(`
+            SELECT s.* FROM sensor_data s
+            INNER JOIN anomaly_index a ON s.id - 1 = a.row_index
+          `)
           setTableData(data)
         }
-
-      } catch (err) {
-        setError('Ошибка при запросе к API. Проверь что бэкенд запущен.')
-        console.error(err)
       } finally {
-        setLoading(false)
+        setFilterLoading(false)
       }
+    }
+
+  const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+
+    const anomalyByColumn = new Map<number, string[]>()
+    result?.anomalies.forEach(a => {
+      const existing = anomalyByColumn.get(a.row_index) ?? []
+      anomalyByColumn.set(a.row_index, [...existing, a.column])
+    })
+
+    const isAnomalyRow = (row: any): boolean => {
+      return anomalyRowIndexes.has(Number(row.id) - 1)
+    }
+
+    const getAnomalyColumns = (row: any): Set<string> => {
+      const cols = anomalyByColumn.get(Number(row.id) - 1) ?? []
+      return new Set(cols)
     }
 
   const columns = tableData.length > 0 ? Object.keys(tableData[0]) : []
@@ -178,15 +220,36 @@ export default function ForgeMePage() {
 
         {tableData.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: 500 }}>
-              Данные из DuckDB ({tableData.length} строк)
-            </label>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ fontWeight: 500 }}>
+                Данные из DuckDB ({tableData.length} строк)
+              </label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {(['all', 'anomalies'] as FilterMode[]).map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => handleFilter(mode)}
+                    disabled={filterLoading}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '6px',
+                      border: '1px solid',
+                      fontSize: '13px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      borderColor: filterMode === mode ? '#5B4FCF' : '#d1d5db',
+                      background: filterMode === mode ? '#5B4FCF' : '#fff',
+                      color: filterMode === mode ? '#fff' : '#374151',
+                    }}
+                  >
+                    {mode === 'all' ? 'Все строки' : '⚠ Только аномалии'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-              <table style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                fontSize: '13px',
-              }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <thead>
                   <tr style={{ background: '#f9fafb' }}>
                     {columns.map(col => (
@@ -204,27 +267,37 @@ export default function ForgeMePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tableData.map((row, i) => (
-                    <tr
-                      key={i}
-                      style={{ background: i % 2 === 0 ? '#fff' : '#f9fafb' }}
-                    >
-                      {columns.map(col => (
-                        <td key={col} style={{
-                          padding: '8px 12px',
-                          color: '#111827',
-                          borderBottom: '1px solid #f3f4f6',
-                          whiteSpace: 'nowrap',
-                        }}>
-                         {row[col] === null || row[col] === undefined
-                          ? <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>null</span>
-                          : col === 'timestamp'
-                            ? new Date(Number(row[col])).toISOString().replace('T', ' ').slice(0, 19)
-                            : String(row[col])}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                  {tableData.map((row, i) => {
+                    const anomaly = isAnomalyRow(row)
+                    const anomalyCols = getAnomalyColumns(row)
+                    return (
+                      <tr
+                        key={i}
+                        style={{
+                          background: anomaly
+                            ? '#fef9c3'
+                            : i % 2 === 0 ? '#fff' : '#f9fafb',
+                        }}
+                      >
+                        {columns.map(col => (
+                          <td key={col} style={{
+                            padding: '8px 12px',
+                            color: anomalyCols.has(col) ? '#b45309' : '#111827',
+                            fontWeight: anomalyCols.has(col) ? 600 : 400,
+                            borderBottom: '1px solid #f3f4f6',
+                            whiteSpace: 'nowrap',
+                            background: anomalyCols.has(col) ? '#fef3c7' : 'transparent',
+                          }}>
+                            {row[col] === null || row[col] === undefined
+                              ? <span style={{ color: '#ef4444', fontWeight: 600 }}>NULL</span>
+                              : col === 'timestamp'
+                                ? new Date(Number(row[col])).toISOString().replace('T', ' ').slice(0, 19)
+                                : String(row[col])}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
