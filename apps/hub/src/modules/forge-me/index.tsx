@@ -59,57 +59,57 @@ export default function ForgeMePage() {
       setResult(response.data)
 
       if (format === 'json') {
-          await loadJSON(response.data.data, 'sensor_data')
-          await loadAnomalyIndex(response.data.anomalies.map(a => a.row_index))
-          const data = await runQuery('SELECT * FROM sensor_data')
-          setTableData(data)
+        await loadJSON(response.data.data, 'sensor_data')
+        await loadAnomalyIndex(response.data.anomalies.map(a => a.row_index))
+        const data = await runQuery('SELECT * FROM sensor_data')
+        setTableData(data)
       }
 
     } catch (err) {
-      setError('Ошибка при запросе к API. Проверь что бэкенд запущен.')
+      setError('Failed to connect to API. Make sure the backend is running.')
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-    const handleFilter = async (mode: FilterMode) => {
-      if (!result) return
-      setFilterLoading(true)
-      setFilterMode(mode)
+  const handleFilter = async (mode: FilterMode) => {
+    if (!result) return
+    setFilterLoading(true)
+    setFilterMode(mode)
 
-      try {
-        if (mode === 'all') {
-          const data = await runQuery('SELECT * FROM sensor_data')
-          setTableData(data)
-        } else {
-          const data = await runQuery(`
-            SELECT s.* FROM sensor_data s
-            INNER JOIN anomaly_index a ON s.id - 1 = a.row_index
-          `)
-          setTableData(data)
-        }
-      } finally {
-        setFilterLoading(false)
+    try {
+      if (mode === 'all') {
+        const data = await runQuery('SELECT * FROM sensor_data')
+        setTableData(data)
+      } else {
+        const data = await runQuery(`
+          SELECT s.* FROM sensor_data s
+          INNER JOIN anomaly_index a ON s.id - 1 = a.row_index
+        `)
+        setTableData(data)
       }
+    } finally {
+      setFilterLoading(false)
     }
+  }
 
   const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
 
-    const anomalyByColumn = new Map<number, string[]>()
-    result?.anomalies.forEach(a => {
-      const existing = anomalyByColumn.get(a.row_index) ?? []
-      anomalyByColumn.set(a.row_index, [...existing, a.column])
-    })
+  const anomalyByColumn = new Map<number, string[]>()
+  result?.anomalies.forEach(a => {
+    const existing = anomalyByColumn.get(a.row_index) ?? []
+    anomalyByColumn.set(a.row_index, [...existing, a.column])
+  })
 
-    const isAnomalyRow = (row: any): boolean => {
-      return anomalyRowIndexes.has(Number(row.id) - 1)
-    }
+  const isAnomalyRow = (row: any): boolean => {
+    return anomalyRowIndexes.has(Number(row.id) - 1)
+  }
 
-    const getAnomalyColumns = (row: any): Set<string> => {
-      const cols = anomalyByColumn.get(Number(row.id) - 1) ?? []
-      return new Set(cols)
-    }
+  const getAnomalyColumns = (row: any): Set<string> => {
+    const cols = anomalyByColumn.get(Number(row.id) - 1) ?? []
+    return new Set(cols)
+  }
 
   const columns = tableData.length > 0 ? Object.keys(tableData[0]) : []
 
@@ -117,17 +117,17 @@ export default function ForgeMePage() {
     <div style={{ maxWidth: '960px' }}>
       <h1 style={{ marginBottom: '8px' }}>ForgeMe</h1>
       <p style={{ color: '#6b7280', marginBottom: '32px' }}>
-        Генератор и анализатор аномалий в данных
+        Anomaly dataset generator and analyzer
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <label style={{ fontWeight: 500 }}>Описание датасета</label>
+          <label style={{ fontWeight: 500 }}>Dataset description</label>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Например: датасет показаний температурных датчиков на производстве за месяц"
+            placeholder="e.g. temperature sensor readings from a manufacturing plant over one month"
             rows={4}
             style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
           />
@@ -135,7 +135,7 @@ export default function ForgeMePage() {
 
         <div style={{ display: 'flex', gap: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-            <label style={{ fontWeight: 500 }}>Формат</label>
+            <label style={{ fontWeight: 500 }}>Format</label>
             <select
               value={format}
               onChange={(e) => setFormat(e.target.value as DataFormat)}
@@ -148,7 +148,7 @@ export default function ForgeMePage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-            <label style={{ fontWeight: 500 }}>Количество строк</label>
+            <label style={{ fontWeight: 500 }}>Row count</label>
             <input
               type="number"
               value={rows}
@@ -160,7 +160,7 @@ export default function ForgeMePage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-            <label style={{ fontWeight: 500 }}>Доля аномалий</label>
+            <label style={{ fontWeight: 500 }}>Anomaly rate</label>
             <input
               type="number"
               value={anomalyRate}
@@ -188,7 +188,7 @@ export default function ForgeMePage() {
             alignSelf: 'flex-start',
           }}
         >
-          {loading ? 'Генерация...' : 'Сгенерировать'}
+          {loading ? 'Generating...' : 'Generate'}
         </button>
 
         {error && (
@@ -212,9 +212,9 @@ export default function ForgeMePage() {
             background: '#f0fdf4',
             fontSize: '14px',
           }}>
-            <span>Строк: <strong>{result.rows_total}</strong></span>
-            <span>Аномалий: <strong>{result.anomalies_count}</strong></span>
-            <span>Формат: <strong>{result.format.toUpperCase()}</strong></span>
+            <span>Rows: <strong>{result.rows_total}</strong></span>
+            <span>Anomalies: <strong>{result.anomalies_count}</strong></span>
+            <span>Format: <strong>{result.format.toUpperCase()}</strong></span>
           </div>
         )}
 
@@ -222,7 +222,7 @@ export default function ForgeMePage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <label style={{ fontWeight: 500 }}>
-                Данные из DuckDB ({tableData.length} строк)
+                Data from DuckDB ({tableData.length} rows)
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {(['all', 'anomalies'] as FilterMode[]).map(mode => (
@@ -242,7 +242,7 @@ export default function ForgeMePage() {
                       color: filterMode === mode ? '#fff' : '#374151',
                     }}
                   >
-                    {mode === 'all' ? 'Все строки' : '⚠ Только аномалии'}
+                    {mode === 'all' ? 'All rows' : '⚠ Anomalies only'}
                   </button>
                 ))}
               </div>
