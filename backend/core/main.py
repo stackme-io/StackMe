@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(title="StackMe Core API")
 
@@ -27,3 +29,6 @@ try:
     print("✓ ForgeMe service loaded")
 except ImportError:
     print("⚠ ForgeMe service not available")
+
+from core.routers.users import router as users_router
+app.include_router(users_router, prefix="/api", tags=["Users"])
