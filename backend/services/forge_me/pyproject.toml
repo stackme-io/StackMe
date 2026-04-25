@@ -1,0 +1,13 @@
+[project]
+name = "forge-me"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "numpy>=2.0",
+    "pandas>=2.0",
+    "stackme-shared",
+]
+
+[tool.uv.sources]
+stackme-shared = { workspace = true }

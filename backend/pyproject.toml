@@ -1,12 +1,22 @@
 [project]
-name = "stackme"
+name = "stackme-backend"
 version = "0.1.0"
-description = "StackMe: Engineering Hub for Logs & Codegen"
+description = "Core API for StackMe platform"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "flask>=3.0.0",
-    "flask-cors>=4.0.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "sqlalchemy>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-multipart>=0.0.9",
+]
+
+[tool.uv.workspace]
+members = [
+    "core",
+    "shared",       # Явно указываем shared
+    "services/*"    # Все сервисы, включая forge_me
 ]
 
 [tool.ruff]
@@ -19,4 +29,5 @@ select = ["E", "F", "I"]
 [dependency-groups]
 dev = [
     "ruff>=0.15.8",
+    "pytest>=8.0.0",
 ]

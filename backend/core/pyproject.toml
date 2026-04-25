@@ -1,0 +1,12 @@
+[project]
+name = "core"
+version = "0.1.0"
+description = "StackMe Core API logic"
+requires-python = ">=3.12"
+dependencies = [
+    # Здесь можно указать зависимости, специфичные только для ядра
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

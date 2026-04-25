@@ -1,16 +1,29 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = FastAPI(title="StackMe Core API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.get("/")
+async def root():
+    """Проверка статуса API"""
+    return {
+        "status": "online",
+        "message": "StackMe Core API is running",
+        "version": "0.1.0"
+    }
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Подключение сервисов
+try:
+    from forge_me.router import router as forge_router
+    app.include_router(forge_router, prefix="/forge-me", tags=["ForgeMe"])
+    print("✓ ForgeMe service loaded")
+except ImportError:
+    print("⚠ ForgeMe service not available")
