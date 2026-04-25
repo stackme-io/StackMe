@@ -32,3 +32,8 @@ dist/
 
 # --- DOCS ---
 doc/
+
+.env
+.env.local
+.env.*.local
+.env.production
