@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import apiClient from '../../api/client'
 import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 
@@ -21,6 +21,12 @@ interface GenerateResponse {
   data: string
 }
 
+interface AnalyzeResponse {
+  rows_total: number
+  anomalies_count: number
+  anomalies: AnomalyInfo[]
+}
+
 const inputStyle = {
   padding: '10px 12px',
   borderRadius: '6px',
@@ -41,6 +47,12 @@ export default function ForgeMePage() {
   const [loading, setLoading] = useState(false)
   const [filterLoading, setFilterLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const [analyzeResult, setAnalyzeResult] = useState<AnalyzeResponse | null>(null)
+  const [analyzeLoading, setAnalyzeLoading] = useState(false)
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -73,43 +85,85 @@ export default function ForgeMePage() {
     }
   }
 
-  const handleFilter = async (mode: FilterMode) => {
-    if (!result) return
-    setFilterLoading(true)
-    setFilterMode(mode)
+const handleFilter = async (mode: FilterMode) => {
+  if (!result) return
+  setFilterLoading(true)
+  setFilterMode(mode)
 
-    try {
-      if (mode === 'all') {
-        const data = await runQuery('SELECT * FROM sensor_data')
-        setTableData(data)
-      } else {
-        const data = await runQuery(`
-          SELECT s.* FROM sensor_data s
-          INNER JOIN anomaly_index a ON s.id - 1 = a.row_index
-        `)
-        setTableData(data)
-      }
-    } finally {
-      setFilterLoading(false)
+  try {
+    if (mode === 'all') {
+      const data = await runQuery('SELECT * FROM sensor_data')
+      setTableData(data)
+    } else {
+      const data = await runQuery(`
+        SELECT s.* FROM sensor_data s
+        INNER JOIN anomaly_index a ON s.id - 1 = a.row_index
+      `)
+      setTableData(data)
     }
+  } finally {
+    setFilterLoading(false)
+  }
+}
+
+const handleAnalyze = useCallback(async (file: File) => {
+  if (!file.name.endsWith('.csv')) {
+    setAnalyzeError('Only CSV files are supported')
+    return
   }
 
-  const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+  setAnalyzeLoading(true)
+  setAnalyzeError(null)
+  setAnalyzeResult(null)
 
-  const anomalyByColumn = new Map<number, string[]>()
-  result?.anomalies.forEach(a => {
-    const existing = anomalyByColumn.get(a.row_index) ?? []
-    anomalyByColumn.set(a.row_index, [...existing, a.column])
-  })
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
 
-  const isAnomalyRow = (row: any): boolean => {
-    return anomalyRowIndexes.has(Number(row.id) - 1)
+    const response = await apiClient.post<AnalyzeResponse>(
+      '/forge-me/analyze',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+    setAnalyzeResult(response.data)
+  } catch (err) {
+    setAnalyzeError('Failed to analyze file. Make sure it is a valid CSV.')
+    console.error(err)
+  } finally {
+    setAnalyzeLoading(false)
   }
+}, [])
 
-  const getAnomalyColumns = (row: any): Set<string> => {
-    const cols = anomalyByColumn.get(Number(row.id) - 1) ?? []
-    return new Set(cols)
-  }
+const handleDrop = useCallback((e: React.DragEvent) => {
+  e.preventDefault()
+  setIsDragOver(false)
+  const file = e.dataTransfer.files[0]
+  if (file) handleAnalyze(file)
+}, [handleAnalyze])
+
+const handleDragOver = (e: React.DragEvent) => {
+  e.preventDefault()
+  setIsDragOver(true)
+}
+
+const handleDragLeave = () => setIsDragOver(false)
+
+const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+
+const anomalyByColumn = new Map<number, string[]>()
+result?.anomalies.forEach(a => {
+  const existing = anomalyByColumn.get(a.row_index) ?? []
+  anomalyByColumn.set(a.row_index, [...existing, a.column])
+})
+
+const isAnomalyRow = (row: any): boolean => {
+  return anomalyRowIndexes.has(Number(row.id) - 1)
+}
+
+const getAnomalyColumns = (row: any): Set<string> => {
+  const cols = anomalyByColumn.get(Number(row.id) - 1) ?? []
+  return new Set(cols)
+}
 
   const columns = tableData.length > 0 ? Object.keys(tableData[0]) : []
 
@@ -303,6 +357,96 @@ export default function ForgeMePage() {
             </div>
           </div>
         )}
+
+        {/* Analyze section — ВСТАВЬ СЮДА */}
+        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '32px', marginTop: '12px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>
+            Analyze your own dataset
+          </h2>
+          <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '16px' }}>
+            Upload a CSV file to detect anomalies using IQR method
+          </p>
+
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              border: `2px dashed ${isDragOver ? '#5B4FCF' : '#d1d5db'}`,
+              borderRadius: '8px',
+              padding: '40px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              background: isDragOver ? '#f5f3ff' : '#fafafa',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '8px' }}>📂</div>
+            <p style={{ fontWeight: 500, color: '#374151', marginBottom: '4px' }}>
+              {analyzeLoading ? 'Analyzing...' : 'Drop CSV file here or click to upload'}
+            </p>
+            <p style={{ fontSize: '13px', color: '#9ca3af' }}>
+              Supports CSV files only
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) handleAnalyze(file)
+              }}
+            />
+          </div>
+
+          {analyzeError && (
+            <div style={{
+              marginTop: '12px',
+              padding: '12px 16px',
+              borderRadius: '6px',
+              background: '#fef2f2',
+              color: '#dc2626',
+              fontSize: '14px',
+            }}>
+              {analyzeError}
+            </div>
+          )}
+
+          {analyzeResult && (
+            <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{
+                display: 'flex',
+                gap: '16px',
+                padding: '16px',
+                borderRadius: '8px',
+                background: '#f0fdf4',
+                fontSize: '14px',
+              }}>
+                <span>Rows: <strong>{analyzeResult.rows_total}</strong></span>
+                <span>Anomalies found: <strong>{analyzeResult.anomalies_count}</strong></span>
+              </div>
+
+              {analyzeResult.anomalies.map((a, i) => (
+                <div key={i} style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  background: '#fef9c3',
+                  fontSize: '13px',
+                  borderLeft: '3px solid #eab308',
+                }}>
+                  <strong>Row {a.row_index}</strong> · {a.column} · {a.anomaly_type}
+                  <br />
+                  {a.description}
+                  {a.original_value && (
+                    <span style={{ color: '#6b7280' }}> (value: {a.original_value})</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
       </div>
     </div>
