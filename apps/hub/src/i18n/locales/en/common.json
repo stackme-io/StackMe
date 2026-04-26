@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "marketplace": "+ MarketMe"
+  },
+  "sidebar": {
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "marketplace": {
+    "title": "MarketMe",
+    "subtitle": "Add tools to your workspace",
+    "add": "Add",
+    "remove": "Remove",
+    "signInToAdd": "Sign in to add",
+    "signInBanner": "Sign in to activate tools and save your workspace.",
+    "signInLink": "Sign in →"
+  },
+  "forge": {
+    "title": "ForgeMe",
+    "subtitle": "Anomaly dataset generator and analyzer",
+    "datasetDescription": "Dataset description",
+    "placeholder": "e.g. temperature sensor readings from a manufacturing plant over one month",
+    "format": "Format",
+    "rowCount": "Row count",
+    "anomalyRate": "Anomaly rate",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "rows": "Rows",
+    "anomalies": "Anomalies",
+    "allRows": "All rows",
+    "anomaliesOnly": "Anomalies only",
+    "dataFromDuckDB": "Data from DuckDB",
+    "analyzeTitle": "Analyze your own dataset",
+    "analyzeSubtitle": "Upload a CSV file to detect anomalies using IQR method",
+    "dropzone": "Drop CSV file here or click to upload",
+    "csvOnly": "Supports CSV files only",
+    "analyzing": "Analyzing...",
+    "anomaliesFound": "Anomalies found",
+    "apiError": "Failed to connect to API. Make sure the backend is running.",
+    "analyzeError": "Failed to analyze file. Make sure it is a valid CSV."
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
