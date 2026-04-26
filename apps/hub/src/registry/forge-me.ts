@@ -4,7 +4,7 @@ import type { ModuleManifest } from '../types/module-manifest'
 export const forgeMeManifest: ModuleManifest = {
   id: 'forge-me',
   name: 'ForgeMe',
-  description: 'Генератор и анализатор аномалий в данных',
+  description: 'Anomaly dataset generator and analyzer',
   icon: 'Hammer',
   route: '/forge-me',
   category: 'generation',

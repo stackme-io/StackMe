@@ -20,6 +20,21 @@ export default function AppShell() {
           StackMe
         </div>
 
+    <Link
+      to="/market-me"
+      style={{
+        padding: '8px 12px',
+        borderRadius: '6px',
+        textDecoration: 'none',
+        color: location.pathname === '/market-me' ? '#fff' : '#374151',
+        background: location.pathname === '/market-me' ? '#5B4FCF' : 'transparent',
+        fontWeight: 500,
+        fontSize: '13px',
+      }}
+    >
+      + MarketMe
+    </Link>
+
         {MODULE_REGISTRY.map((module) => (
           <Link
             key={module.id}
