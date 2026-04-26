@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AnomalyInfo } from './types'
 
 interface AnomalyTableProps {
@@ -7,6 +8,8 @@ interface AnomalyTableProps {
 }
 
 export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTableProps) {
+  const { t } = useTranslation()
+
   if (tableData.length === 0) return null
 
   const columns = Object.keys(tableData[0])
@@ -18,19 +21,12 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
   })
 
   return (
-    <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full text-sm border-collapse">
         <thead>
-          <tr style={{ background: '#f9fafb' }}>
+          <tr className="bg-muted/50">
             {columns.map(col => (
-              <th key={col} style={{
-                padding: '10px 12px',
-                textAlign: 'left',
-                fontWeight: 600,
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb',
-                whiteSpace: 'nowrap',
-              }}>
+              <th key={col} className="px-3 py-2.5 text-left font-medium text-muted-foreground whitespace-nowrap border-b border-border text-xs uppercase tracking-wide">
                 {col}
               </th>
             ))}
@@ -43,25 +39,13 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
             const isAnomaly = anomalyCols.size > 0
 
             return (
-              <tr
-                key={i}
-                style={{
-                  background: isAnomaly
-                    ? '#fef9c3'
-                    : i % 2 === 0 ? '#fff' : '#f9fafb',
-                }}
-              >
+              <tr key={i} className={isAnomaly ? 'bg-amber-50 dark:bg-amber-950/20' : i % 2 === 0 ? 'bg-background' : 'bg-muted/20'}>
                 {columns.map(col => (
-                  <td key={col} style={{
-                    padding: '8px 12px',
-                    color: anomalyCols.has(col) ? '#b45309' : '#111827',
-                    fontWeight: anomalyCols.has(col) ? 600 : 400,
-                    borderBottom: '1px solid #f3f4f6',
-                    whiteSpace: 'nowrap',
-                    background: anomalyCols.has(col) ? '#fef3c7' : 'transparent',
-                  }}>
+                  <td key={col} className={`px-3 py-2 whitespace-nowrap border-b border-border/50 text-sm ${anomalyCols.has(col) ? 'text-amber-700 dark:text-amber-400 font-medium' : 'text-foreground'}`}
+                    style={{ background: anomalyCols.has(col) ? 'rgb(254 243 199 / 0.5)' : 'transparent' }}
+                  >
                     {row[col] === null || row[col] === undefined
-                      ? <span style={{ color: '#ef4444', fontWeight: 600 }}>NULL</span>
+                      ? <span className="text-destructive font-medium text-xs">NULL</span>
                       : isTimestamp?.(col)
                         ? new Date(Number(row[col])).toISOString().replace('T', ' ').slice(0, 19)
                         : String(row[col])}

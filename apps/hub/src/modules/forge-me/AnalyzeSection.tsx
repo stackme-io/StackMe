@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import apiClient from '../../api/client'
 import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 import { AnomalyTable } from './AnomalyTable'
@@ -6,6 +7,7 @@ import type { AnalyzeResponse } from './types'
 import { csvToJson } from './types'
 
 export function AnalyzeSection() {
+  const { t } = useTranslation()
   const [analyzeResult, setAnalyzeResult] = useState<AnalyzeResponse | null>(null)
   const [analyzeLoading, setAnalyzeLoading] = useState(false)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
@@ -15,7 +17,7 @@ export function AnalyzeSection() {
 
   const handleAnalyze = useCallback(async (file: File) => {
     if (!file.name.endsWith('.csv')) {
-      setAnalyzeError('Only CSV files are supported')
+      setAnalyzeError(t('forge.analyzeError'))
       return
     }
 
@@ -42,12 +44,12 @@ export function AnalyzeSection() {
       setAnalyzeTableData(data)
 
     } catch (err) {
-      setAnalyzeError('Failed to analyze file. Make sure it is a valid CSV.')
+      setAnalyzeError(t('forge.analyzeError'))
       console.error(err)
     } finally {
       setAnalyzeLoading(false)
     }
-  }, [])
+  }, [t])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -64,41 +66,31 @@ export function AnalyzeSection() {
   const handleDragLeave = () => setIsDragOver(false)
 
   return (
-    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '32px', marginTop: '12px' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>
-        Analyze your own dataset
-      </h2>
-      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '16px' }}>
-        Upload a CSV file to detect anomalies using IQR method
-      </p>
+    <div className="border-t border-border pt-8 mt-6">
+      <h2 className="text-base font-semibold text-foreground mb-1">{t('forge.analyzeTitle')}</h2>
+      <p className="text-sm text-muted-foreground mb-4">{t('forge.analyzeSubtitle')}</p>
 
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
-        style={{
-          border: `2px dashed ${isDragOver ? '#5B4FCF' : '#d1d5db'}`,
-          borderRadius: '8px',
-          padding: '40px',
-          textAlign: 'center',
-          cursor: 'pointer',
-          background: isDragOver ? '#f5f3ff' : '#fafafa',
-          transition: 'all 0.15s ease',
-        }}
+        className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors ${
+          isDragOver
+            ? 'border-primary bg-primary/5'
+            : 'border-border bg-muted/20 hover:border-primary/50 hover:bg-muted/40'
+        }`}
       >
-        <div style={{ fontSize: '32px', marginBottom: '8px' }}>📂</div>
-        <p style={{ fontWeight: 500, color: '#374151', marginBottom: '4px' }}>
-          {analyzeLoading ? 'Analyzing...' : 'Drop CSV file here or click to upload'}
+        <div className="text-3xl mb-2">📂</div>
+        <p className="text-sm font-medium text-foreground mb-1">
+          {analyzeLoading ? t('forge.analyzing') : t('forge.dropzone')}
         </p>
-        <p style={{ fontSize: '13px', color: '#9ca3af' }}>
-          Supports CSV files only
-        </p>
+        <p className="text-xs text-muted-foreground">{t('forge.csvOnly')}</p>
         <input
           ref={fileInputRef}
           type="file"
           accept=".csv"
-          style={{ display: 'none' }}
+          className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0]
             if (file) handleAnalyze(file)
@@ -107,30 +99,16 @@ export function AnalyzeSection() {
       </div>
 
       {analyzeError && (
-        <div style={{
-          marginTop: '12px',
-          padding: '12px 16px',
-          borderRadius: '6px',
-          background: '#fef2f2',
-          color: '#dc2626',
-          fontSize: '14px',
-        }}>
+        <div className="mt-3 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
           {analyzeError}
         </div>
       )}
 
       {analyzeResult && (
-        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{
-            display: 'flex',
-            gap: '16px',
-            padding: '16px',
-            borderRadius: '8px',
-            background: '#f0fdf4',
-            fontSize: '14px',
-          }}>
-            <span>Rows: <strong>{analyzeResult.rows_total}</strong></span>
-            <span>Anomalies found: <strong>{analyzeResult.anomalies_count}</strong></span>
+        <div className="mt-4 flex flex-col gap-4">
+          <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
+            <span className="text-muted-foreground">{t('forge.rows')}: <strong className="text-foreground">{analyzeResult.rows_total}</strong></span>
+            <span className="text-muted-foreground">{t('forge.anomaliesFound')}: <strong className="text-foreground">{analyzeResult.anomalies_count}</strong></span>
           </div>
 
           <AnomalyTable
@@ -139,18 +117,13 @@ export function AnalyzeSection() {
           />
 
           {analyzeResult.anomalies.map((a, i) => (
-            <div key={i} style={{
-              padding: '10px 14px',
-              borderRadius: '6px',
-              background: '#fef9c3',
-              fontSize: '13px',
-              borderLeft: '3px solid #eab308',
-            }}>
-              <strong>Row {a.row_index}</strong> · {a.column} · {a.anomaly_type}
+            <div key={i} className="px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border-l-2 border-amber-400 text-sm">
+              <span className="font-medium text-foreground">Row {a.row_index}</span>
+              <span className="text-muted-foreground"> · {a.column} · {a.anomaly_type}</span>
               <br />
-              {a.description}
+              <span className="text-foreground">{a.description}</span>
               {a.original_value && (
-                <span style={{ color: '#6b7280' }}> (value: {a.original_value})</span>
+                <span className="text-muted-foreground"> (value: {a.original_value})</span>
               )}
             </div>
           ))}

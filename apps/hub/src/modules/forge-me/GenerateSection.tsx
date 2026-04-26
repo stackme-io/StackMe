@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import apiClient from '../../api/client'
 import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 import { AnomalyTable } from './AnomalyTable'
 import type { DataFormat, FilterMode, GenerateResponse } from './types'
-import { inputStyle } from './types'
 
 export function GenerateSection() {
+  const { t } = useTranslation()
   const [prompt, setPrompt] = useState('')
   const [format, setFormat] = useState<DataFormat>('json')
   const [rows, setRows] = useState(100)
@@ -26,10 +27,7 @@ export function GenerateSection() {
 
     try {
       const response = await apiClient.post<GenerateResponse>('/forge-me/generate', {
-        prompt,
-        format,
-        rows,
-        anomaly_rate: anomalyRate,
+        prompt, format, rows, anomaly_rate: anomalyRate,
       })
       setResult(response.data)
 
@@ -40,7 +38,7 @@ export function GenerateSection() {
         setTableData(data)
       }
     } catch (err) {
-      setError('Failed to connect to API. Make sure the backend is running.')
+      setError(t('forge.apiError'))
       console.error(err)
     } finally {
       setLoading(false)
@@ -51,7 +49,6 @@ export function GenerateSection() {
     if (!result) return
     setFilterLoading(true)
     setFilterMode(mode)
-
     try {
       if (mode === 'all') {
         const data = await runQuery('SELECT * FROM sensor_data')
@@ -69,26 +66,26 @@ export function GenerateSection() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="flex flex-col gap-5">
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        <label style={{ fontWeight: 500 }}>Dataset description</label>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-foreground">{t('forge.datasetDescription')}</label>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="e.g. temperature sensor readings from a manufacturing plant over one month"
+          placeholder={t('forge.placeholder')}
           rows={4}
-          style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
+          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm resize-y placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
-      <div style={{ display: 'flex', gap: '16px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-          <label style={{ fontWeight: 500 }}>Format</label>
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label className="text-sm font-medium text-foreground">{t('forge.format')}</label>
           <select
             value={format}
             onChange={(e) => setFormat(e.target.value as DataFormat)}
-            style={inputStyle}
+            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="json">JSON</option>
             <option value="csv">CSV</option>
@@ -96,28 +93,25 @@ export function GenerateSection() {
           </select>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-          <label style={{ fontWeight: 500 }}>Row count</label>
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label className="text-sm font-medium text-foreground">{t('forge.rowCount')}</label>
           <input
             type="number"
             value={rows}
             onChange={(e) => setRows(Number(e.target.value))}
-            min={10}
-            max={10000}
-            style={inputStyle}
+            min={10} max={10000}
+            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-          <label style={{ fontWeight: 500 }}>Anomaly rate</label>
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label className="text-sm font-medium text-foreground">{t('forge.anomalyRate')}</label>
           <input
             type="number"
             value={anomalyRate}
             onChange={(e) => setAnomalyRate(Number(e.target.value))}
-            min={0}
-            max={0.5}
-            step={0.01}
-            style={inputStyle}
+            min={0} max={0.5} step={0.01}
+            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </div>
@@ -125,78 +119,48 @@ export function GenerateSection() {
       <button
         onClick={handleSubmit}
         disabled={loading || prompt.length < 10}
-        style={{
-          padding: '12px 24px',
-          borderRadius: '6px',
-          border: 'none',
-          background: loading || prompt.length < 10 ? '#a5b4fc' : '#5B4FCF',
-          color: '#fff',
-          fontSize: '15px',
-          fontWeight: 600,
-          cursor: loading || prompt.length < 10 ? 'not-allowed' : 'pointer',
-          alignSelf: 'flex-start',
-        }}
+        className="self-start px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {loading ? 'Generating...' : 'Generate'}
+        {loading ? t('forge.generating') : t('forge.generate')}
       </button>
 
       {error && (
-        <div style={{
-          padding: '12px 16px',
-          borderRadius: '6px',
-          background: '#fef2f2',
-          color: '#dc2626',
-          fontSize: '14px',
-        }}>
+        <div className="px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
           {error}
         </div>
       )}
 
       {result && (
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          padding: '16px',
-          borderRadius: '8px',
-          background: '#f0fdf4',
-          fontSize: '14px',
-        }}>
-          <span>Rows: <strong>{result.rows_total}</strong></span>
-          <span>Anomalies: <strong>{result.anomalies_count}</strong></span>
-          <span>Format: <strong>{result.format.toUpperCase()}</strong></span>
+        <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
+          <span className="text-muted-foreground">{t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong></span>
+          <span className="text-muted-foreground">{t('forge.anomalies')}: <strong className="text-foreground">{result.anomalies_count}</strong></span>
+          <span className="text-muted-foreground">Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong></span>
         </div>
       )}
 
       {tableData.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <label style={{ fontWeight: 500 }}>
-              Data from DuckDB ({tableData.length} rows)
-            </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-foreground">
+              {t('forge.dataFromDuckDB')} ({tableData.length})
+            </span>
+            <div className="flex gap-2">
               {(['all', 'anomalies'] as FilterMode[]).map(mode => (
                 <button
                   key={mode}
                   onClick={() => handleFilter(mode)}
                   disabled={filterLoading}
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '6px',
-                    border: '1px solid',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    borderColor: filterMode === mode ? '#5B4FCF' : '#d1d5db',
-                    background: filterMode === mode ? '#5B4FCF' : '#fff',
-                    color: filterMode === mode ? '#fff' : '#374151',
-                  }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+                    filterMode === mode
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-background text-muted-foreground border-border hover:text-foreground'
+                  }`}
                 >
-                  {mode === 'all' ? 'All rows' : '⚠ Anomalies only'}
+                  {mode === 'all' ? t('forge.allRows') : `⚠ ${t('forge.anomaliesOnly')}`}
                 </button>
               ))}
             </div>
           </div>
-
           <AnomalyTable
             tableData={tableData}
             anomalies={result?.anomalies ?? []}
