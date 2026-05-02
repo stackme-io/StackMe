@@ -5,18 +5,51 @@ import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 import { AnomalyTable } from './AnomalyTable'
 import type { DataFormat, FilterMode, GenerateResponse } from './types'
 
-export function GenerateSection() {
+type AnomalyType =
+  | 'nulls'
+  | 'duplicates'
+  | 'outliers'
+  | 'out-of-order'
+  | 'late-arrivals'
+  | 'type-mismatches'
+  | 'stale-timestamps'
+
+interface HistoryEntry {
+  rows: number
+  rate: number
+  format: DataFormat
+  anomalies: AnomalyType[]
+}
+
+interface GenerateSectionProps {
+  selectedAnomalies: Set<AnomalyType>
+  seed: number
+  rows: number
+  anomalyRate: number
+  onSeedChange: (seed: number) => void
+  onRowsChange: (rows: number) => void
+  onAnomalyRateChange: (rate: number) => void
+  onGenerated: (entry: HistoryEntry) => void
+}
+
+export function GenerateSection({
+  selectedAnomalies,
+  seed,
+  rows,
+  anomalyRate,
+  onSeedChange,
+  onRowsChange,
+  onAnomalyRateChange,
+  onGenerated,
+}: GenerateSectionProps) {
   const { t } = useTranslation()
-  const [prompt, setPrompt] = useState('')
-  const [format, setFormat] = useState<DataFormat>('json')
-  const [rows, setRows] = useState(100)
-  const [anomalyRate, setAnomalyRate] = useState(0.05)
-  const [result, setResult] = useState<GenerateResponse | null>(null)
-  const [tableData, setTableData] = useState<any[]>([])
-  const [filterMode, setFilterMode] = useState<FilterMode>('all')
-  const [loading, setLoading] = useState(false)
+  const [format, setFormat]             = useState<DataFormat>('json')
+  const [result, setResult]             = useState<GenerateResponse | null>(null)
+  const [tableData, setTableData]       = useState<any[]>([])
+  const [filterMode, setFilterMode]     = useState<FilterMode>('all')
+  const [loading, setLoading]           = useState(false)
   const [filterLoading, setFilterLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError]               = useState<string | null>(null)
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -27,7 +60,11 @@ export function GenerateSection() {
 
     try {
       const response = await apiClient.post<GenerateResponse>('/forge-me/generate', {
-        prompt, format, rows, anomaly_rate: anomalyRate,
+        prompt: [...selectedAnomalies].join(', '),
+        format,
+        rows,
+        anomaly_rate: anomalyRate,
+        seed,
       })
       setResult(response.data)
 
@@ -37,6 +74,13 @@ export function GenerateSection() {
         const data = await runQuery('SELECT * FROM sensor_data')
         setTableData(data)
       }
+
+      onGenerated({
+        rows,
+        rate: anomalyRate,
+        format,
+        anomalies: [...selectedAnomalies],
+      })
     } catch (err) {
       setError(t('forge.apiError'))
       console.error(err)
@@ -68,23 +112,15 @@ export function GenerateSection() {
   return (
     <div className="flex flex-col gap-5">
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">{t('forge.datasetDescription')}</label>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder={t('forge.placeholder')}
-          rows={4}
-          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm resize-y placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-      </div>
-
+      {/* Настройки */}
       <div className="flex gap-4">
         <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-sm font-medium text-foreground">{t('forge.format')}</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            {t('forge.format')}
+          </label>
           <select
             value={format}
-            onChange={(e) => setFormat(e.target.value as DataFormat)}
+            onChange={e => setFormat(e.target.value as DataFormat)}
             className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="json">JSON</option>
@@ -94,54 +130,84 @@ export function GenerateSection() {
         </div>
 
         <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-sm font-medium text-foreground">{t('forge.rowCount')}</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            {t('forge.rowCount')}
+          </label>
           <input
             type="number"
             value={rows}
-            onChange={(e) => setRows(Number(e.target.value))}
+            onChange={e => onRowsChange(Number(e.target.value))}
             min={10} max={10000}
             className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-sm font-medium text-foreground">{t('forge.anomalyRate')}</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            {t('forge.anomalyRate')}
+          </label>
           <input
             type="number"
             value={anomalyRate}
-            onChange={(e) => setAnomalyRate(Number(e.target.value))}
+            onChange={e => onAnomalyRateChange(Number(e.target.value))}
             min={0} max={0.5} step={0.01}
             className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </div>
 
+      {/* Seed row */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">seed=</span>
+        <span className="text-xs text-foreground font-mono">{seed}</span>
+        <button
+          onClick={() => onSeedChange(Math.floor(Math.random() * 99999) + 1)}
+          className="text-muted-foreground hover:text-foreground transition-colors text-sm leading-none"
+          title="Randomize seed"
+        >
+          ↺
+        </button>
+      </div>
+
+      {/* Generate button */}
       <button
         onClick={handleSubmit}
-        disabled={loading || prompt.length < 10}
-        className="self-start px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        disabled={loading || selectedAnomalies.size === 0}
+        className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? t('forge.generating') : t('forge.generate')}
       </button>
 
+      {/* Ошибка */}
       {error && (
         <div className="px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
           {error}
         </div>
       )}
 
+      {/* Stat bar */}
       {result && (
         <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
-          <span className="text-muted-foreground">{t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong></span>
-          <span className="text-muted-foreground">{t('forge.anomalies')}: <strong className="text-foreground">{result.anomalies_count}</strong></span>
-          <span className="text-muted-foreground">Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong></span>
+          <span className="text-muted-foreground">
+            {t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong>
+          </span>
+          <span className="text-muted-foreground">
+            {t('forge.anomalies')}: <strong className="text-amber-500">{result.anomalies_count}</strong>
+          </span>
+          <span className="text-muted-foreground">
+            Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong>
+          </span>
+          <span className="text-muted-foreground">
+            seed: <strong className="text-foreground font-mono">{seed}</strong>
+          </span>
         </div>
       )}
 
+      {/* Таблица */}
       {tableData.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">
               {t('forge.dataFromDuckDB')} ({tableData.length})
             </span>
             <div className="flex gap-2">
@@ -164,10 +230,11 @@ export function GenerateSection() {
           <AnomalyTable
             tableData={tableData}
             anomalies={result?.anomalies ?? []}
-            isTimestamp={(col) => col === 'timestamp'}
+            isTimestamp={col => col === 'timestamp'}
           />
         </div>
       )}
+
     </div>
   )
 }
