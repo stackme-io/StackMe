@@ -1,23 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GenerateSection } from './GenerateSection'
-import type { DataFormat } from './types'
-
-type AnomalyType =
-  | 'nulls'
-  | 'duplicates'
-  | 'outliers'
-  | 'out-of-order'
-  | 'late-arrivals'
-  | 'type-mismatches'
-  | 'stale-timestamps'
-
-interface HistoryEntry {
-  rows: number
-  rate: number
-  format: DataFormat
-  anomalies: AnomalyType[]
-}
+import type { AnomalyType, HistoryEntry, DataFormat } from './types'
 
 const ANOMALIES: { id: AnomalyType; label: string; badge: string }[] = [
   { id: 'nulls',            label: 'nulls',            badge: 'any'    },

@@ -3,23 +3,7 @@ import { useTranslation } from 'react-i18next'
 import apiClient from '../../api/client'
 import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 import { AnomalyTable } from './AnomalyTable'
-import type { DataFormat, FilterMode, GenerateResponse } from './types'
-
-type AnomalyType =
-  | 'nulls'
-  | 'duplicates'
-  | 'outliers'
-  | 'out-of-order'
-  | 'late-arrivals'
-  | 'type-mismatches'
-  | 'stale-timestamps'
-
-interface HistoryEntry {
-  rows: number
-  rate: number
-  format: DataFormat
-  anomalies: AnomalyType[]
-}
+import type { AnomalyType, HistoryEntry, DataFormat, FilterMode, GenerateResponse } from './types'
 
 interface GenerateSectionProps {
   selectedAnomalies: Set<AnomalyType>
