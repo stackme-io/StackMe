@@ -9,31 +9,44 @@ class DataFormat(str, Enum):
 
 
 class AnomalyType(str, Enum):
-    outlier = "outlier"       # числовой выброс
-    missing = "missing"       # пропущенное значение
-    duplicate = "duplicate"   # дублирующаяся строка
+    outlier = "outlier"
+    missing = "missing"
+    duplicate = "duplicate"
+
+
+class SchemaField(BaseModel):
+    name: str
+    type: str  # "int" | "float" | "timestamp" | "string"
 
 
 class GenerateRequest(BaseModel):
     prompt: str = Field(
-        min_length=10,
-        description="Описание датасета который нужно сгенерировать"
+        default="",
+        description="Dataset description"
     )
     format: DataFormat = Field(
         default=DataFormat.json,
-        description="Формат возвращаемых данных"
+        description="Output format"
     )
     rows: int = Field(
         default=100,
         ge=10,
         le=10000,
-        description="Количество строк в датасете"
+        description="Number of rows"
     )
     anomaly_rate: float = Field(
         default=0.05,
         ge=0.0,
         le=0.5,
-        description="Доля аномальных строк (0.05 = 5%)"
+        description="Fraction of anomalous rows"
+    )
+    seed: int = Field(
+        default=42,
+        description="Random seed for reproducibility"
+    )
+    schema: list[SchemaField] | None = Field(
+        default=None,
+        description="User schema fields for Schema match mode"
     )
 
 
@@ -50,7 +63,8 @@ class GenerateResponse(BaseModel):
     rows_total: int
     anomalies_count: int
     anomalies: list[AnomalyInfo]
-    data: str  # сами данные в виде строки (JSON, CSV или SQL)
+    data: str
+
 
 class AnalyzeResponse(BaseModel):
     rows_total: int

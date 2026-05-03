@@ -13,10 +13,7 @@ class AnomalyRecord:
 
 
 def generate_clean_dataset(rows: int, seed: int = 42) -> pd.DataFrame:
-    """
-    Генерирует чистый датасет без аномалий.
-    Симулирует показания датчиков на производстве.
-    """
+    """Generates a clean dataset without anomalies. Simulates sensor readings."""
     rng = np.random.default_rng(seed)
 
     df = pd.DataFrame({
@@ -44,10 +41,7 @@ def inject_anomalies(
     anomaly_rate: float = 0.05,
     seed: int = 42,
 ) -> tuple[pd.DataFrame, list[AnomalyRecord]]:
-    """
-    Внедряет аномалии в датасет.
-    Возвращает изменённый датасет и список аномалий.
-    """
+    """Injects anomalies into a dataset. Returns modified dataset and anomaly list."""
     rng = np.random.default_rng(seed)
     df = df.copy()
     anomalies: list[AnomalyRecord] = []
@@ -68,7 +62,7 @@ def inject_anomalies(
             column="temperature",
             anomaly_type="outlier",
             original_value=str(original),
-            description=f"Значение {df.at[row, 'temperature']} выходит за допустимый диапазон"
+            description=f"Value {df.at[row, 'temperature']} is outside the expected range"
         ))
 
     for row in missing_rows:
@@ -79,7 +73,7 @@ def inject_anomalies(
             column="user_id",
             anomaly_type="missing",
             original_value=str(original),
-            description="Пропущенное значение user_id"
+            description="Missing value in column 'user_id'"
         ))
 
     for row in duplicate_rows:
@@ -92,16 +86,14 @@ def inject_anomalies(
                 column="id",
                 anomaly_type="duplicate",
                 original_value=None,
-                description=f"Строка является дублем строки {row - 1}"
+                description=f"Row is a duplicate of row {row - 1}"
             ))
 
     return df, anomalies
 
 
 def serialize_dataset(df: pd.DataFrame, format: str) -> str:
-    """
-    Сериализует датасет в нужный формат.
-    """
+    """Serializes dataset to the requested format."""
     if format == "json":
         return df.to_json(orient="records", force_ascii=False)
 
@@ -127,7 +119,8 @@ def serialize_dataset(df: pd.DataFrame, format: str) -> str:
         inserts = ",\n  ".join(rows)
         return f"INSERT INTO {table} ({columns}) VALUES\n  {inserts};"
 
-    raise ValueError(f"Неизвестный формат: {format}")
+    raise ValueError(f"Unknown format: {format}")
+
 
 def detect_anomalies(df: pd.DataFrame) -> list[AnomalyRecord]:
     """
