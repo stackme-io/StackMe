@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GenerateSection } from './GenerateSection'
+import { SchemaSection } from './SchemaSection'
 import type { AnomalyType, HistoryEntry, DataFormat, ViewMode } from './types'
 
 const ANOMALIES: { id: AnomalyType; label: string; badge: string }[] = [
@@ -192,7 +193,6 @@ export default function ForgeMePage() {
           </div>
         )}
 
-        {/* Контент по режиму */}
         {viewMode === 'raw' ? (
           <GenerateSection
             selectedAnomalies={selected}
@@ -205,11 +205,19 @@ export default function ForgeMePage() {
             onGenerated={handleGenerated}
           />
         ) : (
-          <div className="flex flex-col gap-4">
-            <p className="text-xs text-muted-foreground">
-              Schema match — coming in D5.2
-            </p>
-          </div>
+          <>
+            <SchemaSection onSchemaReady={(fields) => console.log('schema:', fields)} />
+            <GenerateSection
+              selectedAnomalies={selected}
+              seed={seed}
+              rows={rows}
+              anomalyRate={anomalyRate}
+              onSeedChange={setSeed}
+              onRowsChange={setRows}
+              onAnomalyRateChange={setAnomalyRate}
+              onGenerated={handleGenerated}
+            />
+          </>
         )}
 
         {/* Footer */}
