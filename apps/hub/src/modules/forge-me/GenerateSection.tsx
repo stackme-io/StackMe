@@ -4,6 +4,7 @@ import apiClient from '../../api/client'
 import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
 import { AnomalyTable } from './AnomalyTable'
 import type { AnomalyType, HistoryEntry, DataFormat, FilterMode, GenerateResponse } from './types'
+import type { ParsedField } from './SchemaSection'
 
 interface GenerateSectionProps {
   selectedAnomalies: Set<AnomalyType>
@@ -14,6 +15,7 @@ interface GenerateSectionProps {
   onRowsChange: (rows: number) => void
   onAnomalyRateChange: (rate: number) => void
   onGenerated: (entry: HistoryEntry) => void
+  schemaFields?: ParsedField[]
 }
 
 export function GenerateSection({
@@ -25,6 +27,7 @@ export function GenerateSection({
   onRowsChange,
   onAnomalyRateChange,
   onGenerated,
+  schemaFields,
 }: GenerateSectionProps) {
   const { t } = useTranslation()
   const [format, setFormat]             = useState<DataFormat>('json')
@@ -49,6 +52,9 @@ export function GenerateSection({
         rows,
         anomaly_rate: anomalyRate,
         seed,
+        schema: schemaFields && schemaFields.length > 0
+          ? schemaFields.map(f => ({ name: f.name, type: f.type }))
+          : undefined,
       })
       setResult(response.data)
 
@@ -94,7 +100,7 @@ export function GenerateSection({
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 max-w-2xl">
 
       {/* Настройки */}
       <div className="flex gap-4">
@@ -214,7 +220,7 @@ export function GenerateSection({
           <AnomalyTable
             tableData={tableData}
             anomalies={result?.anomalies ?? []}
-            isTimestamp={col => col === 'timestamp'}
+            isTimestamp={col => col === 'timestamp' || col.toLowerCase().includes('date') || col.toLowerCase().includes('time')}
           />
         </div>
       )}

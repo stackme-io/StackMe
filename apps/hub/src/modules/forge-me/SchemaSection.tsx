@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 
-interface ParsedField {
+export interface ParsedField {
   name: string
   type: 'int' | 'float' | 'timestamp' | 'string'
 }

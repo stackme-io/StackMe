@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GenerateSection } from './GenerateSection'
 import { SchemaSection } from './SchemaSection'
+import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, HistoryEntry, DataFormat, ViewMode } from './types'
 
 const ANOMALIES: { id: AnomalyType; label: string; badge: string }[] = [
@@ -28,6 +29,7 @@ export default function ForgeMePage() {
   const [rows, setRows]                 = useState(100)
   const [anomalyRate, setAnomalyRate]   = useState(0.05)
   const [history, setHistory]           = useState<HistoryEntry[]>([])
+  const [schemaFields, setSchemaFields] = useState<ParsedField[]>([])
 
   const toggleAnomaly = useCallback((id: AnomalyType) => {
     setSelected(prev => {
@@ -158,7 +160,8 @@ export default function ForgeMePage() {
       </button>
 
       {/* ── Главная область ── */}
-      <main className="flex-1 overflow-y-auto px-6 pt-5 pb-12 min-w-0">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <div className="flex-1 overflow-y-auto px-6 pt-5">
 
         {/* Raw / Schema Match toggle */}
         <div className="flex mb-5">
@@ -206,7 +209,7 @@ export default function ForgeMePage() {
           />
         ) : (
           <>
-            <SchemaSection onSchemaReady={(fields) => console.log('schema:', fields)} />
+            <SchemaSection onSchemaReady={setSchemaFields} />
             <GenerateSection
               selectedAnomalies={selected}
               seed={seed}
@@ -216,12 +219,14 @@ export default function ForgeMePage() {
               onRowsChange={setRows}
               onAnomalyRateChange={setAnomalyRate}
               onGenerated={handleGenerated}
+              schemaFields={schemaFields}
             />
           </>
         )}
+        </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 h-8 border-t border-border/50 bg-background flex items-center px-6 gap-5 z-10">
+        <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {['no setup', 'runs locally', 'no data collected', 'open source'].map(item => (
             <span key={item} className="text-[10px] text-muted-foreground/30">
               <span className="mr-1 text-muted-foreground/20">//</span>{item}

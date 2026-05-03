@@ -45,10 +45,10 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
   })
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
+    <div className="overflow-auto rounded-lg border border-border max-h-[420px]">
       <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr className="bg-muted/30">
+        <thead className="sticky top-0 z-10">
+          <tr className="bg-muted/30 backdrop-blur-sm">
             {columns.map(col => (
               <th
                 key={col}
