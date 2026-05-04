@@ -30,13 +30,13 @@ export function GenerateSection({
   schemaFields,
 }: GenerateSectionProps) {
   const { t } = useTranslation()
-  const [format, setFormat]             = useState<DataFormat>('json')
-  const [result, setResult]             = useState<GenerateResponse | null>(null)
-  const [tableData, setTableData]       = useState<any[]>([])
-  const [filterMode, setFilterMode]     = useState<FilterMode>('all')
-  const [loading, setLoading]           = useState(false)
+  const [format, setFormat]               = useState<DataFormat>('json')
+  const [result, setResult]               = useState<GenerateResponse | null>(null)
+  const [tableData, setTableData]         = useState<any[]>([])
+  const [filterMode, setFilterMode]       = useState<FilterMode>('all')
+  const [loading, setLoading]             = useState(false)
   const [filterLoading, setFilterLoading] = useState(false)
-  const [error, setError]               = useState<string | null>(null)
+  const [error, setError]                 = useState<string | null>(null)
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -100,82 +100,86 @@ export function GenerateSection({
   }
 
   return (
-    <div className="flex flex-col gap-5 max-w-2xl">
+    <div className="flex flex-col gap-5">
 
-      {/* Настройки */}
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t('forge.format')}
-          </label>
-          <select
-            value={format}
-            onChange={e => setFormat(e.target.value as DataFormat)}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+      {/* Controls — constrained width */}
+      <div className="flex flex-col gap-5 max-w-2xl">
+
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t('forge.format')}
+            </label>
+            <select
+              value={format}
+              onChange={e => setFormat(e.target.value as DataFormat)}
+              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="sql">SQL</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t('forge.rowCount')}
+            </label>
+            <input
+              type="number"
+              value={rows}
+              onChange={e => onRowsChange(Number(e.target.value))}
+              min={10} max={10000}
+              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t('forge.anomalyRate')}
+            </label>
+            <input
+              type="number"
+              value={anomalyRate}
+              onChange={e => onAnomalyRateChange(Number(e.target.value))}
+              min={0} max={0.5} step={0.01}
+              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+        </div>
+
+        {/* Seed row */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">seed=</span>
+          <span className="text-xs text-foreground font-mono">{seed}</span>
+          <button
+            onClick={() => onSeedChange(Math.floor(Math.random() * 99999) + 1)}
+            className="text-muted-foreground hover:text-foreground transition-colors text-sm leading-none"
+            title="Randomize seed"
           >
-            <option value="json">JSON</option>
-            <option value="csv">CSV</option>
-            <option value="sql">SQL</option>
-          </select>
+            ↺
+          </button>
         </div>
 
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t('forge.rowCount')}
-          </label>
-          <input
-            type="number"
-            value={rows}
-            onChange={e => onRowsChange(Number(e.target.value))}
-            min={10} max={10000}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t('forge.anomalyRate')}
-          </label>
-          <input
-            type="number"
-            value={anomalyRate}
-            onChange={e => onAnomalyRateChange(Number(e.target.value))}
-            min={0} max={0.5} step={0.01}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-      </div>
-
-      {/* Seed row */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">seed=</span>
-        <span className="text-xs text-foreground font-mono">{seed}</span>
+        {/* Generate button */}
         <button
-          onClick={() => onSeedChange(Math.floor(Math.random() * 99999) + 1)}
-          className="text-muted-foreground hover:text-foreground transition-colors text-sm leading-none"
-          title="Randomize seed"
+          onClick={handleSubmit}
+          disabled={loading || selectedAnomalies.size === 0}
+          className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          ↺
+          {loading ? t('forge.generating') : t('forge.generate')}
         </button>
+
       </div>
 
-      {/* Generate button */}
-      <button
-        onClick={handleSubmit}
-        disabled={loading || selectedAnomalies.size === 0}
-        className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {loading ? t('forge.generating') : t('forge.generate')}
-      </button>
-
-      {/* Ошибка */}
+      {/* Error */}
       {error && (
-        <div className="px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+        <div className="px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20 max-w-2xl">
           {error}
         </div>
       )}
 
-      {/* Stat bar */}
+      {/* Stat bar — full width */}
       {result && (
         <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
           <span className="text-muted-foreground">
@@ -193,7 +197,7 @@ export function GenerateSection({
         </div>
       )}
 
-      {/* Таблица */}
+      {/* Table — full width */}
       {tableData.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
@@ -220,7 +224,11 @@ export function GenerateSection({
           <AnomalyTable
             tableData={tableData}
             anomalies={result?.anomalies ?? []}
-            isTimestamp={col => col === 'timestamp' || col.toLowerCase().includes('date') || col.toLowerCase().includes('time')}
+            isTimestamp={col =>
+              col === 'timestamp' ||
+              col.toLowerCase().includes('date') ||
+              col.toLowerCase().includes('time')
+            }
           />
         </div>
       )}

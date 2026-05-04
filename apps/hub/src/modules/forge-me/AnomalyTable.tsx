@@ -18,13 +18,13 @@ const BADGE_STYLES: Record<string, string> = {
 
 function normalizeType(type: string): string {
   const t = type.toLowerCase()
-  if (t.includes('outlier'))         return 'outlier'
-  if (t.includes('missing') || t.includes('null')) return 'missing'
-  if (t.includes('duplicate'))       return 'duplicate'
+  if (t.includes('outlier'))                          return 'outlier'
+  if (t.includes('missing') || t.includes('null'))    return 'missing'
+  if (t.includes('duplicate'))                        return 'duplicate'
   if (t.includes('type_mismatch') || t.includes('mismatch')) return 'type_mismatch'
-  if (t.includes('stale'))           return 'stale_timestamp'
+  if (t.includes('stale'))                            return 'stale_timestamp'
   if (t.includes('out_of_order') || t.includes('order')) return 'out_of_order'
-  if (t.includes('late'))            return 'late_arrival'
+  if (t.includes('late'))                             return 'late_arrival'
   return 'outlier'
 }
 
@@ -56,19 +56,19 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
   })
 
   return (
-    <div className="overflow-auto rounded-lg border border-border max-h-[420px]">
-      <table className="w-full text-sm border-collapse">
+    <div className="rounded-lg border border-border max-h-[420px] overflow-y-auto overflow-x-hidden">
+      <table className="w-full text-sm border-collapse table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-muted/30 backdrop-blur-sm">
             {columns.map(col => (
               <th
                 key={col}
-                className="px-3 py-2.5 text-left font-medium text-muted-foreground whitespace-nowrap border-b border-border text-[10px] uppercase tracking-wider"
+                className="px-3 py-2.5 text-left font-medium text-muted-foreground truncate border-b border-border text-[10px] uppercase tracking-wider"
               >
                 {col}
               </th>
             ))}
-            <th className="px-3 py-2.5 text-left font-medium text-muted-foreground whitespace-nowrap border-b border-border text-[10px] uppercase tracking-wider">
+            <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
               type
             </th>
           </tr>
@@ -98,7 +98,7 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
                   return (
                     <td
                       key={col}
-                      className={`px-3 py-2 whitespace-nowrap border-b border-border/40 text-sm ${
+                      className={`px-3 py-2 truncate border-b border-border/40 text-sm ${
                         isAnomalyCell ? 'text-amber-400 font-medium' : 'text-foreground'
                       }`}
                     >
@@ -112,7 +112,7 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
                     </td>
                   )
                 })}
-                <td className="px-3 py-2 whitespace-nowrap border-b border-border/40">
+                <td className="px-3 py-2 border-b border-border/40 w-28">
                   {isAnomaly && anomaly ? (
                     <AnomalyBadge type={anomaly.type} />
                   ) : null}
