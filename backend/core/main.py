@@ -38,5 +38,7 @@ try:
     from forge_me.router import router as forge_router
     app.include_router(forge_router, prefix="/forge-me", tags=["ForgeMe"])
     print("✓ ForgeMe service loaded")
-except ImportError:
-    print("⚠ ForgeMe service not available")
+except Exception as e:
+    print(f"⚠ ForgeMe service not available: {e}")
+    import traceback
+    traceback.print_exc()

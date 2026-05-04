@@ -3,4 +3,6 @@ Name: forge-me
 Version: 0.1.0
 Requires-Python: >=3.12
 Requires-Dist: fastapi>=0.115
-Requires-Dist: shared
+Requires-Dist: numpy>=2.0
+Requires-Dist: pandas>=2.0
+Requires-Dist: stackme-shared

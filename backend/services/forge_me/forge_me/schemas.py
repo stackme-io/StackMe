@@ -12,6 +12,10 @@ class AnomalyType(str, Enum):
     outlier = "outlier"
     missing = "missing"
     duplicate = "duplicate"
+    type_mismatch = "type_mismatch"
+    stale_timestamp = "stale_timestamp"
+    out_of_order = "out_of_order"
+    late_arrival = "late_arrival"
 
 
 class SchemaField(BaseModel):
@@ -47,6 +51,10 @@ class GenerateRequest(BaseModel):
     schema: list[SchemaField] | None = Field(
         default=None,
         description="User schema fields for Schema match mode"
+    )
+    anomaly_types: list[str] | None = Field(
+        default=None,
+        description="Anomaly types to inject, matching UI checkbox ids"
     )
 
 
