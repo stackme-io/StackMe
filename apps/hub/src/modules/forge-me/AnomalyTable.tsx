@@ -7,23 +7,35 @@ interface AnomalyTableProps {
 }
 
 const BADGE_STYLES: Record<string, string> = {
-  outlier:   'bg-amber-950/40 text-amber-400 border-amber-900',
-  missing:   'bg-red-950/40 text-red-400 border-red-900',
-  duplicate: 'bg-blue-950/40 text-blue-400 border-blue-900',
+  outlier:         'bg-amber-950/40 text-amber-400 border-amber-900',
+  missing:         'bg-red-950/40 text-red-400 border-red-900',
+  duplicate:       'bg-blue-950/40 text-blue-400 border-blue-900',
+  type_mismatch:   'bg-purple-950/40 text-purple-400 border-purple-900',
+  stale_timestamp: 'bg-cyan-950/40 text-cyan-400 border-cyan-900',
+  out_of_order:    'bg-orange-950/40 text-orange-400 border-orange-900',
+  late_arrival:    'bg-rose-950/40 text-rose-400 border-rose-900',
+}
+
+function normalizeType(type: string): string {
+  const t = type.toLowerCase()
+  if (t.includes('outlier'))         return 'outlier'
+  if (t.includes('missing') || t.includes('null')) return 'missing'
+  if (t.includes('duplicate'))       return 'duplicate'
+  if (t.includes('type_mismatch') || t.includes('mismatch')) return 'type_mismatch'
+  if (t.includes('stale'))           return 'stale_timestamp'
+  if (t.includes('out_of_order') || t.includes('order')) return 'out_of_order'
+  if (t.includes('late'))            return 'late_arrival'
+  return 'outlier'
 }
 
 function AnomalyBadge({ type }: { type: string }) {
-  const normalized = type.toLowerCase().includes('outlier')   ? 'outlier'
-                   : type.toLowerCase().includes('missing') ||
-                     type.toLowerCase().includes('null')      ? 'missing'
-                   : type.toLowerCase().includes('duplicate') ? 'duplicate'
-                   : 'outlier'
-
+  const normalized = normalizeType(type)
   const style = BADGE_STYLES[normalized] ?? 'bg-muted text-muted-foreground border-border'
+  const label = type.replace(/_/g, ' ')
 
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${style}`}>
-      {type}
+    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono whitespace-nowrap ${style}`}>
+      {label}
     </span>
   )
 }
@@ -33,7 +45,6 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
 
   const columns = Object.keys(tableData[0])
 
-  // row_index → { cols: Set<string>, type: string }
   const anomalyMap = new Map<number, { cols: Set<string>; type: string }>()
   anomalies.forEach(a => {
     const existing = anomalyMap.get(a.row_index)
@@ -57,7 +68,6 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
                 {col}
               </th>
             ))}
-            {/* Колонка TYPE */}
             <th className="px-3 py-2.5 text-left font-medium text-muted-foreground whitespace-nowrap border-b border-border text-[10px] uppercase tracking-wider">
               type
             </th>
@@ -65,9 +75,9 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
         </thead>
         <tbody>
           {tableData.map((row, i) => {
-            const rowIndex   = row.id !== undefined ? Number(row.id) - 1 : i
-            const anomaly    = anomalyMap.get(rowIndex)
-            const isAnomaly  = !!anomaly
+            const rowIndex    = row.id !== undefined ? Number(row.id) - 1 : i
+            const anomaly     = anomalyMap.get(rowIndex)
+            const isAnomaly   = !!anomaly
             const anomalyCols = anomaly?.cols ?? new Set<string>()
 
             return (
@@ -89,9 +99,7 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
                     <td
                       key={col}
                       className={`px-3 py-2 whitespace-nowrap border-b border-border/40 text-sm ${
-                        isAnomalyCell
-                          ? 'text-amber-400 font-medium'
-                          : 'text-foreground'
+                        isAnomalyCell ? 'text-amber-400 font-medium' : 'text-foreground'
                       }`}
                     >
                       {value === null || value === undefined ? (
@@ -104,7 +112,6 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
                     </td>
                   )
                 })}
-                {/* TYPE колонка */}
                 <td className="px-3 py-2 whitespace-nowrap border-b border-border/40">
                   {isAnomaly && anomaly ? (
                     <AnomalyBadge type={anomaly.type} />

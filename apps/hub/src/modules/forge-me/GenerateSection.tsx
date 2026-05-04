@@ -47,11 +47,11 @@ export function GenerateSection({
 
     try {
       const response = await apiClient.post<GenerateResponse>('/forge-me/generate', {
-        prompt: [...selectedAnomalies].join(', '),
         format,
         rows,
         anomaly_rate: anomalyRate,
         seed,
+        anomaly_types: [...selectedAnomalies],
         schema: schemaFields && schemaFields.length > 0
           ? schemaFields.map(f => ({ name: f.name, type: f.type }))
           : undefined,

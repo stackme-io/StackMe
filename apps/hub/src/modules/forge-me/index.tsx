@@ -5,7 +5,7 @@ import { SchemaSection } from './SchemaSection'
 import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, HistoryEntry, DataFormat, ViewMode } from './types'
 
-const ANOMALIES: { id: AnomalyType; label: string; badge: string }[] = [
+const ANOMALIES: { id: AnomalyType; label: string; badge: string; disabled?: boolean }[] = [
   { id: 'nulls',            label: 'nulls',           badge: 'any'    },
   { id: 'duplicates',       label: 'duplicates',       badge: 'any'    },
   { id: 'outliers',         label: 'outliers',         badge: 'any'    },
@@ -13,6 +13,10 @@ const ANOMALIES: { id: AnomalyType; label: string; badge: string }[] = [
   { id: 'late-arrivals',    label: 'late arrivals',    badge: 'stream' },
   { id: 'type-mismatches',  label: 'type mismatches',  badge: 'any'    },
   { id: 'stale-timestamps', label: 'stale timestamps', badge: 'batch'  },
+]
+
+const DISABLED_ANOMALIES = [
+  { label: 'schema drift', badge: 'soon' },
 ]
 
 const STARTER: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
@@ -98,6 +102,18 @@ export default function ForgeMePage() {
                   <span className="text-xs flex-1">{a.label}</span>
                   <span className="text-[9px] text-muted-foreground/50">{a.badge}</span>
                 </button>
+              ))}
+
+              {/* Disabled anomaly types — coming soon */}
+              {DISABLED_ANOMALIES.map(a => (
+                <div
+                  key={a.label}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-md opacity-35 cursor-not-allowed"
+                >
+                  <span className="w-3 h-3 rounded-sm border border-border flex-shrink-0" />
+                  <span className="text-xs flex-1 text-muted-foreground">{a.label}</span>
+                  <span className="text-[9px] text-primary/50">{a.badge}</span>
+                </div>
               ))}
             </div>
           </div>
