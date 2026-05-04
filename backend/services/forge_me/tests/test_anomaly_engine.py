@@ -1,7 +1,15 @@
 import pytest
+import numpy as np
 import pandas as pd
 from forge_me.anomaly_engine import generate_clean_dataset, inject_anomalies, detect_anomalies
+from forge_me.injectors import (
+    inject_subtle_outlier, inject_missing, inject_duplicates,
+    inject_type_mismatch, inject_stale_timestamp,
+    inject_out_of_order, inject_late_arrival,
+)
 
+
+# ── generate_clean_dataset ──────────────────────────────────────────────────
 
 def test_generate_clean_dataset_shape():
     df = generate_clean_dataset(rows=100)
@@ -31,15 +39,15 @@ def test_generate_clean_dataset_reproducible():
     pd.testing.assert_frame_equal(df1, df2)
 
 
+# ── inject_anomalies (orchestrator) ────────────────────────────────────────
+
 def test_inject_anomalies_returns_correct_count():
-    """Количество аномалий соответствует anomaly_rate"""
     df = generate_clean_dataset(rows=100)
     _, anomalies = inject_anomalies(df, anomaly_rate=0.1)
     assert len(anomalies) == 10
 
 
 def test_inject_anomalies_has_all_types():
-    """Все три типа аномалий присутствуют"""
     df = generate_clean_dataset(rows=100)
     _, anomalies = inject_anomalies(df, anomaly_rate=0.3)
     types = {a.anomaly_type for a in anomalies}
@@ -48,34 +56,150 @@ def test_inject_anomalies_has_all_types():
     assert "duplicate" in types
 
 
-def test_inject_anomalies_outlier_value():
-    """Выброс температуры в 10x от оригинала"""
-    df = generate_clean_dataset(rows=100)
-    df_anomaly, anomalies = inject_anomalies(df, anomaly_rate=0.1)
-    outliers = [a for a in anomalies if a.anomaly_type == "outlier"]
-    for a in outliers:
-        original = float(a.original_value)
-        new_value = df_anomaly.at[a.row_index, "temperature"]
-        assert abs(new_value - original * 10) < 0.01
-
-
-def test_inject_anomalies_missing_value():
-    """Пропуск user_id реально None в датасете"""
-    df = generate_clean_dataset(rows=100)
-    df_anomaly, anomalies = inject_anomalies(df, anomaly_rate=0.1)
-    missing = [a for a in anomalies if a.anomaly_type == "missing"]
-    for a in missing:
-        assert pd.isna(df_anomaly.at[a.row_index, "user_id"])
-
-
 def test_inject_anomalies_preserves_row_count():
-    """Количество строк не меняется после внедрения аномалий"""
     df = generate_clean_dataset(rows=100)
     df_anomaly, _ = inject_anomalies(df, anomaly_rate=0.1)
     assert len(df_anomaly) == 100
 
+
+def test_inject_anomalies_respects_anomaly_types():
+    """Only requested anomaly types appear in result."""
+    df = generate_clean_dataset(rows=100)
+    _, anomalies = inject_anomalies(
+        df, anomaly_rate=0.2, anomaly_types=["nulls", "duplicates"]
+    )
+    types = {a.anomaly_type for a in anomalies}
+    assert "outlier" not in types
+    assert types.issubset({"missing", "duplicate"})
+
+
+def test_inject_anomalies_fallback_types():
+    """Falls back to default 3 types when anomaly_types is empty."""
+    df = generate_clean_dataset(rows=100)
+    _, anomalies = inject_anomalies(df, anomaly_rate=0.3, anomaly_types=[])
+    types = {a.anomaly_type for a in anomalies}
+    assert types.issubset({"outlier", "missing", "duplicate"})
+
+
+# ── inject_subtle_outlier ───────────────────────────────────────────────────
+
+def test_subtle_outlier_is_detectable_by_iqr():
+    """Subtle outlier exceeds 3σ and should be caught by IQR detection."""
+    df = generate_clean_dataset(rows=200, seed=1)
+    rng = np.random.default_rng(1)
+    df_copy = df.copy()
+    inject_subtle_outlier(df_copy, [10, 20, 30], rng)
+    anomalies = detect_anomalies(df_copy)
+    outliers = [a for a in anomalies if a.anomaly_type == "outlier"]
+    assert len(outliers) >= 1
+
+
+def test_subtle_outlier_looks_plausible():
+    """Subtle outlier should not be ×10 of original — must stay in believable range."""
+    df = generate_clean_dataset(rows=100, seed=42)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    original = float(df_copy.at[10, "temperature"])
+    inject_subtle_outlier(df_copy, [10], rng)
+    new_val = float(df_copy.at[10, "temperature"])
+    assert abs(new_val) < abs(original * 5), "Outlier should not be a gross ×10 spike"
+
+
+# ── inject_missing ──────────────────────────────────────────────────────────
+
+def test_inject_missing_creates_null():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    anomalies = inject_missing(df_copy, [5, 10, 15], rng)
+    assert len(anomalies) == 3
+    for a in anomalies:
+        assert pd.isna(df_copy.at[a.row_index, a.column])
+
+
+def test_inject_missing_anomaly_type():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    anomalies = inject_missing(df.copy(), [0], rng)
+    assert anomalies[0].anomaly_type == "missing"
+
+
+# ── inject_duplicates ───────────────────────────────────────────────────────
+
+def test_inject_duplicates_copies_previous_row():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    anomalies = inject_duplicates(df_copy, [10], rng)
+    assert len(anomalies) == 1
+    assert anomalies[0].anomaly_type == "duplicate"
+    # all columns except id should match previous row
+    for col in df_copy.columns:
+        if col == "id":
+            continue
+        assert df_copy.at[10, col] == df_copy.at[9, col]
+
+
+# ── inject_type_mismatch ────────────────────────────────────────────────────
+
+def test_inject_type_mismatch_inserts_string():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    anomalies = inject_type_mismatch(df_copy, [5, 10], rng)
+    assert len(anomalies) == 2
+    for a in anomalies:
+        val = df_copy.at[a.row_index, a.column]
+        assert isinstance(val, str), f"Expected string, got {type(val)}"
+    assert all(a.anomaly_type == "type_mismatch" for a in anomalies)
+
+
+# ── inject_stale_timestamp ──────────────────────────────────────────────────
+
+def test_inject_stale_timestamp_shifts_backward():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    original_ts = pd.Timestamp(df_copy.at[5, "timestamp"])
+    anomalies = inject_stale_timestamp(df_copy, [5], rng)
+    assert len(anomalies) == 1
+    new_ts = pd.Timestamp(df_copy.at[5, "timestamp"])
+    assert new_ts < original_ts
+    assert anomalies[0].anomaly_type == "stale_timestamp"
+
+
+# ── inject_out_of_order ─────────────────────────────────────────────────────
+
+def test_inject_out_of_order_swaps_timestamps():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    ts_row5 = df_copy.at[5, "timestamp"]
+    ts_row6 = df_copy.at[6, "timestamp"]
+    anomalies = inject_out_of_order(df_copy, [5], rng)
+    assert len(anomalies) == 1
+    assert df_copy.at[5, "timestamp"] == ts_row6
+    assert df_copy.at[6, "timestamp"] == ts_row5
+    assert anomalies[0].anomaly_type == "out_of_order"
+
+
+# ── inject_late_arrival ─────────────────────────────────────────────────────
+
+def test_inject_late_arrival_assigns_stale_timestamp():
+    df = generate_clean_dataset(rows=100)
+    rng = np.random.default_rng(42)
+    df_copy = df.copy()
+    last_ts = pd.Timestamp(df_copy["timestamp"].iloc[-1])
+    anomalies = inject_late_arrival(df_copy, [10], rng)
+    assert len(anomalies) == 1
+    new_ts = pd.Timestamp(df_copy.at[10, "timestamp"])
+    assert new_ts < last_ts
+    assert anomalies[0].anomaly_type == "late_arrival"
+
+
+# ── detect_anomalies ────────────────────────────────────────────────────────
+
 def test_detect_anomalies_finds_outlier():
-    """detect_anomalies finds temperature outliers via IQR"""
     df = pd.DataFrame({
         "temperature": [22.0, 21.5, 23.0, 22.8, 999.0],
         "pressure": [101.0, 101.1, 101.2, 101.3, 101.4],
@@ -87,7 +211,6 @@ def test_detect_anomalies_finds_outlier():
 
 
 def test_detect_anomalies_finds_missing():
-    """detect_anomalies finds missing values"""
     df = pd.DataFrame({
         "temperature": [22.0, None, 23.0],
         "user_id": [1001, 1002, None],
@@ -101,7 +224,6 @@ def test_detect_anomalies_finds_missing():
 
 
 def test_detect_anomalies_finds_duplicates():
-    """detect_anomalies finds duplicate rows"""
     df = pd.DataFrame({
         "temperature": [22.0, 22.0, 23.0],
         "pressure": [101.0, 101.0, 101.5],
@@ -113,10 +235,8 @@ def test_detect_anomalies_finds_duplicates():
 
 
 def test_detect_anomalies_clean_dataset():
-    """detect_anomalies returns empty list for clean dataset"""
     df = generate_clean_dataset(rows=100)
     anomalies = detect_anomalies(df)
-    # Clean dataset may have IQR outliers due to normal distribution — only check no missing/duplicates
     missing = [a for a in anomalies if a.anomaly_type == "missing"]
     duplicates = [a for a in anomalies if a.anomaly_type == "duplicate"]
     assert len(missing) == 0
@@ -124,7 +244,6 @@ def test_detect_anomalies_clean_dataset():
 
 
 def test_detect_anomalies_returns_anomaly_records():
-    """detect_anomalies returns list of AnomalyRecord objects"""
     df = pd.DataFrame({
         "temperature": [22.0, 999.0],
         "pressure": [101.0, 101.1],

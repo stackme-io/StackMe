@@ -10,6 +10,11 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "pydantic-settings>=2.0.0",
     "python-multipart>=0.0.9",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "pydantic>=2.13.3",
+    "httpx>=0.28.1",
+    "python-jose>=3.5.0",
 ]
 
 [tool.uv.workspace]
