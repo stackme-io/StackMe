@@ -18,6 +18,18 @@ interface GenerateSectionProps {
   schemaFields?: ParsedField[]
 }
 
+const MIME: Record<DataFormat, string> = {
+  json: 'application/json',
+  csv:  'text/csv',
+  sql:  'text/plain',
+}
+
+const EXT: Record<DataFormat, string> = {
+  json: 'json',
+  csv:  'csv',
+  sql:  'sql',
+}
+
 export function GenerateSection({
   selectedAnomalies,
   seed,
@@ -97,6 +109,17 @@ export function GenerateSection({
     } finally {
       setFilterLoading(false)
     }
+  }
+
+  const handleDownload = () => {
+    if (!result) return
+    const blob = new Blob([result.data], { type: MIME[result.format] })
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement('a')
+    a.href     = url
+    a.download = `forgeme_seed${seed}_${rows}rows.${EXT[result.format]}`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -179,31 +202,52 @@ export function GenerateSection({
         </div>
       )}
 
-      {/* Stat bar — full width */}
+      {/* Stat bar + Download */}
       {result && (
-        <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
-          <span className="text-muted-foreground">
-            {t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong>
-          </span>
-          <span className="text-muted-foreground">
-            {t('forge.anomalies')}: <strong className="text-amber-500">{result.anomalies_count}</strong>
-          </span>
-          <span className="text-muted-foreground">
-            Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong>
-          </span>
-          <span className="text-muted-foreground">
-            seed: <strong className="text-foreground font-mono">{seed}</strong>
-          </span>
+        <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
+          <div className="flex gap-4">
+            <span className="text-muted-foreground">
+              {t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              {t('forge.anomalies')}: <strong className="text-amber-500">{result.anomalies_count}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              seed: <strong className="text-foreground font-mono">{seed}</strong>
+            </span>
+          </div>
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-border text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors flex-shrink-0"
+          >
+            ↓ Download {result.format.toUpperCase()}
+          </button>
         </div>
       )}
 
       {/* Table — full width */}
+      {result && format !== 'json' && (
+        <div className="flex items-center justify-center px-6 py-10 rounded-lg border border-border border-dashed text-center">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm text-muted-foreground">
+              Table preview is not available for {format.toUpperCase()} format.
+            </span>
+            <span className="text-xs text-muted-foreground/50">
+              Use the Download button above to get your dataset.
+            </span>
+          </div>
+        </div>
+      )}
       {tableData.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground uppercase tracking-wide">
               {t('forge.dataFromDuckDB')} ({tableData.length})
             </span>
+            {format === 'json' && (
             <div className="flex gap-2">
               {(['all', 'anomalies'] as FilterMode[]).map(mode => (
                 <button
@@ -220,6 +264,7 @@ export function GenerateSection({
                 </button>
               ))}
             </div>
+          )}
           </div>
           <AnomalyTable
             tableData={tableData}
