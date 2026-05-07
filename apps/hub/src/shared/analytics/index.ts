@@ -62,6 +62,32 @@ function waitForReady(): Promise<void> {
   })
 }
 
+function csvToJson(csv: string): Record<string, string>[] {
+  const lines = csv.trim().split('\n')
+  if (lines.length < 2) return []
+  const headers = lines[0].split(',').map(h => h.trim())
+  return lines.slice(1).map(line => {
+    const values = line.split(',').map(v => v.trim())
+    return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']))
+  })
+}
+
+export async function loadCSV(csvText: string, tableName: string): Promise<void> {
+  getWorker()
+  await waitForReady()
+
+  const json = JSON.stringify(csvToJson(csvText))
+
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID()
+    pendingLoads.set(id, (error) => {
+      if (error) reject(new Error(error))
+      else resolve()
+    })
+    worker!.postMessage({ type: 'LOAD_JSON', id, jsonData: json, tableName })
+  })
+}
+
 export async function loadJSON(jsonData: string, tableName: string): Promise<void> {
   getWorker()
   await waitForReady()

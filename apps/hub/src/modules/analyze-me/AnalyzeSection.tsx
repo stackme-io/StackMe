@@ -1,130 +1,173 @@
-import { useState, useRef, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import apiClient from '../../api/client'
-import { loadJSON, runQuery, loadAnomalyIndex } from '../../shared/analytics'
-import { AnomalyTable } from './AnomalyTable'
-import type { AnalyzeResponse } from './types'
-import { csvToJson } from './types'
+import { useState, useCallback } from 'react'
+import { loadCSV, runQuery } from '../../shared/analytics'
+import type { AnomalyInfo, AnalyzeResult } from './types'
 
 export function AnalyzeSection() {
-  const { t } = useTranslation()
-  const [analyzeResult, setAnalyzeResult] = useState<AnalyzeResponse | null>(null)
-  const [analyzeLoading, setAnalyzeLoading] = useState(false)
-  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
-  const [isDragOver, setIsDragOver] = useState(false)
-  const [analyzeTableData, setAnalyzeTableData] = useState<any[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [result, setResult]   = useState<AnalyzeResult | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError]     = useState<string | null>(null)
 
-  const handleAnalyze = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.csv')) {
-      setAnalyzeError(t('forge.analyzeError'))
-      return
-    }
-
-    setAnalyzeLoading(true)
-    setAnalyzeError(null)
-    setAnalyzeResult(null)
-    setAnalyzeTableData([])
+  const analyze = useCallback(async (file: File) => {
+    setLoading(true)
+    setError(null)
+    setResult(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await apiClient.post<AnalyzeResponse>(
-        '/forge-me/analyze',
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      )
-      setAnalyzeResult(response.data)
-
       const text = await file.text()
-      await loadJSON(JSON.stringify(csvToJson(text)), 'analyze_data')
-      await loadAnomalyIndex(response.data.anomalies.map(a => a.row_index))
-      const data = await runQuery('SELECT * FROM analyze_data')
-      setAnalyzeTableData(data)
+      await loadCSV(text, 'analyze_data')
 
-    } catch (err) {
-      setAnalyzeError(t('forge.analyzeError'))
+      const rowCountResult = await runQuery('SELECT COUNT(*) as cnt FROM analyze_data')
+      const rows_total = Number(rowCountResult[0]?.cnt ?? 0)
+
+      const anomalies: AnomalyInfo[] = []
+
+      // Get columns
+      const columns = await runQuery(`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'analyze_data'
+        ORDER BY ordinal_position
+      `)
+      const colNames = columns.map((c: any) => c.column_name as string)
+
+      // Add row_index to table
+      await runQuery(`
+        CREATE OR REPLACE TABLE analyze_data_indexed AS
+        SELECT ROW_NUMBER() OVER () - 1 AS _row_index, *
+        FROM analyze_data
+      `)
+
+      // Detect nulls per column
+      for (const col of colNames) {
+        const nullRows = await runQuery(`
+          SELECT _row_index
+          FROM analyze_data_indexed
+          WHERE "${col}" IS NULL OR CAST("${col}" AS VARCHAR) = ''
+        `)
+        for (const row of nullRows) {
+          anomalies.push({
+            row_index: Number(row._row_index),
+            column: col,
+            anomaly_type: 'missing',
+            original_value: '',
+            description: `Null or empty value in column "${col}"`,
+          })
+        }
+      }
+
+      // Detect duplicates — find rows where all non-index columns match a previous row
+      const colList = colNames.map(c => `"${c}"`).join(', ')
+      const dupRows = await runQuery(`
+        WITH grouped AS (
+          SELECT ${colList}, MIN(_row_index) as first_seen, COUNT(*) as cnt
+          FROM analyze_data_indexed
+          GROUP BY ${colList}
+          HAVING COUNT(*) > 1
+        )
+        SELECT i._row_index
+        FROM analyze_data_indexed i
+        JOIN grouped g ON (${colNames.map(c => `i."${c}" = g."${c}"`).join(' AND ')})
+        WHERE i._row_index > g.first_seen
+      `)
+      for (const row of dupRows) {
+        anomalies.push({
+          row_index: Number(row._row_index),
+          column: '*',
+          anomaly_type: 'duplicate',
+          original_value: '',
+          description: 'Duplicate row detected',
+        })
+      }
+
+      // Detect outliers — IQR method on numeric columns
+      for (const col of colNames) {
+        const stats = await runQuery(`
+          SELECT
+            PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY CAST("${col}" AS DOUBLE)) as q1,
+            PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY CAST("${col}" AS DOUBLE)) as q3
+          FROM analyze_data_indexed
+          WHERE TRY_CAST("${col}" AS DOUBLE) IS NOT NULL
+        `)
+        if (!stats[0] || stats[0].q1 == null) continue
+        const q1  = Number(stats[0].q1)
+        const q3  = Number(stats[0].q3)
+        const iqr = q3 - q1
+        if (iqr === 0) continue
+        const lower = q1 - 3 * iqr
+        const upper = q3 + 3 * iqr
+
+        const outlierRows = await runQuery(`
+          SELECT _row_index, CAST("${col}" AS DOUBLE) as val
+          FROM analyze_data_indexed
+          WHERE TRY_CAST("${col}" AS DOUBLE) IS NOT NULL
+            AND (CAST("${col}" AS DOUBLE) < ${lower} OR CAST("${col}" AS DOUBLE) > ${upper})
+        `)
+        for (const row of outlierRows) {
+          anomalies.push({
+            row_index: Number(row._row_index),
+            column: col,
+            anomaly_type: 'outlier',
+            original_value: String(row.val),
+            description: `Outlier detected in column "${col}" (value: ${row.val}, expected range: ${lower.toFixed(2)}–${upper.toFixed(2)})`,
+          })
+        }
+      }
+
+      anomalies.sort((a, b) => a.row_index - b.row_index)
+      setResult({ rows_total, anomalies_count: anomalies.length, anomalies })
+    } catch (err: any) {
       console.error(err)
+      setError('Failed to analyze file. Make sure it is a valid CSV.')
     } finally {
-      setAnalyzeLoading(false)
+      setLoading(false)
     }
-  }, [t])
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-    const file = e.dataTransfer.files[0]
-    if (file) handleAnalyze(file)
-  }, [handleAnalyze])
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(true)
-  }
-
-  const handleDragLeave = () => setIsDragOver(false)
+  }, [])
 
   return (
-    <div className="border-t border-border pt-8 mt-6">
-      <h2 className="text-base font-semibold text-foreground mb-1">{t('forge.analyzeTitle')}</h2>
-      <p className="text-sm text-muted-foreground mb-4">{t('forge.analyzeSubtitle')}</p>
-
+    <div>
       <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors ${
-          isDragOver
-            ? 'border-primary bg-primary/5'
-            : 'border-border bg-muted/20 hover:border-primary/50 hover:bg-muted/40'
-        }`}
+        onClick={() => document.getElementById('analyze-file-input')?.click()}
+        className="border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-primary/30 hover:bg-muted/20 transition-colors"
       >
-        <div className="text-3xl mb-2">📂</div>
-        <p className="text-sm font-medium text-foreground mb-1">
-          {analyzeLoading ? t('forge.analyzing') : t('forge.dropzone')}
-        </p>
-        <p className="text-xs text-muted-foreground">{t('forge.csvOnly')}</p>
         <input
-          ref={fileInputRef}
+          id="analyze-file-input"
           type="file"
-          accept=".csv"
+          accept=".csv,.json"
           className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) handleAnalyze(file)
-          }}
+          onChange={e => { const f = e.target.files?.[0]; if (f) analyze(f) }}
         />
+        <p className="text-sm text-foreground">
+          {loading ? 'Analyzing...' : 'drop your CSV here or click to browse'}
+        </p>
+        <p className="text-xs text-muted-foreground">no data leaves your browser</p>
       </div>
 
-      {analyzeError && (
+      {error && (
         <div className="mt-3 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
-          {analyzeError}
+          {error}
         </div>
       )}
 
-      {analyzeResult && (
-        <div className="mt-4 flex flex-col gap-4">
+      {result && (
+        <div className="mt-4 flex flex-col gap-3">
           <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
-            <span className="text-muted-foreground">{t('forge.rows')}: <strong className="text-foreground">{analyzeResult.rows_total}</strong></span>
-            <span className="text-muted-foreground">{t('forge.anomaliesFound')}: <strong className="text-foreground">{analyzeResult.anomalies_count}</strong></span>
+            <span className="text-muted-foreground">
+              rows: <strong className="text-foreground">{result.rows_total}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              anomalies: <strong className="text-foreground">{result.anomalies_count}</strong>
+            </span>
           </div>
 
-          <AnomalyTable
-            tableData={analyzeTableData}
-            anomalies={analyzeResult.anomalies}
-          />
-
-          {analyzeResult.anomalies.map((a, i) => (
-            <div key={i} className="px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border-l-2 border-amber-400 text-sm">
+          {result.anomalies.map((a, i) => (
+            <div
+              key={i}
+              className="px-4 py-3 rounded-lg border-l-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 text-sm"
+            >
               <span className="font-medium text-foreground">Row {a.row_index}</span>
               <span className="text-muted-foreground"> · {a.column} · {a.anomaly_type}</span>
               <br />
               <span className="text-foreground">{a.description}</span>
-              {a.original_value && (
-                <span className="text-muted-foreground"> (value: {a.original_value})</span>
-              )}
             </div>
           ))}
         </div>
