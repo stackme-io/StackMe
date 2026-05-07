@@ -15,14 +15,21 @@ dependencies = [
     "pydantic>=2.13.3",
     "httpx>=0.28.1",
     "python-jose>=3.5.0",
+    "forge-me",
+    "analyze-me",
 ]
 
 [tool.uv.workspace]
 members = [
     "core",
-    "shared",       # Явно указываем shared
-    "services/*"    # Все сервисы, включая forge_me
+    "shared",
+    "services/forge_me",
+    "services/analyze_me",
 ]
+
+[tool.uv.sources]
+forge-me = { workspace = true }
+analyze-me = { workspace = true }
 
 [tool.ruff]
 line-length = 100

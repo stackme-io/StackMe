@@ -42,3 +42,12 @@ except Exception as e:
     print(f"⚠ ForgeMe service not available: {e}")
     import traceback
     traceback.print_exc()
+
+try:
+    from analyze_me.router import router as analyze_router
+    app.include_router(analyze_router, prefix="/analyze-me", tags=["AnalyzeMe"])
+    print("✓ AnalyzeMe service loaded")
+except Exception as e:
+    print(f"⚠ AnalyzeMe service not available: {e}")
+    import traceback
+    traceback.print_exc()
