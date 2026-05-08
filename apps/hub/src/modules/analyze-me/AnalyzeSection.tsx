@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { loadCSV, runQuery } from '../../shared/analytics'
 import type { AnomalyInfo, AnalyzeResult } from './types'
 import { AnomalyTable } from './AnomalyTable'
@@ -10,7 +10,24 @@ export function AnalyzeSection() {
   const [tableData, setTableData] = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState<string | null>(null)
-  const [filter, setFilter]       = useState<FilterType>('all')
+  const [filter, setFilter]         = useState<FilterType>('all')
+  const [tooltipVisible, setTooltip] = useState(false)
+  const tooltipRef                   = useRef<HTMLDivElement>(null)
+  const badgeRef                     = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!tooltipVisible) return
+    const handler = (e: MouseEvent) => {
+      if (
+        tooltipRef.current && !tooltipRef.current.contains(e.target as Node) &&
+        badgeRef.current && !badgeRef.current.contains(e.target as Node)
+      ) {
+        setTooltip(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [tooltipVisible])
 
   const analyze = useCallback(async (file: File) => {
     setLoading(true)
@@ -167,21 +184,49 @@ export function AnalyzeSection() {
   return (
     <div>
       {/* Upload zone */}
-      <div
-        onClick={() => document.getElementById('analyze-file-input')?.click()}
-        className="border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-primary/30 hover:bg-muted/20 transition-colors"
-      >
-        <input
-          id="analyze-file-input"
-          type="file"
-          accept=".csv,.json"
-          className="hidden"
-          onChange={e => { const f = e.target.files?.[0]; if (f) analyze(f) }}
-        />
-        <p className="text-sm text-foreground">
-          {loading ? 'Analyzing...' : 'drop your CSV here or click to browse'}
-        </p>
-        <p className="text-xs text-muted-foreground">no data leaves your browser</p>
+      <div className="relative">
+        <label
+          htmlFor="analyze-file-input"
+          className="border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-primary/30 hover:bg-muted/20 transition-colors block"
+        >
+          <input
+            id="analyze-file-input"
+            type="file"
+            accept=".csv,.json"
+            className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) analyze(f) }}
+          />
+          <p className="text-sm text-foreground">
+            {loading ? 'Analyzing...' : 'drop your CSV here or click to browse'}
+          </p>
+          <div className="h-2" />
+        </label>
+
+        {/* Privacy badge — inside zone visually, outside label to avoid file picker */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2" ref={badgeRef}>
+          <button
+            type="button"
+            onClick={() => setTooltip(v => !v)}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/60 bg-background hover:border-border transition-colors"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
+              <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+            </svg>
+            <span className="text-[10px] text-muted-foreground">stays in your browser</span>
+          </button>
+
+          {tooltipVisible && (
+            <div
+              ref={tooltipRef}
+              onClick={() => setTooltip(false)}
+              className="absolute top-8 left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground cursor-pointer"
+            >
+              <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
+              <p className="font-medium text-foreground mb-1">Your data never leaves your device</p>
+              <p>Analysis runs entirely in your browser using DuckDB-Wasm — a full SQL engine compiled to WebAssembly. No server, no uploads, no logs.</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -231,6 +276,44 @@ export function AnalyzeSection() {
 
           {/* Table */}
           <AnomalyTable tableData={filteredTableData} anomalies={filteredAnomalies} />
+
+          {/* Anomaly cards */}
+          {filteredAnomalies.length > 0 && (
+            <div className="flex flex-col gap-2 mt-1">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground px-1">
+                Anomaly details
+              </p>
+              {filteredAnomalies.map((a, i) => (
+                <div
+                  key={i}
+                  className={`px-4 py-3 rounded-lg text-sm border-l-2 ${
+                    a.anomaly_type === 'missing'
+                      ? 'border-red-500 bg-red-950/10'
+                      : a.anomaly_type === 'duplicate'
+                      ? 'border-blue-500 bg-blue-950/10'
+                      : 'border-amber-500 bg-amber-950/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-foreground">Row {a.row_index}</span>
+                    {a.column !== '*' && (
+                      <span className="text-muted-foreground">· {a.column}</span>
+                    )}
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${
+                      a.anomaly_type === 'missing'
+                        ? 'bg-red-950/40 text-red-400 border-red-900'
+                        : a.anomaly_type === 'duplicate'
+                        ? 'bg-blue-950/40 text-blue-400 border-blue-900'
+                        : 'bg-amber-950/40 text-amber-400 border-amber-900'
+                    }`}>
+                      {a.anomaly_type}
+                    </span>
+                  </div>
+                  <p className="text-muted-foreground text-xs">{a.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
         </div>
       )}
