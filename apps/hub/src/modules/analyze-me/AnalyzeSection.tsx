@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react'
 import { loadCSV, runQuery } from '../../shared/analytics'
 import type { AnomalyInfo, AnalyzeResult } from './types'
+import { AnomalyTable } from './AnomalyTable'
 
 export function AnalyzeSection() {
-  const [result, setResult]   = useState<AnalyzeResult | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState<string | null>(null)
+  const [result, setResult]       = useState<AnalyzeResult | null>(null)
+  const [tableData, setTableData] = useState<any[]>([])
+  const [loading, setLoading]     = useState(false)
+  const [error, setError]         = useState<string | null>(null)
 
   const analyze = useCallback(async (file: File) => {
     setLoading(true)
@@ -36,6 +38,9 @@ export function AnalyzeSection() {
         SELECT ROW_NUMBER() OVER () - 1 AS _row_index, *
         FROM analyze_data
       `)
+
+      const rows = await runQuery('SELECT * FROM analyze_data_indexed')
+      setTableData(rows)
 
       // Detect nulls per column
       for (const col of colNames) {
@@ -159,17 +164,7 @@ export function AnalyzeSection() {
             </span>
           </div>
 
-          {result.anomalies.map((a, i) => (
-            <div
-              key={i}
-              className="px-4 py-3 rounded-lg border-l-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 text-sm"
-            >
-              <span className="font-medium text-foreground">Row {a.row_index}</span>
-              <span className="text-muted-foreground"> · {a.column} · {a.anomaly_type}</span>
-              <br />
-              <span className="text-foreground">{a.description}</span>
-            </div>
-          ))}
+          <AnomalyTable tableData={tableData} anomalies={result.anomalies} />
         </div>
       )}
     </div>
