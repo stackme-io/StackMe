@@ -3,16 +3,20 @@ import { loadCSV, runQuery } from '../../shared/analytics'
 import type { AnomalyInfo, AnalyzeResult } from './types'
 import { AnomalyTable } from './AnomalyTable'
 
+type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier'
+
 export function AnalyzeSection() {
   const [result, setResult]       = useState<AnalyzeResult | null>(null)
   const [tableData, setTableData] = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState<string | null>(null)
+  const [filter, setFilter]       = useState<FilterType>('all')
 
   const analyze = useCallback(async (file: File) => {
     setLoading(true)
     setError(null)
     setResult(null)
+    setFilter('all')
 
     try {
       const text = await file.text()
@@ -60,18 +64,21 @@ export function AnalyzeSection() {
         }
       }
 
-      // Detect duplicates — find rows where all non-index columns match a previous row
+      // Detect duplicates
       const colList = colNames.map(c => `"${c}"`).join(', ')
       const dupRows = await runQuery(`
         WITH grouped AS (
-          SELECT ${colList}, MIN(_row_index) as first_seen, COUNT(*) as cnt
+          SELECT ${colNames.map(c => `CAST("${c}" AS VARCHAR)`).join(' || \'|\' || ')} as _row_key,
+                 MIN(_row_index) as first_seen
           FROM analyze_data_indexed
-          GROUP BY ${colList}
+          GROUP BY _row_key
           HAVING COUNT(*) > 1
         )
         SELECT i._row_index
         FROM analyze_data_indexed i
-        JOIN grouped g ON (${colNames.map(c => `i."${c}" = g."${c}"`).join(' AND ')})
+        JOIN grouped g ON (
+          ${colNames.map(c => `CAST(i."${c}" AS VARCHAR)`).join(' || \'|\' || ')} = g._row_key
+        )
         WHERE i._row_index > g.first_seen
       `)
       for (const row of dupRows) {
@@ -128,8 +135,38 @@ export function AnalyzeSection() {
     }
   }, [])
 
+  const counts = result ? {
+    missing:   result.anomalies.filter(a => a.anomaly_type === 'missing').length,
+    duplicate: result.anomalies.filter(a => a.anomaly_type === 'duplicate').length,
+    outlier:   result.anomalies.filter(a => a.anomaly_type === 'outlier').length,
+  } : null
+
+  const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+
+  const filteredTableData = filter === 'all'
+    ? tableData
+    : filter === 'anomalies'
+    ? tableData.filter(row => anomalyRowIndexes.has(Number(row._row_index)))
+    : tableData.filter(row => {
+        const idx = Number(row._row_index)
+        return result?.anomalies.some(a => a.row_index === idx && a.anomaly_type === filter)
+      })
+
+  const filteredAnomalies = filter === 'all' || filter === 'anomalies'
+    ? result?.anomalies ?? []
+    : result?.anomalies.filter(a => a.anomaly_type === filter) ?? []
+
+  const FILTERS: { key: FilterType; label: string }[] = [
+    { key: 'all',       label: 'All rows' },
+    { key: 'anomalies', label: 'Anomalies only' },
+    { key: 'missing',   label: `Nulls${counts ? ` (${counts.missing})` : ''}` },
+    { key: 'duplicate', label: `Duplicates${counts ? ` (${counts.duplicate})` : ''}` },
+    { key: 'outlier',   label: `Outliers${counts ? ` (${counts.outlier})` : ''}` },
+  ]
+
   return (
     <div>
+      {/* Upload zone */}
       <div
         onClick={() => document.getElementById('analyze-file-input')?.click()}
         className="border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-primary/30 hover:bg-muted/20 transition-colors"
@@ -155,6 +192,8 @@ export function AnalyzeSection() {
 
       {result && (
         <div className="mt-4 flex flex-col gap-3">
+
+          {/* Summary */}
           <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
             <span className="text-muted-foreground">
               rows: <strong className="text-foreground">{result.rows_total}</strong>
@@ -162,9 +201,37 @@ export function AnalyzeSection() {
             <span className="text-muted-foreground">
               anomalies: <strong className="text-foreground">{result.anomalies_count}</strong>
             </span>
+            {counts && (
+              <>
+                <span className="text-red-400/70 text-xs self-center">nulls: <strong>{counts.missing}</strong></span>
+                <span className="text-blue-400/70 text-xs self-center">duplicates: <strong>{counts.duplicate}</strong></span>
+                <span className="text-amber-400/70 text-xs self-center">outliers: <strong>{counts.outlier}</strong></span>
+              </>
+            )}
           </div>
 
-          <AnomalyTable tableData={tableData} anomalies={result.anomalies} />
+          {/* Filters */}
+          <div className="flex mb-1">
+            <div className="flex border border-border rounded-lg overflow-hidden">
+              {FILTERS.map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  className={`px-4 py-1.5 text-xs font-medium transition-colors ${
+                    filter === f.key
+                      ? 'bg-primary/10 text-foreground'
+                      : 'text-muted-foreground hover:bg-muted/30'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Table */}
+          <AnomalyTable tableData={filteredTableData} anomalies={filteredAnomalies} />
+
         </div>
       )}
     </div>
