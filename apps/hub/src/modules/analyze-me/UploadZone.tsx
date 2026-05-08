@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 
 interface UploadZoneProps {
   loading: boolean
@@ -8,6 +8,7 @@ interface UploadZoneProps {
 
 export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
   const [tooltipVisible, setTooltip] = useState(false)
+  const [dragging, setDragging]      = useState(false)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const badgeRef   = useRef<HTMLDivElement>(null)
 
@@ -25,13 +26,36 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
     return () => document.removeEventListener('mousedown', handler)
   }, [tooltipVisible])
 
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    if (!loading) setDragging(true)
+  }, [loading])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragging(false)
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragging(false)
+    if (loading) return
+    const file = e.dataTransfer.files[0]
+    if (file) onFile(file)
+  }, [loading, onFile])
+
   return (
     <div className="relative">
       <label
         htmlFor="analyze-file-input"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
         className={`border-2 border-dashed rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer transition-colors block ${
           loading
             ? 'border-primary/30 bg-muted/10'
+            : dragging
+            ? 'border-primary/60 bg-primary/5'
             : 'border-border hover:border-primary/30 hover:bg-muted/20'
         }`}
       >
@@ -44,7 +68,7 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
           onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }}
         />
         <p className="text-sm text-foreground">
-          {loading ? progress ?? 'Analyzing...' : 'drop your CSV here or click to browse'}
+          {loading ? progress ?? 'Analyzing...' : dragging ? 'release to analyze' : 'drop your CSV here or click to browse'}
         </p>
         {loading && (
           <div className="w-48 h-1 bg-muted rounded-full overflow-hidden">

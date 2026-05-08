@@ -21,6 +21,13 @@ export function useAnalyze() {
       return
     }
 
+    // Validate file type
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    if (!ext || !['csv', 'json'].includes(ext)) {
+      setError(`Unsupported file type ".${ext ?? '?'}". Please upload a CSV or JSON file.`)
+      return
+    }
+
     setSizeWarn(sizeMB > SIZE_WARN_MB)
     setLoading(true)
     setProgress('Reading file...')
@@ -28,7 +35,45 @@ export function useAnalyze() {
     setResult(null)
 
     try {
-      const text = await file.text()
+      let text: string
+
+      try {
+        text = await file.text()
+      } catch {
+        throw new Error('Could not read file. It may be corrupted or use an unsupported encoding (UTF-8 required).')
+      }
+
+      // Validate not empty
+      if (!text.trim()) {
+        throw new Error('File is empty.')
+      }
+
+      // Validate CSV has headers and at least one row
+      if (ext === 'csv') {
+        const lines = text.trim().split('\n').filter(l => l.trim())
+        if (lines.length < 2) {
+          throw new Error('CSV file must have a header row and at least one data row.')
+        }
+        const headers = lines[0].split(',').map(h => h.trim()).filter(Boolean)
+        if (headers.length === 0) {
+          throw new Error('CSV file has no valid column headers.')
+        }
+      }
+
+      // Validate JSON is array
+      if (ext === 'json') {
+        try {
+          const parsed = JSON.parse(text)
+          if (!Array.isArray(parsed)) {
+            throw new Error('JSON file must contain an array of objects (e.g. [{...}, {...}]).')
+          }
+          if (parsed.length === 0) {
+            throw new Error('JSON array is empty.')
+          }
+        } catch (e: any) {
+          throw new Error(e.message.startsWith('JSON') ? e.message : 'Invalid JSON format.')
+        }
+      }
 
       setProgress('Loading into DuckDB...')
       await loadCSV(text, 'analyze_data')
@@ -138,7 +183,7 @@ export function useAnalyze() {
       setResult({ rows_total, anomalies_count: anomalies.length, anomalies })
     } catch (err: any) {
       console.error(err)
-      setError('Failed to analyze file. Make sure it is a valid CSV.')
+      setError(err.message ?? 'Failed to analyze file.')
     } finally {
       setLoading(false)
       setProgress(null)
