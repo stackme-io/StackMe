@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { loadCSV, runQuery } from '../../shared/analytics'
+import { loadCSV, loadJSON, runQuery } from '../../shared/analytics'
 import type { AnomalyInfo, AnalyzeResult } from './types'
 
 const SIZE_WARN_MB  = 10
@@ -76,7 +76,11 @@ export function useAnalyze() {
       }
 
       setProgress('Loading into DuckDB...')
-      await loadCSV(text, 'analyze_data')
+      if (ext === 'json') {
+        await loadJSON(text, 'analyze_data')
+      } else {
+        await loadCSV(text, 'analyze_data')
+      }
 
       const rowCountResult = await runQuery('SELECT COUNT(*) as cnt FROM analyze_data')
       const rows_total = Number(rowCountResult[0]?.cnt ?? 0)
