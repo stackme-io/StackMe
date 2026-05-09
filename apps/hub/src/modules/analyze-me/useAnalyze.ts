@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { loadCSV, loadJSON, runQuery } from '../../shared/analytics'
 import type { AnomalyInfo, AnalyzeResult } from './types'
 
@@ -6,6 +7,8 @@ const SIZE_WARN_MB  = 10
 const SIZE_LIMIT_MB = 50
 
 export function useAnalyze() {
+  const { t } = useTranslation()
+
   const [result, setResult]       = useState<AnalyzeResult | null>(null)
   const [tableData, setTableData] = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
@@ -17,20 +20,19 @@ export function useAnalyze() {
     const sizeMB = file.size / (1024 * 1024)
 
     if (sizeMB > SIZE_LIMIT_MB) {
-      setError(`File is too large (${sizeMB.toFixed(1)} MB). Maximum allowed size is ${SIZE_LIMIT_MB} MB.`)
+      setError(`${t('analyze.errorTooLarge')} (${sizeMB.toFixed(1)} MB). ${t('analyze.errorMaxSize')} ${SIZE_LIMIT_MB} MB.`)
       return
     }
 
-    // Validate file type
     const ext = file.name.split('.').pop()?.toLowerCase()
     if (!ext || !['csv', 'json'].includes(ext)) {
-      setError(`Unsupported file type ".${ext ?? '?'}". Please upload a CSV or JSON file.`)
+      setError(`${t('analyze.errorUnsupportedType')} ".${ext ?? '?'}". Please upload a CSV or JSON file.`)
       return
     }
 
     setSizeWarn(sizeMB > SIZE_WARN_MB)
     setLoading(true)
-    setProgress('Reading file...')
+    setProgress(t('analyze.progressReading'))
     setError(null)
     setResult(null)
 
@@ -40,42 +42,39 @@ export function useAnalyze() {
       try {
         text = await file.text()
       } catch {
-        throw new Error('Could not read file. It may be corrupted or use an unsupported encoding (UTF-8 required).')
+        throw new Error(t('analyze.errorEncoding'))
       }
 
-      // Validate not empty
       if (!text.trim()) {
-        throw new Error('File is empty.')
+        throw new Error(t('analyze.errorEmpty'))
       }
 
-      // Validate CSV has headers and at least one row
       if (ext === 'csv') {
         const lines = text.trim().split('\n').filter(l => l.trim())
         if (lines.length < 2) {
-          throw new Error('CSV file must have a header row and at least one data row.')
+          throw new Error(t('analyze.errorMinRows'))
         }
         const headers = lines[0].split(',').map(h => h.trim()).filter(Boolean)
         if (headers.length === 0) {
-          throw new Error('CSV file has no valid column headers.')
+          throw new Error(t('analyze.errorNoHeaders'))
         }
       }
 
-      // Validate JSON is array
       if (ext === 'json') {
         try {
           const parsed = JSON.parse(text)
           if (!Array.isArray(parsed)) {
-            throw new Error('JSON file must contain an array of objects (e.g. [{...}, {...}]).')
+            throw new Error(t('analyze.errorJsonArray'))
           }
           if (parsed.length === 0) {
-            throw new Error('JSON array is empty.')
+            throw new Error(t('analyze.errorJsonEmpty'))
           }
         } catch (e: any) {
-          throw new Error(e.message.startsWith('JSON') ? e.message : 'Invalid JSON format.')
+          throw new Error(e.message.startsWith('JSON') ? e.message : t('analyze.errorJsonInvalid'))
         }
       }
 
-      setProgress('Loading into DuckDB...')
+      setProgress(t('analyze.progressLoading'))
       if (ext === 'json') {
         await loadJSON(text, 'analyze_data')
       } else {
@@ -87,7 +86,7 @@ export function useAnalyze() {
 
       const anomalies: AnomalyInfo[] = []
 
-      setProgress('Reading columns...')
+      setProgress(t('analyze.progressColumns'))
       const columns = await runQuery(`
         SELECT column_name
         FROM information_schema.columns
@@ -105,7 +104,7 @@ export function useAnalyze() {
       const rows = await runQuery('SELECT * FROM analyze_data_indexed')
       setTableData(rows)
 
-      setProgress('Detecting nulls...')
+      setProgress(t('analyze.progressNulls'))
       for (const col of colNames) {
         const nullRows = await runQuery(`
           SELECT _row_index
@@ -123,7 +122,7 @@ export function useAnalyze() {
         }
       }
 
-      setProgress('Detecting duplicates...')
+      setProgress(t('analyze.progressDuplicates'))
       const dupRows = await runQuery(`
         WITH grouped AS (
           SELECT ${colNames.map(c => `CAST("${c}" AS VARCHAR)`).join(' || \'|\' || ')} as _row_key,
@@ -149,7 +148,7 @@ export function useAnalyze() {
         })
       }
 
-      setProgress('Detecting outliers...')
+      setProgress(t('analyze.progressOutliers'))
       for (const col of colNames) {
         const stats = await runQuery(`
           SELECT
@@ -187,12 +186,12 @@ export function useAnalyze() {
       setResult({ rows_total, anomalies_count: anomalies.length, anomalies })
     } catch (err: any) {
       console.error(err)
-      setError(err.message ?? 'Failed to analyze file.')
+      setError(err.message ?? t('analyze.errorGeneric'))
     } finally {
       setLoading(false)
       setProgress(null)
     }
-  }, [])
+  }, [t])
 
   return { result, tableData, loading, progress, sizeWarn, error, analyze }
 }

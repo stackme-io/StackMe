@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AnomalyInfo } from './types'
 
 interface AnomalyCardsProps {
@@ -5,12 +6,14 @@ interface AnomalyCardsProps {
 }
 
 export function AnomalyCards({ anomalies }: AnomalyCardsProps) {
+  const { t } = useTranslation()
+
   if (anomalies.length === 0) return null
 
   return (
     <div className="flex flex-col gap-2 mt-1">
       <p className="text-[9px] uppercase tracking-widest text-muted-foreground px-1">
-        Anomaly details
+        {t('analyze.anomalyDetails')}
       </p>
       {anomalies.map((a, i) => (
         <div
@@ -24,7 +27,7 @@ export function AnomalyCards({ anomalies }: AnomalyCardsProps) {
           }`}
         >
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground">Row {a.row_index}</span>
+            <span className="font-medium text-foreground">{t('analyze.row')} {a.row_index}</span>
             {a.column !== '*' && (
               <span className="text-muted-foreground">· {a.column}</span>
             )}

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface UploadZoneProps {
   loading: boolean
@@ -7,6 +8,7 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
+  const { t } = useTranslation()
   const [tooltipVisible, setTooltip] = useState(false)
   const [dragging, setDragging]      = useState(false)
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -44,6 +46,12 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
     if (file) onFile(file)
   }, [loading, onFile])
 
+  const dropzoneText = loading
+    ? progress ?? t('analyze.analyzing')
+    : dragging
+    ? t('analyze.dropzoneRelease')
+    : t('analyze.dropzone')
+
   return (
     <div className="relative">
       <label
@@ -67,9 +75,7 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
           disabled={loading}
           onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }}
         />
-        <p className="text-sm text-foreground">
-          {loading ? progress ?? 'Analyzing...' : dragging ? 'release to analyze' : 'drop your CSV here or click to browse'}
-        </p>
+        <p className="text-sm text-foreground">{dropzoneText}</p>
         {loading && (
           <div className="w-48 h-1 bg-muted rounded-full overflow-hidden">
             <div className="h-full bg-primary/50 rounded-full animate-pulse w-full" />
@@ -88,7 +94,7 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
             <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
           </svg>
-          <span className="text-[10px] text-muted-foreground">stays in your browser</span>
+          <span className="text-[10px] text-muted-foreground">{t('analyze.privacyBadge')}</span>
         </button>
 
         {tooltipVisible && (
@@ -98,8 +104,8 @@ export function UploadZone({ loading, progress, onFile }: UploadZoneProps) {
             className="absolute top-8 left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground cursor-pointer"
           >
             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
-            <p className="font-medium text-foreground mb-1">Your data never leaves your device</p>
-            <p>Analysis runs entirely in your browser using DuckDB-Wasm — a full SQL engine compiled to WebAssembly. No server, no uploads, no logs.</p>
+            <p className="font-medium text-foreground mb-1">{t('analyze.privacyTitle')}</p>
+            <p>{t('analyze.privacyBody')}</p>
           </div>
         )}
       </div>
