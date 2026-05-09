@@ -55,6 +55,7 @@ export function csvToJson(csv: string): Record<string, any>[] {
     })
     return obj
   })
+}
 
 export interface SchemaField {
   name: string
