@@ -1,9 +1,8 @@
 import { useState, useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import { GenerateSection } from './GenerateSection'
 import { SchemaSection } from './SchemaSection'
 import type { ParsedField } from './SchemaSection'
-import type { AnomalyType, HistoryEntry, DataFormat, ViewMode } from './types'
+import type { AnomalyType, HistoryEntry, ViewMode } from './types'
 
 const ANOMALIES: { id: AnomalyType; label: string; badge: string; disabled?: boolean }[] = [
   { id: 'nulls',            label: 'nulls',           badge: 'any'    },
@@ -23,7 +22,7 @@ const STARTER: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 const CHAOS: AnomalyType[]   = ANOMALIES.map(a => a.id)
 
 export default function ForgeMePage() {
-  const { t } = useTranslation()
+
 
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [viewMode, setViewMode]         = useState<ViewMode>('raw')
@@ -49,9 +48,6 @@ export default function ForgeMePage() {
     setPreset(p)
   }, [])
 
-  const shuffleSeed = useCallback(() => {
-    setSeed(Math.floor(Math.random() * 99999) + 1)
-  }, [])
 
   const ratePreview = useMemo(() => {
     if (selected.size === 0) return []

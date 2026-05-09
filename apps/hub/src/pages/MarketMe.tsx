@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useUser, useClerk } from '@clerk/clerk-react'
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
 import { MODULE_REGISTRY } from '../registry'
 import apiClient from '../api/client'
@@ -17,6 +17,7 @@ const categoryColors: Record<string, string> = {
 export default function MarketMePage() {
   const { isSignedIn } = useUser()
   const { openSignIn } = useClerk()
+  const { getToken } = useAuth()
   const { t } = useTranslation()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
@@ -31,7 +32,7 @@ export default function MarketMePage() {
 
   const fetchActiveModules = async () => {
     try {
-      const token = await window.Clerk.session.getToken()
+      const token = await getToken()
       const response = await apiClient.get('/api/me/modules', {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -55,7 +56,7 @@ export default function MarketMePage() {
     }
     setModuleStates(prev => ({ ...prev, [moduleId]: 'loading' }))
     try {
-      const token = await window.Clerk.session.getToken()
+      const token = await getToken()
       await apiClient.post(
         '/api/modules/activate',
         { module_id: moduleId },
@@ -71,7 +72,7 @@ export default function MarketMePage() {
   const handleDeactivate = async (moduleId: string) => {
     setModuleStates(prev => ({ ...prev, [moduleId]: 'loading' }))
     try {
-      const token = await window.Clerk.session.getToken()
+      const token = await getToken()
       await apiClient.delete(`/api/modules/${moduleId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
