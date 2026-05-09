@@ -4,11 +4,11 @@ WORKDIR /app
 
 RUN pip install uv
 
-COPY pyproject.toml .
-COPY core/ core/
-COPY shared/ shared/
-COPY services/forge_me/ services/forge_me/
-COPY services/analyze_me/ services/analyze_me/
+COPY backend/pyproject.toml .
+COPY backend/core/ core/
+COPY backend/shared/ shared/
+COPY backend/services/forge_me/ services/forge_me/
+COPY backend/services/analyze_me/ services/analyze_me/
 
 RUN uv sync --frozen
 
