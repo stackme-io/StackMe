@@ -8,7 +8,7 @@ import { AnomalyCards } from './AnomalyCards'
 type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier'
 
 export function AnalyzeSection() {
-  const { result, tableData, loading, progress, sizeWarn, error, analyze } = useAnalyze()
+  const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const [filter, setFilter] = useState<FilterType>('all')
 
   const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
@@ -28,7 +28,7 @@ export function AnalyzeSection() {
 
   return (
     <div>
-      <UploadZone loading={loading} progress={progress} onFile={analyze} />
+      <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={analyze} />
 
       {sizeWarn && !loading && result && (
         <div className="mt-2 px-4 py-2 rounded-lg bg-amber-950/20 text-amber-400 text-xs border border-amber-900/40">

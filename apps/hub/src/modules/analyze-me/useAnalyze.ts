@@ -15,6 +15,7 @@ export function useAnalyze() {
   const [progress, setProgress]   = useState<string | null>(null)
   const [sizeWarn, setSizeWarn]   = useState(false)
   const [error, setError]         = useState<string | null>(null)
+  const [fileName, setFileName]   = useState<string | null>(null)
 
   const analyze = useCallback(async (file: File) => {
     const sizeMB = file.size / (1024 * 1024)
@@ -31,6 +32,7 @@ export function useAnalyze() {
     }
 
     setSizeWarn(sizeMB > SIZE_WARN_MB)
+    setFileName(file.name)
     setLoading(true)
     setProgress(t('analyze.progressReading'))
     setError(null)
@@ -193,5 +195,5 @@ export function useAnalyze() {
     }
   }, [t])
 
-  return { result, tableData, loading, progress, sizeWarn, error, analyze }
+  return { result, tableData, loading, progress, sizeWarn, error, fileName, analyze }
 }

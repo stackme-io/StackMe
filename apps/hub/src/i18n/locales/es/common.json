@@ -44,6 +44,7 @@
   "analyze": {
     "dropzone": "suelta tu CSV aquí o haz clic para buscar",
     "dropzoneRelease": "suelta para analizar",
+    "dropzoneReplace": "suelta otro archivo o haz clic para reemplazar",
     "analyzing": "Analizando...",
     "progressReading": "Leyendo archivo...",
     "progressLoading": "Cargando en DuckDB...",
