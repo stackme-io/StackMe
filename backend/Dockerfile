@@ -5,6 +5,7 @@ WORKDIR /app
 RUN pip install uv
 
 COPY backend/pyproject.toml .
+COPY backend/uv.lock .
 COPY backend/core/ core/
 COPY backend/shared/ shared/
 COPY backend/services/forge_me/ services/forge_me/
