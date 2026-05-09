@@ -8,7 +8,12 @@ from core.models.user_module import UserModule  # noqa: F401 — registers model
 from core.routers.users import router as users_router
 from core.routers.modules import router as modules_router
 
-app = FastAPI(title="StackMe Core API")
+import os
+app = FastAPI(
+    title="StackMe Core API",
+    docs_url="/docs" if os.getenv("ENVIRONMENT") != "production" else None,
+    redoc_url=None
+)
 
 app.add_middleware(
     CORSMiddleware,
