@@ -83,8 +83,12 @@ export function GenerateSection({
         format,
         anomalies: [...selectedAnomalies],
       })
-    } catch (err) {
-      setError(t('forge.apiError'))
+    } catch (err: any) {
+      if (err?.response?.status === 429) {
+        setError(t('forge.rateLimitError'))
+      } else {
+        setError(t('forge.apiError'))
+      }
       console.error(err)
     } finally {
       setLoading(false)

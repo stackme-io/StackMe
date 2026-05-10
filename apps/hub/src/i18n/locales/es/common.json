@@ -39,6 +39,7 @@
     "analyzing": "Analizando...",
     "anomaliesFound": "Anomalías encontradas",
     "apiError": "Error al conectar con la API. Asegúrate de que el backend está en ejecución.",
+    "rateLimitError": "Demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.",
     "analyzeError": "Error al analizar el archivo. Asegúrate de que es un CSV válido."
   },
   "analyze": {
