@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/clerk-react'
-const { t } = useTranslation()
-import { useAuth } from '@clerk/clerk-react'
+import { useUser, useAuth } from '@clerk/clerk-react'
 import apiClient from '../api/client'
 
 export default function AccountMePage() {
   const { user } = useUser()
   const { getToken } = useAuth()
-  const { t } = useTranslation()
   const [nickname, setNickname] = useState('')
   const [savedNickname, setSavedNickname] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -57,7 +54,6 @@ export default function AccountMePage() {
   return (
     <div className="max-w-lg mx-auto px-6 py-8 flex flex-col gap-8">
 
-      {/* Avatar + name */}
       <div className="flex items-center gap-4">
         {avatarUrl ? (
           <img src={avatarUrl} alt="avatar" className="w-14 h-14 rounded-full" />
@@ -72,7 +68,6 @@ export default function AccountMePage() {
         </div>
       </div>
 
-      {/* Email */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           Email
@@ -85,7 +80,6 @@ export default function AccountMePage() {
         </p>
       </div>
 
-      {/* Nickname */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           Nickname
