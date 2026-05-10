@@ -1,12 +1,15 @@
 from .schemas import GenerateRequest, GenerateResponse, AnomalyInfo, AnomalyType, AnalyzeResponse
 from .anomaly_engine import generate_clean_dataset, inject_anomalies, serialize_dataset
 from .injectors import INJECTORS
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 import io
 import numpy as np
 import pandas as pd
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/health")
@@ -15,7 +18,6 @@ async def health():
 
 
 def generate_schema_dataset(rows: int, seed: int, schema_fields: list) -> pd.DataFrame:
-    """Generates a dataset using user-provided schema field names and types."""
     rng = np.random.default_rng(seed)
     data = {}
 
@@ -38,22 +40,23 @@ def generate_schema_dataset(rows: int, seed: int, schema_fields: list) -> pd.Dat
 
 
 @router.post("/generate", response_model=GenerateResponse)
-async def generate(request: GenerateRequest):
-    active_types = request.anomaly_types or []
+@limiter.limit("20/minute")
+async def generate(request: Request, body: GenerateRequest):
+    active_types = body.anomaly_types or []
 
-    if request.schema:
+    if body.schema:
         df = generate_schema_dataset(
-            rows=request.rows,
-            seed=request.seed,
-            schema_fields=request.schema,
+            rows=body.rows,
+            seed=body.seed,
+            schema_fields=body.schema,
         )
     else:
-        df = generate_clean_dataset(rows=request.rows, seed=request.seed)
+        df = generate_clean_dataset(rows=body.rows, seed=body.seed)
 
     df_with_anomalies, anomaly_records = inject_anomalies(
         df,
-        anomaly_rate=request.anomaly_rate,
-        seed=request.seed,
+        anomaly_rate=body.anomaly_rate,
+        seed=body.seed,
         anomaly_types=active_types,
     )
 
@@ -72,10 +75,10 @@ async def generate(request: GenerateRequest):
             description=a.description,
         ))
 
-    data = serialize_dataset(df_with_anomalies, request.format.value)
+    data = serialize_dataset(df_with_anomalies, body.format.value)
 
     return GenerateResponse(
-        format=request.format,
+        format=body.format,
         rows_total=len(df_with_anomalies),
         anomalies_count=len(anomalies),
         anomalies=anomalies,
@@ -84,7 +87,8 @@ async def generate(request: GenerateRequest):
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-async def analyze(file: UploadFile = File(...)):
+@limiter.limit("20/minute")
+async def analyze(request: Request, file: UploadFile = File(...)):
     content = await file.read()
 
     try:
