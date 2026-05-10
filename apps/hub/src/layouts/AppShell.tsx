@@ -1,10 +1,12 @@
+import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
+import { SignInButton, SignOutButton, useUser, useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
 import { Sun, Moon, Globe } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
+import apiClient from '../api/client'
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -12,13 +14,41 @@ const LANGUAGES = [
   { code: 'uk', label: 'UK', name: 'Українська' },
 ]
 
+const DEFAULT_MODULE_IDS = ['forge-me', 'analyze-me']
+
 export default function AppShell() {
   const location = useLocation()
   const { isSignedIn, user } = useUser()
+  const { getToken } = useAuth()
   const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
+  const [activeModuleIds, setActiveModuleIds] = useState<string[]>([])
 
   const activeModule = MODULE_REGISTRY.find(m => location.pathname === m.route)
+
+  useEffect(() => {
+    if (isSignedIn) {
+      fetchActiveModules()
+    } else {
+      setActiveModuleIds([])
+    }
+  }, [isSignedIn])
+
+  const fetchActiveModules = async () => {
+    try {
+      const token = await getToken()
+      const res = await apiClient.get('/api/me/modules', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setActiveModuleIds(res.data.modules)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const visibleModules = isSignedIn
+    ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
+    : MODULE_REGISTRY.filter(m => DEFAULT_MODULE_IDS.includes(m.id))
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
@@ -82,8 +112,11 @@ export default function AppShell() {
           {isSignedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-7 h-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/20 transition-colors">
-                  {user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U'}
+                <button className="w-7 h-7 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/20 transition-colors">
+                  {user.imageUrl
+                    ? <img src={user.imageUrl} alt="avatar" className="w-full h-full object-cover" />
+                    : user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U'
+                  }
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="end">
@@ -119,16 +152,16 @@ export default function AppShell() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="5"  cy="5"  r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="12" cy="5"  r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="19" cy="5"  r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="5"  cy="12" r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="5"  cy="19" r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/>
-                  <circle cx="19" cy="19" r="1.5" fill="currentColor" stroke="none"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <circle cx="5"  cy="5"  r="1.5" fill="currentColor"/>
+                  <circle cx="12" cy="5"  r="1.5" fill="currentColor"/>
+                  <circle cx="19" cy="5"  r="1.5" fill="currentColor"/>
+                  <circle cx="5"  cy="12" r="1.5" fill="currentColor"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                  <circle cx="19" cy="12" r="1.5" fill="currentColor"/>
+                  <circle cx="5"  cy="19" r="1.5" fill="currentColor"/>
+                  <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+                  <circle cx="19" cy="19" r="1.5" fill="currentColor"/>
                 </svg>
               </button>
             </DropdownMenuTrigger>
@@ -136,7 +169,7 @@ export default function AppShell() {
               <div className="px-2 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border mb-1">
                 Services
               </div>
-              {MODULE_REGISTRY.map(module => (
+              {visibleModules.map(module => (
                 <DropdownMenuItem key={module.id} asChild>
                   <Link
                     to={module.route}

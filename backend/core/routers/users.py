@@ -4,18 +4,37 @@ from sqlalchemy.orm import Session
 from core.auth import get_current_user
 from core.db import get_db
 from core.models.user_profile import UserProfile
+from core.models.user_module import UserModule
 
 router = APIRouter()
+
+DEFAULT_MODULES = ["forge-me", "analyze-me"]
 
 
 class NicknameUpdate(BaseModel):
     nickname: str
 
 
+def ensure_default_modules(user_id: str, db: Session):
+    for module_id in DEFAULT_MODULES:
+        exists = db.query(UserModule).filter(
+            UserModule.user_id == user_id,
+            UserModule.module_id == module_id
+        ).first()
+        if not exists:
+            db.add(UserModule(user_id=user_id, module_id=module_id))
+    db.commit()
+
+
 @router.get("/me")
-async def get_me(user: dict = Depends(get_current_user)):
+async def get_me(
+    user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    user_id = user.get("sub")
+    ensure_default_modules(user_id, db)
     return {
-        "user_id": user.get("sub"),
+        "user_id": user_id,
         "email": user.get("email"),
         "first_name": user.get("first_name"),
     }
