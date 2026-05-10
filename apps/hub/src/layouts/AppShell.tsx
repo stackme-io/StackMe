@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { SignInButton, SignOutButton, useUser, useAuth } from '@clerk/clerk-react'
+import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
 import { Sun, Moon, Globe } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
-import apiClient from '../api/client'
+import { useModules } from '../context/ModulesContext'
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -19,32 +18,11 @@ const DEFAULT_MODULE_IDS = ['forge-me', 'analyze-me']
 export default function AppShell() {
   const location = useLocation()
   const { isSignedIn, user } = useUser()
-  const { getToken } = useAuth()
   const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
-  const [activeModuleIds, setActiveModuleIds] = useState<string[]>([])
+  const { activeModuleIds } = useModules()
 
   const activeModule = MODULE_REGISTRY.find(m => location.pathname === m.route)
-
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchActiveModules()
-    } else {
-      setActiveModuleIds([])
-    }
-  }, [isSignedIn])
-
-  const fetchActiveModules = async () => {
-    try {
-      const token = await getToken()
-      const res = await apiClient.get('/api/me/modules', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setActiveModuleIds(res.data.modules)
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
@@ -53,10 +31,8 @@ export default function AppShell() {
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
 
-      {/* ── Topbar ── */}
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
-        {/* Left — logo + active module pill */}
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
           {activeModule && (
@@ -76,10 +52,8 @@ export default function AppShell() {
           )}
         </div>
 
-        {/* Right — controls */}
         <div className="flex items-center gap-1">
 
-          {/* Language */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
@@ -100,7 +74,6 @@ export default function AppShell() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Theme */}
           <button
             onClick={toggle}
             className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -108,7 +81,6 @@ export default function AppShell() {
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Auth */}
           {isSignedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -148,7 +120,6 @@ export default function AppShell() {
             </SignInButton>
           )}
 
-          {/* Service switcher — 9 dots */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
@@ -192,7 +163,6 @@ export default function AppShell() {
         </div>
       </header>
 
-      {/* ── Content ── */}
       <main className="flex-1 overflow-hidden">
         <Outlet />
       </main>

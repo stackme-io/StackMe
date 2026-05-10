@@ -15,6 +15,10 @@ class ActivateRequest(BaseModel):
 
 
 def ensure_default_modules(user_id: str, db: Session):
+    from core.models.user_profile import UserProfile
+    profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+    if profile and profile.defaults_applied:
+        return
     for module_id in DEFAULT_MODULES:
         exists = db.query(UserModule).filter(
             UserModule.user_id == user_id,
@@ -22,6 +26,11 @@ def ensure_default_modules(user_id: str, db: Session):
         ).first()
         if not exists:
             db.add(UserModule(user_id=user_id, module_id=module_id))
+    if not profile:
+        profile = UserProfile(user_id=user_id, defaults_applied=True)
+        db.add(profile)
+    else:
+        profile.defaults_applied = True
     db.commit()
 
 

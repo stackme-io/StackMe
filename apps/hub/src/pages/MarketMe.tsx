@@ -3,6 +3,7 @@ import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
 import { MODULE_REGISTRY } from '../registry'
 import apiClient from '../api/client'
+import { useModules } from '../context/ModulesContext'
 
 interface ModuleState {
   [moduleId: string]: 'active' | 'loading' | 'inactive'
@@ -19,6 +20,7 @@ export default function MarketMePage() {
   const { openSignIn } = useClerk()
   const { getToken } = useAuth()
   const { t } = useTranslation()
+  const { refresh } = useModules()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
 
@@ -63,6 +65,7 @@ export default function MarketMePage() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setModuleStates(prev => ({ ...prev, [moduleId]: 'active' }))
+      await refresh()
     } catch (err) {
       console.error(err)
       setModuleStates(prev => ({ ...prev, [moduleId]: 'inactive' }))
@@ -77,6 +80,7 @@ export default function MarketMePage() {
         headers: { Authorization: `Bearer ${token}` }
       })
       setModuleStates(prev => ({ ...prev, [moduleId]: 'inactive' }))
+      await refresh()
     } catch (err) {
       console.error(err)
       setModuleStates(prev => ({ ...prev, [moduleId]: 'active' }))

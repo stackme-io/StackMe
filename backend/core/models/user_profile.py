@@ -12,3 +12,4 @@ class UserProfile(Base):
     nickname: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    defaults_applied: Mapped[bool] = mapped_column(default=False)
