@@ -91,6 +91,11 @@ export default function AppShell() {
                   {user.emailAddresses[0]?.emailAddress}
                 </div>
                 <DropdownMenuItem asChild>
+                  <Link to="/account-me" className="cursor-pointer">
+                    My Account
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/market-me" className="cursor-pointer">
                     {t('nav.marketplace')}
                   </Link>
