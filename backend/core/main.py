@@ -9,6 +9,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from core.db import engine, Base
 from core.models.user_module import UserModule  # noqa: F401 — registers model
+from core.models.user_profile import UserProfile  # noqa: F401 — registers model
 from core.routers.users import router as users_router
 from core.routers.modules import router as modules_router
 
