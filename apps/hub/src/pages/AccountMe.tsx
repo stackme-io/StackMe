@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { useTranslation } from 'react-i18next'
+const { t } = useTranslation()
 import { useAuth } from '@clerk/clerk-react'
 import apiClient from '../api/client'
 
