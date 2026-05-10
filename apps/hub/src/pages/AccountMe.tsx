@@ -37,7 +37,10 @@ export default function AccountMePage() {
       setSavedNickname(nickname)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.response?.status === 409) {
+        alert('This nickname is already taken. Please choose another.')
+      }
       console.error(err)
     } finally {
       setSaving(false)
