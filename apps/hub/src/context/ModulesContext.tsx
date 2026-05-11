@@ -27,6 +27,7 @@ export function ModulesProvider({ children }: { children: React.ReactNode }) {
       const res = await apiClient.get('/api/me/modules', {
         headers: { Authorization: `Bearer ${token}` }
       })
+      console.log('modules refreshed:', res.data.modules)
       setActiveModuleIds(res.data.modules)
     } catch (err) {
       console.error(err)
