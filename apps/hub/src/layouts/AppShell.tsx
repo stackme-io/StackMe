@@ -67,14 +67,12 @@ export default function AppShell() {
                         isActive
                           ? 'text-foreground font-medium'
                           : 'bg-muted/40 text-muted-foreground rounded-md border border-transparent hover:border-border hover:text-foreground',
-                        panel.pinned && !isActive
+                        isActive
                           ? 'border-l-2 border-l-primary'
                           : '',
                       ].join(' ')}
                     >
-                      {isActive && <span className="text-muted-foreground font-light">(</span>}
                       <span>{panel.manifest.name}</span>
-                      {isActive && <span className="text-muted-foreground font-light">)</span>}
                       <button
                         onClick={(e) => { e.stopPropagation(); togglePin(panel.id) }}
                         className={[
