@@ -65,11 +65,8 @@ export default function AppShell() {
                       className={[
                         'flex items-center gap-1.5 h-7 pl-2.5 pr-1 text-xs cursor-pointer transition-all select-none',
                         isActive
-                          ? 'text-foreground font-medium'
-                          : 'bg-muted/40 text-muted-foreground rounded-md border border-transparent hover:border-border hover:text-foreground',
-                        isActive
-                          ? 'border-l-2 border-l-primary'
-                          : '',
+                          ? 'text-foreground font-medium rounded-md border border-border'
+                          : 'text-muted-foreground hover:text-foreground',
                       ].join(' ')}
                     >
                       <span>{panel.manifest.name}</span>
