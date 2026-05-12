@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
+import { useWorkspace } from '../store/workspace'
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -21,12 +22,14 @@ export default function AppShell() {
   const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
-
-  const activeModule = MODULE_REGISTRY.find(m => location.pathname === m.route)
+  const { openPanel, panels } = useWorkspace()
 
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
     : MODULE_REGISTRY.filter(m => DEFAULT_MODULE_IDS.includes(m.id))
+
+  const isMarketMe = location.pathname === '/market-me'
+  const isAccountMe = location.pathname === '/account-me'
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
@@ -35,19 +38,16 @@ export default function AppShell() {
 
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
-          {activeModule && (
-            <>
-              <span className="text-border">|</span>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <span className="text-xs font-medium text-primary">{activeModule.name}</span>
-              </div>
-            </>
-          )}
-          {!activeModule && location.pathname === '/market-me' && (
+          {isMarketMe && (
             <>
               <span className="text-border">|</span>
               <span className="text-xs font-medium text-foreground">MarketMe</span>
+            </>
+          )}
+          {isAccountMe && (
+            <>
+              <span className="text-border">|</span>
+              <span className="text-xs font-medium text-foreground">AccountMe</span>
             </>
           )}
         </div>
@@ -140,16 +140,18 @@ export default function AppShell() {
               <div className="px-2 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border mb-1">
                 Services
               </div>
-              {visibleModules.map(module => (
-                <DropdownMenuItem key={module.id} asChild>
-                  <Link
-                    to={module.route}
-                    className={`cursor-pointer ${location.pathname === module.route ? 'font-medium text-foreground' : ''}`}
+              {visibleModules.map(module => {
+                const isOpen = panels.some(p => p.id === module.id)
+                return (
+                  <DropdownMenuItem
+                    key={module.id}
+                    className={`cursor-pointer ${isOpen ? 'font-medium text-foreground' : ''}`}
+                    onClick={() => openPanel(module)}
                   >
                     {module.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
+                  </DropdownMenuItem>
+                )
+              })}
               <div className="border-t border-border mt-1 pt-1">
                 <DropdownMenuItem asChild>
                   <Link to="/market-me" className="cursor-pointer">
