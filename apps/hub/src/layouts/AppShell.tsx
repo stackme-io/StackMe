@@ -30,6 +30,11 @@ const MARKET_ME_MANIFEST = {
   component: MarketMePage,
 }
 
+const MODULE_COLORS: Record<string, string> = {
+  'forge-me': 'border-l-violet-400',
+  'analyze-me': 'border-l-teal-400',
+}
+
 export default function AppShell() {
   const location = useLocation()
   const { isSignedIn, user } = useUser()
@@ -93,7 +98,7 @@ export default function AppShell() {
                       className={[
                         'flex items-center gap-1.5 h-7 pl-2.5 pr-1 text-xs cursor-pointer transition-all select-none',
                         isActive
-                          ? 'text-foreground font-medium rounded-md border border-border border-l-2 border-l-primary'
+                          ? `text-foreground font-medium rounded-md border border-border border-l-2 ${MODULE_COLORS[panel.id] ?? 'border-l-primary'}`
                           : 'text-muted-foreground hover:text-foreground border-l-2 border-l-transparent',
                       ].join(' ')}
                     >
