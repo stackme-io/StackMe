@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Lock, LockOpen, X, Sun, Moon, Globe } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
@@ -36,6 +37,12 @@ export default function AppShell() {
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
   const { openPanel, panels, activeId, closePanel, togglePin, setActive } = useWorkspace()
+
+  useEffect(() => {
+    if (panels.length === 0) {
+      openPanel(MARKET_ME_MANIFEST)
+    }
+  }, [])
 
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))

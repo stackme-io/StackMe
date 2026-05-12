@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { MODULE_REGISTRY } from '../registry'
 import apiClient from '../api/client'
 import { useModules } from '../context/ModulesContext'
+import { useWorkspace } from '../store/workspace'
 
 interface ModuleState {
   [moduleId: string]: 'active' | 'loading' | 'inactive'
@@ -21,6 +22,7 @@ export default function MarketMePage() {
   const { getToken } = useAuth()
   const { t } = useTranslation()
   const { refresh } = useModules()
+  const { openPanel, closePanel } = useWorkspace()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
 
@@ -80,11 +82,17 @@ export default function MarketMePage() {
         headers: { Authorization: `Bearer ${token}` }
       })
       setModuleStates(prev => ({ ...prev, [moduleId]: 'inactive' }))
+      closePanel(moduleId)
       await refresh()
     } catch (err) {
       console.error(err)
       setModuleStates(prev => ({ ...prev, [moduleId]: 'active' }))
     }
+  }
+
+  const handleOpen = (moduleId: string) => {
+    const manifest = MODULE_REGISTRY.find(m => m.id === moduleId)
+    if (manifest) openPanel(manifest)
   }
 
   return (
@@ -131,21 +139,29 @@ export default function MarketMePage() {
                 <p className="text-xs text-muted-foreground">{module.description}</p>
               </div>
 
-              <button
-                onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}
-                disabled={isLoading || loadingModules}
-                className={`ml-4 px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isActive
-                    ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                }`}
-              >
-                {isLoading ? '...' : isActive
-                  ? t('marketplace.remove')
-                  : isSignedIn
-                    ? t('marketplace.add')
-                    : t('marketplace.signInToAdd')}
-              </button>
+              <div className="flex items-center gap-2 ml-4">
+                <button
+                  onClick={() => handleOpen(module.id)}
+                  className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                >
+                  Open
+                </button>
+                <button
+                  onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}
+                  disabled={isLoading || loadingModules}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
+                    isActive
+                      ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
+                      : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  }`}
+                >
+                  {isLoading ? '...' : isActive
+                    ? t('marketplace.remove')
+                    : isSignedIn
+                      ? t('marketplace.add')
+                      : t('marketplace.signInToAdd')}
+                </button>
+              </div>
             </div>
           )
         })}

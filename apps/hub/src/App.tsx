@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
-          <Route path="/" element={<Navigate to="/forge-me" replace />} />
+          <Route path="/" element={<Navigate to="/market-me" replace />} />
           <Route path="/account-me" element={<AccountMePage />} />
           <Route path="*" element={<PanelLayout />} />
         </Route>

@@ -1,7 +1,23 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { ModuleManifest } from '../types/module-manifest'
+import { lazy } from 'react'
 import { MODULE_REGISTRY } from '../registry'
+
+const SYSTEM_MANIFESTS = [
+  {
+    id: 'market-me',
+    name: 'MarketMe',
+    description: '',
+    icon: 'Store',
+    route: '/market-me',
+    category: 'analytics' as const,
+    defaultForNewUsers: false,
+    component: lazy(() => import('../pages/MarketMe')),
+  },
+]
+
+const ALL_MANIFESTS = [...MODULE_REGISTRY, ...SYSTEM_MANIFESTS]
 
 export interface Panel {
   id: string
@@ -74,7 +90,7 @@ export const useWorkspace = create<WorkspaceStore>()(
         const saved = persisted as { panels: { id: string; pinned: boolean }[]; activeId: string | null }
         const restoredPanels: Panel[] = saved.panels
           .map(({ id, pinned }) => {
-            const manifest = MODULE_REGISTRY.find(m => m.id === id)
+            const manifest = ALL_MANIFESTS.find(m => m.id === id)
             if (!manifest) return null
             return { id, manifest, pinned }
           })
