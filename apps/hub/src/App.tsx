@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { MODULE_REGISTRY } from './registry'
 import AppShell from './layouts/AppShell'
 import MarketMePage from './pages/MarketMe'
 import AccountMePage from './pages/AccountMe'

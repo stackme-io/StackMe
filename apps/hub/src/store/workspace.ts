@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ModuleManifest } from '../registry'
+import type { ModuleManifest } from '../types/module-manifest'
 
 export interface Panel {
   id: string
@@ -14,51 +14,43 @@ interface WorkspaceStore {
   togglePin: (id: string) => void
 }
 
-export const useWorkspace = create<WorkspaceStore>((set, get) => ({
-  panels: [],
+export const useWorkspace = create<WorkspaceStore>()(
+  (set, get) => ({
+    panels: [],
 
-  openPanel: (manifest) => {
-    const { panels } = get()
-    const alreadyOpen = panels.find(p => p.manifest.id === manifest.id)
-    if (alreadyOpen) return
+    openPanel: (manifest: ModuleManifest) => {
+      const { panels } = get()
+      const alreadyOpen = panels.find((p: Panel) => p.manifest.id === manifest.id)
+      if (alreadyOpen) return
 
-    const pinnedPanels = panels.filter(p => p.pinned)
-    const unpinnedPanels = panels.filter(p => !p.pinned)
+      const pinnedPanels = panels.filter((p: Panel) => p.pinned)
+      const unpinnedPanels = panels.filter((p: Panel) => !p.pinned)
 
-    const newPanel: Panel = {
-      id: manifest.id,
-      manifest,
-      pinned: false,
-    }
+      const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
 
-    if (panels.length === 0) {
-      set({ panels: [newPanel] })
-      return
-    }
+      if (panels.length === 0 || pinnedPanels.length === 0) {
+        set({ panels: [newPanel] })
+        return
+      }
 
-    if (pinnedPanels.length === 0) {
-      set({ panels: [newPanel] })
-      return
-    }
+      if (pinnedPanels.length >= 2) return
 
-    if (pinnedPanels.length >= 2) {
-      set({ panels: [...pinnedPanels.slice(0, 2)] })
-      return
-    }
+      const next = [...pinnedPanels, ...unpinnedPanels.slice(1), newPanel].slice(0, 2)
+      set({ panels: next })
+    },
 
-    const next = [...pinnedPanels, ...unpinnedPanels.slice(1), newPanel].slice(0, 2)
-    set({ panels: next })
-  },
+    closePanel: (id: string) => {
+      set((state: WorkspaceStore) => ({
+        panels: state.panels.filter((p: Panel) => p.id !== id),
+      }))
+    },
 
-  closePanel: (id) => {
-    set(state => ({ panels: state.panels.filter(p => p.id !== id) }))
-  },
-
-  togglePin: (id) => {
-    set(state => ({
-      panels: state.panels.map(p =>
-        p.id === id ? { ...p, pinned: !p.pinned } : p
-      ),
-    }))
-  },
-}))
+    togglePin: (id: string) => {
+      set((state: WorkspaceStore) => ({
+        panels: state.panels.map((p: Panel) =>
+          p.id === id ? { ...p, pinned: !p.pinned } : p
+        ),
+      }))
+    },
+  })
+)

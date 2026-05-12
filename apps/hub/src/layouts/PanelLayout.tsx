@@ -1,15 +1,21 @@
 import { Suspense } from 'react'
 import { Pin, PinOff, X } from 'lucide-react'
-import { useWorkspace } from '../store/workspace'
+import { useWorkspace, type Panel } from '../store/workspace'
 
 export default function PanelLayout() {
   const { panels, closePanel, togglePin } = useWorkspace()
 
-  if (panels.length === 0) return null
+  if (panels.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+        Open a service from the menu above
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      {panels.map((panel, index) => (
+      {panels.map((panel: Panel, index: number) => (
         <div
           key={panel.id}
           className={`flex flex-col h-full overflow-hidden flex-1 ${
