@@ -35,6 +35,11 @@ const MODULE_COLORS: Record<string, string> = {
   'analyze-me': 'border-l-teal-400',
 }
 
+const MODULE_TEXT_COLORS: Record<string, string> = {
+  'forge-me': 'text-violet-400',
+  'analyze-me': 'text-teal-400',
+}
+
 export default function AppShell() {
   const location = useLocation()
   const { isSignedIn, user } = useUser()
@@ -102,7 +107,9 @@ export default function AppShell() {
                           : 'text-muted-foreground hover:text-foreground border-l-2 border-l-transparent',
                       ].join(' ')}
                     >
-                      <span>{panel.manifest.name}</span>
+                      <span className={isActive ? (MODULE_TEXT_COLORS[panel.id] ?? '') : ''}>
+                        {panel.manifest.name}
+                      </span>
                       <button
                         onClick={(e) => { e.stopPropagation(); togglePin(panel.id) }}
                         className={[
