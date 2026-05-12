@@ -7,6 +7,8 @@ import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
+import { lazy } from 'react'
+const MarketMePage = lazy(() => import('../pages/MarketMe'))
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -15,6 +17,17 @@ const LANGUAGES = [
 ]
 
 const DEFAULT_MODULE_IDS = ['forge-me', 'analyze-me']
+
+const MARKET_ME_MANIFEST = {
+  id: 'market-me',
+  name: 'MarketMe',
+  description: '',
+  icon: 'Store',
+  route: '/market-me',
+  category: 'analytics' as const,
+  defaultForNewUsers: false,
+  component: MarketMePage,
+}
 
 export default function AppShell() {
   const location = useLocation()
@@ -199,12 +212,13 @@ export default function AppShell() {
                 )
               })}
               <div className="border-t border-border mt-1 pt-1">
-                <DropdownMenuItem asChild>
-                  <Link to="/market-me" className="cursor-pointer">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => openPanel(MARKET_ME_MANIFEST)}
+                  >
                     + {t('nav.marketplace')}
-                  </Link>
-                </DropdownMenuItem>
-              </div>
+                  </DropdownMenuItem>
+                </div>
             </DropdownMenuContent>
           </DropdownMenu>
 
