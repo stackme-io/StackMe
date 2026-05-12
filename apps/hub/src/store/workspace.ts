@@ -1,5 +1,7 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { ModuleManifest } from '../types/module-manifest'
+import { MODULE_REGISTRY } from '../registry'
 
 export interface Panel {
   id: string
@@ -17,45 +19,73 @@ interface WorkspaceStore {
 }
 
 export const useWorkspace = create<WorkspaceStore>()(
-  (set, get) => ({
-    panels: [],
-    activeId: null,
+  persist(
+    (set, get) => ({
+      panels: [],
+      activeId: null,
 
-    openPanel: (manifest: ModuleManifest) => {
-      const { panels } = get()
-      const alreadyOpen = panels.find((p: Panel) => p.manifest.id === manifest.id)
+      openPanel: (manifest: ModuleManifest) => {
+        const { panels } = get()
+        const alreadyOpen = panels.find((p: Panel) => p.manifest.id === manifest.id)
 
-      if (alreadyOpen) {
-        set({ activeId: manifest.id })
-        return
-      }
+        if (alreadyOpen) {
+          set({ activeId: manifest.id })
+          return
+        }
 
-      const pinnedPanels = panels.filter((p: Panel) => p.pinned)
-      const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
+        const pinnedPanels = panels.filter((p: Panel) => p.pinned)
+        const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
 
-      const next = [...pinnedPanels, newPanel]
-      set({ panels: next, activeId: manifest.id })
-    },
+        const next = [...pinnedPanels, newPanel]
+        set({ panels: next, activeId: manifest.id })
+      },
 
-    closePanel: (id: string) => {
-      const { panels, activeId } = get()
-      const next = panels.filter((p: Panel) => p.id !== id)
-      const nextActiveId = id === activeId
-        ? (next[next.length - 1]?.id ?? null)
-        : activeId
-      set({ panels: next, activeId: nextActiveId })
-    },
+      closePanel: (id: string) => {
+        const { panels, activeId } = get()
+        const next = panels.filter((p: Panel) => p.id !== id)
+        const nextActiveId = id === activeId
+          ? (next[next.length - 1]?.id ?? null)
+          : activeId
+        set({ panels: next, activeId: nextActiveId })
+      },
 
-    togglePin: (id: string) => {
-      set((state: WorkspaceStore) => ({
-        panels: state.panels.map((p: Panel) =>
-          p.id === id ? { ...p, pinned: !p.pinned } : p
-        ),
-      }))
-    },
+      togglePin: (id: string) => {
+        set((state: WorkspaceStore) => ({
+          panels: state.panels.map((p: Panel) =>
+            p.id === id ? { ...p, pinned: !p.pinned } : p
+          ),
+        }))
+      },
 
-    setActive: (id: string) => {
-      set({ activeId: id })
-    },
-  })
+      setActive: (id: string) => {
+        set({ activeId: id })
+      },
+    }),
+    {
+      name: 'stackme-workspace',
+      partialize: (state: WorkspaceStore) => ({
+        panels: state.panels.map((p: Panel) => ({
+          id: p.id,
+          pinned: p.pinned,
+        })),
+        activeId: state.activeId,
+      }),
+      merge: (persisted: unknown, current: WorkspaceStore) => {
+        const saved = persisted as { panels: { id: string; pinned: boolean }[]; activeId: string | null }
+        const restoredPanels: Panel[] = saved.panels
+          .map(({ id, pinned }) => {
+            const manifest = MODULE_REGISTRY.find(m => m.id === id)
+            if (!manifest) return null
+            return { id, manifest, pinned }
+          })
+          .filter((p): p is Panel => p !== null)
+
+        return {
+          ...current,
+          panels: restoredPanels,
+          activeId: saved.activeId,
+        }
+      },
+    }
+  )
 )
