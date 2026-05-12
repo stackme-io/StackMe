@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, LockOpen, X, Sun, Moon, Globe } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
@@ -8,7 +8,7 @@ import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
-import { lazy } from 'react'
+
 const MarketMePage = lazy(() => import('../pages/MarketMe'))
 
 const LANGUAGES = [
@@ -46,9 +46,18 @@ export default function AppShell() {
   }, [])
 
   useEffect(() => {
-    const active = panels.find(p => p.id === activeId)
-    if (active) navigate(active.manifest.route)
+    const active = panels.find((p: Panel) => p.id === activeId)
+    if (active && location.pathname !== active.manifest.route) {
+      navigate(active.manifest.route)
+    }
   }, [activeId])
+
+  useEffect(() => {
+    const matchedPanel = panels.find((p: Panel) => p.manifest.route === location.pathname)
+    if (matchedPanel && matchedPanel.id !== activeId) {
+      setActive(matchedPanel.id)
+    }
+  }, [location.pathname])
 
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
@@ -63,7 +72,6 @@ export default function AppShell() {
 
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
-
 
           {isAccountMe && (
             <>
@@ -219,13 +227,13 @@ export default function AppShell() {
                 )
               })}
               <div className="border-t border-border mt-1 pt-1">
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => openPanel(MARKET_ME_MANIFEST)}
-                  >
-                    + {t('nav.marketplace')}
-                  </DropdownMenuItem>
-                </div>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => openPanel(MARKET_ME_MANIFEST)}
+                >
+                  + {t('nav.marketplace')}
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 
