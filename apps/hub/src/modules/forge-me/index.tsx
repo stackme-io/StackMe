@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { ModuleTabs } from '../../shared/ModuleTabs'
 import { GenerateSection } from './GenerateSection'
 import { SchemaSection } from './SchemaSection'
 import type { ParsedField } from './SchemaSection'
@@ -22,8 +23,7 @@ const STARTER: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 const CHAOS: AnomalyType[]   = ANOMALIES.map(a => a.id)
 
 export default function ForgeMePage() {
-
-
+  const [activeTab, setActiveTab]       = useState('work')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [viewMode, setViewMode]         = useState<ViewMode>('raw')
   const [selected, setSelected]         = useState<Set<AnomalyType>>(new Set(STARTER))
@@ -48,7 +48,6 @@ export default function ForgeMePage() {
     setPreset(p)
   }, [])
 
-
   const ratePreview = useMemo(() => {
     if (selected.size === 0) return []
     const total = Math.round(rows * anomalyRate)
@@ -63,14 +62,12 @@ export default function ForgeMePage() {
   return (
     <div className="flex h-full relative overflow-hidden">
 
-      {/* ── Сайдбар ── */}
       <aside
         className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
         style={{ width: sidebarOpen ? '208px' : '0px' }}
       >
         <div className="w-[208px] h-full flex flex-col overflow-hidden">
 
-          {/* Anomaly mix */}
           <div className="p-3 pb-2 border-b border-border">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               Anomaly mix
@@ -99,8 +96,6 @@ export default function ForgeMePage() {
                   <span className="text-[9px] text-muted-foreground/50">{a.badge}</span>
                 </button>
               ))}
-
-              {/* Disabled anomaly types — coming soon */}
               {DISABLED_ANOMALIES.map(a => (
                 <div
                   key={a.label}
@@ -114,7 +109,6 @@ export default function ForgeMePage() {
             </div>
           </div>
 
-          {/* Presets */}
           <div className="p-3 pb-2 border-b border-border">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               Presets
@@ -136,7 +130,6 @@ export default function ForgeMePage() {
             </div>
           </div>
 
-          {/* History */}
           <div className="p-3 flex-1 overflow-y-auto">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               History
@@ -162,7 +155,6 @@ export default function ForgeMePage() {
         </div>
       </aside>
 
-      {/* ── Toggle кнопка сайдбара ── */}
       <button
         onClick={() => setSidebarOpen(o => !o)}
         className="absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
@@ -171,78 +163,151 @@ export default function ForgeMePage() {
         <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
       </button>
 
-      {/* ── Главная область ── */}
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto px-6 pt-5">
 
-        {/* Raw / Schema Match toggle */}
-        <div className="flex mb-5">
-          <div className="flex border border-border rounded-lg overflow-hidden">
-            {(['raw', 'schema'] as ViewMode[]).map(mode => (
-              <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-4 py-1.5 text-xs font-medium transition-colors ${
-                  viewMode === mode
-                    ? 'bg-primary/10 text-foreground'
-                    : 'text-muted-foreground hover:bg-muted/30'
-                }`}
-              >
-                {mode === 'raw' ? 'Raw generator' : 'Schema match'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Rate preview */}
-        {ratePreview.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {ratePreview.map(r => (
-              <span
-                key={r.type}
-                className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground"
-              >
-                {r.count} {r.type}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {viewMode === 'raw' ? (
-          <GenerateSection
-            selectedAnomalies={selected}
-            seed={seed}
-            rows={rows}
-            anomalyRate={anomalyRate}
-            onSeedChange={setSeed}
-            onRowsChange={setRows}
-            onAnomalyRateChange={setAnomalyRate}
-            onGenerated={handleGenerated}
+          <ModuleTabs
+            tabs={[
+              { id: 'work',  label: 'Work'  },
+              { id: 'about', label: 'About' },
+              { id: 'stack', label: 'Stack' },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
           />
-        ) : (
-          <>
-            <SchemaSection onSchemaReady={setSchemaFields} />
-            <GenerateSection
-              selectedAnomalies={selected}
-              seed={seed}
-              rows={rows}
-              anomalyRate={anomalyRate}
-              onSeedChange={setSeed}
-              onRowsChange={setRows}
-              onAnomalyRateChange={setAnomalyRate}
-              onGenerated={handleGenerated}
-              schemaFields={schemaFields}
-            />
-          </>
-        )}
+
+          {activeTab === 'work' && (
+            <>
+              <div className="flex mb-5">
+                <div className="flex border border-border rounded-lg overflow-hidden">
+                  {(['raw', 'schema'] as ViewMode[]).map(mode => (
+                    <button
+                      key={mode}
+                      onClick={() => setViewMode(mode)}
+                      className={`px-4 py-1.5 text-xs font-medium transition-colors ${
+                        viewMode === mode
+                          ? 'bg-primary/10 text-foreground'
+                          : 'text-muted-foreground hover:bg-muted/30'
+                      }`}
+                    >
+                      {mode === 'raw' ? 'Raw generator' : 'Schema match'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {ratePreview.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {ratePreview.map(r => (
+                    <span
+                      key={r.type}
+                      className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground"
+                    >
+                      {r.count} {r.type}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {viewMode === 'raw' ? (
+                <GenerateSection
+                  selectedAnomalies={selected}
+                  seed={seed}
+                  rows={rows}
+                  anomalyRate={anomalyRate}
+                  onSeedChange={setSeed}
+                  onRowsChange={setRows}
+                  onAnomalyRateChange={setAnomalyRate}
+                  onGenerated={handleGenerated}
+                />
+              ) : (
+                <>
+                  <SchemaSection onSchemaReady={setSchemaFields} />
+                  <GenerateSection
+                    selectedAnomalies={selected}
+                    seed={seed}
+                    rows={rows}
+                    anomalyRate={anomalyRate}
+                    onSeedChange={setSeed}
+                    onRowsChange={setRows}
+                    onAnomalyRateChange={setAnomalyRate}
+                    onGenerated={handleGenerated}
+                    schemaFields={schemaFields}
+                  />
+                </>
+              )}
+            </>
+          )}
+
+          {activeTab === 'about' && (
+            <div className="max-w-xl">
+              <h2 className="text-sm font-medium text-foreground mb-1">ForgeMe</h2>
+              <p className="text-xs text-muted-foreground mb-4">v0.1.0 · MIT License</p>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-6">
+                Synthetic dataset generator with injected anomalies. Describe your data in plain text,
+                get a dataset with nulls, duplicates, outliers and more — ready for testing your pipelines.
+              </p>
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">What's next</p>
+              <div className="flex flex-col gap-1.5 mb-6">
+                {[
+                  'LLM-driven schema generation from prompt',
+                  'Export as Parquet or Excel',
+                  'Custom anomaly type configuration',
+                  'Dataset history with auth',
+                ].map(f => (
+                  <div key={f} className="flex items-center justify-between py-1.5 border-b border-border/50">
+                    <span className="text-xs text-muted-foreground">{f}</span>
+                    <button className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors">
+                      + vote
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'stack' && (
+            <div className="max-w-xl">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">Technologies</p>
+              <div className="flex flex-col gap-1.5 mb-6">
+                {[
+                  { name: 'FastAPI',     license: 'MIT', desc: 'Backend framework' },
+                  { name: 'DuckDB-Wasm', license: 'MIT', desc: 'In-browser SQL analytics engine' },
+                  { name: 'React 19',    license: 'MIT', desc: 'UI framework' },
+                  { name: 'Vite',        license: 'MIT', desc: 'Build tool' },
+                  { name: 'Tailwind v4', license: 'MIT', desc: 'Styling' },
+                  { name: 'uv',          license: 'MIT', desc: 'Python package manager' },
+                ].map(t => (
+                  <div key={t.name} className="flex items-center justify-between py-1.5 border-b border-border/50">
+                    <div>
+                      <span className="text-xs text-foreground">{t.name}</span>
+                      <span className="text-xs text-muted-foreground ml-2">{t.desc}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground/50">{t.license}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-4">
+
+                  <a href="https://github.com/stackme-io/StackMe"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  GitHub →
+                </a>
+                <span className="text-xs text-muted-foreground/40">MIT License · free forever · self-hostable</span>
+              </div>
+            </div>
+          )}
+
         </div>
 
-        {/* Footer */}
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {['no setup', 'runs locally', 'no data collected', 'open source'].map(item => (
-              <span key={item} className="text-[10px] text-muted-foreground/60">
-                <span className="mr-1 text-muted-foreground/40">//</span>{item}
-              </span>
+            <span key={item} className="text-[10px] text-muted-foreground/60">
+              <span className="mr-1 text-muted-foreground/40">//</span>{item}
+            </span>
           ))}
         </div>
 
