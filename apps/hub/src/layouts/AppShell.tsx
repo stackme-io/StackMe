@@ -63,16 +63,18 @@ export default function AppShell() {
                       key={panel.id}
                       onClick={() => setActive(panel.id)}
                       className={[
-                        'flex items-center gap-1.5 h-7 pl-2.5 pr-1 rounded-md border text-xs cursor-pointer transition-all select-none',
+                        'flex items-center gap-1.5 h-7 pl-2.5 pr-1 text-xs cursor-pointer transition-all select-none',
                         isActive
-                          ? 'bg-background text-foreground border-border font-medium'
-                          : 'bg-muted/40 text-muted-foreground border-transparent hover:border-border hover:text-foreground',
-                        panel.pinned
+                          ? 'text-foreground font-medium'
+                          : 'bg-muted/40 text-muted-foreground rounded-md border border-transparent hover:border-border hover:text-foreground',
+                        panel.pinned && !isActive
                           ? 'border-l-2 border-l-primary'
                           : '',
                       ].join(' ')}
                     >
+                      {isActive && <span className="text-muted-foreground font-light">(</span>}
                       <span>{panel.manifest.name}</span>
+                      {isActive && <span className="text-muted-foreground font-light">)</span>}
                       <button
                         onClick={(e) => { e.stopPropagation(); togglePin(panel.id) }}
                         className={[
