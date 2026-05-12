@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, LockOpen, X, Sun, Moon, Globe } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +36,7 @@ export default function AppShell() {
   const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
+  const navigate = useNavigate()
   const { openPanel, panels, activeId, closePanel, togglePin, setActive } = useWorkspace()
 
   useEffect(() => {
@@ -44,11 +45,15 @@ export default function AppShell() {
     }
   }, [])
 
+  useEffect(() => {
+    const active = panels.find(p => p.id === activeId)
+    if (active) navigate(active.manifest.route)
+  }, [activeId])
+
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
     : MODULE_REGISTRY.filter(m => DEFAULT_MODULE_IDS.includes(m.id))
 
-  const isMarketMe = location.pathname === '/market-me'
   const isAccountMe = location.pathname === '/account-me'
 
   return (
@@ -59,12 +64,7 @@ export default function AppShell() {
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
 
-          {isMarketMe && (
-            <>
-              <span className="text-border">|</span>
-              <span className="text-xs font-medium text-foreground">MarketMe</span>
-            </>
-          )}
+
           {isAccountMe && (
             <>
               <span className="text-border">|</span>
