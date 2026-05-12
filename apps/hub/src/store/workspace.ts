@@ -9,40 +9,41 @@ export interface Panel {
 
 interface WorkspaceStore {
   panels: Panel[]
+  activeId: string | null
   openPanel: (manifest: ModuleManifest) => void
   closePanel: (id: string) => void
   togglePin: (id: string) => void
+  setActive: (id: string) => void
 }
 
 export const useWorkspace = create<WorkspaceStore>()(
   (set, get) => ({
     panels: [],
+    activeId: null,
 
     openPanel: (manifest: ModuleManifest) => {
       const { panels } = get()
       const alreadyOpen = panels.find((p: Panel) => p.manifest.id === manifest.id)
-      if (alreadyOpen) return
 
-      const pinnedPanels = panels.filter((p: Panel) => p.pinned)
-      const unpinnedPanels = panels.filter((p: Panel) => !p.pinned)
-
-      const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
-
-      if (panels.length === 0 || pinnedPanels.length === 0) {
-        set({ panels: [newPanel] })
+      if (alreadyOpen) {
+        set({ activeId: manifest.id })
         return
       }
 
-      if (pinnedPanels.length >= 2) return
+      const pinnedPanels = panels.filter((p: Panel) => p.pinned)
+      const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
 
-      const next = [...pinnedPanels, ...unpinnedPanels.slice(1), newPanel].slice(0, 2)
-      set({ panels: next })
+      const next = [...pinnedPanels, newPanel]
+      set({ panels: next, activeId: manifest.id })
     },
 
     closePanel: (id: string) => {
-      set((state: WorkspaceStore) => ({
-        panels: state.panels.filter((p: Panel) => p.id !== id),
-      }))
+      const { panels, activeId } = get()
+      const next = panels.filter((p: Panel) => p.id !== id)
+      const nextActiveId = id === activeId
+        ? (next[next.length - 1]?.id ?? null)
+        : activeId
+      set({ panels: next, activeId: nextActiveId })
     },
 
     togglePin: (id: string) => {
@@ -51,6 +52,10 @@ export const useWorkspace = create<WorkspaceStore>()(
           p.id === id ? { ...p, pinned: !p.pinned } : p
         ),
       }))
+    },
+
+    setActive: (id: string) => {
+      set({ activeId: id })
     },
   })
 )

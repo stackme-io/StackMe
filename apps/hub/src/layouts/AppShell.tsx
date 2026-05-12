@@ -1,12 +1,12 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Lock, LockOpen, X, Sun, Moon, Globe } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
-import { Sun, Moon, Globe } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
-import { useWorkspace } from '../store/workspace'
+import { useWorkspace, type Panel } from '../store/workspace'
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -22,7 +22,7 @@ export default function AppShell() {
   const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
-  const { openPanel, panels } = useWorkspace()
+  const { openPanel, panels, activeId, closePanel, togglePin, setActive } = useWorkspace()
 
   const visibleModules = isSignedIn
     ? MODULE_REGISTRY.filter(m => activeModuleIds.includes(m.id))
@@ -38,6 +38,7 @@ export default function AppShell() {
 
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
+
           {isMarketMe && (
             <>
               <span className="text-border">|</span>
@@ -48,6 +49,54 @@ export default function AppShell() {
             <>
               <span className="text-border">|</span>
               <span className="text-xs font-medium text-foreground">AccountMe</span>
+            </>
+          )}
+
+          {panels.length > 0 && (
+            <>
+              <span className="text-border">|</span>
+              <div className="flex items-center gap-1">
+                {panels.map((panel: Panel) => {
+                  const isActive = panel.id === activeId
+                  return (
+                    <div
+                      key={panel.id}
+                      onClick={() => setActive(panel.id)}
+                      className={[
+                        'flex items-center gap-1.5 h-7 pl-2.5 pr-1 rounded-md border text-xs cursor-pointer transition-all select-none',
+                        isActive
+                          ? 'bg-background text-foreground border-border font-medium'
+                          : 'bg-muted/40 text-muted-foreground border-transparent hover:border-border hover:text-foreground',
+                        panel.pinned
+                          ? 'border-l-2 border-l-primary'
+                          : '',
+                      ].join(' ')}
+                    >
+                      <span>{panel.manifest.name}</span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); togglePin(panel.id) }}
+                        className={[
+                          'flex items-center justify-center w-4 h-4 rounded transition-colors hover:bg-muted',
+                          panel.pinned ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                        ].join(' ')}
+                        title={panel.pinned ? 'Unlock' : 'Lock'}
+                      >
+                        {panel.pinned
+                          ? <Lock className="w-3 h-3" />
+                          : <LockOpen className="w-3 h-3" />
+                        }
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); closePanel(panel.id) }}
+                        className="flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        title="Close"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
             </>
           )}
         </div>
@@ -141,7 +190,7 @@ export default function AppShell() {
                 Services
               </div>
               {visibleModules.map(module => {
-                const isOpen = panels.some(p => p.id === module.id)
+                const isOpen = panels.some((p: Panel) => p.id === module.id)
                 return (
                   <DropdownMenuItem
                     key={module.id}
