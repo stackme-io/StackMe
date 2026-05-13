@@ -1,0 +1,12 @@
+{
+  "title": "ForgeMe",
+  "version": "v0.1.0 · Licencia MIT",
+  "description": "Generador de conjuntos de datos sintéticos con anomalías inyectadas. Describe tus datos en texto plano, obtén un dataset con nulos, duplicados, valores atípicos y más — listo para probar tus pipelines.",
+  "whatsnextLabel": "Próximamente",
+  "whatsnext": [
+    "Generación de esquema por LLM desde prompt",
+    "Exportar como Parquet o Excel",
+    "Configuración de tipos de anomalía personalizados",
+    "Historial de datasets con autenticación"
+  ]
+}

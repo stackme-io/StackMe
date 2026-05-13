@@ -9,11 +9,11 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ loading, progress, fileName, onFile }: UploadZoneProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation('analyze-me')
   const [tooltipVisible, setTooltip] = useState(false)
-  const [dragging, setDragging]      = useState(false)
+  const [dragging, setDragging] = useState(false)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const badgeRef   = useRef<HTMLDivElement>(null)
+  const badgeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!tooltipVisible) return
@@ -48,12 +48,12 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
   }, [loading, onFile])
 
   const mainText = loading
-    ? progress ?? t('analyze.analyzing')
+    ? progress ?? t('analyzing')
     : dragging
-    ? t('analyze.dropzoneRelease')
+    ? t('dropzoneRelease')
     : fileName
-    ? t('analyze.dropzoneReplace')
-    : t('analyze.dropzone')
+    ? t('dropzoneReplace')
+    : t('dropzone')
 
   return (
     <div className="relative">
@@ -99,7 +99,6 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
           </div>
         )}
 
-        {/* Privacy badge — inside label, in flow */}
         <div className="mt-1 relative" ref={badgeRef}>
           <button
             type="button"
@@ -110,7 +109,7 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
               <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
             </svg>
-            <span className="text-[10px] text-muted-foreground">{t('analyze.privacyBadge')}</span>
+            <span className="text-[10px] text-muted-foreground">{t('privacyBadge')}</span>
           </button>
 
           {tooltipVisible && (
@@ -120,8 +119,8 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
               className="absolute top-8 left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground cursor-pointer"
             >
               <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
-              <p className="font-medium text-foreground mb-1">{t('analyze.privacyTitle')}</p>
-              <p>{t('analyze.privacyBody')}</p>
+              <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
+              <p>{t('privacyBody')}</p>
             </div>
           )}
         </div>

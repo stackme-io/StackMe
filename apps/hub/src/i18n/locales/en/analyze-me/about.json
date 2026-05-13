@@ -1,0 +1,12 @@
+{
+  "title": "AnalyzeMe",
+  "version": "v0.1.0 · MIT License",
+  "description": "Local-first anomaly detection for real datasets. Upload a CSV or JSON file — the file never leaves your browser. Analysis runs entirely in DuckDB-Wasm.",
+  "whatsnextLabel": "What's next",
+  "whatsnext": [
+    "Export anomaly report as CSV",
+    "Select key columns for duplicate detection",
+    "Z-score outlier detection",
+    "Excel and Parquet support"
+  ]
+}

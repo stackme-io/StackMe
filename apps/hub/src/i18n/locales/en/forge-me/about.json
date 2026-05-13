@@ -1,0 +1,12 @@
+{
+  "title": "ForgeMe",
+  "version": "v0.1.0 · MIT License",
+  "description": "Synthetic dataset generator with injected anomalies. Describe your data in plain text, get a dataset with nulls, duplicates, outliers and more — ready for testing your pipelines.",
+  "whatsnextLabel": "What's next",
+  "whatsnext": [
+    "LLM-driven schema generation from prompt",
+    "Export as Parquet or Excel",
+    "Custom anomaly type configuration",
+    "Dataset history with auth"
+  ]
+}

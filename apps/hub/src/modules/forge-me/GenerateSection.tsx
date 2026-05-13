@@ -41,14 +41,14 @@ export function GenerateSection({
   onGenerated,
   schemaFields,
 }: GenerateSectionProps) {
-  const { t } = useTranslation()
-  const [format, setFormat]               = useState<DataFormat>('json')
-  const [result, setResult]               = useState<GenerateResponse | null>(null)
-  const [tableData, setTableData]         = useState<any[]>([])
-  const [filterMode, setFilterMode]       = useState<FilterMode>('all')
-  const [loading, setLoading]             = useState(false)
+  const { t } = useTranslation('forge-me')
+  const [format, setFormat]             = useState<DataFormat>('json')
+  const [result, setResult]             = useState<GenerateResponse | null>(null)
+  const [tableData, setTableData]       = useState<any[]>([])
+  const [filterMode, setFilterMode]     = useState<FilterMode>('all')
+  const [loading, setLoading]           = useState(false)
   const [filterLoading, setFilterLoading] = useState(false)
-  const [error, setError]                 = useState<string | null>(null)
+  const [error, setError]               = useState<string | null>(null)
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -68,6 +68,7 @@ export function GenerateSection({
           ? schemaFields.map(f => ({ name: f.name, type: f.type }))
           : undefined,
       })
+
       setResult(response.data)
 
       if (format === 'json') {
@@ -85,9 +86,9 @@ export function GenerateSection({
       })
     } catch (err: any) {
       if (err?.response?.status === 429) {
-        setError(t('forge.rateLimitError'))
+        setError(t('rateLimitError'))
       } else {
-        setError(t('forge.apiError'))
+        setError(t('apiError'))
       }
       console.error(err)
     } finally {
@@ -118,9 +119,9 @@ export function GenerateSection({
   const handleDownload = () => {
     if (!result) return
     const blob = new Blob([result.data], { type: MIME[result.format] })
-    const url  = URL.createObjectURL(blob)
-    const a    = document.createElement('a')
-    a.href     = url
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
     a.download = `forgeme_seed${seed}_${rows}rows.${EXT[result.format]}`
     a.click()
     URL.revokeObjectURL(url)
@@ -129,13 +130,11 @@ export function GenerateSection({
   return (
     <div className="flex flex-col gap-5">
 
-      {/* Controls — constrained width */}
       <div className="flex flex-col gap-5 max-w-2xl">
-
         <div className="flex gap-4">
           <div className="flex flex-col gap-1.5 flex-1">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {t('forge.format')}
+              {t('format')}
             </label>
             <select
               value={format}
@@ -150,7 +149,7 @@ export function GenerateSection({
 
           <div className="flex flex-col gap-1.5 flex-1">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {t('forge.rowCount')}
+              {t('rowCount')}
             </label>
             <input
               type="number"
@@ -163,7 +162,7 @@ export function GenerateSection({
 
           <div className="flex flex-col gap-1.5 flex-1">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {t('forge.anomalyRate')}
+              {t('anomalyRate')}
             </label>
             <input
               type="number"
@@ -175,7 +174,6 @@ export function GenerateSection({
           </div>
         </div>
 
-        {/* Seed row */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">seed=</span>
           <span className="text-xs text-foreground font-mono">{seed}</span>
@@ -188,33 +186,29 @@ export function GenerateSection({
           </button>
         </div>
 
-        {/* Generate button */}
         <button
           onClick={handleSubmit}
           disabled={loading || selectedAnomalies.size === 0}
           className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? t('forge.generating') : t('forge.generate')}
+          {loading ? t('generating') : t('generate')}
         </button>
-
       </div>
 
-      {/* Error */}
       {error && (
         <div className="px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20 max-w-2xl">
           {error}
         </div>
       )}
 
-      {/* Stat bar + Download */}
       {result && (
         <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
           <div className="flex gap-4">
             <span className="text-muted-foreground">
-              {t('forge.rows')}: <strong className="text-foreground">{result.rows_total}</strong>
+              {t('rows')}: <strong className="text-foreground">{result.rows_total}</strong>
             </span>
             <span className="text-muted-foreground">
-              {t('forge.anomalies')}: <strong className="text-amber-500">{result.anomalies_count}</strong>
+              {t('anomalies')}: <strong className="text-amber-500">{result.anomalies_count}</strong>
             </span>
             <span className="text-muted-foreground">
               Format: <strong className="text-foreground">{result.format.toUpperCase()}</strong>
@@ -232,7 +226,6 @@ export function GenerateSection({
         </div>
       )}
 
-      {/* Table — full width */}
       {result && format !== 'json' && (
         <div className="flex items-center justify-center px-6 py-10 rounded-lg border border-border border-dashed text-center">
           <div className="flex flex-col gap-1.5">
@@ -245,30 +238,31 @@ export function GenerateSection({
           </div>
         </div>
       )}
+
       {tableData.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground uppercase tracking-wide">
-              {t('forge.dataFromDuckDB')} ({tableData.length})
+              {t('dataFromDuckDB')} ({tableData.length})
             </span>
             {format === 'json' && (
-            <div className="flex gap-2">
-              {(['all', 'anomalies'] as FilterMode[]).map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => handleFilter(mode)}
-                  disabled={filterLoading}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
-                    filterMode === mode
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-background text-muted-foreground border-border hover:text-foreground'
-                  }`}
-                >
-                  {mode === 'all' ? t('forge.allRows') : `⚠ ${t('forge.anomaliesOnly')}`}
-                </button>
-              ))}
-            </div>
-          )}
+              <div className="flex gap-2">
+                {(['all', 'anomalies'] as FilterMode[]).map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => handleFilter(mode)}
+                    disabled={filterLoading}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+                      filterMode === mode
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background text-muted-foreground border-border hover:text-foreground'
+                    }`}
+                  >
+                    {mode === 'all' ? t('allRows') : `⚠ ${t('anomaliesOnly')}`}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <AnomalyTable
             tableData={tableData}

@@ -1,0 +1,13 @@
+{
+  "technologiesLabel": "Technologies",
+  "items": [
+    { "name": "FastAPI",     "license": "MIT", "desc": "Backend framework" },
+    { "name": "DuckDB-Wasm", "license": "MIT", "desc": "In-browser SQL analytics engine" },
+    { "name": "React 19",    "license": "MIT", "desc": "UI framework" },
+    { "name": "Vite",        "license": "MIT", "desc": "Build tool" },
+    { "name": "Tailwind v4", "license": "MIT", "desc": "Styling" },
+    { "name": "uv",          "license": "MIT", "desc": "Python package manager" }
+  ],
+  "github": "GitHub →",
+  "badge": "MIT License · free forever · self-hostable"
+}

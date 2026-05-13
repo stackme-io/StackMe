@@ -1,0 +1,13 @@
+{
+  "technologiesLabel": "Технології",
+  "items": [
+    { "name": "FastAPI",     "license": "MIT", "desc": "Backend-фреймворк" },
+    { "name": "DuckDB-Wasm", "license": "MIT", "desc": "SQL-рушій аналітики в браузері" },
+    { "name": "React 19",    "license": "MIT", "desc": "UI-фреймворк" },
+    { "name": "Vite",        "license": "MIT", "desc": "Інструмент збірки" },
+    { "name": "Tailwind v4", "license": "MIT", "desc": "Стилізація" },
+    { "name": "uv",          "license": "MIT", "desc": "Менеджер пакетів Python" }
+  ],
+  "github": "GitHub →",
+  "badge": "Ліцензія MIT · безкоштовно назавжди · self-hostable"
+}
