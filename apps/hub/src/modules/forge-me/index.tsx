@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { GenerateSection } from './GenerateSection'
 import { SchemaSection } from './SchemaSection'
@@ -33,6 +34,7 @@ export default function ForgeMePage() {
   const [anomalyRate, setAnomalyRate]   = useState(0.05)
   const [history, setHistory]           = useState<HistoryEntry[]>([])
   const [schemaFields, setSchemaFields] = useState<ParsedField[]>([])
+  const { t } = useTranslation('forge-me')
 
   const toggleAnomaly = useCallback((id: AnomalyType) => {
     setSelected(prev => {
@@ -241,20 +243,14 @@ export default function ForgeMePage() {
 
           {activeTab === 'about' && (
             <div className="max-w-xl">
-              <h2 className="text-sm font-medium text-foreground mb-1">ForgeMe</h2>
-              <p className="text-xs text-muted-foreground mb-4">v0.1.0 · MIT License</p>
-              <p className="text-xs text-muted-foreground leading-relaxed mb-6">
-                Synthetic dataset generator with injected anomalies. Describe your data in plain text,
-                get a dataset with nulls, duplicates, outliers and more — ready for testing your pipelines.
+              <h2 className="text-sm font-medium text-foreground mb-1">{t('about.title')}</h2>
+              <p className="text-xs text-muted-foreground mb-4">{t('about.version')}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-6">{t('about.description')}</p>
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">
+                {t('about.whatsnextLabel')}
               </p>
-              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">What's next</p>
               <div className="flex flex-col gap-1.5 mb-6">
-                {[
-                  'LLM-driven schema generation from prompt',
-                  'Export as Parquet or Excel',
-                  'Custom anomaly type configuration',
-                  'Dataset history with auth',
-                ].map(f => (
+                {(t('about.whatsnext', { returnObjects: true }) as string[]).map(f => (
                   <div key={f} className="flex items-center justify-between py-1.5 border-b border-border/50">
                     <span className="text-xs text-muted-foreground">{f}</span>
                     <button className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors">
@@ -268,35 +264,30 @@ export default function ForgeMePage() {
 
           {activeTab === 'stack' && (
             <div className="max-w-xl">
-              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">Technologies</p>
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">
+                {t('stack.technologiesLabel')}
+              </p>
               <div className="flex flex-col gap-1.5 mb-6">
-                {[
-                  { name: 'FastAPI',     license: 'MIT', desc: 'Backend framework' },
-                  { name: 'DuckDB-Wasm', license: 'MIT', desc: 'In-browser SQL analytics engine' },
-                  { name: 'React 19',    license: 'MIT', desc: 'UI framework' },
-                  { name: 'Vite',        license: 'MIT', desc: 'Build tool' },
-                  { name: 'Tailwind v4', license: 'MIT', desc: 'Styling' },
-                  { name: 'uv',          license: 'MIT', desc: 'Python package manager' },
-                ].map(t => (
-                  <div key={t.name} className="flex items-center justify-between py-1.5 border-b border-border/50">
+                {(t('stack.items', { returnObjects: true }) as { name: string; license: string; desc: string }[]).map(item => (
+                  <div key={item.name} className="flex items-center justify-between py-1.5 border-b border-border/50">
                     <div>
-                      <span className="text-xs text-foreground">{t.name}</span>
-                      <span className="text-xs text-muted-foreground ml-2">{t.desc}</span>
+                      <span className="text-xs text-foreground">{item.name}</span>
+                      <span className="text-xs text-muted-foreground ml-2">{item.desc}</span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground/50">{t.license}</span>
+                    <span className="text-[10px] text-muted-foreground/50">{item.license}</span>
                   </div>
                 ))}
               </div>
               <div className="flex items-center gap-4">
-
-                  <a href="https://github.com/stackme-io/StackMe"
+                <a
+                  href="https://github.com/stackme-io/StackMe"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  GitHub →
+                  {t('stack.github')}
                 </a>
-                <span className="text-xs text-muted-foreground/40">MIT License · free forever · self-hostable</span>
+                <span className="text-xs text-muted-foreground/40">{t('stack.badge')}</span>
               </div>
             </div>
           )}
@@ -304,7 +295,7 @@ export default function ForgeMePage() {
         </div>
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
-          {['no setup', 'runs locally', 'no data collected', 'open source'].map(item => (
+          {(t('footer.badges', { returnObjects: true }) as string[]).map(item => (
             <span key={item} className="text-[10px] text-muted-foreground/60">
               <span className="mr-1 text-muted-foreground/40">//</span>{item}
             </span>

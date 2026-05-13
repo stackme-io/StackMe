@@ -1,0 +1,29 @@
+{
+  "about": {
+    "title": "AnalyzeMe",
+    "version": "v0.1.0 · Ліцензія MIT",
+    "description": "Локальне виявлення аномалій для реальних наборів даних. Завантажте CSV або JSON файл — він ніколи не покидає ваш браузер. Аналіз повністю виконується в DuckDB-Wasm.",
+    "whatsnextLabel": "Що далі",
+    "whatsnext": [
+      "Експорт звіту аномалій як CSV",
+      "Вибір ключових стовпців для виявлення дублікатів",
+      "Виявлення викидів за Z-score",
+      "Підтримка Excel та Parquet"
+    ]
+  },
+  "stack": {
+    "technologiesLabel": "Технології",
+    "items": [
+      { "name": "DuckDB-Wasm", "license": "MIT", "desc": "SQL-рушій аналітики в браузері" },
+      { "name": "React 19",    "license": "MIT", "desc": "UI-фреймворк" },
+      { "name": "Vite",        "license": "MIT", "desc": "Інструмент збірки" },
+      { "name": "Tailwind v4", "license": "MIT", "desc": "Стилізація" },
+      { "name": "Vitest",      "license": "MIT", "desc": "Модульне тестування" }
+    ],
+    "github": "GitHub →",
+    "badge": "Ліцензія MIT · безкоштовно назавжди · self-hostable"
+  },
+  "footer": {
+    "badges": ["без налаштувань", "працює локально", "дані не збираються", "відкритий код"]
+  }
+}

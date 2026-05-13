@@ -1,0 +1,29 @@
+{
+  "about": {
+    "title": "AnalyzeMe",
+    "version": "v0.1.0 · MIT License",
+    "description": "Local-first anomaly detection for real datasets. Upload a CSV or JSON file — the file never leaves your browser. Analysis runs entirely in DuckDB-Wasm.",
+    "whatsnextLabel": "What's next",
+    "whatsnext": [
+      "Export anomaly report as CSV",
+      "Select key columns for duplicate detection",
+      "Z-score outlier detection",
+      "Excel and Parquet support"
+    ]
+  },
+  "stack": {
+    "technologiesLabel": "Technologies",
+    "items": [
+      { "name": "DuckDB-Wasm", "license": "MIT", "desc": "In-browser SQL analytics engine" },
+      { "name": "React 19",    "license": "MIT", "desc": "UI framework" },
+      { "name": "Vite",        "license": "MIT", "desc": "Build tool" },
+      { "name": "Tailwind v4", "license": "MIT", "desc": "Styling" },
+      { "name": "Vitest",      "license": "MIT", "desc": "Unit testing" }
+    ],
+    "github": "GitHub →",
+    "badge": "MIT License · free forever · self-hostable"
+  },
+  "footer": {
+    "badges": ["no setup", "runs locally", "no data collected", "open source"]
+  }
+}

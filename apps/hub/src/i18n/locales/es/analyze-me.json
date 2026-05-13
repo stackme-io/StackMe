@@ -1,0 +1,29 @@
+{
+  "about": {
+    "title": "AnalyzeMe",
+    "version": "v0.1.0 · Licencia MIT",
+    "description": "Detección de anomalías local para conjuntos de datos reales. Sube un archivo CSV o JSON — el archivo nunca sale de tu navegador. El análisis se ejecuta completamente en DuckDB-Wasm.",
+    "whatsnextLabel": "Próximamente",
+    "whatsnext": [
+      "Exportar informe de anomalías como CSV",
+      "Seleccionar columnas clave para detección de duplicados",
+      "Detección de valores atípicos por Z-score",
+      "Soporte para Excel y Parquet"
+    ]
+  },
+  "stack": {
+    "technologiesLabel": "Tecnologías",
+    "items": [
+      { "name": "DuckDB-Wasm", "license": "MIT", "desc": "Motor SQL analítico en el navegador" },
+      { "name": "React 19",    "license": "MIT", "desc": "Framework de UI" },
+      { "name": "Vite",        "license": "MIT", "desc": "Herramienta de compilación" },
+      { "name": "Tailwind v4", "license": "MIT", "desc": "Estilos" },
+      { "name": "Vitest",      "license": "MIT", "desc": "Pruebas unitarias" }
+    ],
+    "github": "GitHub →",
+    "badge": "Licencia MIT · gratis para siempre · auto-hospedable"
+  },
+  "footer": {
+    "badges": ["sin configuración", "funciona localmente", "sin datos recopilados", "código abierto"]
+  }
+}
