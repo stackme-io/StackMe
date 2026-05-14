@@ -22,14 +22,14 @@ export default function AnalyzeMePage() {
 
         {activeTab === 'about' && (
           <div className="max-w-xl">
-            <h2 className="text-sm font-medium text-foreground mb-1">{t('about.title')}</h2>
-            <p className="text-xs text-muted-foreground mb-4">{t('about.version')}</p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-6">{t('about.description')}</p>
+            <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
+            <p className="text-xs text-muted-foreground mb-4">{t('version')}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-6">{t('description')}</p>
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">
-              {t('about.whatsnextLabel')}
+              {t('whatsnextLabel')}
             </p>
             <div className="flex flex-col gap-1.5 mb-6">
-              {(t('about.whatsnext', { returnObjects: true }) as string[]).map(f => (
+              {(t('whatsnext', { returnObjects: true }) as string[]).map(f => (
                 <div key={f} className="flex items-center justify-between py-1.5 border-b border-border/50">
                   <span className="text-xs text-muted-foreground">{f}</span>
                   <button className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors">
@@ -44,10 +44,10 @@ export default function AnalyzeMePage() {
         {activeTab === 'stack' && (
           <div className="max-w-xl">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">
-              {t('stack.technologiesLabel')}
+              {t('technologiesLabel')}
             </p>
             <div className="flex flex-col gap-1.5 mb-6">
-              {(t('stack.items', { returnObjects: true }) as { name: string; license: string; desc: string }[]).map(item => (
+              {(t('items', { returnObjects: true }) as { name: string; license: string; desc: string }[]).map(item => (
                 <div key={item.name} className="flex items-center justify-between py-1.5 border-b border-border/50">
                   <div>
                     <span className="text-xs text-foreground">{item.name}</span>
@@ -64,16 +64,16 @@ export default function AnalyzeMePage() {
                 rel="noopener noreferrer"
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                {t('stack.github')}
+                {t('github')}
               </a>
-              <span className="text-xs text-muted-foreground/40">{t('stack.badge')}</span>
+              <span className="text-xs text-muted-foreground/40">{t('badge')}</span>
             </div>
           </div>
         )}
       </main>
 
       <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
-        {(t('footer.badges', { returnObjects: true }) as string[]).map(item => (
+        {(t('badges', { returnObjects: true }) as string[]).map(item => (
           <span key={item} className="text-[10px] text-muted-foreground/60">
             <span className="mr-1 text-muted-foreground/40">//</span>{item}
           </span>
