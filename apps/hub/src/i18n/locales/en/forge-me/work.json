@@ -21,5 +21,7 @@
   "anomaliesFound": "Anomalies found",
   "apiError": "Failed to connect to API. Make sure the backend is running.",
   "rateLimitError": "Too many requests. Please wait a moment and try again.",
-  "analyzeError": "Failed to analyze file. Make sure it is a valid CSV."
+  "analyzeError": "Failed to analyze file. Make sure it is a valid CSV.",
+  "rowLimitHint": "max {{max}} rows",
+  "rowLimitError": "Row limit exceeded. Maximum is {{max}} rows. Self-host for unlimited →"
 }

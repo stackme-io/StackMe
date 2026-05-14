@@ -30,6 +30,8 @@ const EXT: Record<DataFormat, string> = {
   sql:  'sql',
 }
 
+const MAX_ROWS = 1000
+
 export function GenerateSection({
   selectedAnomalies,
   seed,
@@ -42,15 +44,18 @@ export function GenerateSection({
   schemaFields,
 }: GenerateSectionProps) {
   const { t } = useTranslation('forge-me')
-  const [format, setFormat]             = useState<DataFormat>('json')
-  const [result, setResult]             = useState<GenerateResponse | null>(null)
-  const [tableData, setTableData]       = useState<any[]>([])
-  const [filterMode, setFilterMode]     = useState<FilterMode>('all')
-  const [loading, setLoading]           = useState(false)
+  const [format, setFormat]               = useState<DataFormat>('json')
+  const [result, setResult]               = useState<GenerateResponse | null>(null)
+  const [tableData, setTableData]         = useState<any[]>([])
+  const [filterMode, setFilterMode]       = useState<FilterMode>('all')
+  const [loading, setLoading]             = useState(false)
   const [filterLoading, setFilterLoading] = useState(false)
-  const [error, setError]               = useState<string | null>(null)
+  const [error, setError]                 = useState<string | null>(null)
+
+  const rowsExceeded = rows > MAX_ROWS
 
   const handleSubmit = async () => {
+    if (rowsExceeded) return
     setLoading(true)
     setError(null)
     setResult(null)
@@ -148,16 +153,37 @@ export function GenerateSection({
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {t('rowCount')}
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t('rowCount')}
+              </label>
+              <span className="text-[10px] text-muted-foreground/50">
+                {t('rowLimitHint', { max: MAX_ROWS })}
+              </span>
+            </div>
             <input
               type="number"
               value={rows}
               onChange={e => onRowsChange(Number(e.target.value))}
-              min={10} max={10000}
-              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              min={10}
+              max={MAX_ROWS}
+              className={`px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-colors ${
+                rowsExceeded ? 'border-destructive/50 focus:ring-destructive/30' : 'border-border'
+              }`}
             />
+            {rowsExceeded && (
+              <p className="text-[11px] text-destructive/80 flex items-center gap-1">
+                {t('rowLimitError', { max: MAX_ROWS }).split('→')[0]}
+                <a
+                  href="https://github.com/stackme-io/StackMe"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-destructive transition-colors"
+                >
+                  →
+                </a>
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1">
@@ -188,7 +214,7 @@ export function GenerateSection({
 
         <button
           onClick={handleSubmit}
-          disabled={loading || selectedAnomalies.size === 0}
+          disabled={loading || selectedAnomalies.size === 0 || rowsExceeded}
           className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? t('generating') : t('generate')}

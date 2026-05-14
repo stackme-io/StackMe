@@ -1,7 +1,8 @@
 from .schemas import GenerateRequest, GenerateResponse, AnomalyInfo, AnomalyType, AnalyzeResponse
 from .anomaly_engine import generate_clean_dataset, inject_anomalies, serialize_dataset
 from .injectors import INJECTORS
-from fastapi import APIRouter, UploadFile, File, Request
+
+from fastapi import APIRouter, UploadFile, File, Request, HTTPException
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 import io
@@ -10,6 +11,8 @@ import pandas as pd
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
+
+MAX_ROWS = 1000
 
 
 @router.get("/health")
@@ -20,11 +23,9 @@ async def health():
 def generate_schema_dataset(rows: int, seed: int, schema_fields: list) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     data = {}
-
     for field in schema_fields:
         name = field.name
         ftype = field.type
-
         if ftype == "int":
             data[name] = rng.integers(low=1000, high=9999, size=rows).tolist()
         elif ftype == "float":
@@ -35,13 +36,18 @@ def generate_schema_dataset(rows: int, seed: int, schema_fields: list) -> pd.Dat
             ).astype(str).tolist()
         else:
             data[name] = [f"{name}_{i + 1}" for i in range(rows)]
-
     return pd.DataFrame(data)
 
 
 @router.post("/generate", response_model=GenerateResponse)
 @limiter.limit("20/minute")
 async def generate(request: Request, body: GenerateRequest):
+    if body.rows > MAX_ROWS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Row limit exceeded. Maximum allowed is {MAX_ROWS} rows."
+        )
+
     active_types = body.anomaly_types or []
 
     if body.schema:
@@ -60,7 +66,6 @@ async def generate(request: Request, body: GenerateRequest):
         anomaly_types=active_types,
     )
 
-    valid_types = set(AnomalyType.__members__.values())
     anomalies = []
     for a in anomaly_records:
         try:
@@ -90,11 +95,9 @@ async def generate(request: Request, body: GenerateRequest):
 @limiter.limit("20/minute")
 async def analyze(request: Request, file: UploadFile = File(...)):
     content = await file.read()
-
     try:
         df = pd.read_csv(io.StringIO(content.decode("utf-8")))
     except Exception:
-        from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="Invalid CSV file")
 
     from .anomaly_engine import detect_anomalies

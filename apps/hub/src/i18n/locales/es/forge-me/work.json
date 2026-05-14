@@ -21,5 +21,7 @@
   "anomaliesFound": "Anomalías encontradas",
   "apiError": "Error al conectar con la API. Asegúrate de que el backend está en ejecución.",
   "rateLimitError": "Demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.",
-  "analyzeError": "Error al analizar el archivo. Asegúrate de que es un CSV válido."
+  "analyzeError": "Error al analizar el archivo. Asegúrate de que es un CSV válido.",
+  "rowLimitHint": "máx {{max}} filas",
+  "rowLimitError": "Límite de filas superado. El máximo es {{max}} filas. Instálalo tú mismo para sin límites →"
 }
