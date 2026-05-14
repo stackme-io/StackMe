@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { UploadZone } from './UploadZone'
 import { AnalysisSummary } from './AnalysisSummary'
@@ -9,6 +10,7 @@ type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier'
 
 export function AnalyzeSection() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
+  const { t } = useTranslation('analyze-me')
   const [filter, setFilter] = useState<FilterType>('all')
 
   const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
@@ -32,7 +34,7 @@ export function AnalyzeSection() {
 
       {sizeWarn && !loading && result && (
         <div className="mt-2 px-4 py-2 rounded-lg bg-amber-950/20 text-amber-400 text-xs border border-amber-900/40">
-          Large file detected — analysis may take longer than usual.
+          {t('sizeWarning')}
         </div>
       )}
 
