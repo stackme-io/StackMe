@@ -68,6 +68,7 @@ export default function ForgeMePage() {
       >
         <div className="w-[208px] h-full flex flex-col overflow-hidden">
 
+          {/* Anomaly mix */}
           <div className="p-3 pb-2 border-b border-border">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               Anomaly mix
@@ -87,11 +88,7 @@ export default function ForgeMePage() {
                   }`}
                 >
                   <span className={`w-3 h-3 rounded-sm border flex-shrink-0 flex items-center justify-center ${
-                    a.disabled
-                      ? 'border-border'
-                      : selected.has(a.id)
-                      ? 'bg-primary border-primary'
-                      : 'border-border'
+                    !a.disabled && selected.has(a.id) ? 'bg-primary border-primary' : 'border-border'
                   }`}>
                     {!a.disabled && selected.has(a.id) && (
                       <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -108,6 +105,7 @@ export default function ForgeMePage() {
             </div>
           </div>
 
+          {/* Presets */}
           <div className="p-3 pb-2 border-b border-border">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               Presets
@@ -133,6 +131,29 @@ export default function ForgeMePage() {
             </div>
           </div>
 
+          {/* Mode — п.1 */}
+          <div className="p-3 pb-2 border-b border-border">
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
+              Mode
+            </p>
+            <div className="flex flex-col gap-1.5">
+              {(['raw', 'schema'] as ViewMode[]).map(mode => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`px-2 py-1.5 rounded-md text-xs text-left border transition-colors ${
+                    viewMode === mode
+                      ? 'border-primary/50 bg-primary/10 text-foreground'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-muted/30'
+                  }`}
+                >
+                  {mode === 'raw' ? 'Raw generator' : 'Schema match'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* History */}
           <div className="p-3 flex-1 overflow-y-auto">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               History
@@ -181,24 +202,6 @@ export default function ForgeMePage() {
 
           {activeTab === 'work' && (
             <>
-              <div className="flex mb-5">
-                <div className="flex border border-border rounded-lg overflow-hidden">
-                  {(['raw', 'schema'] as ViewMode[]).map(mode => (
-                    <button
-                      key={mode}
-                      onClick={() => setViewMode(mode)}
-                      className={`px-4 py-1.5 text-xs font-medium transition-colors ${
-                        viewMode === mode
-                          ? 'bg-primary/10 text-foreground'
-                          : 'text-muted-foreground hover:bg-muted/30'
-                      }`}
-                    >
-                      {mode === 'raw' ? 'Raw generator' : 'Schema match'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {ratePreview.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {ratePreview.map(r => (
