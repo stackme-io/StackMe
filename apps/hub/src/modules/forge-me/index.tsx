@@ -198,6 +198,7 @@ export default function ForgeMePage() {
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
+            moduleId="forge-me"
           />
 
           {activeTab === 'work' && (

@@ -16,7 +16,7 @@ export default function AnalyzeMePage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <main className="flex-1 overflow-y-auto px-6 pt-5">
-        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} moduleId="analyze-me" />
 
         {activeTab === 'work' && <AnalyzeSection />}
 
