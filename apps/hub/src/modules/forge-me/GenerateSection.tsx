@@ -154,14 +154,12 @@ export function GenerateSection({
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                {t('rowCount')}
-              </label>
-              <span className="text-[10px] text-muted-foreground/50">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center justify-between">
+              {t('rowCount')}
+              <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/50">
                 {t('rowLimitHint', { max: MAX_ROWS })}
               </span>
-            </div>
+            </label>
             <input
               type="number"
               value={rows}
