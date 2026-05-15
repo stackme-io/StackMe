@@ -1,0 +1,50 @@
+{
+  "eyebrow": "Manifest",
+  "heroTitle": "We build tools.\nNot traps.",
+  "heroLead": "StackMe is a set of tools for working with data. Dataset generation, file analysis, autotests and more. Everything runs in the browser — no install, no sign-up required to try.",
+  "heroStatement": "The system is designed so you don't have to take our word for it. Just check the code.",
+
+  "block1Title": "Why it's free — and will it stay that way",
+  "block1Icon": "ti-heart",
+  "block1p1": "Because it's the right thing to do. We believe there should be more free tools accessible to everyone — and we run on enthusiasm and donations as a deliberate position, not a temporary measure.",
+  "block1p2": "Everything we launched as free will stay free forever. Paid features will only appear for extra convenience: project storage, history, multi-project organisation. Core functionality — always free.",
+  "block1accent": "Core functionality — always free.",
+
+  "block2Title": "What happens if we shut down",
+  "block2Icon": "ti-server",
+  "block2Tag": "Self-Hosting First",
+  "block2p1": "All code is open on GitHub. Fork the repo and deploy it yourself — one command via Docker Compose. This isn't a fallback plan,",
+  "block2accent1": "it's a guarantee built into the architecture from day one.",
+  "block2p2": "Tools like AnalyzeMe run directly in your browser — data never leaves your device. We build on open technologies — FastAPI, React, DuckDB — intentionally, so anyone can run their own copy without depending on our infrastructure.",
+
+  "block3Title": "Your data is yours only",
+  "block3Icon": "ti-eye-off",
+  "block3Tag": "No Dark Patterns",
+  "block3p1": "We care about privacy. Your data is yours only — we never use it or share it with third parties. Full stop.",
+  "block3p2": "Monetisation in our products is always transparent and voluntary.",
+  "block3accent": "Monetisation in our products is always transparent and voluntary.",
+  "block3p2rest": "No hidden subscriptions, fake countdown timers, or dark UI patterns — and there never will be. We don't profit from manipulation. It's not interesting to us, and it's not who we are.",
+
+  "block4Title": "Who's behind this and is it serious",
+  "block4Icon": "ti-users",
+  "block4p1": "A small team that believes: if you can make something useful and free — make it. We're not a corporation or a VC-backed startup, which is exactly why we don't need to squeeze the maximum out of you.",
+  "block4p2": "The project is alive: open Roadmap, public backlog, discussions inside each tool.",
+  "block4accent": "Vote for features, propose your own, write to us directly.",
+  "block4p2rest": "We read and respond.",
+
+  "block5Title": "Is it worth your time",
+  "block5Icon": "ti-clock",
+  "block5p1": "Each tool solves a specific problem — open it and try without sign-up, without onboarding, without a form. If it fits — add it to your stack.",
+  "block5p2": "",
+  "block5accent": "People who come back do so because it's convenient,",
+  "block5p2rest": "not because we trapped them. If the product doesn't suit you — that's okay, we wish you well.",
+
+  "block6Title": "Want to get involved",
+  "block6Icon": "ti-git-merge",
+  "block6p1": "We welcome contributors, partnerships and people with ideas. Reach out via GitHub or our community.",
+  "block6p2": "",
+  "block6accent": "There should be more good in the world — and we believe that.",
+
+  "linkGithub": "GitHub",
+  "linkSite": "stackme-app.vercel.app"
+}

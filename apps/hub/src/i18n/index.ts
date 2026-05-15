@@ -38,6 +38,10 @@ import enForgeMeWork     from './locales/en/forge-me/work.json'
 import esForgeMeWork     from './locales/es/forge-me/work.json'
 import ukForgeMeWork     from './locales/uk/forge-me/work.json'
 
+import enMarketMeManifest from './locales/en/market-me/manifest.json'
+import esMarketMeManifest from './locales/es/market-me/manifest.json'
+import ukMarketMeManifest from './locales/uk/market-me/manifest.json'
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -47,7 +51,7 @@ i18n
     defaultNS: 'common',
     resources: {
       en: {
-        common:       enCommon,
+        common:      enCommon,
         'analyze-me': {
           ...enAnalyzeMeAbout,
           ...enAnalyzeMeStack,
@@ -60,9 +64,12 @@ i18n
           ...enForgeMeFooter,
           ...enForgeMeWork,
         },
+        'market-me': {
+          ...enMarketMeManifest,
+        },
       },
       es: {
-        common:       esCommon,
+        common:      esCommon,
         'analyze-me': {
           ...esAnalyzeMeAbout,
           ...esAnalyzeMeStack,
@@ -75,9 +82,12 @@ i18n
           ...esForgeMeFooter,
           ...esForgeMeWork,
         },
+        'market-me': {
+          ...esMarketMeManifest,
+        },
       },
       uk: {
-        common:       ukCommon,
+        common:      ukCommon,
         'analyze-me': {
           ...ukAnalyzeMeAbout,
           ...ukAnalyzeMeStack,
@@ -89,6 +99,9 @@ i18n
           ...ukForgeMeStack,
           ...ukForgeMeFooter,
           ...ukForgeMeWork,
+        },
+        'market-me': {
+          ...ukMarketMeManifest,
         },
       },
     },

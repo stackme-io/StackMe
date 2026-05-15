@@ -5,6 +5,7 @@ import { MODULE_REGISTRY } from '../registry'
 import apiClient from '../api/client'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace } from '../store/workspace'
+import { ModuleTabs } from '../shared/ModuleTabs'
 
 interface ModuleState {
   [moduleId: string]: 'active' | 'loading' | 'inactive'
@@ -20,11 +21,13 @@ export default function MarketMePage() {
   const { isSignedIn } = useUser()
   const { openSignIn } = useClerk()
   const { getToken } = useAuth()
-  const { t } = useTranslation()
+  const { t: tc } = useTranslation()
+  const { t } = useTranslation('market-me')
   const { refresh } = useModules()
   const { openPanel, closePanel } = useWorkspace()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
+  const [activeTab, setActiveTab] = useState('modules')
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -97,75 +100,158 @@ export default function MarketMePage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-foreground mb-1">{t('marketplace.title')}</h1>
-      <p className="text-sm text-muted-foreground mb-8">{t('marketplace.subtitle')}</p>
+      <h1 className="text-2xl font-semibold text-foreground mb-1">{tc('marketplace.title')}</h1>
+      <p className="text-sm text-muted-foreground mb-6">{tc('marketplace.subtitle')}</p>
 
-      {!isSignedIn && (
-        <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-primary/5 border border-primary/20 mb-6">
-          <span className="text-sm text-foreground">
-            {t('marketplace.signInBanner')}
-          </span>
-          <button
-            onClick={() => openSignIn()}
-            className="ml-4 text-sm font-medium text-primary hover:text-primary/80 transition-colors whitespace-nowrap"
-          >
-            {t('marketplace.signInLink')}
-          </button>
-        </div>
-      )}
+      <ModuleTabs
+        tabs={[
+          { id: 'modules', label: 'Modules' },
+          { id: 'manifest', label: 'Manifest' },
+        ]}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
 
-      <div className="flex flex-col gap-3">
-        {MODULE_REGISTRY.map((module) => {
-          const state = moduleStates[module.id] ?? 'inactive'
-          const isActive = state === 'active'
-          const isLoading = state === 'loading'
+      {activeTab === 'modules' && (
+        <>
+          {!isSignedIn && (
+            <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-primary/5 border border-primary/20 mb-6">
+              <span className="text-sm text-foreground">
+                {tc('marketplace.signInBanner')}
+              </span>
+              <button
+                onClick={() => openSignIn()}
+                className="ml-4 text-sm font-medium text-primary hover:text-primary/80 transition-colors whitespace-nowrap"
+              >
+                {tc('marketplace.signInLink')}
+              </button>
+            </div>
+          )}
 
-          return (
-            <div
-              key={module.id}
-              className={`flex items-center justify-between px-5 py-4 rounded-xl border transition-colors ${
-                isActive
-                  ? 'border-primary/30 bg-primary/5'
-                  : 'border-border bg-background hover:bg-muted/30'
-              }`}
-            >
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
-                    {module.category}
-                  </span>
-                  <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
-                </div>
-                <p className="text-xs text-muted-foreground">{module.description}</p>
-              </div>
+          <div className="flex flex-col gap-3">
+            {MODULE_REGISTRY.map((module) => {
+              const state = moduleStates[module.id] ?? 'inactive'
+              const isActive = state === 'active'
+              const isLoading = state === 'loading'
 
-              <div className="flex items-center gap-2 ml-4">
-                <button
-                  onClick={() => handleOpen(module.id)}
-                  className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
-                >
-                  Open
-                </button>
-                <button
-                  onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}
-                  disabled={isLoading || loadingModules}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
+              return (
+                <div
+                  key={module.id}
+                  className={`flex items-center justify-between px-5 py-4 rounded-xl border transition-colors ${
                     isActive
-                      ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                      : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                      ? 'border-primary/30 bg-primary/5'
+                      : 'border-border bg-background hover:bg-muted/30'
                   }`}
                 >
-                  {isLoading ? '...' : isActive
-                    ? t('marketplace.remove')
-                    : isSignedIn
-                      ? t('marketplace.add')
-                      : t('marketplace.signInToAdd')}
-                </button>
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
+                        {module.category}
+                      </span>
+                      <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{module.description}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => handleOpen(module.id)}
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                    >
+                      Open
+                    </button>
+                    <button
+                      onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}
+                      disabled={isLoading || loadingModules}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
+                        isActive
+                          ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
+                          : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                      }`}
+                    >
+                      {isLoading ? '...' : isActive
+                        ? tc('marketplace.remove')
+                        : isSignedIn
+                          ? tc('marketplace.add')
+                          : tc('marketplace.signInToAdd')}
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {activeTab === 'manifest' && (
+        <div className="max-w-xl">
+          <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-5">
+            {t('eyebrow')}
+          </p>
+          <h2 className="text-xl font-medium text-foreground leading-snug mb-3 whitespace-pre-line">
+            {t('heroTitle')}
+          </h2>
+          <p className="text-sm leading-relaxed text-muted-foreground mb-2">
+            {t('heroLead')}
+          </p>
+          <p className="text-sm leading-relaxed text-foreground font-medium mb-8">
+            {t('heroStatement')}
+          </p>
+
+          {([1, 2, 3, 4, 5, 6] as const).map(n => (
+            <div key={n} className="py-5 border-t border-border/50 last:border-b">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <div className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center flex-shrink-0">
+                  <i className={`ti ${t(`block${n}Icon`)} text-sm text-muted-foreground`} />
+                </div>
+                <p className="text-xs font-medium text-foreground">
+                  {t(`block${n}Title`)}
+                  {(n === 2 || n === 3) && (
+                    <span className="ml-2 text-[10px] font-normal px-1.5 py-0.5 rounded border border-border text-muted-foreground/60">
+                      {t(`block${n}Tag`)}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="pl-[38px] flex flex-col gap-2">
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {t(`block${n}p1`)}
+                  {n === 2 && (
+                    <span className="text-foreground font-medium"> {t('block2accent1')}</span>
+                  )}
+                </p>
+                {t(`block${n}p2`) && (
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {(n === 3 || n === 5) && (
+                      <span className="text-foreground font-medium">{t(`block${n}accent`)} </span>
+                    )}
+                    {t(`block${n}p2rest`)}
+                  </p>
+                )}
+                {(n === 4 || n === 6) && (
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {t(`block${n}p2`)}
+                    <span className="text-foreground font-medium"> {t(`block${n}accent`)}</span>
+                    {n === 4 && <span className="text-muted-foreground"> {t('block4p2rest')}</span>}
+                  </p>
+                )}
               </div>
             </div>
-          )
-        })}
-      </div>
+          ))}
+
+          <div className="flex gap-2.5 mt-6 flex-wrap">
+
+              <a href="https://github.com/stackme-io/StackMe" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground border border-border rounded-md px-3.5 py-1.5 hover:bg-muted/40 hover:text-foreground transition-colors">
+              <i className="ti ti-brand-github text-sm" />
+              {t('linkGithub')}
+            </a>
+            <a href="https://stackme-app.vercel.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground border border-border rounded-md px-3.5 py-1.5 hover:bg-muted/40 hover:text-foreground transition-colors">
+              <i className="ti ti-external-link text-sm" />
+              {t('linkSite')}
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
