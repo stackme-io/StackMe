@@ -99,7 +99,7 @@ export default function MarketMePage() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl px-6 pt-5">
       <h1 className="text-2xl font-semibold text-foreground mb-1">{tc('marketplace.title')}</h1>
       <p className="text-sm text-muted-foreground mb-6">{tc('marketplace.subtitle')}</p>
 
