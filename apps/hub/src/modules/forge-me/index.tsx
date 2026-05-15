@@ -10,18 +10,14 @@ const ANOMALIES: { id: AnomalyType; label: string; badge: string; disabled?: boo
   { id: 'nulls',            label: 'nulls',           badge: 'any'    },
   { id: 'duplicates',       label: 'duplicates',       badge: 'any'    },
   { id: 'outliers',         label: 'outliers',         badge: 'any'    },
-  { id: 'out-of-order',     label: 'out-of-order',     badge: 'stream' },
-  { id: 'late-arrivals',    label: 'late arrivals',    badge: 'stream' },
-  { id: 'type-mismatches',  label: 'type mismatches',  badge: 'any'    },
-  { id: 'stale-timestamps', label: 'stale timestamps', badge: 'batch'  },
-]
-
-const DISABLED_ANOMALIES = [
-  { label: 'schema drift', badge: 'soon' },
+  { id: 'out-of-order',     label: 'out-of-order',     badge: 'soon',  disabled: true },
+  { id: 'late-arrivals',    label: 'late arrivals',    badge: 'soon',  disabled: true },
+  { id: 'type-mismatches',  label: 'type mismatches',  badge: 'soon',  disabled: true },
+  { id: 'stale-timestamps', label: 'stale timestamps', badge: 'soon',  disabled: true },
 ]
 
 const STARTER: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
-const CHAOS: AnomalyType[]   = ANOMALIES.map(a => a.id)
+const CHAOS: AnomalyType[]   = ANOMALIES.filter(a => !a.disabled).map(a => a.id)
 
 export default function ForgeMePage() {
   const [activeTab, setActiveTab]       = useState('work')
@@ -37,6 +33,8 @@ export default function ForgeMePage() {
   const { t } = useTranslation('forge-me')
 
   const toggleAnomaly = useCallback((id: AnomalyType) => {
+    const anomaly = ANOMALIES.find(a => a.id === id)
+    if (anomaly?.disabled) return
     setSelected(prev => {
       const next = new Set(prev)
       next.has(id) ? next.delete(id) : next.add(id)
@@ -79,34 +77,33 @@ export default function ForgeMePage() {
                 <button
                   key={a.id}
                   onClick={() => toggleAnomaly(a.id)}
+                  disabled={a.disabled}
                   className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${
-                    selected.has(a.id)
+                    a.disabled
+                      ? 'opacity-35 cursor-not-allowed'
+                      : selected.has(a.id)
                       ? 'bg-primary/10 text-foreground'
                       : 'text-muted-foreground hover:bg-muted/50'
                   }`}
                 >
                   <span className={`w-3 h-3 rounded-sm border flex-shrink-0 flex items-center justify-center ${
-                    selected.has(a.id) ? 'bg-primary border-primary' : 'border-border'
+                    a.disabled
+                      ? 'border-border'
+                      : selected.has(a.id)
+                      ? 'bg-primary border-primary'
+                      : 'border-border'
                   }`}>
-                    {selected.has(a.id) && (
+                    {!a.disabled && selected.has(a.id) && (
                       <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                         <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
                       </svg>
                     )}
                   </span>
                   <span className="text-xs flex-1">{a.label}</span>
-                  <span className="text-[9px] text-muted-foreground/50">{a.badge}</span>
+                  <span className={`text-[9px] ${a.disabled ? 'text-primary/40' : 'text-muted-foreground/50'}`}>
+                    {a.badge}
+                  </span>
                 </button>
-              ))}
-              {DISABLED_ANOMALIES.map(a => (
-                <div
-                  key={a.label}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-md opacity-35 cursor-not-allowed"
-                >
-                  <span className="w-3 h-3 rounded-sm border border-border flex-shrink-0" />
-                  <span className="text-xs flex-1 text-muted-foreground">{a.label}</span>
-                  <span className="text-[9px] text-primary/50">{a.badge}</span>
-                </div>
               ))}
             </div>
           </div>
@@ -116,19 +113,23 @@ export default function ForgeMePage() {
               Presets
             </p>
             <div className="flex flex-col gap-1.5">
-              {(['starter', 'chaos'] as const).map(p => (
-                <button
-                  key={p}
-                  onClick={() => applyPreset(p)}
-                  className={`px-2 py-1.5 rounded-md text-xs text-left border transition-colors ${
-                    preset === p
-                      ? 'border-primary/50 bg-primary/10 text-foreground'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-muted/30'
-                  }`}
-                >
-                  {p === 'starter' ? 'Starter' : 'Full chaos'}
-                </button>
-              ))}
+              <button
+                onClick={() => applyPreset('starter')}
+                className={`px-2 py-1.5 rounded-md text-xs text-left border transition-colors ${
+                  preset === 'starter'
+                    ? 'border-primary/50 bg-primary/10 text-foreground'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-muted/30'
+                }`}
+              >
+                Starter
+              </button>
+              <button
+                disabled
+                className="px-2 py-1.5 rounded-md text-xs text-left border border-border text-muted-foreground/40 opacity-50 cursor-not-allowed flex items-center justify-between"
+              >
+                <span>Full chaos</span>
+                <span className="text-[9px] text-primary/40">soon</span>
+              </button>
             </div>
           </div>
 

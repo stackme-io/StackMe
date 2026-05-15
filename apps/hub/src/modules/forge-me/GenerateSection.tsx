@@ -137,6 +137,7 @@ export function GenerateSection({
 
       <div className="flex flex-col gap-5 max-w-2xl">
         <div className="flex gap-4">
+
           <div className="flex flex-col gap-1.5 flex-1">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {t('format')}
@@ -198,27 +199,31 @@ export function GenerateSection({
               className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
+
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">seed=</span>
-          <span className="text-xs text-foreground font-mono">{seed}</span>
+        {/* п.4 — seed и Generate в одну строку */}
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => onSeedChange(Math.floor(Math.random() * 99999) + 1)}
-            className="text-muted-foreground hover:text-foreground transition-colors text-sm leading-none"
-            title="Randomize seed"
+            onClick={handleSubmit}
+            disabled={loading || selectedAnomalies.size === 0 || rowsExceeded}
+            className="px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            ↺
+            {loading ? t('generating') : t('generate')}
           </button>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">seed=</span>
+            <span className="text-xs text-foreground font-mono">{seed}</span>
+            <button
+              onClick={() => onSeedChange(Math.floor(Math.random() * 99999) + 1)}
+              className="text-muted-foreground hover:text-foreground transition-colors text-sm leading-none"
+              title="Randomize seed"
+            >
+              ↺
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={loading || selectedAnomalies.size === 0 || rowsExceeded}
-          className="self-start px-5 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? t('generating') : t('generate')}
-        </button>
       </div>
 
       {error && (
@@ -265,12 +270,10 @@ export function GenerateSection({
         </div>
       )}
 
+      {/* п.3 — фильтры слева, счётчик справа */}
       {tableData.length > 0 && (
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">
-              {t('dataFromDuckDB')} ({tableData.length})
-            </span>
+          <div className="flex items-center gap-3">
             {format === 'json' && (
               <div className="flex gap-2">
                 {(['all', 'anomalies'] as FilterMode[]).map(mode => (
@@ -289,6 +292,9 @@ export function GenerateSection({
                 ))}
               </div>
             )}
+            <span className="text-xs text-muted-foreground ml-auto">
+              {t('dataFromDuckDB')} · {tableData.length}
+            </span>
           </div>
           <AnomalyTable
             tableData={tableData}
