@@ -100,8 +100,6 @@ export default function MarketMePage() {
 
   return (
     <div className="max-w-2xl px-6 pt-5">
-      <h1 className="text-2xl font-semibold text-foreground mb-1">{tc('marketplace.title')}</h1>
-      <p className="text-sm text-muted-foreground mb-6">{tc('marketplace.subtitle')}</p>
 
       <ModuleTabs
         tabs={[
@@ -185,9 +183,6 @@ export default function MarketMePage() {
 
       {activeTab === 'manifest' && (
         <div className="max-w-xl">
-          <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-5">
-            {t('eyebrow')}
-          </p>
           <h2 className="text-xl font-medium text-foreground leading-snug mb-3 whitespace-pre-line">
             {t('heroTitle')}
           </h2>
@@ -239,15 +234,10 @@ export default function MarketMePage() {
             </div>
           ))}
 
-          <div className="flex gap-2.5 mt-6 flex-wrap">
-
-              <a href="https://github.com/stackme-io/StackMe" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground border border-border rounded-md px-3.5 py-1.5 hover:bg-muted/40 hover:text-foreground transition-colors">
+          <div className="flex gap-2.5 mt-6 mb-8 flex-wrap">
+            <a href="https://github.com/stackme-io/StackMe" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground border border-border rounded-md px-3.5 py-1.5 hover:bg-muted/40 hover:text-foreground transition-colors">
               <i className="ti ti-brand-github text-sm" />
               {t('linkGithub')}
-            </a>
-            <a href="https://stackme-app.vercel.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground border border-border rounded-md px-3.5 py-1.5 hover:bg-muted/40 hover:text-foreground transition-colors">
-              <i className="ti ti-external-link text-sm" />
-              {t('linkSite')}
             </a>
           </div>
         </div>
