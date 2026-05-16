@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { GenerateSection } from './GenerateSection'
@@ -20,7 +21,8 @@ const STARTER: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 const CHAOS: AnomalyType[]   = ANOMALIES.filter(a => !a.disabled).map(a => a.id)
 
 export default function ForgeMePage() {
-  const [activeTab, setActiveTab]       = useState('work')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab]       = useState(searchParams.get('tab') ?? 'work')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [viewMode, setViewMode]         = useState<ViewMode>('raw')
   const [selected, setSelected]         = useState<Set<AnomalyType>>(new Set(STARTER))
@@ -131,7 +133,7 @@ export default function ForgeMePage() {
             </div>
           </div>
 
-          {/* Mode — п.1 */}
+          {/* Mode */}
           <div className="p-3 pb-2 border-b border-border">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
               Mode
@@ -198,7 +200,6 @@ export default function ForgeMePage() {
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
-            moduleId="forge-me"
           />
 
           {activeTab === 'work' && (
@@ -301,7 +302,7 @@ export default function ForgeMePage() {
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-[10px] text-muted-foreground/75">
+            <span key={item} className="text-[10px] text-muted-foreground/60">
               <span className="mr-1 text-muted-foreground/40">//</span>{item}
             </span>
           ))}

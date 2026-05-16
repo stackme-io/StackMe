@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnalyzeSection } from './AnalyzeSection'
 import { ModuleTabs } from '../../shared/ModuleTabs'
@@ -10,13 +11,14 @@ const TABS = [
 ]
 
 export default function AnalyzeMePage() {
-  const [activeTab, setActiveTab] = useState('work')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') ?? 'work')
   const { t } = useTranslation('analyze-me')
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <main className="flex-1 overflow-y-auto px-6 pt-5">
-        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} moduleId="analyze-me" />
+        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
         {activeTab === 'work' && <AnalyzeSection />}
 
@@ -74,7 +76,7 @@ export default function AnalyzeMePage() {
 
       <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
         {(t('badges', { returnObjects: true }) as string[]).map(item => (
-          <span key={item} className="text-[10px] text-muted-foreground/75">
+          <span key={item} className="text-[10px] text-muted-foreground/60">
             <span className="mr-1 text-muted-foreground/40">//</span>{item}
           </span>
         ))}

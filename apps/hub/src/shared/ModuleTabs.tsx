@@ -1,4 +1,4 @@
-import { track } from '@vercel/analytics'
+import { useSearchParams } from 'react-router-dom'
 
 interface ModuleTab {
   id: string
@@ -9,15 +9,13 @@ interface ModuleTabsProps {
   tabs: ModuleTab[]
   activeTab: string
   onChange: (id: string) => void
-  moduleId?: string
 }
 
-export function ModuleTabs({ tabs, activeTab, onChange, moduleId }: ModuleTabsProps) {
+export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
+  const [, setSearchParams] = useSearchParams()
+
   const handleChange = (id: string) => {
-    track('module_tab_view', {
-      tab: id,
-      ...(moduleId ? { module: moduleId } : {}),
-    })
+    setSearchParams(id === 'work' ? {} : { tab: id })
     onChange(id)
   }
 
