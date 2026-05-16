@@ -1,22 +1,17 @@
 import { useState } from 'react'
 import type { AnomalyType, ViewMode } from './types'
 
-interface AnomalyItem {
-  id: AnomalyType
-  label: string
-}
-
-const ANOMALIES_ACTIVE: AnomalyItem[] = [
-  { id: 'nulls',      label: 'nulls'      },
-  { id: 'duplicates', label: 'duplicates' },
-  { id: 'outliers',   label: 'outliers'   },
+const ANOMALIES_ACTIVE = [
+  { id: 'nulls'      as AnomalyType, label: 'nulls'       },
+  { id: 'duplicates' as AnomalyType, label: 'duplicates'  },
+  { id: 'outliers'   as AnomalyType, label: 'outliers'    },
 ]
 
-const ANOMALIES_UPCOMING: AnomalyItem[] = [
-  { id: 'out-of-order',     label: 'out-of-order'    },
-  { id: 'late-arrivals',    label: 'late arrivals'   },
-  { id: 'type-mismatches',  label: 'type mismatches' },
-  { id: 'stale-timestamps', label: 'stale timestamps'},
+const ANOMALIES_UPCOMING = [
+  { id: 'out-of-order'     as AnomalyType, label: 'Out-of-order',     desc: 'Events in wrong sequence'     },
+  { id: 'late-arrivals'    as AnomalyType, label: 'Late arrivals',     desc: 'Delayed event timestamps'     },
+  { id: 'type-mismatches'  as AnomalyType, label: 'Type mismatches',   desc: 'Wrong schema values'          },
+  { id: 'stale-timestamps' as AnomalyType, label: 'Stale timestamps',  desc: 'Frozen temporal data'         },
 ]
 
 interface SidebarProps {
@@ -65,7 +60,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
             className="flex items-center gap-1.5 px-2 py-1.5 mt-1 text-left text-muted-foreground/50 hover:text-muted-foreground transition-colors"
           >
             <span
-              className="text-[10px] transition-transform duration-150 inline-block"
+              className="text-[10px] inline-block transition-transform duration-150"
               style={{ transform: upcomingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               ⌄
@@ -78,9 +73,9 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
           {upcomingOpen && (
             <div className="flex flex-col gap-0.5 mt-0.5">
               {ANOMALIES_UPCOMING.map(a => (
-                <div key={a.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md">
-                  <span className="w-3 h-3 rounded-sm border border-border/40 flex-shrink-0" />
+                <div key={a.id} className="flex flex-col px-2 py-1.5 rounded-md">
                   <span className="text-xs text-muted-foreground/35">{a.label}</span>
+                  <span className="text-[10px] text-muted-foreground/25">{a.desc}</span>
                 </div>
               ))}
             </div>
@@ -89,6 +84,15 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
       </div>
 
       <div className="p-3 pb-2 border-b border-border">
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
+          Anomaly rate
+        </p>
+        <p className="text-[10px] text-muted-foreground/50 mb-2">
+          % of rows intentionally corrupted
+        </p>
+      </div>
+
+      <div className="p-3 pb-2">
         <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
           Mode
         </p>

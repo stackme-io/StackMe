@@ -10,7 +10,7 @@ import type { AnomalyType, ViewMode } from './types'
 const DEFAULT_SELECTED: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 
 export default function ForgeMePage() {
-  const [activeTab, setActiveTab]       = useState('work')
+  const [activeTab, setActiveTab]       = useState('generate')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [viewMode, setViewMode]         = useState<ViewMode>('raw')
   const [selected, setSelected]         = useState<Set<AnomalyType>>(new Set(DEFAULT_SELECTED))
@@ -63,15 +63,15 @@ export default function ForgeMePage() {
 
           <ModuleTabs
             tabs={[
-              { id: 'work',  label: 'Work'  },
-              { id: 'about', label: 'About' },
-              { id: 'stack', label: 'Stack' },
+              { id: 'generate',  label: 'Generate' },
+              { id: 'roadmap',   label: 'Roadmap'  },
+              { id: 'stack',     label: 'Stack'    },
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
           />
 
-          {activeTab === 'work' && (
+          {activeTab === 'generate' && (
             <>
               {ratePreview.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -116,7 +116,7 @@ export default function ForgeMePage() {
             </>
           )}
 
-          {activeTab === 'about' && (
+          {activeTab === 'roadmap' && (
             <div className="max-w-xl">
               <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
               <p className="text-xs text-muted-foreground mb-4">{t('version')}</p>
@@ -154,12 +154,7 @@ export default function ForgeMePage() {
                 ))}
               </div>
               <div className="flex items-center gap-4">
-
-                <a  href="https://github.com/stackme-io/StackMe"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
+                <a href="https://github.com/stackme-io/StackMe" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   {t('github')}
                 </a>
                 <span className="text-xs text-muted-foreground/40">{t('badge')}</span>
