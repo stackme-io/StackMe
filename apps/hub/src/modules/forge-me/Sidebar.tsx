@@ -83,15 +83,6 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
         </div>
       </div>
 
-      <div className="p-3 pb-2 border-b border-border">
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
-          Anomaly rate
-        </p>
-        <p className="text-[10px] text-muted-foreground/50 mb-2">
-          % of rows intentionally corrupted
-        </p>
-      </div>
-
       <div className="p-3 pb-2">
         <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
           Mode

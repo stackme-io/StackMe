@@ -196,6 +196,23 @@ export function GenerateSection({
               min={0} max={0.5} step={0.01}
               className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
+            <span className="text-[10px] text-muted-foreground/50">
+              {Math.round(anomalyRate * 100)}% of rows will be corrupted
+            </span>
+          </div><div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t('anomalyRate')}
+            </label>
+            <input
+              type="number"
+              value={anomalyRate}
+              onChange={e => onAnomalyRateChange(Number(e.target.value))}
+              min={0} max={0.5} step={0.01}
+              className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <span className="text-[10px] text-muted-foreground/50">
+              {Math.round(anomalyRate * 100)}% of rows will be corrupted
+            </span>
           </div>
 
         </div>
