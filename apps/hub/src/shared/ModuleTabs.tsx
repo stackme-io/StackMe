@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 interface ModuleTab {
@@ -13,11 +13,17 @@ interface ModuleTabsProps {
 }
 
 export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const mounted = useRef(false)
 
-  useEffect(() => {
-    setSearchParams({ tab: activeTab }, { replace: true })
-  }, [activeTab])
+  useLayoutEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      if (searchParams.get('tab') !== activeTab) {
+        setSearchParams({ tab: activeTab }, { replace: true })
+      }
+    }
+  }, [])
 
   const handleChange = (id: string) => {
     setSearchParams({ tab: id }, { replace: true })
