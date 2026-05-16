@@ -56,11 +56,11 @@ export default function AppShell() {
   }, [])
 
   useEffect(() => {
-    const active = panels.find((p: Panel) => p.id === activeId)
-    if (active && location.pathname !== active.manifest.route) {
-      navigate(active.manifest.route, { replace: true })
-    }
-  }, [activeId])
+  const active = panels.find((p: Panel) => p.id === activeId)
+  if (active && location.pathname !== active.manifest.route) {
+    navigate(active.manifest.route)
+  }
+}, [activeId])
 
   useEffect(() => {
     const matchedPanel = panels.find((p: Panel) => p.manifest.route === location.pathname)

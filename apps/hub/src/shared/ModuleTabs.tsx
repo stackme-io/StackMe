@@ -15,7 +15,7 @@ export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
   const [, setSearchParams] = useSearchParams()
 
   const handleChange = (id: string) => {
-    setSearchParams(id === 'work' ? {} : { tab: id })
+    setSearchParams({ tab: id })
     onChange(id)
   }
 
