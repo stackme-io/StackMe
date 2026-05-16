@@ -58,7 +58,7 @@ export default function AppShell() {
   useEffect(() => {
     const active = panels.find((p: Panel) => p.id === activeId)
     if (active && location.pathname !== active.manifest.route) {
-      navigate(active.manifest.route)
+      navigate(active.manifest.route, { replace: true })
     }
   }, [activeId])
 
