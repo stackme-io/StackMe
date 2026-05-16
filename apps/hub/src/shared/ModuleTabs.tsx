@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 interface ModuleTab {
@@ -9,18 +8,15 @@ interface ModuleTab {
 interface ModuleTabsProps {
   tabs: ModuleTab[]
   activeTab: string
-  onChange: (id: string) => void
+  onChange?: (id: string) => void
 }
 
 export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
   const [, setSearchParams] = useSearchParams()
 
-  useEffect(() => {
-    setSearchParams({ tab: activeTab }, { replace: true })
-  }, [activeTab])
-
   const handleChange = (id: string) => {
-    onChange(id)
+    setSearchParams({ tab: id }, { replace: true })
+    onChange?.(id)
   }
 
   return (

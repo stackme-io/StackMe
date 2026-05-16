@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnalyzeSection } from './AnalyzeSection'
@@ -12,13 +11,13 @@ const TABS = [
 
 export default function AnalyzeMePage() {
   const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') ?? 'work')
+  const activeTab = searchParams.get('tab') ?? 'work'
   const { t } = useTranslation('analyze-me')
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <main className="flex-1 overflow-y-auto px-6 pt-5">
-        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+        <ModuleTabs tabs={TABS} activeTab={activeTab} />
 
         {activeTab === 'work' && <AnalyzeSection />}
 

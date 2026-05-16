@@ -22,7 +22,7 @@ const CHAOS: AnomalyType[]   = ANOMALIES.filter(a => !a.disabled).map(a => a.id)
 
 export default function ForgeMePage() {
   const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab]       = useState(searchParams.get('tab') ?? 'work')
+  const activeTab = searchParams.get('tab') ?? 'work'
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [viewMode, setViewMode]         = useState<ViewMode>('raw')
   const [selected, setSelected]         = useState<Set<AnomalyType>>(new Set(STARTER))
@@ -199,7 +199,7 @@ export default function ForgeMePage() {
               { id: 'stack', label: 'Stack' },
             ]}
             activeTab={activeTab}
-            onChange={setActiveTab}
+
           />
 
           {activeTab === 'work' && (
