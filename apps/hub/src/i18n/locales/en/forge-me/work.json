@@ -23,5 +23,7 @@
   "rateLimitError": "Too many requests. Please wait a moment and try again.",
   "analyzeError": "Failed to analyze file. Make sure it is a valid CSV.",
   "rowLimitHint": "max {{max}} rows",
-  "rowLimitError": "Row limit exceeded. Maximum is {{max}} rows. Self-host for unlimited →"
+  "rowLimitError": "Row limit exceeded. Maximum is {{max}} rows. Self-host for unlimited →",
+  "exportData": "Export",
+  "copyToClipboard": "Copy"
 }
