@@ -63,9 +63,9 @@ export default function ForgeMePage() {
 
           <ModuleTabs
             tabs={[
-              { id: 'generate',  label: 'Generate' },
-              { id: 'roadmap',   label: 'Roadmap'  },
-              { id: 'stack',     label: 'Stack'    },
+              { id: 'generate', label: 'Generate' },
+              { id: 'roadmap',  label: 'Roadmap'  },
+              { id: 'stack',    label: 'Stack'     },
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
