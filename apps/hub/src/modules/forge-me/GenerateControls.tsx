@@ -98,10 +98,10 @@ export function GenerateControls({
         </span>
         <button
           onClick={() => onSeedChange(Math.floor(Math.random() * 1000))}
-          className="text-muted-foreground/50 hover:text-foreground transition-colors"
+          className="text-[13px] text-muted-foreground/50 hover:text-foreground transition-colors"
           title="Randomize seed"
         >
-          <i className="ti ti-refresh text-sm" />
+          ↺
         </button>
       </div>
     </div>
