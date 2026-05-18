@@ -41,16 +41,22 @@ export function GenerateSection({
     if (rowError || selectedAnomalies.size === 0) return
     setIsLoading(true)
     try {
+      const ANOMALY_MAP: Record<string, string> = {
+        nulls:      'missing',
+        duplicates: 'duplicate',
+        outliers:   'outlier',
+      }
+
       const body: Record<string, unknown> = {
-        num_rows: rows,
-        anomaly_types: [...selectedAnomalies],
+        rows,
+        anomaly_types: [...selectedAnomalies].map(a => ANOMALY_MAP[a] ?? a),
         anomaly_rate: anomalyRate,
         seed,
         format: format.toLowerCase(),
       }
       if (schemaFields.length > 0) body.schema = schemaFields
 
-      const res = await fetch('https://stackme-production.up.railway.app/api/forge/generate', {
+      const res = await fetch('https://stackme-production.up.railway.app/forge-me/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
