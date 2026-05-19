@@ -34,14 +34,14 @@ export function GenerateControls({
           <select
             value={format}
             onChange={e => onFormatChange(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring appearance-none w-full"
           >
             <option value="JSON">JSON</option>
             <option value="CSV">CSV</option>
           </select>
         </div>
 
-        <div className="flex flex-col gap-1.5 flex-1">
+        <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center justify-between">
             {t('rowCount')}
             <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/50">
@@ -65,7 +65,7 @@ export function GenerateControls({
           )}
         </div>
 
-        <div className="flex flex-col gap-1.5 flex-1">
+        <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             {t('anomalyRate')}
           </label>
@@ -93,16 +93,28 @@ export function GenerateControls({
         >
           {isLoading ? t('generating') : t('generate')}
         </button>
-        <span className="text-xs text-muted-foreground">
-          seed= <span className="font-mono">{seed}</span>
-        </span>
-        <button
-          onClick={() => onSeedChange(Math.floor(Math.random() * 1000))}
-          className="text-[13px] text-muted-foreground/50 hover:text-foreground transition-colors"
-          title="Randomize seed"
-        >
-          ↺
-        </button>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground">seed=</span>
+          <input
+            type="number"
+            value={seed}
+            onChange={e => {
+              const v = Math.floor(Number(e.target.value))
+              if (v >= 0 && v <= 99999) onSeedChange(v)
+            }}
+            min={0}
+            max={99999}
+            step={1}
+            className="w-16 px-1.5 py-0.5 rounded border border-border bg-background text-foreground text-xs font-mono focus:outline-none focus:ring-1 focus:ring-ring"
+          />
+          <button
+            onClick={() => onSeedChange(Math.floor(Math.random() * 99999))}
+            className="text-[13px] text-muted-foreground/50 hover:text-foreground transition-colors"
+            title="Randomize seed"
+          >
+            ↺
+          </button>
+        </div>
       </div>
     </div>
   )
