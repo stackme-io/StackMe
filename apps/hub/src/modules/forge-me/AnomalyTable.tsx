@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { RowInspect } from './RowInspect'
 import type { AnomalyInfo } from './types'
 
 interface AnomalyTableProps {
@@ -18,13 +20,13 @@ const BADGE_STYLES: Record<string, string> = {
 
 function normalizeType(type: string): string {
   const t = type.toLowerCase()
-  if (t.includes('outlier'))                          return 'outlier'
-  if (t.includes('missing') || t.includes('null'))    return 'missing'
-  if (t.includes('duplicate'))                        return 'duplicate'
+  if (t.includes('outlier'))                                return 'outlier'
+  if (t.includes('missing') || t.includes('null'))          return 'missing'
+  if (t.includes('duplicate'))                              return 'duplicate'
   if (t.includes('type_mismatch') || t.includes('mismatch')) return 'type_mismatch'
-  if (t.includes('stale'))                            return 'stale_timestamp'
-  if (t.includes('out_of_order') || t.includes('order')) return 'out_of_order'
-  if (t.includes('late'))                             return 'late_arrival'
+  if (t.includes('stale'))                                  return 'stale_timestamp'
+  if (t.includes('out_of_order') || t.includes('order'))    return 'out_of_order'
+  if (t.includes('late'))                                   return 'late_arrival'
   return 'outlier'
 }
 
@@ -32,7 +34,6 @@ function AnomalyBadge({ type }: { type: string }) {
   const normalized = normalizeType(type)
   const style = BADGE_STYLES[normalized] ?? 'bg-muted text-muted-foreground border-border'
   const label = type.replace(/_/g, ' ')
-
   return (
     <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono whitespace-nowrap ${style}`}>
       {label}
@@ -41,6 +42,8 @@ function AnomalyBadge({ type }: { type: string }) {
 }
 
 export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTableProps) {
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
   if (tableData.length === 0) return null
 
   const columns = Object.keys(tableData[0])
@@ -55,73 +58,87 @@ export function AnomalyTable({ tableData, anomalies, isTimestamp }: AnomalyTable
     }
   })
 
+  const selectedRowData = selectedRowIndex !== null ? tableData[selectedRowIndex] : null
+
   return (
-    <div className="rounded-lg border border-border max-h-[420px] overflow-y-auto overflow-x-hidden">
-      <table className="w-full text-sm border-collapse table-fixed">
-        <thead className="sticky top-0 z-10">
-          <tr className="bg-muted/30 backdrop-blur-sm">
-            {columns.map(col => (
-              <th
-                key={col}
-                className="px-3 py-2.5 text-left font-medium text-muted-foreground truncate border-b border-border text-[10px] uppercase tracking-wider"
-              >
-                {col}
+    <div className="flex gap-3">
+      <div className="flex-1 rounded-lg border border-border max-h-[420px] overflow-y-auto overflow-x-hidden min-w-0">
+        <table className="w-full text-sm border-collapse table-fixed">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-muted/30 backdrop-blur-sm">
+              {columns.map(col => (
+                <th
+                  key={col}
+                  className="px-3 py-2.5 text-left font-medium text-muted-foreground truncate border-b border-border text-[10px] uppercase tracking-wider"
+                >
+                  {col}
+                </th>
+              ))}
+              <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
+                type
               </th>
-            ))}
-            <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
-              type
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((row, i) => {
-            const rowIndex    = row.id !== undefined ? Number(row.id) - 1 : i
-            const anomaly     = anomalyMap.get(rowIndex)
-            const isAnomaly   = !!anomaly
-            const anomalyCols = anomaly?.cols ?? new Set<string>()
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row, i) => {
+              const rowIndex  = row.id !== undefined ? Number(row.id) - 1 : i
+              const anomaly   = anomalyMap.get(rowIndex)
+              const isAnomaly = !!anomaly
+              const anomalyCols = anomaly?.cols ?? new Set<string>()
+              const isSelected = selectedRowIndex === rowIndex
 
-            return (
-              <tr
-                key={i}
-                className={
-                  isAnomaly
-                    ? 'bg-amber-950/10'
-                    : i % 2 === 0
-                    ? 'bg-background'
-                    : 'bg-muted/10'
-                }
-              >
-                {columns.map(col => {
-                  const isAnomalyCell = anomalyCols.has(col)
-                  const value = row[col]
+              return (
+                <tr
+                  key={i}
+                  onClick={() => setSelectedRowIndex(isSelected ? null : rowIndex)}
+                  className={`cursor-pointer transition-colors ${
+                    isSelected
+                      ? 'bg-primary/10'
+                      : isAnomaly
+                      ? 'bg-amber-950/10 hover:bg-amber-950/20'
+                      : i % 2 === 0
+                      ? 'bg-background hover:bg-muted/20'
+                      : 'bg-muted/10 hover:bg-muted/20'
+                  }`}
+                >
+                  {columns.map(col => {
+                    const isAnomalyCell = anomalyCols.has(col)
+                    const value = row[col]
+                    return (
+                      <td
+                        key={col}
+                        className={`px-3 py-2 truncate border-b border-border/40 text-sm ${
+                          isAnomalyCell ? 'text-amber-400 font-medium' : 'text-foreground'
+                        }`}
+                      >
+                        {value === null || value === undefined ? (
+                          <span className="text-red-500 font-mono text-xs font-semibold">NULL</span>
+                        ) : isTimestamp?.(col) ? (
+                          new Date(Number(value)).toISOString().replace('T', ' ').slice(0, 19)
+                        ) : (
+                          String(value)
+                        )}
+                      </td>
+                    )
+                  })}
+                  <td className="px-3 py-2 border-b border-border/40 w-28">
+                    {isAnomaly && anomaly ? <AnomalyBadge type={anomaly.type} /> : null}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
 
-                  return (
-                    <td
-                      key={col}
-                      className={`px-3 py-2 truncate border-b border-border/40 text-sm ${
-                        isAnomalyCell ? 'text-amber-400 font-medium' : 'text-foreground'
-                      }`}
-                    >
-                      {value === null || value === undefined ? (
-                        <span className="text-red-500 font-mono text-xs font-semibold">NULL</span>
-                      ) : isTimestamp?.(col) ? (
-                        new Date(Number(value)).toISOString().replace('T', ' ').slice(0, 19)
-                      ) : (
-                        String(value)
-                      )}
-                    </td>
-                  )
-                })}
-                <td className="px-3 py-2 border-b border-border/40 w-28">
-                  {isAnomaly && anomaly ? (
-                    <AnomalyBadge type={anomaly.type} />
-                  ) : null}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      {selectedRowIndex !== null && selectedRowData && (
+        <RowInspect
+          rowIndex={selectedRowIndex}
+          rowData={selectedRowData}
+          anomalies={anomalies}
+          onClose={() => setSelectedRowIndex(null)}
+        />
+      )}
     </div>
   )
 }
