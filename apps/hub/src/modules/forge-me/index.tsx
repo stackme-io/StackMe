@@ -117,37 +117,81 @@ export default function ForgeMePage() {
           )}
 
           {activeTab === 'roadmap' && (
-            <div className="max-w-xl">
-              <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
-              <p className="text-xs text-muted-foreground mb-6">{t('description')}</p>
+            <div className="max-w-xl pb-8">
 
-              {(['done', 'next', 'later'] as const).map(section => (
-                <div key={section} className="mb-6">
-                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">
-                    {t(`${section}Label`)}
+              {/* Done */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-primary/30" />
+                  <p className="text-[9px] uppercase tracking-widest text-foreground font-medium">
+                    {t('doneLabel')}
                   </p>
-                  <div className="flex flex-col">
-                    {(t(section, { returnObjects: true }) as { title: string; desc: string }[]).map(item => (
-                      <div key={item.title} className="flex items-start justify-between py-2 border-b border-border/50">
-                        <div>
-                          <p className="text-xs text-foreground">{item.title}</p>
-                          <p className="text-[10px] text-muted-foreground/50 mt-0.5">{item.desc}</p>
-                        </div>
-                        {section === 'next' && (
-                          <button className="text-[10px] text-muted-foreground/40 hover:text-foreground transition-colors ml-4 mt-0.5 flex-shrink-0">
-                            + vote
-                          </button>
-                        )}
+                  <div className="h-px flex-1 bg-primary/30" />
+                </div>
+                {(t('done', { returnObjects: true }) as { group: string; items: { title: string; desc: string }[] }[]).map(group => (
+                  <div key={group.group} className="mb-4">
+                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-1.5 ml-0">
+                      {group.group}
+                    </p>
+                    {group.items.map(item => (
+                      <div key={item.title} className="flex items-baseline gap-2 py-1.5 border-b border-border/30">
+                        <span className="text-primary/60 text-[10px] flex-shrink-0">✓</span>
+                        <span className="text-xs text-foreground w-32 flex-shrink-0">{item.title}</span>
+                        <span className="text-[10px] text-muted-foreground">{item.desc}</span>
                       </div>
                     ))}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
 
-              <div className="mt-8">
-                <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">
-                  {t('suggestLabel')}
-                </p>
+              {/* Next */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-primary/30" />
+                  <p className="text-[9px] uppercase tracking-widest text-foreground font-medium">
+                    {t('nextLabel')}
+                  </p>
+                  <div className="h-px flex-1 bg-primary/30" />
+                </div>
+                {(t('next', { returnObjects: true }) as { title: string; desc: string }[]).map(item => (
+                  <div key={item.title} className="flex items-baseline gap-2 py-1.5 border-b border-border/30">
+                    <span className="text-muted-foreground/40 text-[10px] flex-shrink-0">→</span>
+                    <span className="text-xs text-foreground w-32 flex-shrink-0">{item.title}</span>
+                    <span className="text-[10px] text-muted-foreground flex-1">{item.desc}</span>
+                    <button className="text-[10px] text-muted-foreground/40 hover:text-foreground transition-colors flex-shrink-0">
+                      + vote
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Later */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-border" />
+                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50">
+                    {t('laterLabel')}
+                  </p>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                {(t('later', { returnObjects: true }) as { title: string; desc: string }[]).map(item => (
+                  <div key={item.title} className="flex items-baseline gap-2 py-1.5 border-b border-border/30">
+                    <span className="text-muted-foreground/40 text-[10px] flex-shrink-0">·</span>
+                    <span className="text-xs text-muted-foreground/75 w-32 flex-shrink-0">{item.title}</span>
+                    <span className="text-[10px] text-muted-foreground/50">{item.desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Suggest */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-border" />
+                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50">
+                    {t('suggestLabel')}
+                  </p>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
                 <textarea
                   maxLength={300}
                   placeholder={t('suggestPlaceholder')}

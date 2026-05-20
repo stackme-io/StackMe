@@ -5,32 +5,48 @@
 
   "doneLabel": "Qué hay en v0.1.0",
   "done": [
-    { "title": "Nulos, duplicados, outliers", "desc": "Tres tipos de anomalías principales listos para inyectar en cualquier dataset" },
-    { "title": "Generación raw", "desc": "Genera datos sintéticos desde cero sin ninguna entrada requerida" },
-    { "title": "Schema match", "desc": "Sube tu esquema y obtén datos que se ajusten a tu estructura" },
-    { "title": "Cantidad de filas + formato", "desc": "Controla el tamaño hasta 1000 filas, exporta como JSON o CSV" },
-    { "title": "Anomaly rate", "desc": "Define qué porcentaje de filas se corrompe" },
-    { "title": "Control de seed", "desc": "Fija un seed para resultados reproducibles o aleatorízalo" },
-    { "title": "Copiar / Exportar", "desc": "Copia al portapapeles como TSV o descarga el archivo directamente" }
+    {
+      "group": "Tipos de anomalías",
+      "items": [
+        { "title": "Nulos",       "desc": "Elimina valores aleatoriamente — simula datos faltantes en pipelines" },
+        { "title": "Duplicados",  "desc": "Repite filas — detecta bugs de deduplicación antes de prod" },
+        { "title": "Outliers",    "desc": "Inyecta extremos estadísticos — prueba tu lógica de validación" }
+      ]
+    },
+    {
+      "group": "Generación",
+      "items": [
+        { "title": "Modo raw",       "desc": "Sin entrada necesaria — no describes nada, obtienes un dataset al instante" },
+        { "title": "Schema match",   "desc": "Pega tu esquema — obtén datos que se ajusten a tu estructura exacta" },
+        { "title": "Control de seed","desc": "Mismo seed = mismo dataset — comparte y reproduce resultados" }
+      ]
+    },
+    {
+      "group": "Exportar",
+      "items": [
+        { "title": "JSON / CSV",      "desc": "Descarga el archivo o copia directamente al portapapeles como TSV" },
+        { "title": "Filtro anomalías","desc": "Ve todas las filas o aísla solo las corrompidas" }
+      ]
+    }
   ],
 
   "nextLabel": "Próxima versión",
   "next": [
-    { "title": "Type mismatches", "desc": "Los campos devuelven tipos de datos incorrectos — string donde se espera int" },
-    { "title": "Eventos fuera de orden", "desc": "Los registros llegan en secuencia cronológica incorrecta" },
-    { "title": "Late arrivals", "desc": "Eventos con timestamp posterior al momento real de ocurrencia" },
-    { "title": "Vista de tabla JSON", "desc": "El JSON generado se mostrará como tabla navegable" },
-    { "title": "Abrir en AnalyzeMe", "desc": "Envía tu dataset directamente a AnalyzeMe para inspeccionarlo" },
+    { "title": "Type mismatches",          "desc": "Los campos devuelven tipos incorrectos — string donde se espera int" },
+    { "title": "Eventos fuera de orden",   "desc": "Los registros llegan en secuencia cronológica incorrecta" },
+    { "title": "Late arrivals",            "desc": "Eventos con timestamp posterior al momento real" },
+    { "title": "Vista de tabla JSON",      "desc": "El JSON generado se mostrará como tabla navegable" },
+    { "title": "Abrir en AnalyzeMe",       "desc": "Envía tu dataset directamente a AnalyzeMe para inspeccionarlo" },
     { "title": "Compartir config por URL", "desc": "Comparte seed y configuración como enlace con tu equipo" },
-    { "title": "Generación de esquema con LLM", "desc": "Describe tus datos en texto plano, obtén un esquema al instante" }
+    { "title": "Esquema con LLM",          "desc": "Describe tus datos en texto plano, obtén un esquema al instante" }
   ],
 
   "laterLabel": "Más adelante",
   "later": [
-    { "title": "Stale timestamps", "desc": "Los campos temporales dejan de actualizarse — el tiempo parece congelado" },
-    { "title": "Exportar Parquet / Excel", "desc": "Descarga en formato columnar o de hoja de cálculo" },
-    { "title": "Anomalías por columna", "desc": "Apunta a campos específicos en lugar de todo el dataset" },
-    { "title": "Historial de datasets", "desc": "Guarda y revisa ejecuciones anteriores de generación" }
+    { "title": "Stale timestamps",       "desc": "Los campos temporales dejan de actualizarse — el tiempo parece congelado" },
+    { "title": "Exportar Parquet/Excel", "desc": "Descarga en formato columnar o de hoja de cálculo" },
+    { "title": "Anomalías por columna",  "desc": "Apunta a campos específicos en lugar de todo el dataset" },
+    { "title": "Historial de datasets",  "desc": "Guarda y revisa ejecuciones anteriores" }
   ],
 
   "suggestLabel": "Sugerir una función",

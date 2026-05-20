@@ -5,32 +5,48 @@
 
   "doneLabel": "What's in v0.1.0",
   "done": [
-    { "title": "Nulls, duplicates, outliers", "desc": "Three core anomaly types ready to inject into any dataset" },
-    { "title": "Raw generation", "desc": "Generate synthetic data from scratch with no input required" },
-    { "title": "Schema match", "desc": "Upload your schema and get data that fits your structure" },
-    { "title": "Row count + format", "desc": "Control output size up to 1000 rows, export as JSON or CSV" },
-    { "title": "Anomaly rate", "desc": "Set what percentage of rows gets corrupted" },
-    { "title": "Seed control", "desc": "Pin a seed for reproducible results or randomize it" },
-    { "title": "Copy / Export", "desc": "Copy to clipboard as TSV or download the file directly" }
+    {
+      "group": "Anomaly types",
+      "items": [
+        { "title": "Nulls",       "desc": "Randomly removes values — simulates missing data in pipelines" },
+        { "title": "Duplicates",  "desc": "Repeats rows — catches deduplication bugs before prod" },
+        { "title": "Outliers",    "desc": "Injects statistical extremes — tests your validation logic" }
+      ]
+    },
+    {
+      "group": "Generation",
+      "items": [
+        { "title": "Raw mode",      "desc": "No input needed — describe nothing, get a dataset instantly" },
+        { "title": "Schema match",  "desc": "Paste your schema — get data that fits your exact structure" },
+        { "title": "Seed control",  "desc": "Same seed = same dataset — share and reproduce results" }
+      ]
+    },
+    {
+      "group": "Export",
+      "items": [
+        { "title": "JSON / CSV",       "desc": "Download the file or copy directly to clipboard as TSV" },
+        { "title": "Anomaly filter",   "desc": "View all rows or isolate only the corrupted ones" }
+      ]
+    }
   ],
 
   "nextLabel": "Next version",
   "next": [
-    { "title": "Type mismatches", "desc": "Fields return wrong data types — string where int is expected" },
-    { "title": "Out-of-order events", "desc": "Records arrive in wrong chronological sequence" },
-    { "title": "Late arrivals", "desc": "Events timestamped later than they actually occurred" },
-    { "title": "JSON table view", "desc": "Generated JSON will render as a browsable table" },
-    { "title": "Open in AnalyzeMe", "desc": "Send your dataset directly to AnalyzeMe for inspection" },
-    { "title": "Share config by URL", "desc": "Share seed and settings as a link with your team" },
+    { "title": "Type mismatches",       "desc": "Fields return wrong data types — string where int is expected" },
+    { "title": "Out-of-order events",   "desc": "Records arrive in wrong chronological sequence" },
+    { "title": "Late arrivals",         "desc": "Events timestamped later than they actually occurred" },
+    { "title": "JSON table view",       "desc": "Generated JSON will render as a browsable table" },
+    { "title": "Open in AnalyzeMe",     "desc": "Send your dataset directly to AnalyzeMe for inspection" },
+    { "title": "Share config by URL",   "desc": "Share seed and settings as a link with your team" },
     { "title": "LLM schema generation", "desc": "Describe your data in plain text, get a schema instantly" }
   ],
 
   "laterLabel": "Later",
   "later": [
-    { "title": "Stale timestamps", "desc": "Temporal fields stop updating — time appears frozen" },
-    { "title": "Parquet / Excel export", "desc": "Download in columnar or spreadsheet format" },
-    { "title": "Column-level anomalies", "desc": "Target specific fields instead of the whole dataset" },
-    { "title": "Dataset history", "desc": "Save and revisit previous generation runs" }
+    { "title": "Stale timestamps",        "desc": "Temporal fields stop updating — time appears frozen" },
+    { "title": "Parquet / Excel export",  "desc": "Download in columnar or spreadsheet format" },
+    { "title": "Column-level anomalies",  "desc": "Target specific fields instead of the whole dataset" },
+    { "title": "Dataset history",         "desc": "Save and revisit previous generation runs" }
   ],
 
   "suggestLabel": "Suggest a feature",
