@@ -85,13 +85,13 @@ export function GenerateControls({
 
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 bg-muted/20 rounded-xl px-4 py-3">
         <button
           onClick={onGenerate}
           disabled={isLoading || rowError || selectedAnomalies.size === 0}
-          className="px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-8 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? t('generating') : t('generate')}
+          {isLoading ? t('generating') : 'Generate'}
         </button>
         <div className="flex items-center gap-1.5">
           <span className="text-xs text-muted-foreground">seed=</span>

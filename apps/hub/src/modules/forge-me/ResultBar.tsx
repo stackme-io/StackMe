@@ -35,7 +35,7 @@ export function ResultBar({
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {t('allRows')}
+            {t('All rows')}
           </button>
           <button
             onClick={() => onFilterChange('anomalies')}
@@ -45,7 +45,7 @@ export function ResultBar({
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            ⚠ {t('anomaliesOnly')}
+            ⚠ Anomalies only
           </button>
         </div>
 
