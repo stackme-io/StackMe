@@ -25,7 +25,7 @@ export function GenerateControls({
 }: GenerateControlsProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4 items-start">
+      <div className="flex gap-6 items-start">
 
         <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -44,7 +44,7 @@ export function GenerateControls({
         <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center justify-between">
             {t('rowCount')}
-            <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/50">
+            <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/75">
               {t('rowLimitHint', { max: MAX_ROWS })}
             </span>
           </label>
@@ -78,7 +78,7 @@ export function GenerateControls({
             step={0.01}
             className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
-          <span className="text-[10px] text-muted-foreground/50">
+          <span className="text-[10px] text-muted-foreground/75 mt-0.5">
             {Math.round(anomalyRate * 100)}% of rows will be corrupted
           </span>
         </div>
