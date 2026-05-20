@@ -119,21 +119,53 @@ export default function ForgeMePage() {
           {activeTab === 'roadmap' && (
             <div className="max-w-xl">
               <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
-              <p className="text-xs text-muted-foreground mb-4">{t('version')}</p>
-              <p className="text-xs text-muted-foreground leading-relaxed mb-6">{t('description')}</p>
-              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">
-                {t('whatsnextLabel')}
-              </p>
-              <div className="flex flex-col gap-1.5 mb-6">
-                {(t('whatsnext', { returnObjects: true }) as string[]).map(f => (
-                  <div key={f} className="flex items-center justify-between py-1.5 border-b border-border/50">
-                    <span className="text-xs text-muted-foreground">{f}</span>
-                    <button className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors">
-                      + vote
-                    </button>
+              <p className="text-xs text-muted-foreground mb-6">{t('description')}</p>
+
+              {(['done', 'next', 'later'] as const).map(section => (
+                <div key={section} className="mb-6">
+                  <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-2">
+                    {t(`${section}Label`)}
+                  </p>
+                  <div className="flex flex-col">
+                    {(t(section, { returnObjects: true }) as { title: string; desc: string }[]).map(item => (
+                      <div key={item.title} className="flex items-start justify-between py-2 border-b border-border/50">
+                        <div>
+                          <p className="text-xs text-foreground">{item.title}</p>
+                          <p className="text-[10px] text-muted-foreground/50 mt-0.5">{item.desc}</p>
+                        </div>
+                        {section === 'next' && (
+                          <button className="text-[10px] text-muted-foreground/40 hover:text-foreground transition-colors ml-4 mt-0.5 flex-shrink-0">
+                            + vote
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+              ))}
+
+              <div className="mt-8">
+                <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">
+                  {t('suggestLabel')}
+                </p>
+                <textarea
+                  maxLength={300}
+                  placeholder={t('suggestPlaceholder')}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-xs resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                  rows={3}
+                />
+                <div className="flex items-center justify-between mt-2">
+                  <label className="flex items-center gap-2 text-[10px] text-muted-foreground/50 cursor-pointer">
+                    <input type="checkbox" defaultChecked className="rounded" />
+                    {t('suggestUsernameLabel')}
+                  </label>
+                  <p className="text-[10px] text-muted-foreground/40">{t('suggestHint')}</p>
+                </div>
+                <button className="mt-3 px-4 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
+                  {t('suggestSubmit')}
+                </button>
               </div>
+
             </div>
           )}
 

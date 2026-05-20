@@ -1,29 +1,41 @@
 {
   "title": "ForgeMe",
-  "subtitle": "Generador y analizador de anomalías en datos",
-  "datasetDescription": "Descripción del conjunto de datos",
-  "placeholder": "ej. lecturas de sensores de temperatura de una planta industrial durante un mes",
-  "format": "Formato",
-  "rowCount": "Número de filas",
-  "anomalyRate": "Tasa de anomalías",
-  "generate": "Generar",
-  "generating": "Generando...",
-  "rows": "Filas",
-  "anomalies": "Anomalías",
-  "allRows": "Todas las filas",
-  "anomaliesOnly": "Solo anomalías",
-  "dataFromDuckDB": "Datos de DuckDB",
-  "analyzeTitle": "Analiza tu propio conjunto de datos",
-  "analyzeSubtitle": "Sube un archivo CSV para detectar anomalías usando el método IQR",
-  "dropzone": "Suelta el archivo CSV aquí o haz clic para subir",
-  "csvOnly": "Solo se admiten archivos CSV",
-  "analyzing": "Analizando...",
-  "anomaliesFound": "Anomalías encontradas",
-  "apiError": "Error al conectar con la API. Asegúrate de que el backend está en ejecución.",
-  "rateLimitError": "Demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.",
-  "analyzeError": "Error al analizar el archivo. Asegúrate de que es un CSV válido.",
-  "rowLimitHint": "máx {{max}} filas",
-  "rowLimitError": "Límite de filas superado. El máximo es {{max}} filas. Instálalo tú mismo para sin límites →",
-  "exportData": "Exportar",
-  "copyToClipboard": "Copiar"
+  "version": "v0.1.0 · Licencia MIT",
+  "description": "Generador de datasets sintéticos con anomalías inyectadas. Describe tus datos en texto plano, obtén un dataset con nulos, duplicados, outliers y más — listo para probar tus pipelines.",
+
+  "doneLabel": "Qué hay en v0.1.0",
+  "done": [
+    { "title": "Nulos, duplicados, outliers", "desc": "Tres tipos de anomalías principales listos para inyectar en cualquier dataset" },
+    { "title": "Generación raw", "desc": "Genera datos sintéticos desde cero sin ninguna entrada requerida" },
+    { "title": "Schema match", "desc": "Sube tu esquema y obtén datos que se ajusten a tu estructura" },
+    { "title": "Cantidad de filas + formato", "desc": "Controla el tamaño hasta 1000 filas, exporta como JSON o CSV" },
+    { "title": "Anomaly rate", "desc": "Define qué porcentaje de filas se corrompe" },
+    { "title": "Control de seed", "desc": "Fija un seed para resultados reproducibles o aleatorízalo" },
+    { "title": "Copiar / Exportar", "desc": "Copia al portapapeles como TSV o descarga el archivo directamente" }
+  ],
+
+  "nextLabel": "Próxima versión",
+  "next": [
+    { "title": "Type mismatches", "desc": "Los campos devuelven tipos de datos incorrectos — string donde se espera int" },
+    { "title": "Eventos fuera de orden", "desc": "Los registros llegan en secuencia cronológica incorrecta" },
+    { "title": "Late arrivals", "desc": "Eventos con timestamp posterior al momento real de ocurrencia" },
+    { "title": "Vista de tabla JSON", "desc": "El JSON generado se mostrará como tabla navegable" },
+    { "title": "Abrir en AnalyzeMe", "desc": "Envía tu dataset directamente a AnalyzeMe para inspeccionarlo" },
+    { "title": "Compartir config por URL", "desc": "Comparte seed y configuración como enlace con tu equipo" },
+    { "title": "Generación de esquema con LLM", "desc": "Describe tus datos en texto plano, obtén un esquema al instante" }
+  ],
+
+  "laterLabel": "Más adelante",
+  "later": [
+    { "title": "Stale timestamps", "desc": "Los campos temporales dejan de actualizarse — el tiempo parece congelado" },
+    { "title": "Exportar Parquet / Excel", "desc": "Descarga en formato columnar o de hoja de cálculo" },
+    { "title": "Anomalías por columna", "desc": "Apunta a campos específicos en lugar de todo el dataset" },
+    { "title": "Historial de datasets", "desc": "Guarda y revisa ejecuciones anteriores de generación" }
+  ],
+
+  "suggestLabel": "Sugerir una función",
+  "suggestPlaceholder": "Describe qué te gustaría ver en ForgeMe...",
+  "suggestHint": "Una sugerencia por día · Revisada antes de publicarse",
+  "suggestSubmit": "Enviar",
+  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar"
 }
