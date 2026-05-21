@@ -56,17 +56,15 @@ export function RowInspect({
 
       <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3">
 
-        {/* No row selected */}
         {rowIndex === null && (
           <div className="flex flex-col gap-1.5 mt-2">
-            <p className="text-xs font-medium text-foreground">Inspect rows</p>
-            <p className="text-[10px] text-muted-foreground/75 leading-relaxed">
-              Click any row to inspect anomaly details, view affected columns and original values.
+            <p className="text-xs font-medium text-foreground">No anomalies found</p>
+            <p className="text-[10px] text-muted-foreground/50">
+              Try increasing the anomaly rate or row count.
             </p>
           </div>
         )}
 
-        {/* Row hidden by filter */}
         {rowIndex !== null && hiddenByFilter && (
           <div className="flex flex-col gap-2 mt-2">
             <p className="text-xs text-muted-foreground/75">
@@ -81,7 +79,6 @@ export function RowInspect({
           </div>
         )}
 
-        {/* Row visible */}
         {rowIndex !== null && !hiddenByFilter && (
           <>
             {rowAnomalies.length === 0 ? (
