@@ -30,7 +30,8 @@
     }
   ],
 
-  "nextLabel": "Próxima versión",
+  "nextLabel": "Coming up",
+  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa — eso define el alcance.",
   "next": [
     { "title": "Type mismatches",          "desc": "Los campos devuelven tipos incorrectos — string donde se espera int" },
     { "title": "Eventos fuera de orden",   "desc": "Los registros llegan en secuencia cronológica incorrecta" },

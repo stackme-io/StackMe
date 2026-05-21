@@ -30,7 +30,8 @@
     }
   ],
 
-  "nextLabel": "Next version",
+  "nextLabel": "Coming up",
+  "nextDesc": "These are candidates for the next version. Vote for what matters to you — it shapes the scope.",
   "next": [
     { "title": "Type mismatches",       "desc": "Fields return wrong data types — string where int is expected" },
     { "title": "Out-of-order events",   "desc": "Records arrive in wrong chronological sequence" },

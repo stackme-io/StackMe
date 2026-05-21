@@ -53,6 +53,9 @@ export function RoadmapTab() {
 
       <div className="mb-6">
         <SectionDivider label={t('nextLabel')} accent />
+        <p className="text-[10px] text-muted-foreground/50 mb-3 leading-relaxed">
+          {t('nextDesc')}
+        </p>
         {(t('next', { returnObjects: true }) as RoadmapItem[]).map(item => (
           <RoadmapRow
             key={item.title}
