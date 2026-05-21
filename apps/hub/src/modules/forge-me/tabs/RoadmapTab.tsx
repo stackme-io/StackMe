@@ -24,7 +24,7 @@ function RoadmapRow({ prefix, title, desc, action }: {
   return (
     <div className="flex items-baseline gap-2 py-1 border-b border-border/20 last:border-0">
       <span className="text-muted-foreground/40 text-xs flex-shrink-0 w-3">{prefix}</span>
-      <span className="text-xs text-foreground w-28 flex-shrink-0">{title}</span>
+      <span className="text-xs text-foreground w-36 flex-shrink-0 whitespace-nowrap overflow-hidden text-ellipsis">{title}</span>
       <span className="text-xs text-muted-foreground/75 flex-1">{desc}</span>
       {action}
     </div>
@@ -41,10 +41,10 @@ export function RoadmapTab() {
         <SectionDivider label={t('doneLabel')} accent />
         {(t('done', { returnObjects: true }) as DoneGroup[]).map(group => (
           <div key={group.group} className="mb-3">
-            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/40 mb-1">
-              {group.group}
-            </p>
-            {group.items.map(item => (
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1 mt-3 first:mt-0">
+                      {group.group}
+                    </p>
+                    {group.items.map(item => (
               <RoadmapRow key={item.title} prefix="✓" title={item.title} desc={item.desc} />
             ))}
           </div>
