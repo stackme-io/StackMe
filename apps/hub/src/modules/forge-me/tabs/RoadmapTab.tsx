@@ -39,12 +39,12 @@ export function RoadmapTab() {
 
       <div className="mb-6">
         <SectionDivider label={t('doneLabel')} accent />
-        {(t('done', { returnObjects: true }) as DoneGroup[]).map(group => (
-          <div key={group.group} className="mb-3">
-            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1 mt-3 first:mt-0">
-                      {group.group}
-                    </p>
-                    {group.items.map(item => (
+        {(t('done', { returnObjects: true }) as DoneGroup[]).map((group, gi) => (
+          <div key={group.group} className={gi === 0 ? 'mb-2' : 'mb-2 mt-4'}>
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">
+              {group.group}
+            </p>
+            {group.items.map(item => (
               <RoadmapRow key={item.title} prefix="✓" title={item.title} desc={item.desc} />
             ))}
           </div>
