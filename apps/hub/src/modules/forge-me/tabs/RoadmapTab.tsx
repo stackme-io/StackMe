@@ -40,7 +40,8 @@ export function RoadmapTab() {
       <div className="mb-6">
         <SectionDivider label={t('doneLabel')} accent />
         {(t('done', { returnObjects: true }) as DoneGroup[]).map((group, gi) => (
-          <div key={group.group} className={gi === 0 ? 'mb-2' : 'mb-2 mt-4'}>
+          <div key={group.group} className="mb-2">
+            {gi > 0 && <div className="mt-4" />}
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">
               {group.group}
             </p>
