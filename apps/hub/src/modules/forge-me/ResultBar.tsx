@@ -20,11 +20,11 @@ export function ResultBar({
     <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-muted/30 border border-border mb-3">
       <div className="flex items-center text-xs text-muted-foreground">
           <span>{rows} rows</span>
-          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span className="mx-3 text-sm text-muted-foreground/50">·</span>
           <span className="text-amber-500">{anomalyCount} anomalies</span>
-          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span className="mx-3 text-sm text-muted-foreground/50">·</span>
           <span>{format}</span>
-          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span className="mx-3 text-sm text-muted-foreground/50">·</span>
           <span>seed {seed}</span>
       </div>
 
