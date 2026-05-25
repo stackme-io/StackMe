@@ -18,11 +18,14 @@ export function ResultBar({
 }: ResultBarProps) {
   return (
     <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-muted/30 border border-border mb-3">
-      <div className="flex items-center text-xs text-muted-foreground divide-x divide-border">
-        <span className="pr-3">{rows} rows</span>
-        <span className="px-3 text-amber-500">{anomalyCount} anomalies</span>
-        <span className="px-3">{format}</span>
-        <span className="pl-3">seed {seed}</span>
+      <div className="flex items-center text-xs text-muted-foreground">
+          <span>{rows} rows</span>
+          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span className="text-amber-500">{anomalyCount} anomalies</span>
+          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span>{format}</span>
+          <span className="mx-2 text-muted-foreground/40">·</span>
+          <span>seed {seed}</span>
       </div>
 
       <div className="flex items-center gap-2">
