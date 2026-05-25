@@ -54,5 +54,12 @@
   "suggestPlaceholder": "Describe what you'd like to see in ForgeMe...",
   "suggestHint": "One suggestion per day · Reviewed before publishing",
   "suggestSubmit": "Submit",
-  "suggestUsernameLabel": "Show my username when published"
+  "suggestUsernameLabel": "Show my username when published",
+
+  "format": "Format",
+  "rowCount": "Row count",
+  "rowLimitHint": "Max {{max}} rows",
+  "rowLimitError": "Must not exceed {{max}} rows",
+  "anomalyRate": "Anomaly rate",
+  "generating": "Generating..."
 }

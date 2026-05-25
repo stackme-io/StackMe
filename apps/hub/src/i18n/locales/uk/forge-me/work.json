@@ -54,5 +54,12 @@
   "suggestPlaceholder": "Опишіть що ви хотіли б бачити у ForgeMe...",
   "suggestHint": "Одна пропозиція на день · Перевіряється перед публікацією",
   "suggestSubmit": "Надіслати",
-  "suggestUsernameLabel": "Показувати моє ім'я при публікації"
+  "suggestUsernameLabel": "Показувати моє ім'я при публікації",
+
+  "format": "Формат",
+  "rowCount": "Кількість рядків",
+  "rowLimitHint": "Максимум {{max}} рядків",
+  "rowLimitError": "Не повинно перевищувати {{max}} рядків",
+  "anomalyRate": "Рівень аномалій",
+  "generating": "Генерування..."
 }

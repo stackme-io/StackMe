@@ -54,5 +54,12 @@
   "suggestPlaceholder": "Describe qué te gustaría ver en ForgeMe...",
   "suggestHint": "Una sugerencia por día · Revisada antes de publicarse",
   "suggestSubmit": "Enviar",
-  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar"
+  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar",
+
+  "format": "Formato",
+  "rowCount": "Cantidad de filas",
+  "rowLimitHint": "Máximo {{max}} filas",
+  "rowLimitError": "No debe exceder {{max}} filas",
+  "anomalyRate": "Tasa de anomalía",
+  "generating": "Generando..."
 }
