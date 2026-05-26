@@ -71,24 +71,26 @@ export function GenerateControls({
           )}
         </div>
 
-        <div className="flex flex-col gap-1.5 w-[180px]">
+        <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             {t('anomalyRate')}
           </label>
-          <input
-            type="number"
-            value={anomalyRate}
-            onChange={e => onAnomalyRateChange(Number(e.target.value))}
-            min={0}
-            max={0.5}
-            step={0.01}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
-            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-              ≈ {total} corrupted rows · {breakdown}
-            </p>
-          )}
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              value={anomalyRate}
+              onChange={e => onAnomalyRateChange(Number(e.target.value))}
+              min={0}
+              max={0.5}
+              step={0.01}
+              className="w-[180px] px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
+              <p className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
+                ≈ {total} corrupted rows · {breakdown}
+              </p>
+            )}
+          </div>
         </div>
 
       </div>
