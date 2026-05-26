@@ -24,10 +24,7 @@ export function GenerateControls({
   onGenerate, selectedAnomalies, t,
 }: GenerateControlsProps) {
   const total = Math.round(rows * anomalyRate)
-  const perType = selectedAnomalies.size > 0
-    ? Math.max(1, Math.round(total / selectedAnomalies.size))
-    : 0
-  const breakdown = [...selectedAnomalies].map(type => `${perType} ${type}`).join(' · ')
+  const breakdown = [...selectedAnomalies].join(' · ')
 
   return (
     <div className="flex flex-col gap-4">
