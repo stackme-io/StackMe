@@ -139,7 +139,7 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
             {fields.map(f => (
               <span
                 key={f.name}
-                className={`text-[10px] px-1.5 py-px rounded border font-mono ${TYPE_STYLES[f.type]}`}
+                className={`text-[9px] px-1.5 py-0.5 rounded border font-mono ${TYPE_STYLES[f.type]}`}
               >
                 {f.name} <span className="opacity-50">{f.type}</span>
               </span>
