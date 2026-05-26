@@ -8,13 +8,14 @@ interface ResultBarProps {
   onExport: () => void
   onCopy: () => void
   copied: boolean
+  exported: boolean
   t: (key: string) => string
 }
 
 export function ResultBar({
   rows, anomalyCount, format, seed,
   viewFilter, onFilterChange,
-  onExport, onCopy, copied, t,
+  onExport, onCopy, copied, exported, t,
 }: ResultBarProps) {
   return (
     <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-muted/30 border border-border mb-3">
@@ -63,10 +64,10 @@ export function ResultBar({
 
         <button
           onClick={onExport}
-          className="flex items-center gap-1.5 px-3 py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+          className="flex items-center justify-center gap-1.5 w-[104px] py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
         >
-          <i className="ti ti-download text-sm" />
-          Export {format}
+          <i className={`ti ${exported ? 'ti-check' : 'ti-download'} text-sm`} />
+          {exported ? 'Exported' : `Export ${format}`}
         </button>
       </div>
     </div>

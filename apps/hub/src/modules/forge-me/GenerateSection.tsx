@@ -35,6 +35,7 @@ export function GenerateSection({
   const [anomalies, setAnomalies]             = useState<AnomalyInfo[]>([])
   const [viewFilter, setViewFilter]           = useState<'all' | 'anomalies'>('all')
   const [copied, setCopied]                   = useState(false)
+  const [exported, setExported]               = useState(false)
   const [hasGenerated, setHasGenerated]       = useState(false)
   const [inspectorOpen, setInspectorOpen]     = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -126,6 +127,8 @@ export function GenerateSection({
     a.download = `forgeme-${seed}.${ext}`
     a.click()
     URL.revokeObjectURL(url)
+    setExported(true)
+    setTimeout(() => setExported(false), 2000)
   }
 
   const handleCopy = () => {
@@ -194,6 +197,7 @@ export function GenerateSection({
             onExport={handleExport}
             onCopy={handleCopy}
             copied={copied}
+            exported={exported}
             t={t as (key: string) => string}
           />
           <div className="flex gap-3" ref={tableRef}>
