@@ -40,10 +40,10 @@ function parseFields(raw: string): ParsedField[] {
 }
 
 const TYPE_STYLES: Record<string, string> = {
-  int:       'text-blue-400 border-blue-900 bg-blue-950/30',
-  float:     'text-amber-400 border-amber-900 bg-amber-950/30',
-  timestamp: 'text-purple-400 border-purple-900 bg-purple-950/30',
-  string:    'text-green-400 border-green-900 bg-green-950/30',
+  int:       'text-blue-400 bg-blue-950/40',
+  float:     'text-amber-400 bg-amber-950/40',
+  timestamp: 'text-purple-400 bg-purple-950/40',
+  string:    'text-green-400 bg-green-950/40',
 }
 
 interface SchemaSectionProps {
@@ -139,7 +139,7 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
             {fields.map(f => (
               <span
                 key={f.name}
-                className={`text-[9px] px-1.5 py-0.5 rounded border font-mono ${TYPE_STYLES[f.type]}`}
+                className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${TYPE_STYLES[f.type]}`}
               >
                 {f.name} <span className="opacity-50">{f.type}</span>
               </span>
