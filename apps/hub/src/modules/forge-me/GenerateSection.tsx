@@ -29,15 +29,15 @@ export function GenerateSection({
   schemaFields = [],
 }: GenerateSectionProps) {
   const { t } = useTranslation('forge-me')
-  const [format, setFormat]                   = useState('JSON')
-  const [isLoading, setIsLoading]             = useState(false)
-  const [tableData, setTableData]             = useState<Record<string, unknown>[]>([])
-  const [anomalies, setAnomalies]             = useState<AnomalyInfo[]>([])
-  const [viewFilter, setViewFilter]           = useState<'all' | 'anomalies'>('all')
-  const [copied, setCopied]                   = useState(false)
-  const [exported, setExported]               = useState(false)
-  const [hasGenerated, setHasGenerated]       = useState(false)
-  const [inspectorOpen, setInspectorOpen]     = useState(false)
+  const [format, setFormat]                     = useState('JSON')
+  const [isLoading, setIsLoading]               = useState(false)
+  const [tableData, setTableData]               = useState<Record<string, unknown>[]>([])
+  const [anomalies, setAnomalies]               = useState<AnomalyInfo[]>([])
+  const [viewFilter, setViewFilter]             = useState<'all' | 'anomalies'>('all')
+  const [copied, setCopied]                     = useState(false)
+  const [exported, setExported]                 = useState(false)
+  const [hasGenerated, setHasGenerated]         = useState(false)
+  const [inspectorOpen, setInspectorOpen]       = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const tableRef = useRef<HTMLDivElement>(null)
 
@@ -45,9 +45,11 @@ export function GenerateSection({
 
   const anomalyRowIndices = new Set(anomalies.map(a => a.row_index))
 
+  // embed original array index as _idx so AnomalyTable can always match backend row_index
+  const indexedData = tableData.map((row, i) => ({ ...row, _idx: i }))
   const displayData = viewFilter === 'anomalies'
-    ? tableData.filter((_, i) => anomalyRowIndices.has(i))
-    : tableData
+    ? indexedData.filter(row => anomalyRowIndices.has(row._idx as number))
+    : indexedData
 
   const anomalyCount = anomalyRowIndices.size
 
@@ -58,7 +60,6 @@ export function GenerateSection({
       const firstAnomalyRowIndex = anomalies[0].row_index
       setSelectedRowIndex(firstAnomalyRowIndex)
       setInspectorOpen(true)
-      // auto-scroll to first anomaly row
       setTimeout(() => {
         if (tableRef.current) {
           const rows = tableRef.current.querySelectorAll('tbody tr')
@@ -142,8 +143,7 @@ export function GenerateSection({
     const tsv = [
       allKeys.join('\t'),
       ...source.map((r, i) => {
-        const rowIndex = r.id !== undefined ? Number(r.id) - 1 : i
-        const anomalyType = anomalyTypeMap.get(rowIndex) ?? ''
+        const anomalyType = anomalyTypeMap.get(i) ?? ''
         return [...keys.map(k => r[k] ?? ''), anomalyType].join('\t')
       }),
     ].join('\n')
@@ -158,7 +158,6 @@ export function GenerateSection({
     setInspectorOpen(true)
   }
 
-  // is selected row visible in current filter
   const selectedRowHidden = selectedRowIndex !== null
     && viewFilter === 'anomalies'
     && !anomalyRowIndices.has(selectedRowIndex)

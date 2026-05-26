@@ -36,8 +36,8 @@ function isTimestampCol(col: string): boolean {
 }
 
 function colHeaderClass(col: string): string {
-  if (col === 'id')            return 'w-[72px]'
-  if (isTimestampCol(col))     return 'w-[160px]'
+  if (col === 'id')        return 'w-[72px]'
+  if (isTimestampCol(col)) return 'w-[160px]'
   return ''
 }
 
@@ -56,7 +56,8 @@ export function AnomalyTable({
 }: AnomalyTableProps) {
   if (tableData.length === 0) return null
 
-  const columns = Object.keys(tableData[0])
+  // exclude internal _idx from visible columns
+  const columns = Object.keys(tableData[0]).filter(col => col !== '_idx')
 
   const anomalyMap = new Map<number, { cols: Set<string>; type: string }>()
   anomalies.forEach(a => {
@@ -88,7 +89,8 @@ export function AnomalyTable({
         </thead>
         <tbody>
           {tableData.map((row, i) => {
-            const rowIndex    = row.id !== undefined ? Number(row.id) - 1 : i
+            // use embedded _idx if present (handles filtered views with non-sequential IDs)
+            const rowIndex    = row._idx !== undefined ? Number(row._idx) : i
             const anomaly     = anomalyMap.get(rowIndex)
             const isAnomaly   = !!anomaly
             const anomalyCols = anomaly?.cols ?? new Set<string>()
