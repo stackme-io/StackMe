@@ -84,7 +84,7 @@ export function GenerateControls({
             />
             {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
               <p className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
-                ≈ {total} corrupted rows · {breakdown}
+                ≈ {total} corrupted rows: {breakdown}
               </p>
             )}
           </div>
