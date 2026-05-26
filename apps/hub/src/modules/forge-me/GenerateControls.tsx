@@ -37,7 +37,7 @@ export function GenerateControls({
           <select
             value={format}
             onChange={e => onFormatChange(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring appearance-none w-full"
+            className="px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring appearance-none w-full"
           >
             <option value="JSON">JSON</option>
             <option value="CSV">CSV</option>
@@ -58,7 +58,7 @@ export function GenerateControls({
             onChange={e => onRowsChange(Number(e.target.value))}
             min={1}
             max={MAX_ROWS}
-            className={`px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring ${
+            className={`px-3 py-1.5 rounded-lg border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring ${
               rowError ? 'border-destructive focus:ring-destructive' : 'border-border'
             }`}
           />
@@ -83,7 +83,7 @@ export function GenerateControls({
               min={0}
               max={0.5}
               step={0.01}
-              className="w-[180px] px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-[180px] px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
               <p className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
