@@ -23,6 +23,12 @@ export function GenerateControls({
   onFormatChange, onRowsChange, onAnomalyRateChange, onSeedChange,
   onGenerate, selectedAnomalies, t,
 }: GenerateControlsProps) {
+  const total = Math.round(rows * anomalyRate)
+  const perType = selectedAnomalies.size > 0
+    ? Math.max(1, Math.round(total / selectedAnomalies.size))
+    : 0
+  const breakdown = [...selectedAnomalies].map(type => `${perType} ${type}`).join(' · ')
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-6 items-start">
@@ -78,9 +84,11 @@ export function GenerateControls({
             step={0.01}
             className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
-          <span className="text-[10px] text-muted-foreground/75 mt-0.5">
-            {Math.round(anomalyRate * 100)}% of rows will be corrupted
-          </span>
+          {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
+            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+              ≈ {total} corrupted rows · {breakdown}
+            </p>
+          )}
         </div>
 
       </div>

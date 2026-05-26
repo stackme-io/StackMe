@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { Sidebar } from './Sidebar'
@@ -28,13 +28,6 @@ export default function ForgeMePage() {
       return next
     })
   }, [])
-
-  const ratePreview = useMemo(() => {
-    if (selected.size === 0) return []
-    const total = Math.round(rows * anomalyRate)
-    const per   = Math.round(total / selected.size)
-    return [...selected].map(type => ({ type, count: per }))
-  }, [selected, rows, anomalyRate])
 
   return (
     <div className="flex h-full relative overflow-hidden">
@@ -79,7 +72,6 @@ export default function ForgeMePage() {
               seed={seed}
               rows={rows}
               anomalyRate={anomalyRate}
-              ratePreview={ratePreview}
               schemaFields={schemaFields}
               onSeedChange={setSeed}
               onRowsChange={setRows}
