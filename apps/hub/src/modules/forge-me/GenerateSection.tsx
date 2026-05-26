@@ -134,17 +134,17 @@ export function GenerateSection({
 
   const handleCopy = () => {
     const anomalyTypeMap = new Map(anomalies.map(a => [a.row_index, a.anomaly_type]))
-    const source = viewFilter === 'anomalies'
-      ? tableData.filter((_, i) => anomalyRowIndices.has(i))
-      : tableData
-    if (source.length === 0) return
-    const keys = Object.keys(source[0])
+    const sourceWithIndex = viewFilter === 'anomalies'
+      ? tableData.map((row, i) => ({ row, idx: i })).filter(({ idx }) => anomalyRowIndices.has(idx))
+      : tableData.map((row, i) => ({ row, idx: i }))
+    if (sourceWithIndex.length === 0) return
+    const keys = Object.keys(sourceWithIndex[0].row)
     const allKeys = [...keys, 'anomaly_type']
     const tsv = [
       allKeys.join('\t'),
-      ...source.map((r, i) => {
-        const anomalyType = anomalyTypeMap.get(i) ?? ''
-        return [...keys.map(k => r[k] ?? ''), anomalyType].join('\t')
+      ...sourceWithIndex.map(({ row, idx }) => {
+        const anomalyType = anomalyTypeMap.get(idx) ?? ''
+        return [...keys.map(k => row[k] ?? ''), anomalyType].join('\t')
       }),
     ].join('\n')
     navigator.clipboard.writeText(tsv).then(() => {
