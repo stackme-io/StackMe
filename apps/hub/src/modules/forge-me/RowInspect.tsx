@@ -87,13 +87,13 @@ export function RowInspect({
                 <p className="text-[10px] text-muted-foreground/50">No anomalies detected</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 {rowAnomalies.map((a, i) => {
                   const normalized = normalizeType(a.anomaly_type)
                   const style = BADGE_STYLES[normalized] ?? 'bg-muted text-muted-foreground border-border'
                   return (
-                    <div key={i} className="flex flex-col gap-1.5">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono self-start ${style}`}>
+                    <div key={i} className="flex flex-col gap-2">
+                      <span className={`text-[11px] px-1.5 py-0.5 rounded border font-mono font-semibold self-start ${style}`}>
                         {a.anomaly_type.replace(/_/g, ' ')}
                       </span>
                       <div className="flex flex-col gap-0.5">
@@ -121,14 +121,14 @@ export function RowInspect({
 
             {rowData && (
               <div className="border-t border-border/40 pt-3 mt-1">
-                <p className="text-[9px] uppercase tracking-widest text-muted-foreground/40 mb-2">
+                <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-2">
                   Row data
                 </p>
                 <div className="flex flex-col gap-0.5">
                   {Object.entries(rowData).map(([key, val]) => (
                     <div key={key} className="flex items-baseline justify-between gap-2">
                       <span className="text-[10px] text-muted-foreground/50 flex-shrink-0">{key}</span>
-                      <span className="text-[10px] text-foreground font-mono truncate text-right">
+                      <span className="text-[10px] text-foreground font-mono break-all text-right">
                         {val === null || val === undefined
                           ? <span className="text-red-400">NULL</span>
                           : String(val)}

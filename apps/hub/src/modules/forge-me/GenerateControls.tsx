@@ -23,7 +23,7 @@ export function GenerateControls({
   onFormatChange, onRowsChange, onAnomalyRateChange, onSeedChange,
   onGenerate, selectedAnomalies, t,
 }: GenerateControlsProps) {
-  const total = Math.round(rows * anomalyRate)
+  const total     = Math.round(rows * anomalyRate)
   const breakdown = [...selectedAnomalies].join(' · ')
 
   return (
@@ -42,6 +42,7 @@ export function GenerateControls({
             <option value="JSON">JSON</option>
             <option value="CSV">CSV</option>
           </select>
+          <div className="h-4" />
         </div>
 
         <div className="flex flex-col gap-1.5 w-[180px]">
@@ -61,11 +62,13 @@ export function GenerateControls({
               rowError ? 'border-destructive focus:ring-destructive' : 'border-border'
             }`}
           />
-          {rowError && (
-            <span className="text-[10px] text-destructive">
-              {t('rowLimitError', { max: MAX_ROWS })}
-            </span>
-          )}
+          <div className="h-4 flex items-center">
+            {rowError && (
+              <span className="text-[10px] text-destructive">
+                {t('rowLimitError', { max: MAX_ROWS })}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -88,6 +91,7 @@ export function GenerateControls({
               </p>
             )}
           </div>
+          <div className="h-4" />
         </div>
 
       </div>
@@ -112,7 +116,7 @@ export function GenerateControls({
             min={0}
             max={99999}
             step={1}
-            className="w-16 px-1.5 py-0.5 rounded border border-border bg-background text-foreground text-xs font-mono focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-16 px-1.5 py-0.5 rounded border border-border bg-background text-foreground text-xs font-mono text-right focus:outline-none focus:ring-1 focus:ring-ring"
           />
           <button
             onClick={() => onSeedChange(Math.floor(Math.random() * 99999))}
@@ -122,6 +126,9 @@ export function GenerateControls({
             ↺
           </button>
         </div>
+        <span className="ml-auto text-[10px] text-muted-foreground/40">
+          Deterministic · local generation
+        </span>
       </div>
     </div>
   )

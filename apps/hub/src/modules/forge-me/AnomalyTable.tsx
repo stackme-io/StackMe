@@ -30,6 +30,17 @@ function normalizeType(type: string): string {
   return 'outlier'
 }
 
+function isTimestampCol(col: string): boolean {
+  const c = col.toLowerCase()
+  return c.includes('timestamp') || c.includes('_at') || c === 'date' || c === 'time'
+}
+
+function colHeaderClass(col: string): string {
+  if (col === 'id')            return 'w-[72px]'
+  if (isTimestampCol(col))     return 'w-[160px]'
+  return ''
+}
+
 function AnomalyBadge({ type }: { type: string }) {
   const normalized = normalizeType(type)
   const style = BADGE_STYLES[normalized] ?? 'bg-muted text-muted-foreground border-border'
@@ -61,16 +72,16 @@ export function AnomalyTable({
     <div className="flex-1 rounded-lg border border-border max-h-[420px] overflow-y-auto overflow-x-hidden min-w-0">
       <table className="w-full text-sm border-collapse table-fixed">
         <thead className="sticky top-0 z-10">
-          <tr className="bg-muted/30 backdrop-blur-sm">
+          <tr className="bg-muted/40 backdrop-blur-sm">
             {columns.map(col => (
               <th
                 key={col}
-                className="px-3 py-2.5 text-left font-medium text-muted-foreground truncate border-b border-border text-[10px] uppercase tracking-wider"
+                className={`px-3 py-2.5 text-left font-medium text-foreground/60 truncate border-b border-border text-[10px] uppercase tracking-wider ${colHeaderClass(col)}`}
               >
                 {col}
               </th>
             ))}
-            <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
+            <th className="px-3 py-2.5 text-left font-medium text-foreground/60 border-b border-border text-[10px] uppercase tracking-wider w-28">
               type
             </th>
           </tr>
@@ -91,20 +102,25 @@ export function AnomalyTable({
                   isSelected
                     ? 'bg-primary/10'
                     : isAnomaly
-                    ? 'bg-amber-950/10 hover:bg-amber-950/20'
+                    ? 'bg-amber-950/10 hover:bg-amber-950/30'
                     : i % 2 === 0
-                    ? 'bg-background hover:bg-muted/20'
-                    : 'bg-muted/10 hover:bg-muted/20'
+                    ? 'bg-background hover:bg-muted/30'
+                    : 'bg-muted/10 hover:bg-muted/30'
                 }`}
               >
                 {columns.map(col => {
                   const isAnomalyCell = anomalyCols.has(col)
-                  const value = row[col]
+                  const isId          = col === 'id'
+                  const value         = row[col]
                   return (
                     <td
                       key={col}
-                      className={`px-3 py-2 truncate border-b border-border/40 text-sm ${
-                        isAnomalyCell ? 'text-amber-400 font-medium' : 'text-foreground'
+                      className={`px-3 py-2 truncate border-b border-border/40 ${
+                        isId
+                          ? 'text-xs font-mono text-muted-foreground/50'
+                          : isAnomalyCell
+                          ? 'text-sm text-amber-400 font-medium'
+                          : 'text-sm text-foreground'
                       }`}
                     >
                       {value === null || value === undefined ? (
