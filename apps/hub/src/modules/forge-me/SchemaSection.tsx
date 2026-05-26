@@ -100,14 +100,13 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
         <textarea
           value={raw}
           onChange={e => handleTextChange(e.target.value)}
-          rows={4}
           placeholder={'user_id,created_at,amount,status\n1001,2024-01-01,99.90,active\n1002,2024-01-02,149.00,trial'}
-          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-xs font-mono resize-none placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full h-[88px] px-3 py-2 rounded-lg border border-border bg-background text-foreground text-xs font-mono resize-none placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-ring"
         />
       )}
 
       {tab === 'upload' && (
-        <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-lg border-2 border-dashed border-border bg-background cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-colors">
+        <label className="flex flex-col items-center justify-center gap-1.5 h-[88px] px-4 rounded-lg border-2 border-dashed border-border bg-background cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-colors">
           <span className="text-xs text-muted-foreground">
             {fileName ?? 'Click to upload CSV'}
           </span>
@@ -136,13 +135,13 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
             Detected schema · {fields.length} fields
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1">
             {fields.map(f => (
               <span
                 key={f.name}
-                className={`text-[10px] px-2 py-0.5 rounded border font-mono ${TYPE_STYLES[f.type]}`}
+                className={`text-[10px] px-1.5 py-px rounded border font-mono ${TYPE_STYLES[f.type]}`}
               >
-                {f.name} <span className="opacity-60">{f.type}</span>
+                {f.name} <span className="opacity-50">{f.type}</span>
               </span>
             ))}
           </div>
