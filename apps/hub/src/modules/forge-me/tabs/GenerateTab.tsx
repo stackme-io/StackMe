@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { GenerateSection } from '../GenerateSection'
 import { SchemaSection } from '../SchemaSection'
 import type { ParsedField } from '../SchemaSection'
@@ -21,6 +22,8 @@ export function GenerateTab({
   schemaFields,
   onSeedChange, onRowsChange, onAnomalyRateChange, onSchemaReady,
 }: GenerateTabProps) {
+  const [schemaCollapsed, setSchemaCollapsed] = useState(false)
+
   return (
     <>
       {viewMode === 'raw' ? (
@@ -36,7 +39,24 @@ export function GenerateTab({
         />
       ) : (
         <>
-          <SchemaSection onSchemaReady={onSchemaReady} />
+          <div className={schemaCollapsed ? 'hidden' : ''}>
+            <SchemaSection onSchemaReady={onSchemaReady} />
+          </div>
+
+          {schemaCollapsed && (
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/10 mb-5">
+              <span className="text-xs text-muted-foreground/60">
+                {schemaFields.length} columns detected
+              </span>
+              <button
+                onClick={() => setSchemaCollapsed(false)}
+                className="ml-auto text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
+              >
+                Edit
+              </button>
+            </div>
+          )}
+
           <GenerateSection
             selectedAnomalies={selected}
             seed={seed}
@@ -45,7 +65,7 @@ export function GenerateTab({
             onSeedChange={onSeedChange}
             onRowsChange={onRowsChange}
             onAnomalyRateChange={onAnomalyRateChange}
-            onGenerated={() => {}}
+            onGenerated={() => setSchemaCollapsed(true)}
             schemaFields={schemaFields}
           />
         </>

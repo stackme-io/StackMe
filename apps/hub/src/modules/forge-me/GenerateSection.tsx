@@ -26,6 +26,7 @@ export function GenerateSection({
   selectedAnomalies,
   seed, rows, anomalyRate,
   onSeedChange, onRowsChange, onAnomalyRateChange,
+  onGenerated,
   schemaFields = [],
 }: GenerateSectionProps) {
   const { t } = useTranslation('forge-me')
@@ -37,6 +38,7 @@ export function GenerateSection({
   const [copied, setCopied]                     = useState(false)
   const [exported, setExported]                 = useState(false)
   const [hasGenerated, setHasGenerated]         = useState(false)
+  const [collapsed, setCollapsed]               = useState(false)
   const [inspectorOpen, setInspectorOpen]       = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const tableRef = useRef<HTMLDivElement>(null)
@@ -45,7 +47,6 @@ export function GenerateSection({
 
   const anomalyRowIndices = new Set(anomalies.map(a => a.row_index))
 
-  // embed original array index as _idx so AnomalyTable can always match backend row_index
   const indexedData = tableData.map((row, i) => ({ ...row, _idx: i }))
   const displayData = viewFilter === 'anomalies'
     ? indexedData.filter(row => anomalyRowIndices.has(row._idx as number))
@@ -53,7 +54,6 @@ export function GenerateSection({
 
   const anomalyCount = anomalyRowIndices.size
 
-  // auto-select first anomaly row after generate
   useEffect(() => {
     if (!hasGenerated) return
     if (anomalies.length > 0) {
@@ -107,6 +107,8 @@ export function GenerateSection({
       setAnomalies(data.anomalies ?? [])
       setViewFilter('all')
       setHasGenerated(true)
+      setCollapsed(true)
+      onGenerated()
     } catch (err) {
       console.error(err)
     } finally {
@@ -168,21 +170,42 @@ export function GenerateSection({
 
   return (
     <div className="flex flex-col gap-4">
-      <GenerateControls
-        format={format}
-        rows={rows}
-        anomalyRate={anomalyRate}
-        seed={seed}
-        isLoading={isLoading}
-        rowError={rowError}
-        onFormatChange={setFormat}
-        onRowsChange={onRowsChange}
-        onAnomalyRateChange={onAnomalyRateChange}
-        onSeedChange={onSeedChange}
-        onGenerate={handleGenerate}
-        selectedAnomalies={selectedAnomalies}
-        t={t as (key: string, opts?: object) => string}
-      />
+
+      {collapsed ? (
+        <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-2.5">
+          <span className="text-xs text-muted-foreground/60 font-mono">{format}</span>
+          <span className="text-muted-foreground/30 text-sm">·</span>
+          <span className="text-xs text-muted-foreground/60">{rows} rows</span>
+          <span className="text-muted-foreground/30 text-sm">·</span>
+          <span className="text-xs text-muted-foreground/60">rate {anomalyRate}</span>
+          <span className="text-muted-foreground/30 text-sm">·</span>
+          <span className="text-xs text-muted-foreground/60 font-mono">seed {seed}</span>
+          <span className="text-muted-foreground/30 text-sm">·</span>
+          <span className="text-xs text-muted-foreground/60">{[...selectedAnomalies].join(' · ')}</span>
+          <button
+            onClick={() => setCollapsed(false)}
+            className="ml-auto text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
+          >
+            Edit
+          </button>
+        </div>
+      ) : (
+        <GenerateControls
+          format={format}
+          rows={rows}
+          anomalyRate={anomalyRate}
+          seed={seed}
+          isLoading={isLoading}
+          rowError={rowError}
+          onFormatChange={setFormat}
+          onRowsChange={onRowsChange}
+          onAnomalyRateChange={onAnomalyRateChange}
+          onSeedChange={onSeedChange}
+          onGenerate={handleGenerate}
+          selectedAnomalies={selectedAnomalies}
+          t={t as (key: string, opts?: object) => string}
+        />
+      )}
 
       {hasGenerated && (
         <>
