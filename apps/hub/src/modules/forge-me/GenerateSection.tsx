@@ -54,6 +54,9 @@ export function GenerateSection({
 
   const anomalyCount = anomalyRowIndices.size
 
+  const total     = Math.round(rows * anomalyRate)
+  const breakdown = [...selectedAnomalies].join(' · ')
+
   useEffect(() => {
     if (!hasGenerated) return
     if (anomalies.length > 0) {
@@ -171,41 +174,50 @@ export function GenerateSection({
   return (
     <div className="flex flex-col gap-4">
 
-      {collapsed ? (
-        <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-2.5">
-          <span className="text-xs text-muted-foreground/60 font-mono">{format}</span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/60">{rows} rows</span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/60">rate {anomalyRate}</span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/60 font-mono">seed {seed}</span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/60">{[...selectedAnomalies].join(' · ')}</span>
-          <button
-            onClick={() => setCollapsed(false)}
-            className="ml-auto text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
-          >
-            Edit
-          </button>
+      {/* collapsed summary bar */}
+      <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className="overflow-hidden">
+          <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5 mb-0">
+            <span className="text-xs text-muted-foreground/60 font-mono">{format}</span>
+            <span className="text-muted-foreground/30 text-sm">·</span>
+            <span className="text-xs text-muted-foreground/60">{rows} rows</span>
+            <span className="text-muted-foreground/30 text-sm">·</span>
+            <span className="text-xs text-muted-foreground/60 font-mono">seed {seed}</span>
+            <span className="text-muted-foreground/30 text-sm">·</span>
+            <span className="text-xs text-muted-foreground/60">
+              ≈ {total} corrupted rows: {breakdown}
+            </span>
+            <button
+              onClick={() => setCollapsed(false)}
+              className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
+            >
+              <i className="ti ti-pencil text-[11px]" />
+              Edit
+            </button>
+          </div>
         </div>
-      ) : (
-        <GenerateControls
-          format={format}
-          rows={rows}
-          anomalyRate={anomalyRate}
-          seed={seed}
-          isLoading={isLoading}
-          rowError={rowError}
-          onFormatChange={setFormat}
-          onRowsChange={onRowsChange}
-          onAnomalyRateChange={onAnomalyRateChange}
-          onSeedChange={onSeedChange}
-          onGenerate={handleGenerate}
-          selectedAnomalies={selectedAnomalies}
-          t={t as (key: string, opts?: object) => string}
-        />
-      )}
+      </div>
+
+      {/* full controls */}
+      <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'}`}>
+        <div className="overflow-hidden">
+          <GenerateControls
+            format={format}
+            rows={rows}
+            anomalyRate={anomalyRate}
+            seed={seed}
+            isLoading={isLoading}
+            rowError={rowError}
+            onFormatChange={setFormat}
+            onRowsChange={onRowsChange}
+            onAnomalyRateChange={onAnomalyRateChange}
+            onSeedChange={onSeedChange}
+            onGenerate={handleGenerate}
+            selectedAnomalies={selectedAnomalies}
+            t={t as (key: string, opts?: object) => string}
+          />
+        </div>
+      </div>
 
       {hasGenerated && (
         <>
