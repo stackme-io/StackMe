@@ -76,7 +76,7 @@ export function ResultBar({
           <div className="relative group">
             <button
               onClick={onAnalyze}
-              className="flex items-center justify-center gap-1.5 px-3 py-1 text-xs border border-primary/40 rounded-md text-primary hover:bg-primary/10 transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3 py-1 text-xs border border-teal-400/40 rounded-md text-teal-300 hover:bg-teal-950/30 transition-colors"
             >
               <i className="ti ti-chart-bar text-sm" />
               AnalyzeMe

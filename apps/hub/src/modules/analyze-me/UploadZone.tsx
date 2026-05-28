@@ -62,7 +62,7 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-xl px-6 py-5 flex flex-col items-center gap-2 cursor-pointer transition-colors block ${
+        className={`min-h-[88px] border-2 border-dashed rounded-xl px-6 py-3 flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors block ${
           loading
             ? 'border-primary/30 bg-muted/10'
             : dragging
@@ -98,33 +98,33 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
             <div className="h-full bg-primary/50 rounded-full animate-pulse w-full" />
           </div>
         )}
-
-        <div className="mt-1 relative" ref={badgeRef}>
-          <button
-            type="button"
-            onClick={e => { e.preventDefault(); setTooltip(v => !v) }}
-            onMouseDown={e => e.stopPropagation()}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/60 bg-background hover:border-border transition-colors"
-          >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
-              <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
-            </svg>
-            <span className="text-[10px] text-muted-foreground">{t('privacyBadge')}</span>
-          </button>
-
-          {tooltipVisible && (
-            <div
-              ref={tooltipRef}
-              onClick={() => setTooltip(false)}
-              className="absolute top-8 left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground cursor-pointer"
-            >
-              <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
-              <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
-              <p>{t('privacyBody')}</p>
-            </div>
-          )}
-        </div>
       </label>
+
+      <div className="flex justify-center mt-1.5" ref={badgeRef}>
+        <button
+          type="button"
+          onClick={e => { e.preventDefault(); setTooltip(v => !v) }}
+          onMouseDown={e => e.stopPropagation()}
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/60 bg-background hover:border-border transition-colors"
+        >
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
+            <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-[10px] text-muted-foreground">{t('privacyBadge')}</span>
+        </button>
+
+        {tooltipVisible && (
+          <div
+            ref={tooltipRef}
+            onClick={() => setTooltip(false)}
+            className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground cursor-pointer"
+          >
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
+            <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
+            <p>{t('privacyBody')}</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
