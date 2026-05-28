@@ -65,7 +65,7 @@ export default function ForgeMePage() {
             onChange={setActiveTab}
           />
 
-          {activeTab === 'generate' && (
+          <div style={{ display: activeTab === 'generate' ? 'block' : 'none' }}>
             <GenerateTab
               selected={selected}
               viewMode={viewMode}
@@ -78,11 +78,15 @@ export default function ForgeMePage() {
               onAnomalyRateChange={setAnomalyRate}
               onSchemaReady={setSchemaFields}
             />
-          )}
+          </div>
 
-          {activeTab === 'roadmap' && <RoadmapTab />}
+          <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }}>
+            <RoadmapTab />
+          </div>
 
-          {activeTab === 'stack' && <StackTab />}
+          <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>
+            <StackTab />
+          </div>
 
         </div>
 

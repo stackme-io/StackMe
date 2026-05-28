@@ -10,7 +10,7 @@ interface AnalysisSummaryProps {
 }
 
 export function AnalysisSummary({ result, filter, onFilter }: AnalysisSummaryProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation('analyze-me')
 
   const counts = {
     missing:   result.anomalies.filter(a => a.anomaly_type === 'missing').length,
@@ -19,25 +19,25 @@ export function AnalysisSummary({ result, filter, onFilter }: AnalysisSummaryPro
   }
 
   const FILTERS: { key: FilterType; label: string }[] = [
-    { key: 'all',       label: t('analyze.filterAll') },
-    { key: 'anomalies', label: t('analyze.filterAnomalies') },
-    { key: 'missing',   label: `${t('analyze.filterNulls')} (${counts.missing})` },
-    { key: 'duplicate', label: `${t('analyze.filterDuplicates')} (${counts.duplicate})` },
-    { key: 'outlier',   label: `${t('analyze.filterOutliers')} (${counts.outlier})` },
+    { key: 'all',       label: t('filterAll') },
+    { key: 'anomalies', label: t('filterAnomalies') },
+    { key: 'missing',   label: `${t('filterNulls')} (${counts.missing})` },
+    { key: 'duplicate', label: `${t('filterDuplicates')} (${counts.duplicate})` },
+    { key: 'outlier',   label: `${t('filterOutliers')} (${counts.outlier})` },
   ]
 
   return (
     <>
       <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
         <span className="text-muted-foreground">
-          {t('analyze.rows')}: <strong className="text-foreground">{result.rows_total}</strong>
+          {t('rows')}: <strong className="text-foreground">{result.rows_total}</strong>
         </span>
         <span className="text-muted-foreground">
-          {t('analyze.anomalies')}: <strong className="text-foreground">{result.anomalies_count}</strong>
+          {t('anomalies')}: <strong className="text-foreground">{result.anomalies_count}</strong>
         </span>
-        <span className="text-red-400/70 text-xs self-center">{t('analyze.nulls')}: <strong>{counts.missing}</strong></span>
-        <span className="text-blue-400/70 text-xs self-center">{t('analyze.duplicates')}: <strong>{counts.duplicate}</strong></span>
-        <span className="text-amber-400/70 text-xs self-center">{t('analyze.outliers')}: <strong>{counts.outlier}</strong></span>
+        <span className="text-red-400/70 text-xs self-center">{t('nulls')}: <strong>{counts.missing}</strong></span>
+        <span className="text-blue-400/70 text-xs self-center">{t('duplicates')}: <strong>{counts.duplicate}</strong></span>
+        <span className="text-amber-400/70 text-xs self-center">{t('outliers')}: <strong>{counts.outlier}</strong></span>
       </div>
 
       <div className="flex mb-1">
