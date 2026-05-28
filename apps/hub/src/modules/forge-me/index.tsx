@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { Sidebar } from './Sidebar'
@@ -9,16 +9,32 @@ import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, ViewMode } from './types'
 
 const DEFAULT_SELECTED: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
+const STORAGE_KEY = 'forgeme-settings'
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return null
+}
 
 export default function ForgeMePage() {
-  const [activeTab, setActiveTab]       = useState('generate')
-  const [sidebarOpen, setSidebarOpen]   = useState(true)
-  const [viewMode, setViewMode]         = useState<ViewMode>('raw')
-  const [selected, setSelected]         = useState<Set<AnomalyType>>(new Set(DEFAULT_SELECTED))
-  const [seed, setSeed]                 = useState(42)
-  const [rows, setRows]                 = useState(100)
-  const [anomalyRate, setAnomalyRate]   = useState(0.05)
-  const [schemaFields, setSchemaFields] = useState<ParsedField[]>([])
+  const stored                           = useState(loadSettings)[0]
+  const [activeTab, setActiveTab]        = useState('generate')
+  const [sidebarOpen, setSidebarOpen]    = useState(true)
+  const [viewMode, setViewMode]          = useState<ViewMode>('raw')
+  const [selected, setSelected]          = useState<Set<AnomalyType>>(new Set(stored?.selected ?? DEFAULT_SELECTED))
+  const [seed, setSeed]                  = useState<number>(stored?.seed ?? 42)
+  const [rows, setRows]                  = useState<number>(stored?.rows ?? 100)
+  const [anomalyRate, setAnomalyRate]    = useState<number>(stored?.anomalyRate ?? 0.05)
+  const [schemaFields, setSchemaFields]  = useState<ParsedField[]>([])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ seed, rows, anomalyRate, selected: [...selected] }))
+    } catch {}
+  }, [seed, rows, anomalyRate, selected])
   const { t } = useTranslation('forge-me')
 
   const toggleAnomaly = useCallback((id: AnomalyType) => {
