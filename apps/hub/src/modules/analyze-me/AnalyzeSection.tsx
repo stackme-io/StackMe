@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { UploadZone } from './UploadZone'
 import { AnalysisSummary } from './AnalysisSummary'
 import { AnomalyTable } from './AnomalyTable'
 import { AnomalyCards } from './AnomalyCards'
-import { popHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
+import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
 
 type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed'
 
@@ -14,14 +14,27 @@ export function AnalyzeSection() {
   const { t } = useTranslation('analyze-me')
   const [filter, setFilter] = useState<FilterType>('all')
   const [forgeData, setForgeData] = useState<ForgeHandoff | null>(null)
+  const analyzeRef = useRef(analyze)
+  useEffect(() => { analyzeRef.current = analyze }, [analyze])
 
   useEffect(() => {
-    const handoff = popHandoff()
-    if (!handoff) return
-    setForgeData(handoff)
-    const json = JSON.stringify(handoff.rows)
-    const file = new File([json], `forgeme-${handoff.seed}.json`, { type: 'application/json' })
-    analyze(file)
+    function consume(handoff: ForgeHandoff) {
+      setForgeData(handoff)
+      setFilter('all')
+      const json = JSON.stringify(handoff.rows)
+      const file = new File([json], `forgeme-${handoff.seed}.json`, { type: 'application/json' })
+      analyzeRef.current(file)
+    }
+
+    // Case 1: component just mounted, handoff already waiting
+    const immediate = popHandoff()
+    if (immediate) { consume(immediate); return }
+
+    // Case 2: component was already mounted (CSS hide), subscribe for future handoffs
+    return onHandoff(() => {
+      const h = popHandoff()
+      if (h) consume(h)
+    })
   }, [])
 
   const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
