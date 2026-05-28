@@ -46,7 +46,7 @@ export function AnalyzeSection() {
         <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
           <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/70" />
           <span className="text-xs text-muted-foreground/70">
-            Imported from ForgeMe
+            Imported from <span className="text-primary">ForgeMe</span>
           </span>
           <span className="text-muted-foreground/30 text-sm">·</span>
           <span className="text-xs text-amber-500">
@@ -65,9 +65,7 @@ export function AnalyzeSection() {
         </div>
       )}
 
-      {!forgeData && (
-        <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={analyze} />
-      )}
+      <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={analyze} />
 
       {sizeWarn && !loading && result && (
         <div className="mt-2 px-4 py-2 rounded-lg bg-amber-950/20 text-amber-400 text-xs border border-amber-900/40">

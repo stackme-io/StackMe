@@ -8,6 +8,7 @@ interface ResultBarProps {
   onExport: () => void
   onCopy: () => void
   onAnalyze?: () => void
+  analyzeInstalled?: boolean
   copied: boolean
   exported: boolean
   t: (key: string) => string
@@ -16,7 +17,7 @@ interface ResultBarProps {
 export function ResultBar({
   rows, anomalyCount, format, seed,
   viewFilter, onFilterChange,
-  onExport, onCopy, onAnalyze, copied, exported, t,
+  onExport, onCopy, onAnalyze, analyzeInstalled = true, copied, exported, t,
 }: ResultBarProps) {
   return (
     <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-muted/30 border border-border mb-3">
@@ -72,13 +73,20 @@ export function ResultBar({
         </button>
 
         {onAnalyze && (
-          <button
-            onClick={onAnalyze}
-            className="flex items-center justify-center gap-1.5 px-3 py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
-          >
-            <i className="ti ti-chart-bar text-sm" />
-            Analyze
-          </button>
+          <div className="relative group">
+            <button
+              onClick={onAnalyze}
+              className="flex items-center justify-center gap-1.5 px-3 py-1 text-xs border border-primary/40 rounded-md text-primary hover:bg-primary/10 transition-colors"
+            >
+              <i className="ti ti-chart-bar text-sm" />
+              AnalyzeMe
+            </button>
+            {!analyzeInstalled && (
+              <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
+                Install <span className="text-primary">AnalyzeMe</span> via MarketMe to unlock this feature.
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

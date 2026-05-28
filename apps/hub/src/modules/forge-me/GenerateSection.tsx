@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useWorkspace } from '../../store/workspace'
+import { MODULE_REGISTRY } from '../../registry'
 import { GenerateControls } from './GenerateControls'
 import { DataSection } from './DataSection'
 import { setHandoff } from '../../shared/forgeHandoff'
@@ -30,7 +31,9 @@ export function GenerateSection({
   schemaFields = [],
 }: GenerateSectionProps) {
   const { t } = useTranslation('forge-me')
-  const navigate = useNavigate()
+  const { openPanel } = useWorkspace()
+  const analyzeManifest = MODULE_REGISTRY.find(m => m.id === 'analyze-me')
+  const analyzeInstalled = !!analyzeManifest
   const [format, setFormat]                     = useState('JSON')
   const [isLoading, setIsLoading]               = useState(false)
   const [tableData, setTableData]               = useState<Record<string, unknown>[]>([])
@@ -152,8 +155,9 @@ export function GenerateSection({
   }
 
   const handleAnalyze = () => {
+    if (!analyzeManifest) return
     setHandoff({ rows: tableData, anomalies, format, seed, createdAt: Date.now() })
-    navigate('/analyze-me')
+    openPanel(analyzeManifest)
   }
 
   const handleRowSelect = (rowIndex: number) => {
@@ -225,6 +229,7 @@ export function GenerateSection({
           onCopy={handleCopy}
           onExport={handleExport}
           onAnalyze={handleAnalyze}
+          analyzeInstalled={analyzeInstalled}
           onRowSelect={handleRowSelect}
           onInspectorClose={() => setInspectorOpen(false)}
           onShowAll={() => setViewFilter('all')}

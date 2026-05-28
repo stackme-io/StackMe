@@ -136,7 +136,7 @@ export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: A
                 })}
                 <td className="px-3 py-2 border-b border-border/40 w-28">
                   {isAnomaly && anomaly ? (
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex flex-col gap-0.5 w-fit">
                       {anomaly.types.map(t => <AnomalyBadge key={t} type={t} />)}
                     </div>
                   ) : null}
@@ -144,9 +144,18 @@ export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: A
                 {hasInjected && (
                   <td className="px-3 py-2 border-b border-border/40 w-32">
                     {verdict && (
-                      <span className={`text-[10px] font-mono ${VERDICT_STYLES[verdict]}`}>
-                        {VERDICT_LABELS[verdict]}
-                      </span>
+                      <div className="relative group inline-block">
+                        <span className={`text-[10px] font-mono cursor-default ${VERDICT_STYLES[verdict]}`}>
+                          {VERDICT_LABELS[verdict]}
+                        </span>
+                        {verdict !== 'detected' && (
+                          <div className="absolute bottom-full left-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
+                            {verdict === 'missed'
+                              ? 'Injected anomaly was not detected. Try increasing sensitivity in the left panel.'
+                              : 'Detected but not injected — may be a real anomaly or a false alarm. Lower sensitivity to reduce noise.'}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </td>
                 )}
