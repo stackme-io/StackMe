@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import type { AnalyzeResult } from './types'
 
-type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier'
+type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed'
 
 interface AnalysisSummaryProps {
   result: AnalyzeResult
   filter: FilterType
   onFilter: (f: FilterType) => void
+  missedCount?: number
 }
 
-export function AnalysisSummary({ result, filter, onFilter }: AnalysisSummaryProps) {
+export function AnalysisSummary({ result, filter, onFilter, missedCount }: AnalysisSummaryProps) {
   const { t } = useTranslation('analyze-me')
 
   const counts = {
@@ -18,12 +19,15 @@ export function AnalysisSummary({ result, filter, onFilter }: AnalysisSummaryPro
     outlier:   result.anomalies.filter(a => a.anomaly_type === 'outlier').length,
   }
 
-  const FILTERS: { key: FilterType; label: string }[] = [
+  const FILTERS: { key: FilterType; label: string; activeClass?: string }[] = [
     { key: 'all',       label: t('filterAll') },
     { key: 'anomalies', label: t('filterAnomalies') },
     { key: 'missing',   label: `${t('filterNulls')} (${counts.missing})` },
     { key: 'duplicate', label: `${t('filterDuplicates')} (${counts.duplicate})` },
     { key: 'outlier',   label: `${t('filterOutliers')} (${counts.outlier})` },
+    ...(missedCount
+      ? [{ key: 'missed' as FilterType, label: `✗ Missed (${missedCount})`, activeClass: 'bg-amber-950/30 text-amber-300' }]
+      : []),
   ]
 
   return (
@@ -48,7 +52,7 @@ export function AnalysisSummary({ result, filter, onFilter }: AnalysisSummaryPro
               onClick={() => onFilter(f.key)}
               className={`px-4 py-1.5 text-xs font-medium transition-colors ${
                 filter === f.key
-                  ? 'bg-primary/10 text-foreground'
+                  ? (f.activeClass ?? 'bg-primary/10 text-foreground')
                   : 'text-muted-foreground hover:bg-muted/30'
               }`}
             >

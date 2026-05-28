@@ -7,7 +7,7 @@ import { AnomalyTable } from './AnomalyTable'
 import { AnomalyCards } from './AnomalyCards'
 import { popHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
 
-type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier'
+type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed'
 
 export function AnalyzeSection() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
@@ -24,24 +24,37 @@ export function AnalyzeSection() {
     analyze(file)
   }, [])
 
-  const anomalyRowIndexes = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+  const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
+  const injectedSet = new Set(forgeData?.anomalies.map(a => a.row_index) ?? [])
+
+  const verdictCounts = forgeData && result ? {
+    detected:       [...injectedSet].filter(idx => detectedSet.has(idx)).length,
+    missed:         [...injectedSet].filter(idx => !detectedSet.has(idx)).length,
+    false_positive: [...detectedSet].filter(idx => !injectedSet.has(idx)).length,
+  } : null
 
   const filteredTableData = filter === 'all'
     ? tableData
     : filter === 'anomalies'
-    ? tableData.filter(row => anomalyRowIndexes.has(Number(row._row_index)))
+    ? tableData.filter(row => detectedSet.has(Number(row._row_index)))
+    : filter === 'missed'
+    ? tableData.filter(row => {
+        const idx = Number(row._row_index)
+        return injectedSet.has(idx) && !detectedSet.has(idx)
+      })
     : tableData.filter(row => {
         const idx = Number(row._row_index)
         return result?.anomalies.some(a => a.row_index === idx && a.anomaly_type === filter)
       })
 
-  const filteredAnomalies = filter === 'all' || filter === 'anomalies'
+  const filteredAnomalies = filter === 'missed'
+    ? []
+    : filter === 'all' || filter === 'anomalies'
     ? result?.anomalies ?? []
     : result?.anomalies.filter(a => a.anomaly_type === filter) ?? []
 
   return (
     <div>
-
       <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={analyze} />
 
       {forgeData && (
@@ -51,17 +64,30 @@ export function AnalyzeSection() {
             Imported from <span className="text-violet-300">ForgeMe</span>
           </span>
           <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-amber-500">
-            {forgeData.anomalies.length} injected anomalies
-          </span>
+          <span className="text-xs text-amber-500">{forgeData.anomalies.length} injected</span>
           <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/50 font-mono">
-            seed {forgeData.seed}
-          </span>
-          {loading && (
+          <span className="text-xs text-muted-foreground/50 font-mono">seed {forgeData.seed}</span>
+          {loading ? (
             <>
               <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-muted-foreground/50">{progress ?? 'Analyzing imported dataset...'}</span>
+              <span className="text-xs text-muted-foreground/50">{progress ?? 'Analyzing...'}</span>
+            </>
+          ) : verdictCounts && (
+            <>
+              <span className="text-muted-foreground/30 text-sm">·</span>
+              <span className="text-xs text-green-400">✓ {verdictCounts.detected} detected</span>
+              {verdictCounts.missed > 0 && (
+                <>
+                  <span className="text-muted-foreground/30 text-sm">·</span>
+                  <span className="text-xs text-amber-400">✗ {verdictCounts.missed} missed</span>
+                </>
+              )}
+              {verdictCounts.false_positive > 0 && (
+                <>
+                  <span className="text-muted-foreground/30 text-sm">·</span>
+                  <span className="text-xs text-red-400">⚠ {verdictCounts.false_positive} false positive</span>
+                </>
+              )}
             </>
           )}
         </div>
@@ -81,7 +107,12 @@ export function AnalyzeSection() {
 
       {result && (
         <div className="mt-4 flex flex-col gap-3">
-          <AnalysisSummary result={result} filter={filter} onFilter={setFilter} />
+          <AnalysisSummary
+            result={result}
+            filter={filter}
+            onFilter={setFilter}
+            missedCount={verdictCounts?.missed}
+          />
           <AnomalyTable
             tableData={filteredTableData}
             anomalies={filteredAnomalies}
