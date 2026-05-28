@@ -43,7 +43,7 @@ export function RowInspect({
     <div className="w-80 flex-shrink-0 border-l border-border bg-background flex flex-col overflow-hidden">
 
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
           {rowIndex !== null ? `Row #${rowIndex + 1}` : 'Inspector'}
         </p>
         <button
@@ -59,7 +59,7 @@ export function RowInspect({
         {rowIndex === null && (
           <div className="flex flex-col gap-1.5 mt-2">
             <p className="text-sm font-medium text-foreground">No anomalies found</p>
-            <p className="text-xs text-muted-foreground/50">
+            <p className="text-xs text-muted-foreground/70">
               Try increasing the anomaly rate or row count.
             </p>
           </div>
@@ -72,7 +72,7 @@ export function RowInspect({
             </p>
             <button
               onClick={onShowAll}
-              className="text-xs text-muted-foreground/50 hover:text-foreground transition-colors text-left"
+              className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors text-left"
             >
               Show all rows →
             </button>
@@ -84,7 +84,7 @@ export function RowInspect({
             {rowAnomalies.length === 0 ? (
               <div className="flex flex-col gap-1 mt-2">
                 <p className="text-sm font-medium text-foreground">Healthy row</p>
-                <p className="text-xs text-muted-foreground/50">No anomalies detected</p>
+                <p className="text-xs text-muted-foreground/70">No anomalies detected</p>
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -98,12 +98,12 @@ export function RowInspect({
                       </span>
                       <div className="flex flex-col gap-1">
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-muted-foreground/50 flex-shrink-0">column</span>
+                          <span className="text-xs text-muted-foreground/70 flex-shrink-0">column</span>
                           <span className="text-xs text-foreground font-mono">{a.column}</span>
                         </div>
                         {a.original_value !== null && (
                           <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-xs text-muted-foreground/50 flex-shrink-0">original</span>
+                            <span className="text-xs text-muted-foreground/70 flex-shrink-0">original</span>
                             <span className="text-xs text-foreground font-mono">{a.original_value}</span>
                           </div>
                         )}
@@ -121,13 +121,13 @@ export function RowInspect({
 
             {rowData && (
               <div className="border-t border-border/40 pt-3 mt-1">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-2">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70 mb-2">
                   Row data
                 </p>
                 <div className="flex flex-col gap-1">
                   {Object.entries(rowData).map(([key, val]) => (
                     <div key={key} className="flex items-baseline justify-between gap-2">
-                      <span className="text-xs text-muted-foreground/50 flex-shrink-0">{key}</span>
+                      <span className="text-xs text-muted-foreground/70 flex-shrink-0">{key}</span>
                       <span className="text-xs text-foreground font-mono break-all text-right">
                         {val === null || val === undefined
                           ? <span className="text-red-400">NULL</span>

@@ -50,7 +50,7 @@ export function GenerateTab({
           <div className={`grid transition-all duration-200 ${schemaCollapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
             <div className="overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg border border-border bg-muted/10 mb-5 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => setSchemaCollapsed(false)}>
-                <span className="text-xs text-muted-foreground/60">
+                <span className="text-xs text-muted-foreground/70">
                   {schemaFields.length} columns detected
                 </span>
                 <button
