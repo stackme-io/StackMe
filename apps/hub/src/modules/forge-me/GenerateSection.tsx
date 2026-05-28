@@ -86,12 +86,9 @@ export function GenerateSection({
     if (rowError || selectedAnomalies.size === 0) return
     setIsLoading(true)
     try {
-      const ANOMALY_MAP: Record<string, string> = {
-        nulls: 'missing', duplicates: 'duplicate', outliers: 'outlier',
-      }
       const body: Record<string, unknown> = {
         rows,
-        anomaly_types: [...selectedAnomalies].map(a => ANOMALY_MAP[a] ?? a),
+        anomaly_types: [...selectedAnomalies],
         anomaly_rate: anomalyRate,
         seed,
         format: format.toLowerCase(),
