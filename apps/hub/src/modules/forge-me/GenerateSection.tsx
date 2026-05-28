@@ -158,7 +158,7 @@ export function GenerateSection({
 
       <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5">
+          <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5 cursor-pointer hover:bg-muted/40 transition-colors" onClick={() => setCollapsed(false)}>
             <span className="text-xs text-muted-foreground/60 font-mono">{format}</span>
             <span className="text-muted-foreground/30 text-sm">·</span>
             <span className="text-xs text-muted-foreground/60">{rows} rows</span>
