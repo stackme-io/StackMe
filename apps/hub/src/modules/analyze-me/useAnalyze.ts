@@ -164,8 +164,8 @@ export function useAnalyze() {
         const q3  = Number(stats[0].q3)
         const iqr = q3 - q1
         if (iqr === 0) continue
-        const lower = q1 - 3 * iqr
-        const upper = q3 + 3 * iqr
+        const lower = q1 - 1.5 * iqr
+        const upper = q3 + 1.5 * iqr
 
         const outlierRows = await runQuery(`
           SELECT _row_index, CAST("${col}" AS DOUBLE) as val
