@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GenerateControls } from './GenerateControls'
-import { ResultBar } from './ResultBar'
-import { AnomalyTable } from './AnomalyTable'
-import { RowInspect } from './RowInspect'
+import { DataSection } from './DataSection'
 import type { AnomalyType, AnomalyInfo, GenerateResponse } from './types'
 import { csvToJson } from './types'
 import type { ParsedField } from './SchemaSection'
@@ -43,34 +41,34 @@ export function GenerateSection({
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const tableRef = useRef<HTMLDivElement>(null)
 
-  const rowError = rows > MAX_ROWS || rows < 1
-
+  const rowError          = rows > MAX_ROWS || rows < 1
   const anomalyRowIndices = new Set(anomalies.map(a => a.row_index))
-
-  const indexedData = tableData.map((row, i) => ({ ...row, _idx: i }))
-  const displayData = viewFilter === 'anomalies'
+  const indexedData       = tableData.map((row, i) => ({ ...row, _idx: i }))
+  const displayData       = viewFilter === 'anomalies'
     ? indexedData.filter(row => anomalyRowIndices.has(row._idx as number))
     : indexedData
+  const anomalyCount      = anomalyRowIndices.size
+  const total             = Math.round(rows * anomalyRate)
+  const breakdown         = [...selectedAnomalies].join(' · ')
 
-  const anomalyCount = anomalyRowIndices.size
+  const selectedRowHidden = selectedRowIndex !== null
+    && viewFilter === 'anomalies'
+    && !anomalyRowIndices.has(selectedRowIndex)
 
-  const total     = Math.round(rows * anomalyRate)
-  const breakdown = [...selectedAnomalies].join(' · ')
+  const selectedRowData = selectedRowIndex !== null && !selectedRowHidden
+    ? tableData[selectedRowIndex] ?? null
+    : null
 
   useEffect(() => {
     if (!hasGenerated) return
     if (anomalies.length > 0) {
-      const firstAnomalyRowIndex = anomalies[0].row_index
-      setSelectedRowIndex(firstAnomalyRowIndex)
+      const firstIdx = anomalies[0].row_index
+      setSelectedRowIndex(firstIdx)
       setInspectorOpen(true)
       setTimeout(() => {
-        if (tableRef.current) {
-          const rows = tableRef.current.querySelectorAll('tbody tr')
-          const targetRow = rows[firstAnomalyRowIndex] as HTMLElement
-          if (targetRow) {
-            targetRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-          }
-        }
+        const rows = tableRef.current?.querySelectorAll('tbody tr')
+        const target = rows?.[firstIdx] as HTMLElement | undefined
+        target?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
       }, 50)
     } else {
       setSelectedRowIndex(null)
@@ -83,9 +81,7 @@ export function GenerateSection({
     setIsLoading(true)
     try {
       const ANOMALY_MAP: Record<string, string> = {
-        nulls:      'missing',
-        duplicates: 'duplicate',
-        outliers:   'outlier',
+        nulls: 'missing', duplicates: 'duplicate', outliers: 'outlier',
       }
       const body: Record<string, unknown> = {
         rows,
@@ -103,9 +99,7 @@ export function GenerateSection({
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data: GenerateResponse = await res.json()
-      const parsed = data.format === 'json'
-        ? JSON.parse(data.data)
-        : csvToJson(data.data)
+      const parsed = data.format === 'json' ? JSON.parse(data.data) : csvToJson(data.data)
       setTableData(parsed)
       setAnomalies(data.anomalies ?? [])
       setViewFilter('all')
@@ -124,13 +118,11 @@ export function GenerateSection({
       ? JSON.stringify(tableData, null, 2)
       : [Object.keys(tableData[0] ?? {}).join(','),
          ...tableData.map(r => Object.values(r).join(','))].join('\n')
-    const mime = format === 'JSON' ? 'application/json' : 'text/csv'
-    const ext  = format.toLowerCase()
-    const blob = new Blob([content], { type: mime })
+    const blob = new Blob([content], { type: format === 'JSON' ? 'application/json' : 'text/csv' })
     const url  = URL.createObjectURL(blob)
-    const a    = document.createElement('a')
-    a.href = url
-    a.download = `forgeme-${seed}.${ext}`
+    const a    = Object.assign(document.createElement('a'), {
+      href: url, download: `forgeme-${seed}.${format.toLowerCase()}`,
+    })
     a.click()
     URL.revokeObjectURL(url)
     setExported(true)
@@ -144,13 +136,11 @@ export function GenerateSection({
       : tableData.map((row, i) => ({ row, idx: i }))
     if (sourceWithIndex.length === 0) return
     const keys = Object.keys(sourceWithIndex[0].row)
-    const allKeys = [...keys, 'anomaly_type']
     const tsv = [
-      allKeys.join('\t'),
-      ...sourceWithIndex.map(({ row, idx }) => {
-        const anomalyType = anomalyTypeMap.get(idx) ?? ''
-        return [...keys.map(k => row[k] ?? ''), anomalyType].join('\t')
-      }),
+      [...keys, 'anomaly_type'].join('\t'),
+      ...sourceWithIndex.map(({ row, idx }) =>
+        [...keys.map(k => row[k] ?? ''), anomalyTypeMap.get(idx) ?? ''].join('\t')
+      ),
     ].join('\n')
     navigator.clipboard.writeText(tsv).then(() => {
       setCopied(true)
@@ -163,30 +153,19 @@ export function GenerateSection({
     setInspectorOpen(true)
   }
 
-  const selectedRowHidden = selectedRowIndex !== null
-    && viewFilter === 'anomalies'
-    && !anomalyRowIndices.has(selectedRowIndex)
-
-  const selectedRowData = selectedRowIndex !== null && !selectedRowHidden
-    ? tableData[selectedRowIndex] ?? null
-    : null
-
   return (
     <div className="flex flex-col gap-4">
 
-      {/* collapsed summary bar */}
       <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5 mb-0">
+          <div className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5">
             <span className="text-xs text-muted-foreground/60 font-mono">{format}</span>
             <span className="text-muted-foreground/30 text-sm">·</span>
             <span className="text-xs text-muted-foreground/60">{rows} rows</span>
             <span className="text-muted-foreground/30 text-sm">·</span>
             <span className="text-xs text-muted-foreground/60 font-mono">seed {seed}</span>
             <span className="text-muted-foreground/30 text-sm">·</span>
-            <span className="text-xs text-muted-foreground/60">
-              ≈ {total} corrupted rows: {breakdown}
-            </span>
+            <span className="text-xs text-muted-foreground/60">≈ {total} corrupted rows: {breakdown}</span>
             <button
               onClick={() => setCollapsed(false)}
               className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
@@ -198,7 +177,6 @@ export function GenerateSection({
         </div>
       </div>
 
-      {/* full controls */}
       <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'}`}>
         <div className="overflow-hidden">
           <GenerateControls
@@ -220,39 +198,29 @@ export function GenerateSection({
       </div>
 
       {hasGenerated && (
-        <>
-          <ResultBar
-            rows={tableData.length}
-            anomalyCount={anomalyCount}
-            format={format}
-            seed={seed}
-            viewFilter={viewFilter}
-            onFilterChange={setViewFilter}
-            onExport={handleExport}
-            onCopy={handleCopy}
-            copied={copied}
-            exported={exported}
-            t={t as (key: string) => string}
-          />
-          <div className="flex gap-3" ref={tableRef}>
-            <AnomalyTable
-              tableData={displayData}
-              anomalies={anomalies}
-              selectedRowIndex={selectedRowIndex}
-              onRowSelect={handleRowSelect}
-            />
-            {inspectorOpen && (
-              <RowInspect
-                rowIndex={selectedRowIndex}
-                rowData={selectedRowData}
-                anomalies={anomalies}
-                hiddenByFilter={selectedRowHidden}
-                onClose={() => setInspectorOpen(false)}
-                onShowAll={() => setViewFilter('all')}
-              />
-            )}
-          </div>
-        </>
+        <DataSection
+          displayData={displayData}
+          anomalies={anomalies}
+          totalRows={tableData.length}
+          anomalyCount={anomalyCount}
+          format={format}
+          seed={seed}
+          viewFilter={viewFilter}
+          copied={copied}
+          exported={exported}
+          selectedRowIndex={selectedRowIndex}
+          selectedRowData={selectedRowData}
+          selectedRowHidden={selectedRowHidden}
+          inspectorOpen={inspectorOpen}
+          tableRef={tableRef}
+          onFilterChange={setViewFilter}
+          onCopy={handleCopy}
+          onExport={handleExport}
+          onRowSelect={handleRowSelect}
+          onInspectorClose={() => setInspectorOpen(false)}
+          onShowAll={() => setViewFilter('all')}
+          t={t as (key: string) => string}
+        />
       )}
     </div>
   )
