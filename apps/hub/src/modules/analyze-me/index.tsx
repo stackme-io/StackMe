@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnalyzeSection } from './AnalyzeSection'
 import { ModuleTabs } from '../../shared/ModuleTabs'
@@ -10,18 +10,19 @@ const TABS = [
 ]
 
 export default function AnalyzeMePage() {
-  const [searchParams] = useSearchParams()
-  const activeTab = searchParams.get('tab') ?? 'work'
+  const [activeTab, setActiveTab] = useState('work')
   const { t } = useTranslation('analyze-me')
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <main className="flex-1 overflow-y-auto px-6 pt-5">
-        <ModuleTabs tabs={TABS} activeTab={activeTab} />
+        <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-        {activeTab === 'work' && <AnalyzeSection />}
+        <div style={{ display: activeTab === 'work' ? 'block' : 'none' }}>
+          <AnalyzeSection />
+        </div>
 
-        {activeTab === 'about' && (
+        <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
           <div className="max-w-xl">
             <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
             <p className="text-xs text-muted-foreground mb-4">{t('version')}</p>
@@ -40,9 +41,9 @@ export default function AnalyzeMePage() {
               ))}
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'stack' && (
+        <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>
           <div className="max-w-xl">
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 mb-3">
               {t('technologiesLabel')}
@@ -70,7 +71,7 @@ export default function AnalyzeMePage() {
               <span className="text-xs text-muted-foreground/40">{t('badge')}</span>
             </div>
           </div>
-        )}
+        </div>
       </main>
 
       <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
