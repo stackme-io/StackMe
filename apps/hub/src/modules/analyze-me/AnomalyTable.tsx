@@ -1,8 +1,15 @@
 import type { AnomalyInfo } from './types'
 
+interface InjectedAnomaly {
+  row_index: number
+  column: string
+  anomaly_type: string
+}
+
 interface AnomalyTableProps {
   tableData: any[]
   anomalies: AnomalyInfo[]
+  injectedAnomalies?: InjectedAnomaly[]
 }
 
 const BADGE_STYLES: Record<string, string> = {
@@ -20,10 +27,25 @@ function AnomalyBadge({ type }: { type: string }) {
   )
 }
 
-export function AnomalyTable({ tableData, anomalies }: AnomalyTableProps) {
+type Verdict = 'detected' | 'missed' | 'false_positive'
+
+const VERDICT_STYLES: Record<Verdict, string> = {
+  detected:       'text-green-400',
+  missed:         'text-amber-400',
+  false_positive: 'text-red-400',
+}
+
+const VERDICT_LABELS: Record<Verdict, string> = {
+  detected:       '✓ detected',
+  missed:         '✗ missed',
+  false_positive: '⚠ false positive',
+}
+
+export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: AnomalyTableProps) {
   if (tableData.length === 0) return null
 
   const columns = Object.keys(tableData[0]).filter(c => c !== '_row_index')
+  const hasInjected = injectedAnomalies.length > 0
 
   const anomalyMap = new Map<number, { cols: Set<string>; types: string[] }>()
   anomalies.forEach(a => {
@@ -35,6 +57,8 @@ export function AnomalyTable({ tableData, anomalies }: AnomalyTableProps) {
       anomalyMap.set(a.row_index, { cols: new Set([a.column]), types: [a.anomaly_type] })
     }
   })
+
+  const injectedSet = new Set(injectedAnomalies.map(a => a.row_index))
 
   return (
     <div className="rounded-lg border border-border max-h-[680px] overflow-y-auto overflow-x-hidden">
@@ -52,6 +76,11 @@ export function AnomalyTable({ tableData, anomalies }: AnomalyTableProps) {
             <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
               type
             </th>
+            {hasInjected && (
+              <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-32">
+                verdict
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -60,6 +89,15 @@ export function AnomalyTable({ tableData, anomalies }: AnomalyTableProps) {
             const anomaly     = anomalyMap.get(rowIndex)
             const isAnomaly   = !!anomaly
             const anomalyCols = anomaly?.cols ?? new Set<string>()
+            const isInjected  = injectedSet.has(rowIndex)
+            const isDetected  = isAnomaly
+
+            let verdict: Verdict | null = null
+            if (hasInjected) {
+              if (isInjected && isDetected)  verdict = 'detected'
+              if (isInjected && !isDetected) verdict = 'missed'
+              if (!isInjected && isDetected) verdict = 'false_positive'
+            }
 
             return (
               <tr
@@ -103,6 +141,15 @@ export function AnomalyTable({ tableData, anomalies }: AnomalyTableProps) {
                     </div>
                   ) : null}
                 </td>
+                {hasInjected && (
+                  <td className="px-3 py-2 border-b border-border/40 w-32">
+                    {verdict && (
+                      <span className={`text-[10px] font-mono ${VERDICT_STYLES[verdict]}`}>
+                        {VERDICT_LABELS[verdict]}
+                      </span>
+                    )}
+                  </td>
+                )}
               </tr>
             )
           })}

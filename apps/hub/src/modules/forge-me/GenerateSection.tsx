@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { GenerateControls } from './GenerateControls'
 import { DataSection } from './DataSection'
+import { setHandoff } from '../../shared/forgeHandoff'
 import type { AnomalyType, AnomalyInfo, GenerateResponse } from './types'
 import { csvToJson } from './types'
 import type { ParsedField } from './SchemaSection'
@@ -28,6 +30,7 @@ export function GenerateSection({
   schemaFields = [],
 }: GenerateSectionProps) {
   const { t } = useTranslation('forge-me')
+  const navigate = useNavigate()
   const [format, setFormat]                     = useState('JSON')
   const [isLoading, setIsLoading]               = useState(false)
   const [tableData, setTableData]               = useState<Record<string, unknown>[]>([])
@@ -148,6 +151,11 @@ export function GenerateSection({
     })
   }
 
+  const handleAnalyze = () => {
+    setHandoff({ rows: tableData, anomalies, format, seed, createdAt: Date.now() })
+    navigate('/analyze-me')
+  }
+
   const handleRowSelect = (rowIndex: number) => {
     setSelectedRowIndex(prev => prev === rowIndex ? null : rowIndex)
     setInspectorOpen(true)
@@ -216,6 +224,7 @@ export function GenerateSection({
           onFilterChange={setViewFilter}
           onCopy={handleCopy}
           onExport={handleExport}
+          onAnalyze={handleAnalyze}
           onRowSelect={handleRowSelect}
           onInspectorClose={() => setInspectorOpen(false)}
           onShowAll={() => setViewFilter('all')}

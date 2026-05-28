@@ -22,6 +22,7 @@ interface DataSectionProps {
   onFilterChange: (f: 'all' | 'anomalies') => void
   onCopy: () => void
   onExport: () => void
+  onAnalyze?: () => void
   onRowSelect: (index: number) => void
   onInspectorClose: () => void
   onShowAll: () => void
@@ -34,7 +35,7 @@ export function DataSection({
   viewFilter, copied, exported,
   selectedRowIndex, selectedRowData, selectedRowHidden, inspectorOpen,
   tableRef,
-  onFilterChange, onCopy, onExport,
+  onFilterChange, onCopy, onExport, onAnalyze,
   onRowSelect, onInspectorClose, onShowAll,
   t,
 }: DataSectionProps) {
@@ -49,6 +50,7 @@ export function DataSection({
         onFilterChange={onFilterChange}
         onExport={onExport}
         onCopy={onCopy}
+        onAnalyze={onAnalyze}
         copied={copied}
         exported={exported}
         t={t}

@@ -7,6 +7,7 @@ interface ResultBarProps {
   onFilterChange: (f: 'all' | 'anomalies') => void
   onExport: () => void
   onCopy: () => void
+  onAnalyze?: () => void
   copied: boolean
   exported: boolean
   t: (key: string) => string
@@ -15,7 +16,7 @@ interface ResultBarProps {
 export function ResultBar({
   rows, anomalyCount, format, seed,
   viewFilter, onFilterChange,
-  onExport, onCopy, copied, exported, t,
+  onExport, onCopy, onAnalyze, copied, exported, t,
 }: ResultBarProps) {
   return (
     <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-muted/30 border border-border mb-3">
@@ -69,6 +70,16 @@ export function ResultBar({
           <i className={`ti ${exported ? 'ti-check' : 'ti-download'} text-sm`} />
           {exported ? 'Exported' : `Export ${format}`}
         </button>
+
+        {onAnalyze && (
+          <button
+            onClick={onAnalyze}
+            className="flex items-center justify-center gap-1.5 px-3 py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+          >
+            <i className="ti ti-chart-bar text-sm" />
+            Analyze
+          </button>
+        )}
       </div>
     </div>
   )
