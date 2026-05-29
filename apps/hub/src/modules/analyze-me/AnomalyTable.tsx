@@ -149,7 +149,7 @@ export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: A
                           {VERDICT_LABELS[verdict]}
                         </span>
                         {verdict !== 'detected' && (
-                          <div className="absolute bottom-full left-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
+                          <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
                             {verdict === 'missed'
                               ? 'Injected anomaly was not detected. Try increasing sensitivity in the left panel.'
                               : 'Detected but not injected — may be a real anomaly or a false alarm. Lower sensitivity to reduce noise.'}
