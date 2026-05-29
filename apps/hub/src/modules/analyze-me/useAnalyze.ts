@@ -17,7 +17,7 @@ export function useAnalyze() {
   const [error, setError]         = useState<string | null>(null)
   const [fileName, setFileName]   = useState<string | null>(null)
 
-  const analyze = useCallback(async (file: File) => {
+  const analyze = useCallback(async (file: File, iqrMultiplier: number = 1.5) => {
     const sizeMB = file.size / (1024 * 1024)
 
     if (sizeMB > SIZE_LIMIT_MB) {
@@ -164,8 +164,8 @@ export function useAnalyze() {
         const q3  = Number(stats[0].q3)
         const iqr = q3 - q1
         if (iqr === 0) continue
-        const lower = q1 - 1.5 * iqr
-        const upper = q3 + 1.5 * iqr
+        const lower = q1 - iqrMultiplier * iqr
+        const upper = q3 + iqrMultiplier * iqr
 
         const outlierRows = await runQuery(`
           SELECT _row_index, CAST("${col}" AS DOUBLE) as val

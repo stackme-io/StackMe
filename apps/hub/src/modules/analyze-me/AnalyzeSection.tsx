@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { UploadZone } from './UploadZone'
-import { AnalysisSummary } from './AnalysisSummary'
+import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './AnalyzeSidebar'
 import { AnomalyTable } from './AnomalyTable'
 import { AnomalyCards } from './AnomalyCards'
 import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
@@ -12,10 +12,12 @@ type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'm
 export function AnalyzeSection() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const { t } = useTranslation('analyze-me')
-  const [filter, setFilter] = useState<FilterType>('all')
-  const [forgeData, setForgeData] = useState<ForgeHandoff | null>(null)
-  const [copied, setCopied] = useState(false)
-  const analyzeRef = useRef(analyze)
+  const [filter, setFilter]           = useState<FilterType>('all')
+  const [forgeData, setForgeData]     = useState<ForgeHandoff | null>(null)
+  const [copied, setCopied]           = useState(false)
+  const [sensitivity, setSensitivity] = useState<Sensitivity>('balanced')
+  const analyzeRef  = useRef(analyze)
+  const fileRef     = useRef<File | null>(null)
   useEffect(() => { analyzeRef.current = analyze }, [analyze])
 
   useEffect(() => {
@@ -24,7 +26,8 @@ export function AnalyzeSection() {
       setFilter('all')
       const json = JSON.stringify(handoff.rows)
       const file = new File([json], `forgeme-${handoff.seed}.json`, { type: 'application/json' })
-      analyzeRef.current(file)
+      fileRef.current = file
+      analyzeRef.current(file, SENSITIVITY_MULTIPLIER[sensitivity])
     }
 
     const immediate = popHandoff()
@@ -35,6 +38,18 @@ export function AnalyzeSection() {
       if (h) consume(h)
     })
   }, [])
+
+  const handleFile = (file: File) => {
+    fileRef.current = file
+    analyze(file, SENSITIVITY_MULTIPLIER[sensitivity])
+  }
+
+  const handleSensitivityChange = (s: Sensitivity) => {
+    setSensitivity(s)
+    if (fileRef.current) {
+      analyze(fileRef.current, SENSITIVITY_MULTIPLIER[s])
+    }
+  }
 
   const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
   const injectedSet = new Set(forgeData?.anomalies.map(a => a.row_index) ?? [])
@@ -79,69 +94,74 @@ export function AnalyzeSection() {
   }
 
   return (
-    <div>
-      <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={analyze} />
+    <div className="flex gap-0 -mx-6">
+      <aside
+        className="flex-shrink-0 border-r border-border overflow-hidden"
+        style={{ width: '208px' }}
+      >
+        <AnalyzeSidebar
+          result={result}
+          filter={filter}
+          onFilter={setFilter}
+          missedCount={verdictCounts?.missed}
+          sensitivity={sensitivity}
+          onSensitivityChange={handleSensitivityChange}
+        />
+      </aside>
 
-      {forgeData && (
-        <div className="mt-3 mb-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
-          <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/70" />
-          <span className="text-xs text-muted-foreground/70">
-            Imported from <span className="text-violet-300">ForgeMe</span>
-          </span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-amber-500">{forgeData.anomalies.length} injected</span>
-          <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/50 font-mono">seed {forgeData.seed}</span>
-          {loading ? (
-            <>
-              <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-muted-foreground/50">{progress ?? 'Analyzing...'}</span>
-            </>
-          ) : verdictCounts && (
-            <>
-              <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-green-400">✓ {verdictCounts.detected} detected</span>
-              {verdictCounts.missed > 0 && (
-                <>
-                  <span className="text-muted-foreground/30 text-sm">·</span>
-                  <span className="text-xs text-amber-400">✗ {verdictCounts.missed} missed</span>
-                </>
-              )}
-              {verdictCounts.false_positive > 0 && (
-                <>
-                  <span className="text-muted-foreground/30 text-sm">·</span>
-                  <span className="text-xs text-red-400">⚠ {verdictCounts.false_positive} false positive</span>
-                </>
-              )}
-            </>
-          )}
-        </div>
-      )}
+      <div className="flex-1 flex flex-col min-w-0 px-6">
+        <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={handleFile} />
 
-      {sizeWarn && !loading && result && (
-        <div className="mt-2 px-4 py-2 rounded-lg bg-amber-950/20 text-amber-400 text-xs border border-amber-900/40">
-          {t('sizeWarning')}
-        </div>
-      )}
+        {forgeData && (
+          <div className="mt-3 mb-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
+            <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/70" />
+            <span className="text-xs text-muted-foreground/70">
+              Imported from <span className="text-violet-300">ForgeMe</span>
+            </span>
+            <span className="text-muted-foreground/30 text-sm">·</span>
+            <span className="text-xs text-amber-500">{forgeData.anomalies.length} injected</span>
+            <span className="text-muted-foreground/30 text-sm">·</span>
+            <span className="text-xs text-muted-foreground/50 font-mono">seed {forgeData.seed}</span>
+            {loading ? (
+              <>
+                <span className="text-muted-foreground/30 text-sm">·</span>
+                <span className="text-xs text-muted-foreground/50">{progress ?? 'Analyzing...'}</span>
+              </>
+            ) : verdictCounts && (
+              <>
+                <span className="text-muted-foreground/30 text-sm">·</span>
+                <span className="text-xs text-green-400">✓ {verdictCounts.detected} detected</span>
+                {verdictCounts.missed > 0 && (
+                  <>
+                    <span className="text-muted-foreground/30 text-sm">·</span>
+                    <span className="text-xs text-amber-400">✗ {verdictCounts.missed} missed</span>
+                  </>
+                )}
+                {verdictCounts.false_positive > 0 && (
+                  <>
+                    <span className="text-muted-foreground/30 text-sm">·</span>
+                    <span className="text-xs text-red-400">⚠ {verdictCounts.false_positive} false positive</span>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
-      {error && (
-        <div className="mt-3 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
-          {error}
-        </div>
-      )}
+        {sizeWarn && !loading && result && (
+          <div className="mt-2 px-4 py-2 rounded-lg bg-amber-950/20 text-amber-400 text-xs border border-amber-900/40">
+            {t('sizeWarning')}
+          </div>
+        )}
 
-      {result && (
-        <div className="mt-4 flex gap-4">
-          <aside className="w-[200px] flex-shrink-0 rounded-lg border border-border bg-muted/10 self-start">
-            <AnalysisSummary
-              result={result}
-              filter={filter}
-              onFilter={setFilter}
-              missedCount={verdictCounts?.missed}
-            />
-          </aside>
+        {error && (
+          <div className="mt-3 px-4 py-3 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+            {error}
+          </div>
+        )}
 
-          <div className="flex-1 flex flex-col gap-3 min-w-0">
+        {result && (
+          <div className="mt-4 flex flex-col gap-3">
             <div className="flex justify-end">
               <button
                 onClick={handleCopy}
@@ -158,8 +178,8 @@ export function AnalyzeSection() {
             />
             <AnomalyCards anomalies={filteredAnomalies} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
