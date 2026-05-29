@@ -16,6 +16,7 @@ export function AnalyzeSection() {
   const [forgeData, setForgeData]     = useState<ForgeHandoff | null>(null)
   const [copied, setCopied]           = useState(false)
   const [sensitivity, setSensitivity] = useState<Sensitivity>('balanced')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const analyzeRef  = useRef(analyze)
   const fileRef     = useRef<File | null>(null)
   useEffect(() => { analyzeRef.current = analyze }, [analyze])
@@ -94,10 +95,10 @@ export function AnalyzeSection() {
   }
 
   return (
-    <div className="flex gap-0 -mx-6">
+    <div className="flex gap-0 -mx-6 relative">
       <aside
-        className="flex-shrink-0 border-r border-border overflow-hidden"
-        style={{ width: '208px' }}
+        className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
+        style={{ width: sidebarOpen ? '208px' : '0px' }}
       >
         <AnalyzeSidebar
           result={result}
@@ -108,6 +109,14 @@ export function AnalyzeSection() {
           onSensitivityChange={handleSensitivityChange}
         />
       </aside>
+
+      <button
+        onClick={() => setSidebarOpen(o => !o)}
+        className="absolute top-8 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground/70 hover:text-foreground hover:bg-muted transition-all"
+        style={{ left: sidebarOpen ? '208px' : '0px' }}
+      >
+        <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
+      </button>
 
       <div className="flex-1 flex flex-col min-w-0 px-6">
         <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={handleFile} />

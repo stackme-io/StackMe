@@ -127,14 +127,14 @@ export function AnalyzeSidebar({
                   <span className="text-[9px] text-muted-foreground/40">rec.</span>
                 )}
               </div>
-              <span className="text-[10px] text-muted-foreground/50 leading-relaxed mt-0.5">
+              <span className="text-[10px] text-muted-foreground/70 leading-relaxed mt-0.5">
                 {opt.desc}
               </span>
             </button>
           ))}
         </div>
-        <p className="text-[9px] text-muted-foreground/40 mt-2 px-2">
-          Affects outlier detection only
+        <p className="text-[9px] text-muted-foreground/70 mt-2 px-2">
+          * Affects outlier detection only *
         </p>
       </div>
 
