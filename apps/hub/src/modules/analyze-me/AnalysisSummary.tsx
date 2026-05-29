@@ -31,29 +31,48 @@ export function AnalysisSummary({ result, filter, onFilter, missedCount }: Analy
   ]
 
   return (
-    <>
-      <div className="flex gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm">
-        <span className="text-muted-foreground">
-          {t('rows')}: <strong className="text-foreground">{result.rows_total}</strong>
-        </span>
-        <span className="text-muted-foreground">
-          {t('anomalies')}: <strong className="text-foreground">{result.anomalies_count}</strong>
-        </span>
-        <span className="text-red-400/70 text-xs self-center">{t('nulls')}: <strong>{counts.missing}</strong></span>
-        <span className="text-blue-400/70 text-xs self-center">{t('duplicates')}: <strong>{counts.duplicate}</strong></span>
-        <span className="text-amber-400/70 text-xs self-center">{t('outliers')}: <strong>{counts.outlier}</strong></span>
+    <div className="flex flex-col">
+      <div className="p-3 pb-2 border-b border-border">
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-2">
+          Overview
+        </p>
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-muted-foreground/70">{t('rows')}</span>
+            <strong className="text-xs text-foreground">{result.rows_total}</strong>
+          </div>
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-muted-foreground/70">{t('anomalies')}</span>
+            <strong className="text-xs text-foreground">{result.anomalies_count}</strong>
+          </div>
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-red-400/70">{t('nulls')}</span>
+            <strong className="text-xs text-red-400">{counts.missing}</strong>
+          </div>
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-blue-400/70">{t('duplicates')}</span>
+            <strong className="text-xs text-blue-400">{counts.duplicate}</strong>
+          </div>
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-amber-400/70">{t('outliers')}</span>
+            <strong className="text-xs text-amber-400">{counts.outlier}</strong>
+          </div>
+        </div>
       </div>
 
-      <div className="flex mb-1">
-        <div className="flex border border-border rounded-lg overflow-hidden">
+      <div className="p-3 pb-2">
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-2">
+          Filter
+        </p>
+        <div className="flex flex-col gap-0.5">
           {FILTERS.map(f => (
             <button
               key={f.key}
               onClick={() => onFilter(f.key)}
-              className={`px-4 py-1.5 text-xs font-medium transition-colors ${
+              className={`px-2 py-1.5 rounded-md text-xs text-left transition-colors ${
                 filter === f.key
                   ? (f.activeClass ?? 'bg-primary/10 text-foreground')
-                  : 'text-muted-foreground hover:bg-muted/30'
+                  : 'text-muted-foreground/70 hover:bg-muted/50 hover:text-foreground'
               }`}
             >
               {f.label}
@@ -61,6 +80,6 @@ export function AnalysisSummary({ result, filter, onFilter, missedCount }: Analy
           ))}
         </div>
       </div>
-    </>
+    </div>
   )
 }

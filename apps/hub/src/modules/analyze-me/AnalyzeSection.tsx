@@ -14,6 +14,7 @@ export function AnalyzeSection() {
   const { t } = useTranslation('analyze-me')
   const [filter, setFilter] = useState<FilterType>('all')
   const [forgeData, setForgeData] = useState<ForgeHandoff | null>(null)
+  const [copied, setCopied] = useState(false)
   const analyzeRef = useRef(analyze)
   useEffect(() => { analyzeRef.current = analyze }, [analyze])
 
@@ -26,11 +27,9 @@ export function AnalyzeSection() {
       analyzeRef.current(file)
     }
 
-    // Case 1: component just mounted, handoff already waiting
     const immediate = popHandoff()
     if (immediate) { consume(immediate); return }
 
-    // Case 2: component was already mounted (CSS hide), subscribe for future handoffs
     return onHandoff(() => {
       const h = popHandoff()
       if (h) consume(h)
@@ -65,6 +64,19 @@ export function AnalyzeSection() {
     : filter === 'all' || filter === 'anomalies'
     ? result?.anomalies ?? []
     : result?.anomalies.filter(a => a.anomaly_type === filter) ?? []
+
+  const handleCopy = () => {
+    if (filteredTableData.length === 0) return
+    const keys = Object.keys(filteredTableData[0]).filter(k => k !== '_row_index')
+    const tsv = [
+      keys.join('\t'),
+      ...filteredTableData.map(row => keys.map(k => String(row[k] ?? '')).join('\t')),
+    ].join('\n')
+    navigator.clipboard.writeText(tsv).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
     <div>
@@ -119,19 +131,33 @@ export function AnalyzeSection() {
       )}
 
       {result && (
-        <div className="mt-4 flex flex-col gap-3">
-          <AnalysisSummary
-            result={result}
-            filter={filter}
-            onFilter={setFilter}
-            missedCount={verdictCounts?.missed}
-          />
-          <AnomalyTable
-            tableData={filteredTableData}
-            anomalies={filteredAnomalies}
-            injectedAnomalies={forgeData?.anomalies ?? []}
-          />
-          <AnomalyCards anomalies={filteredAnomalies} />
+        <div className="mt-4 flex gap-4">
+          <aside className="w-[200px] flex-shrink-0 rounded-lg border border-border bg-muted/10 self-start">
+            <AnalysisSummary
+              result={result}
+              filter={filter}
+              onFilter={setFilter}
+              missedCount={verdictCounts?.missed}
+            />
+          </aside>
+
+          <div className="flex-1 flex flex-col gap-3 min-w-0">
+            <div className="flex justify-end">
+              <button
+                onClick={handleCopy}
+                className="flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-muted/40 transition-colors"
+              >
+                <i className={`ti ${copied ? 'ti-check' : 'ti-clipboard'} text-sm`} />
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <AnomalyTable
+              tableData={filteredTableData}
+              anomalies={filteredAnomalies}
+              injectedAnomalies={forgeData?.anomalies ?? []}
+            />
+            <AnomalyCards anomalies={filteredAnomalies} />
+          </div>
         </div>
       )}
     </div>
