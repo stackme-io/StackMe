@@ -26,11 +26,12 @@ interface AnalyzeSectionProps {
   forgeData: ForgeHandoff | null
   verdictCounts: VerdictCounts | null
   onFile: (file: File) => void
+  onFilter: (f: FilterType) => void
 }
 
 export function AnalyzeSection({
   result, tableData, loading, progress, sizeWarn, error, fileName,
-  filter, forgeData, verdictCounts, onFile,
+  filter, forgeData, verdictCounts, onFile, onFilter,
 }: AnalyzeSectionProps) {
   const { t } = useTranslation('analyze-me')
   const [copied, setCopied]       = useState(false)
@@ -222,10 +223,35 @@ export function AnalyzeSection({
 
       {result && (
         <div className="mt-4 flex flex-col gap-3">
-          <div className="flex justify-end">
+          <div className="flex items-center gap-1 flex-wrap">
+            {([
+              { key: 'all'       as FilterType, label: 'All rows' },
+              { key: 'anomalies' as FilterType, label: 'Anomalies only' },
+              { key: 'missing'   as FilterType, label: `Nulls (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,   dot: 'bg-red-400' },
+              { key: 'duplicate' as FilterType, label: `Duplicates (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400' },
+              { key: 'outlier'   as FilterType, label: `Outliers (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,  dot: 'bg-amber-400' },
+              ...(verdictCounts && verdictCounts.missed > 0
+                ? [{ key: 'missed' as FilterType, label: `✗ Missed (${verdictCounts.missed})`, dot: undefined }]
+                : []),
+            ] as { key: FilterType; label: string; dot?: string }[]).map(chip => (
+              <button
+                key={chip.key}
+                onClick={() => onFilter(chip.key)}
+                className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
+                  filter === chip.key
+                    ? chip.key === 'missed'
+                      ? 'bg-amber-950/30 text-amber-300'
+                      : 'bg-muted/60 text-foreground'
+                    : 'text-muted-foreground/70 hover:text-foreground hover:bg-muted/30'
+                }`}
+              >
+                {chip.dot && <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${chip.dot}`} />}
+                {chip.label}
+              </button>
+            ))}
             <button
               onClick={handleCopy}
-              className="flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-muted/40 transition-colors"
+              className="ml-auto flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-muted/40 transition-colors"
             >
               <i className={`ti ${copied ? 'ti-check' : 'ti-clipboard'} text-sm`} />
               {copied ? 'Copied' : 'Copy'}

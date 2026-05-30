@@ -78,9 +78,6 @@ export default function AnalyzeMePage() {
       >
         <AnalyzeSidebar
           result={result}
-          filter={filter}
-          onFilter={setFilter}
-          missedCount={verdictCounts?.missed}
           sensitivity={sensitivity}
           onSensitivityChange={handleSensitivityChange}
         />
@@ -111,6 +108,7 @@ export default function AnalyzeMePage() {
               forgeData={forgeData}
               verdictCounts={verdictCounts}
               onFile={handleFile}
+              onFilter={setFilter}
             />
           </div>
 
