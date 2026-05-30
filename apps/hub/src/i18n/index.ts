@@ -6,9 +6,9 @@ import enCommon          from './locales/en/common.json'
 import esCommon          from './locales/es/common.json'
 import ukCommon          from './locales/uk/common.json'
 
-import enAnalyzeMeAbout  from './locales/en/analyze-me/about.json'
-import esAnalyzeMeAbout  from './locales/es/analyze-me/about.json'
-import ukAnalyzeMeAbout  from './locales/uk/analyze-me/about.json'
+import enAnalyzeMeRoadmap  from './locales/en/analyze-me/roadmap.json'
+import esAnalyzeMeRoadmap  from './locales/es/analyze-me/roadmap.json'
+import ukAnalyzeMeRoadmap  from './locales/uk/analyze-me/roadmap.json'
 
 import enAnalyzeMeStack  from './locales/en/analyze-me/stack.json'
 import esAnalyzeMeStack  from './locales/es/analyze-me/stack.json'
@@ -53,7 +53,7 @@ i18n
       en: {
         common:      enCommon,
         'analyze-me': {
-          ...enAnalyzeMeAbout,
+          ...enAnalyzeMeRoadmap,
           ...enAnalyzeMeStack,
           ...enAnalyzeMeFooter,
           ...enAnalyzeMeWork,
@@ -71,7 +71,7 @@ i18n
       es: {
         common:      esCommon,
         'analyze-me': {
-          ...esAnalyzeMeAbout,
+          ...esAnalyzeMeRoadmap,
           ...esAnalyzeMeStack,
           ...esAnalyzeMeFooter,
           ...esAnalyzeMeWork,
@@ -89,7 +89,7 @@ i18n
       uk: {
         common:      ukCommon,
         'analyze-me': {
-          ...ukAnalyzeMeAbout,
+          ...ukAnalyzeMeRoadmap,
           ...ukAnalyzeMeStack,
           ...ukAnalyzeMeFooter,
           ...ukAnalyzeMeWork,

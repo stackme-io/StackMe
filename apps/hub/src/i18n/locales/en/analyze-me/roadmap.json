@@ -1,0 +1,55 @@
+{
+  "title": "AnalyzeMe",
+  "version": "v0.1.0 · MIT License",
+  "description": "Local-first anomaly detection for real datasets. Upload a CSV or JSON file — the file never leaves your browser. Analysis runs entirely in DuckDB-Wasm.",
+
+  "doneLabel": "What's in v0.1.0",
+  "done": [
+    {
+      "group": "Anomaly types",
+      "items": [
+        { "title": "Nulls",      "desc": "Flags missing values across all columns" },
+        { "title": "Duplicates", "desc": "Finds repeated rows — ID columns excluded automatically" },
+        { "title": "Outliers",   "desc": "IQR-based detection — skips identifiers and timestamps" }
+      ]
+    },
+    {
+      "group": "Analysis",
+      "items": [
+        { "title": "Sensitivity control",  "desc": "Three levels adjust outlier threshold — conservative to aggressive" },
+        { "title": "Ground truth mode",    "desc": "Import ForgeMe data to score detection accuracy" },
+        { "title": "Verdict per row",      "desc": "Labels each anomaly as detected, missed or false positive" }
+      ]
+    },
+    {
+      "group": "Export & privacy",
+      "items": [
+        { "title": "Copy to clipboard", "desc": "Exports rows as TSV with TYPE and VERDICT columns" },
+        { "title": "In-browser only",   "desc": "DuckDB-Wasm — no server, no uploads, no logs" }
+      ]
+    }
+  ],
+
+  "nextLabel": "Coming up",
+  "nextDesc": "These are candidates for the next version. Vote for what matters to you — it shapes the scope.",
+  "next": [
+    { "title": "Z-score / MAD detection",        "desc": "Alternative to IQR — better for non-normal distributions" },
+    { "title": "Export as CSV",                  "desc": "Download full anomaly report with metadata" },
+    { "title": "Column selection for duplicates","desc": "Choose which fields define a unique row" },
+    { "title": "Domain rules engine",            "desc": "Define custom validation rules per column" },
+    { "title": "Excel / Parquet support",        "desc": "Analyze columnar and spreadsheet formats directly" }
+  ],
+
+  "laterLabel": "Later",
+  "later": [
+    { "title": "Isolation Forest",      "desc": "Tree-based anomaly scoring for complex datasets" },
+    { "title": "Schema-aware types",    "desc": "Auto-classify columns as measures, identifiers or timestamps" },
+    { "title": "Dataset history",       "desc": "Save and revisit previous analysis runs" }
+  ],
+
+  "suggestLabel": "Suggest a feature",
+  "suggestPlaceholder": "Describe what you'd like to see in AnalyzeMe...",
+  "suggestHint": "One suggestion per day · Reviewed before publishing",
+  "suggestSubmit": "Submit",
+  "suggestUsernameLabel": "Show my username when published"
+}

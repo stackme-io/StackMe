@@ -1,0 +1,55 @@
+{
+  "title": "AnalyzeMe",
+  "version": "v0.1.0 · Licencia MIT",
+  "description": "Detección de anomalías local para datasets reales. Sube un CSV o JSON — el archivo nunca sale de tu navegador. El análisis corre completamente en DuckDB-Wasm.",
+
+  "doneLabel": "Qué hay en v0.1.0",
+  "done": [
+    {
+      "group": "Tipos de anomalías",
+      "items": [
+        { "title": "Nulos",      "desc": "Detecta valores faltantes en todas las columnas" },
+        { "title": "Duplicados", "desc": "Encuentra filas repetidas — columnas ID excluidas automáticamente" },
+        { "title": "Outliers",   "desc": "Detección basada en IQR — omite identificadores y timestamps" }
+      ]
+    },
+    {
+      "group": "Análisis",
+      "items": [
+        { "title": "Control de sensibilidad", "desc": "Tres niveles ajustan el umbral de outliers — de conservador a agresivo" },
+        { "title": "Modo ground truth",       "desc": "Importa datos de ForgeMe para evaluar la precisión de detección" },
+        { "title": "Veredicto por fila",      "desc": "Etiqueta cada anomalía como detectada, perdida o falso positivo" }
+      ]
+    },
+    {
+      "group": "Exportar y privacidad",
+      "items": [
+        { "title": "Copiar al portapapeles", "desc": "Exporta filas como TSV con columnas TYPE y VERDICT" },
+        { "title": "Solo en el navegador",   "desc": "DuckDB-Wasm — sin servidor, sin subidas, sin logs" }
+      ]
+    }
+  ],
+
+  "nextLabel": "Coming up",
+  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa — eso define el alcance.",
+  "next": [
+    { "title": "Detección Z-score / MAD",           "desc": "Alternativa al IQR — mejor para distribuciones no normales" },
+    { "title": "Exportar como CSV",                 "desc": "Descarga el informe completo de anomalías con metadatos" },
+    { "title": "Selección de columnas duplicados",  "desc": "Elige qué campos definen una fila única" },
+    { "title": "Motor de reglas de dominio",        "desc": "Define reglas de validación personalizadas por columna" },
+    { "title": "Soporte Excel / Parquet",           "desc": "Analiza formatos columnares y de hoja de cálculo directamente" }
+  ],
+
+  "laterLabel": "Más adelante",
+  "later": [
+    { "title": "Isolation Forest",     "desc": "Puntuación de anomalías basada en árboles para datasets complejos" },
+    { "title": "Tipos con esquema",    "desc": "Clasifica columnas automáticamente como medidas, identificadores o timestamps" },
+    { "title": "Historial de análisis","desc": "Guarda y revisa ejecuciones anteriores de análisis" }
+  ],
+
+  "suggestLabel": "Sugerir una función",
+  "suggestPlaceholder": "Describe qué te gustaría ver en AnalyzeMe...",
+  "suggestHint": "Una sugerencia por día · Revisada antes de publicarse",
+  "suggestSubmit": "Enviar",
+  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar"
+}

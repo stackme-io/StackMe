@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
+import { RoadmapTab } from './tabs/RoadmapTab'
 import { AnalyzeSection } from './AnalyzeSection'
 import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
@@ -10,7 +11,7 @@ type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'm
 
 const TABS = [
   { id: 'work',  label: 'Work'  },
-  { id: 'about', label: 'About' },
+  { id: 'about', label: 'Roadmap' },
   { id: 'stack', label: 'Stack' },
 ]
 
@@ -113,24 +114,7 @@ export default function AnalyzeMePage() {
           </div>
 
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <div className="max-w-xl">
-              <h2 className="text-sm font-medium text-foreground mb-1">{t('title')}</h2>
-              <p className="text-xs text-muted-foreground mb-4">{t('version')}</p>
-              <p className="text-xs text-muted-foreground leading-relaxed mb-6">{t('description')}</p>
-              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-2">
-                {t('whatsnextLabel')}
-              </p>
-              <div className="flex flex-col gap-1.5 mb-6">
-                {(t('whatsnext', { returnObjects: true }) as string[]).map(f => (
-                  <div key={f} className="flex items-center justify-between py-1.5 border-b border-border/50">
-                    <span className="text-xs text-muted-foreground/70">{f}</span>
-                    <button className="text-[10px] text-muted-foreground/70 hover:text-foreground transition-colors">
-                      + vote
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RoadmapTab />
           </div>
 
           <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>

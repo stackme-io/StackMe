@@ -1,12 +1,1 @@
-{
-  "title": "AnalyzeMe",
-  "version": "v0.1.0 · Licencia MIT",
-  "description": "Detección de anomalías local para conjuntos de datos reales. Sube un archivo CSV o JSON — el archivo nunca sale de tu navegador. El análisis se ejecuta completamente en DuckDB-Wasm.",
-  "whatsnextLabel": "Próximamente",
-  "whatsnext": [
-    "Exportar informe de anomalías como CSV",
-    "Seleccionar columnas clave para detección de duplicados",
-    "Detección de valores atípicos por Z-score",
-    "Soporte para Excel y Parquet"
-  ]
-}
+{}
