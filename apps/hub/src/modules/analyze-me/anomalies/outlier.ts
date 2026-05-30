@@ -1,9 +1,26 @@
 import { runQuery } from '../../../shared/analytics'
 import type { AnomalyInfo } from '../types'
 
+const ID_COL_PATTERN = /^id$|_id$|_at$|_time$|timestamp/i
+
 export async function detectOutliers(colNames: string[], iqrMultiplier: number): Promise<AnomalyInfo[]> {
   const anomalies: AnomalyInfo[] = []
-  for (const col of colNames) {
+
+  const candidateCols = await Promise.all(
+    colNames
+      .filter(c => !ID_COL_PATTERN.test(c))
+      .map(async c => {
+        const res = await runQuery(
+          `SELECT COUNT(*) AS total, COUNT(DISTINCT "${c}") AS uniq FROM analyze_data_indexed WHERE TRY_CAST("${c}" AS DOUBLE) IS NOT NULL`
+        )
+        const total = Number(res[0]?.total ?? 0)
+        const uniq  = Number(res[0]?.uniq  ?? 0)
+        return total > 0 && uniq < total ? c : null
+      })
+  )
+  const measureCols = candidateCols.filter((c): c is string => c !== null)
+
+  for (const col of measureCols) {
     const stats = await runQuery(`
       SELECT
         PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY CAST("${col}" AS DOUBLE)) AS q1,
