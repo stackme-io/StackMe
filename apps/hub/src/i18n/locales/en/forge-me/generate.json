@@ -25,9 +25,9 @@
   "hint1Title": "Pick anomaly types",
   "hint1Desc": "Choose from the sidebar: nulls, duplicates, outliers",
   "hint2Title": "Configure",
-  "hint2Desc": "Set rows, format, and seed",
+  "hint2Desc": "Set rows, format, and seed — or use Schema match to fit your real data",
   "hint3Title": "Generate",
-  "hint3Desc": "Click Generate — review the data table",
+  "hint3Desc": "Click Generate — click any row to inspect it in detail",
   "hint4Title": "Export",
   "hint4Desc": "Download or send directly to AnalyzeMe"
 }
