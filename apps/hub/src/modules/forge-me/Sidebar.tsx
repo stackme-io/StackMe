@@ -1,18 +1,9 @@
 import { useState } from 'react'
+import { ANOMALY_REGISTRY } from './anomalies'
 import type { AnomalyType, ViewMode } from './types'
 
-const ANOMALIES_ACTIVE = [
-  { id: 'nulls'      as AnomalyType, label: 'nulls'       },
-  { id: 'duplicates' as AnomalyType, label: 'duplicates'  },
-  { id: 'outliers'   as AnomalyType, label: 'outliers'    },
-]
-
-const ANOMALIES_UPCOMING = [
-  { id: 'out-of-order'     as AnomalyType, label: 'Out-of-order',     desc: 'Events in wrong sequence'     },
-  { id: 'late-arrivals'    as AnomalyType, label: 'Late arrivals',     desc: 'Delayed event timestamps'     },
-  { id: 'type-mismatches'  as AnomalyType, label: 'Type mismatches',   desc: 'Wrong schema values'          },
-  { id: 'stale-timestamps' as AnomalyType, label: 'Stale timestamps',  desc: 'Frozen temporal data'         },
-]
+const ANOMALIES_ACTIVE   = ANOMALY_REGISTRY.filter(a => a.status === 'active')
+const ANOMALIES_UPCOMING = ANOMALY_REGISTRY.filter(a => a.status === 'coming_soon')
 
 interface SidebarProps {
   selected: Set<AnomalyType>
@@ -35,17 +26,17 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
           {ANOMALIES_ACTIVE.map(a => (
             <button
               key={a.id}
-              onClick={() => onToggle(a.id)}
+              onClick={() => onToggle(a.id as AnomalyType)}
               className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${
-                selected.has(a.id)
+                selected.has(a.id as AnomalyType)
                   ? 'bg-primary/10 text-foreground'
                   : 'text-muted-foreground hover:bg-muted/50'
               }`}
             >
               <span className={`w-3 h-3 rounded-sm border flex-shrink-0 flex items-center justify-center ${
-                selected.has(a.id) ? 'bg-primary border-primary' : 'border-border'
+                selected.has(a.id as AnomalyType) ? 'bg-primary border-primary' : 'border-border'
               }`}>
-                {selected.has(a.id) && (
+                {selected.has(a.id as AnomalyType) && (
                   <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                     <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
                   </svg>
@@ -74,8 +65,8 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
             <div className="flex flex-col gap-0.5 mt-0.5">
               {ANOMALIES_UPCOMING.map(a => (
                 <div key={a.id} className="flex flex-col px-2 py-1.5 rounded-md">
-                  <span className="text-xs text-muted-foreground/50">{a.label}</span>
-                  <span className="text-[10px] text-muted-foreground/40">{a.desc}</span>
+                  <span className="text-xs text-muted-foreground/70">{a.label}</span>
+                  <span className="text-[10px] text-muted-foreground/70">{a.description}</span>
                 </div>
               ))}
             </div>

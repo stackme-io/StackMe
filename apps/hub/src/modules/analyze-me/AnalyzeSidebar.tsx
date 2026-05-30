@@ -115,8 +115,8 @@ export function AnalyzeSidebar({
               onClick={() => onSensitivityChange(opt.id)}
               className={`flex flex-col px-2 py-2 rounded-md text-left transition-colors ${
                 sensitivity === opt.id
-                  ? 'bg-teal-950/60 border border-teal-700/60'
-                  : 'hover:bg-muted/40 border border-transparent'
+                  ? 'bg-teal-950/40 border border-teal-800/50'
+                  : 'hover:bg-muted/50 border border-transparent'
               }`}
             >
               <div className="flex items-center gap-1.5">
@@ -127,14 +127,14 @@ export function AnalyzeSidebar({
                   <span className="text-[9px] text-muted-foreground/40">rec.</span>
                 )}
               </div>
-              <span className="text-[10px] text-muted-foreground/70 leading-relaxed mt-0.5">
+              <span className="text-[10px] text-muted-foreground/50 leading-relaxed mt-0.5">
                 {opt.desc}
               </span>
             </button>
           ))}
         </div>
-        <p className="text-[9px] text-muted-foreground/70 mt-2 px-2">
-          * Affects outlier detection only *
+        <p className="text-[9px] text-muted-foreground/40 mt-2 px-2">
+          Affects outlier detection only
         </p>
       </div>
 
