@@ -755,22 +755,24 @@
   </div>
 </div>
 <div class="issue">
-  <span class="issue-tag tag-open">open</span>
+  <span class="issue-tag tag-fixed">fixed</span>
   <div class="issue-text">
-    <code>RoadmapTab.tsx</code> is duplicated in <code>forge-me/tabs/</code> and <code>analyze-me/tabs/</code> with identical structure.
-    Candidate for <code>shared/RoadmapTab.tsx</code> with a <code>namespace</code> prop.
+    <code>RoadmapTab.tsx</code> was duplicated in <code>forge-me/tabs/</code> and <code>analyze-me/tabs/</code>.
+    → Extracted to <code>shared/RoadmapTab.tsx</code> with a <code>namespace</code> prop.
   </div>
 </div>
 <div class="issue">
-  <span class="issue-tag tag-open">open</span>
+  <span class="issue-tag tag-fixed">fixed</span>
   <div class="issue-text">
-    ForgeMe <code>Sidebar.tsx</code>: section labels "Anomaly mix", "Mode", "+ N upcoming", "Hide upcoming" are hardcoded English — not wired to i18n.
+    ForgeMe <code>Sidebar.tsx</code>: section labels "Anomaly mix", "Mode", "+ N upcoming", "Hide upcoming" were hardcoded English.
+    → Wired to i18n via <code>useTranslation('forge-me')</code>, keys added to en/es/uk locales.
   </div>
 </div>
 <div class="issue">
-  <span class="issue-tag tag-open">open</span>
+  <span class="issue-tag tag-fixed">fixed</span>
   <div class="issue-text">
-    <code>ResultBar.tsx</code>: "Anomalies only", "Copy", "Copied", "Export", "Exported" are hardcoded. "All rows" is passed through <code>t()</code> but the key resolves to the raw string — effectively also hardcoded.
+    <code>ResultBar.tsx</code>: most strings hardcoded, <code>t('All rows')</code> using key-as-string fallback.
+    → All strings replaced with proper keys: <code>allRows</code>, <code>anomaliesOnly</code>, <code>copy</code>, <code>copied</code>, <code>exportLabel</code>, <code>exported</code>.
   </div>
 </div>
 
