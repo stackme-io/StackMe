@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StackMe UI Style Guide</title>
+<style>
+  :root {
+    --bg:         #16171d;
+    --bg-2:       #1c1d25;
+    --bg-3:       #222330;
+    --fg:         rgba(255,255,255,0.985);
+    --fg-70:      rgba(255,255,255,0.70);
+    --fg-60:      rgba(255,255,255,0.60);
+    --fg-50:      rgba(255,255,255,0.50);
+    --fg-40:      rgba(255,255,255,0.40);
+    --muted:      rgba(255,255,255,0.08);
+    --border:     rgba(255,255,255,0.10);
+    --primary:    rgba(255,255,255,0.922);
+    --font:       'Geist Variable', 'Segoe UI', system-ui, sans-serif;
+    --mono:       ui-monospace, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 40px 48px 80px;
+    max-width: 900px;
+  }
+  /* ─── Page structure ─── */
+  h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .subtitle { font-size: 11px; color: var(--fg-50); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 48px; }
+  h2 {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    color: var(--fg-50);
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 11px; font-weight: 500; color: var(--fg-60); margin: 20px 0 8px; }
+  .row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .label { font-size: 9px; color: var(--fg-40); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+  .note { font-size: 10px; color: var(--fg-40); margin-top: 6px; font-style: italic; }
+  .warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 6px; padding: 8px 12px; font-size: 10px; color: rgba(251,191,36,0.85); margin-top: 12px; }
+
+  /* ─── Typography samples ─── */
+  .type-row { display: flex; align-items: baseline; gap: 24px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta { font-size: 10px; color: var(--fg-40); font-family: var(--mono); min-width: 240px; flex-shrink: 0; }
+  .type-sample { flex: 1; }
+
+  /* ─── Color swatches ─── */
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatch { display: flex; flex-direction: column; gap: 5px; }
+  .swatch-box { width: 64px; height: 40px; border-radius: 6px; border: 1px solid var(--border); }
+  .swatch-name { font-size: 9px; color: var(--fg-50); font-family: var(--mono); }
+
+  /* ─── Badge demo ─── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid;
+    font-family: var(--mono);
+  }
+  .badge-missing   { background: rgba(239,68,68,0.25); color: #f87171; border-color: #7f1d1d; }
+  .badge-duplicate { background: rgba(59,130,246,0.25); color: #60a5fa; border-color: #1e3a8a; }
+  .badge-outlier   { background: rgba(245,158,11,0.25); color: #fbbf24; border-color: #78350f; }
+
+  /* ─── Anomaly card demo ─── */
+  .anom-card { padding: 12px 16px; border-radius: 8px; border-left: 2px solid; margin-bottom: 6px; font-size: 12px; }
+  .anom-card-missing   { border-color: #ef4444; background: rgba(239,68,68,0.06); }
+  .anom-card-duplicate { border-color: #3b82f6; background: rgba(59,130,246,0.06); }
+  .anom-card-outlier   { border-color: #f59e0b; background: rgba(245,158,11,0.06); }
+  .anom-card .card-title { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .anom-card .card-desc  { font-size: 11px; color: var(--fg-60); }
+
+  /* ─── Filter chip demo ─── */
+  .chip-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: none;
+    cursor: default;
+    background: transparent;
+  }
+  .chip-bg {
+    position: absolute; inset: 0; border-radius: 6px; border: 1px solid;
+  }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; position: relative; z-index: 1; }
+  .chip-label { position: relative; z-index: 1; }
+  .chip-default .chip-bg  { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+  .chip-missed .chip-bg   { background: rgba(120,53,15,0.3); border-color: rgba(146,64,14,0.5); }
+  .chip-fp .chip-bg       { background: rgba(127,29,29,0.3); border-color: rgba(153,27,27,0.5); }
+  .chip-inactive { color: var(--fg-60); }
+
+  /* ─── Sensitivity option demo ─── */
+  .sens-opt {
+    display: flex; flex-direction: column;
+    padding: 8px; border-radius: 6px; border: 1px solid;
+    width: 160px; text-align: left;
+  }
+  .sens-active   { background: rgba(19,78,74,0.4); border-color: rgba(20,83,45,0.5); }
+  .sens-inactive { background: transparent; border-color: transparent; color: var(--fg-70); }
+  .sens-opt .sens-label { font-size: 12px; font-weight: 500; }
+  .sens-opt .sens-desc  { font-size: 10px; color: var(--fg-50); margin-top: 2px; }
+  .sens-active .sens-label { color: #5eead4; }
+
+  /* ─── Interactive states ─── */
+  .state-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .state-table th { text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-40); padding: 6px 12px 6px 0; border-bottom: 1px solid var(--border); }
+  .state-table td { padding: 6px 12px 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  .state-table td:first-child { color: var(--fg-60); width: 140px; }
+  .state-table td code { font-family: var(--mono); font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.08); padding: 1px 4px; border-radius: 3px; }
+
+  /* ─── Layout spec ─── */
+  .layout-box {
+    display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    height: 120px; font-size: 10px; color: var(--fg-50);
+  }
+  .layout-sidebar { width: 52px; background: rgba(255,255,255,0.03); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9px; }
+  .layout-main { flex: 1; display: flex; flex-direction: column; }
+  .layout-content { flex: 1; display: flex; align-items: center; padding: 0 16px; }
+  .layout-footer { height: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; font-size: 9px; }
+
+  /* ─── Animation spec ─── */
+  .anim-row { display: flex; gap: 16px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .anim-row:last-child { border-bottom: none; }
+  .anim-name { font-size: 11px; color: var(--fg-70); width: 180px; flex-shrink: 0; }
+  .anim-spec { font-size: 10px; font-family: var(--mono); color: #c084fc; background: rgba(192,132,252,0.08); padding: 2px 6px; border-radius: 3px; }
+  .anim-use  { font-size: 10px; color: var(--fg-50); flex: 1; }
+
+  /* ─── Inconsistencies ─── */
+  .issue { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 11px; }
+  .issue:last-child { border-bottom: none; }
+  .issue-tag { flex-shrink: 0; font-size: 9px; padding: 2px 6px; border-radius: 3px; background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); height: fit-content; margin-top: 1px; font-family: var(--mono); }
+  .issue-text { color: var(--fg-70); }
+  .issue-text code { font-family: var(--mono); font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.08); padding: 1px 4px; border-radius: 3px; }
+
+  /* ─── Section divider demo ─── */
+  .section-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .divider-line { height: 1px; flex: 1; }
+  .divider-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500; }
+  .divider-accent .divider-line  { background: rgba(167,139,250,0.3); }
+  .divider-accent .divider-label { color: var(--fg); }
+  .divider-plain .divider-line   { background: var(--border); }
+  .divider-plain .divider-label  { color: var(--fg-50); }
+</style>
+</head>
+<body>
+
+<h1>StackMe UI Style Guide</h1>
+<p class="subtitle">AnalyzeMe · ForgeMe · v0.1 · Dark mode · Geist Variable</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Typography</h2>
+
+<div class="type-row">
+  <div class="type-meta">text-[9px] uppercase tracking-widest<br>font-weight: 500 (labels) / normal</div>
+  <div class="type-sample" style="font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:var(--fg-50)">ANOMALY MIX · OVERVIEW · SENSITIVITY</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-[10px]<br>color: muted-foreground/50</div>
+  <div class="type-sample" style="font-size:10px;color:var(--fg-50)">IQR-based detection — skips identifiers and timestamps</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-[10px] font-mono<br>color: muted-foreground/40</div>
+  <div class="type-sample" style="font-size:10px;font-family:var(--mono);color:var(--fg-40)">// Zero-knowledge · Local-only · Privacy-first</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-xs (12px)<br>primary body text</div>
+  <div class="type-sample" style="font-size:12px;color:var(--fg-70)">Upload a CSV or JSON — the file never leaves your browser</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-xs font-medium uppercase tracking-wide<br>form labels</div>
+  <div class="type-sample" style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg-60)">Format · Row count · Anomaly rate</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-xs font-mono<br>code / filenames / seed</div>
+  <div class="type-sample" style="font-size:12px;font-family:var(--mono);color:var(--fg-70)">dataset-2024-q4.csv · seed 42</div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-sm (14px)<br>separator dots, error messages</div>
+  <div class="type-sample" style="font-size:14px;color:var(--fg-50)">· &nbsp; <span style="font-size:14px;color:#f87171">File format not supported</span></div>
+</div>
+<div class="type-row">
+  <div class="type-meta">text-sm font-semibold<br>primary button</div>
+  <div class="type-sample"><button style="padding:8px 24px;border-radius:8px;background:var(--primary);color:#16171d;font-size:14px;font-weight:600;border:none;cursor:default">Generate</button></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Color Tokens — Dark Mode</h2>
+
+<h3>Semantic tokens</h3>
+<div class="swatches">
+  <div class="swatch"><div class="swatch-box" style="background:#16171d"></div><div class="swatch-name">background</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:rgba(255,255,255,0.985)"></div><div class="swatch-name">foreground</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:rgba(255,255,255,0.269);"></div><div class="swatch-name">muted</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:rgba(180,180,180,0.7)"></div><div class="swatch-name">muted-fg</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:rgba(255,255,255,0.922)"></div><div class="swatch-name">primary</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15)"></div><div class="swatch-name">border</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#ef4444"></div><div class="swatch-name">destructive</div></div>
+</div>
+
+<h3>Domain colors</h3>
+<div class="swatches">
+  <div class="swatch"><div class="swatch-box" style="background:#ef4444"></div><div class="swatch-name">red-400<br>missing / null<br>false positive</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#3b82f6"></div><div class="swatch-name">blue-400<br>duplicate</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#f59e0b"></div><div class="swatch-name">amber-400<br>outlier<br>missed</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#f59e0b;opacity:0.7"></div><div class="swatch-name">amber-500<br>anomaly counts<br>(ResultBar)</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#4ade80"></div><div class="swatch-name">green-400<br>detected ✓</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#5eead4"></div><div class="swatch-name">teal-300<br>active sensitivity</div></div>
+  <div class="swatch"><div class="swatch-box" style="background:#c084fc"></div><div class="swatch-name">violet-300<br>ForgeMe brand</div></div>
+</div>
+
+<h3>Muted-foreground opacity scale</h3>
+<div class="row" style="gap:6px">
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,1.0)">Aa</div><div class="swatch-name">/100%<br>ForgeMe<br>sidebar labels</div></div>
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,0.75)">Aa</div><div class="swatch-name">/75<br>ForgeMe<br>footer badges</div></div>
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,0.70)">Aa</div><div class="swatch-name">/70<br>main secondary<br>text &amp; icons</div></div>
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,0.60)">Aa</div><div class="swatch-name">/60<br>group labels<br>roadmap</div></div>
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,0.50)">Aa</div><div class="swatch-name">/50<br>descriptions<br>placeholders</div></div>
+  <div class="col" style="align-items:center"><div style="font-size:13px;color:rgba(180,180,180,0.40)">Aa</div><div class="swatch-name">/40<br>decorators<br>"//" hints</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Components</h2>
+
+<h3>Type badge</h3>
+<p class="note">text-[10px] px-1.5 py-0.5 rounded border font-mono — used in AnomalyCards</p>
+<div class="row" style="margin-top:10px">
+  <span class="badge badge-missing">missing</span>
+  <span class="badge badge-duplicate">duplicate</span>
+  <span class="badge badge-outlier">outlier</span>
+</div>
+<div class="note">missing: bg-red-950/40 text-red-400 border-red-900<br>
+duplicate: bg-blue-950/40 text-blue-400 border-blue-900<br>
+outlier: bg-amber-950/40 text-amber-400 border-amber-900</div>
+
+<h3>Anomaly card</h3>
+<p class="note">px-4 py-3 rounded-lg text-sm border-l-2 — used in AnomalyCards list</p>
+<div style="max-width:480px;margin-top:10px">
+  <div class="anom-card anom-card-missing">
+    <div class="card-title">
+      <span style="font-weight:500">Row 14</span>
+      <span style="color:var(--fg-50)">· email</span>
+      <span class="badge badge-missing">missing</span>
+    </div>
+    <div class="card-desc">Null value detected in required column</div>
+  </div>
+  <div class="anom-card anom-card-duplicate">
+    <div class="card-title">
+      <span style="font-weight:500">Row 27</span>
+      <span class="badge badge-duplicate">duplicate</span>
+    </div>
+    <div class="card-desc">Identical row found at index 12</div>
+  </div>
+  <div class="anom-card anom-card-outlier">
+    <div class="card-title">
+      <span style="font-weight:500">Row 83</span>
+      <span style="color:var(--fg-50)">· revenue</span>
+      <span class="badge badge-outlier">outlier</span>
+    </div>
+    <div class="card-desc">Value 48200 is 4.2× IQR above Q3</div>
+  </div>
+</div>
+
+<h3>Filter chips with animated pill</h3>
+<p class="note">Framer Motion layoutId="filter-pill" — spring bounce:0.2 duration:0.35 — active state shown below</p>
+<div class="chip-row" style="margin-top:10px">
+  <div class="chip">
+    <div class="chip-bg chip-default" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1)"></div>
+    <span class="chip-label" style="color:var(--fg)">All</span>
+  </div>
+  <div class="chip chip-inactive">
+    <span class="chip-label">Anomalies</span>
+  </div>
+  <div class="chip chip-inactive">
+    <span class="chip-dot" style="background:#ef4444"></span>
+    <span class="chip-label">Nulls (12)</span>
+  </div>
+  <div class="chip chip-inactive">
+    <span class="chip-dot" style="background:#3b82f6"></span>
+    <span class="chip-label">Duplicates (4)</span>
+  </div>
+  <div class="chip chip-inactive">
+    <span class="chip-dot" style="background:#f59e0b"></span>
+    <span class="chip-label">Outliers (7)</span>
+  </div>
+  <div class="chip" style="color:#fbbf24">
+    <div class="chip-bg" style="background:rgba(120,53,15,0.3);border-color:rgba(146,64,14,0.5)"></div>
+    <span class="chip-label" style="position:relative;z-index:1">✗ Missed (3)</span>
+  </div>
+  <div class="chip" style="color:#f87171">
+    <div class="chip-bg" style="background:rgba(127,29,29,0.3);border-color:rgba(153,27,27,0.5)"></div>
+    <span class="chip-label" style="position:relative;z-index:1">⚠ False pos. (2)</span>
+  </div>
+</div>
+
+<h3>Sensitivity option</h3>
+<p class="note">Active: bg-teal-950/40 border-teal-800/50 text-teal-300 — inactive: border-transparent hover:bg-muted/50</p>
+<div class="row" style="margin-top:10px">
+  <div class="sens-opt sens-inactive">
+    <span class="sens-label">Conservative</span>
+    <span class="sens-desc">IQR × 3.0 — fewer alerts</span>
+  </div>
+  <div class="sens-opt sens-active">
+    <span class="sens-label">Balanced</span>
+    <span class="sens-desc" style="color:#5eead4;opacity:0.6">IQR × 1.5 — recommended</span>
+  </div>
+  <div class="sens-opt sens-inactive">
+    <span class="sens-label">Aggressive</span>
+    <span class="sens-desc">IQR × 1.0 — more alerts</span>
+  </div>
+</div>
+
+<h3>Section divider (Roadmap)</h3>
+<div style="max-width:480px;margin-top:10px">
+  <div class="section-divider divider-accent">
+    <div class="divider-line"></div>
+    <span class="divider-label" style="color:var(--fg)">Done in v0.1.0</span>
+    <div class="divider-line"></div>
+  </div>
+  <div class="section-divider divider-plain">
+    <div class="divider-line"></div>
+    <span class="divider-label" style="color:var(--fg-50)">Later</span>
+    <div class="divider-line"></div>
+  </div>
+</div>
+<p class="note">accent: bg-primary/30 lines + text-foreground label<br>plain: bg-border lines + text-muted-foreground/50 label</p>
+
+<h3>Module tabs</h3>
+<p class="note">text-xs pb-1.5 — active: text-foreground border-b border-foreground — inactive: text-muted-foreground hover:text-foreground</p>
+<div style="display:flex;gap:20px;margin-top:10px;border-bottom:1px solid var(--border);padding-bottom:0">
+  <button style="font-size:12px;padding-bottom:6px;border:none;background:none;color:var(--fg);border-bottom:1px solid var(--fg);cursor:default;margin-bottom:-1px">Generate</button>
+  <button style="font-size:12px;padding-bottom:6px;border:none;background:none;color:var(--fg-60);cursor:default">Roadmap</button>
+  <button style="font-size:12px;padding-bottom:6px;border:none;background:none;color:var(--fg-60);cursor:default">Stack</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Interactive States</h2>
+
+<table class="state-table">
+  <tr>
+    <th>Element</th><th>Default</th><th>Hover</th><th>Active</th>
+  </tr>
+  <tr>
+    <td>Filter chip</td>
+    <td><code>text-muted-foreground/70</code></td>
+    <td><code>text-foreground bg-muted/30</code></td>
+    <td>motion.div pill + <code>text-foreground</code></td>
+  </tr>
+  <tr>
+    <td>Sensitivity btn</td>
+    <td><code>border-transparent</code></td>
+    <td><code>bg-muted/50</code></td>
+    <td><code>bg-teal-950/40 border-teal-800/50 text-teal-300</code></td>
+  </tr>
+  <tr>
+    <td>ForgeMe checkbox item</td>
+    <td><code>text-muted-foreground</code></td>
+    <td><code>bg-muted/50</code></td>
+    <td><code>bg-primary/10 text-foreground</code></td>
+  </tr>
+  <tr>
+    <td>Mode button (ForgeMe)</td>
+    <td><code>border-border text-muted-foreground</code></td>
+    <td><code>border-primary/30 bg-muted/30</code></td>
+    <td><code>border-primary/50 bg-primary/10 text-foreground</code></td>
+  </tr>
+  <tr>
+    <td>Module tab</td>
+    <td><code>text-muted-foreground</code></td>
+    <td><code>text-foreground</code></td>
+    <td><code>text-foreground border-b border-foreground</code></td>
+  </tr>
+  <tr>
+    <td>Icon / text link</td>
+    <td><code>text-muted-foreground/70</code></td>
+    <td><code>text-foreground</code></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>Primary button</td>
+    <td><code>bg-primary text-primary-foreground</code></td>
+    <td><code>bg-primary/90</code></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>Copy/Export button</td>
+    <td><code>border-border text-muted-foreground/70</code></td>
+    <td><code>text-foreground bg-muted/40</code></td>
+    <td><code>ti-check icon</code> (2 s flash)</td>
+  </tr>
+  <tr>
+    <td>AnalyzeMe btn (ForgeMe)</td>
+    <td><code>text-muted-foreground border-border</code></td>
+    <td><code>text-teal-300 border-teal-400/40 bg-teal-950/30</code></td>
+    <td>—</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Layout &amp; Spacing</h2>
+
+<div class="layout-box" style="margin-top:12px">
+  <div class="layout-sidebar">208 px sidebar</div>
+  <div class="layout-main">
+    <div class="layout-content">
+      <span>px-6 pt-5 → tabs → content</span>
+    </div>
+    <div class="layout-footer">h-8 · px-6 · gap-5 · footer badges</div>
+  </div>
+</div>
+<div class="note" style="margin-top:8px">
+  Sidebar: w-[208px] → 0 (transition-all duration-200)<br>
+  Sidebar padding: p-3 pb-2 · Section gap: gap-0.5 between buttons<br>
+  Collapsed file bar: rounded-xl px-4 py-1.5 bg-muted/20<br>
+  ForgeMe data bar: rounded-lg px-4 py-2 bg-muted/30 border-border<br>
+  Form controls: gap-6 between fields, gap-1.5 label→input, w-[180px] default
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Animations</h2>
+
+<div class="anim-row">
+  <div class="anim-name">Filter pill (Framer Motion)</div>
+  <div class="anim-spec">layoutId="filter-pill"<br>spring · bounce 0.2 · duration 0.35</div>
+  <div class="anim-use">Slides between filter chips. Absolute inset-0 inside each chip button.</div>
+</div>
+<div class="anim-row">
+  <div class="anim-name">Sidebar collapse</div>
+  <div class="anim-spec">transition-all duration-200<br>width: 208px → 0</div>
+  <div class="anim-use">Toggle button on left edge, z-10 absolute.</div>
+</div>
+<div class="anim-row">
+  <div class="anim-name">Grid row expand/collapse</div>
+  <div class="anim-spec">grid-rows-[0fr] ↔ [1fr]<br>transition-all duration-200<br>child: overflow-hidden</div>
+  <div class="anim-use">UploadZone ↔ collapsed file bar. Sensitivity hint dropdown.</div>
+</div>
+<div class="anim-row">
+  <div class="anim-name">Chevron rotate</div>
+  <div class="anim-spec">transform rotate(0→180deg)<br>transition-all duration-150 (inline style)</div>
+  <div class="anim-use">Expand toggles in sidebars.</div>
+</div>
+<div class="anim-row">
+  <div class="anim-name">Copied / Exported flash</div>
+  <div class="anim-spec">setTimeout 2000 ms<br>icon swap ti-clipboard → ti-check</div>
+  <div class="anim-use">Copy TSV and Export buttons in both modules.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Inconsistencies to Resolve</h2>
+
+<div class="issue">
+  <span class="issue-tag">opacity</span>
+  <div class="issue-text">ForgeMe Sidebar section labels use <code>text-muted-foreground</code> (100%) but AnalyzeSidebar uses <code>text-muted-foreground/70</code>. Recommend: unify to <code>/70</code>.</div>
+</div>
+<div class="issue">
+  <span class="issue-tag">opacity</span>
+  <div class="issue-text">ForgeMe footer badges use <code>text-muted-foreground/75</code>, AnalyzeMe uses <code>/70</code>. Recommend: unify to <code>/70</code>.</div>
+</div>
+<div class="issue">
+  <span class="issue-tag">color</span>
+  <div class="issue-text">Anomaly count in ResultBar uses <code>text-amber-500</code>, but anomaly type labels in AnomalyCards use <code>text-amber-400</code>. Recommend: standardize on <code>amber-400</code> for outlier/count color.</div>
+</div>
+<div class="issue">
+  <span class="issue-tag">duplication</span>
+  <div class="issue-text"><code>RoadmapTab.tsx</code> is duplicated in <code>forge-me/tabs/</code> and <code>analyze-me/tabs/</code> with identical structure. Candidate for extraction to <code>shared/RoadmapTab.tsx</code> with a namespace prop.</div>
+</div>
+<div class="issue">
+  <span class="issue-tag">hardcoded</span>
+  <div class="issue-text">ForgeMe Sidebar section labels ("Anomaly mix", "Mode", "Hide upcoming", "+ N upcoming") are hardcoded English strings — not wired to i18n.</div>
+</div>
+<div class="issue">
+  <span class="issue-tag">hardcoded</span>
+  <div class="issue-text">ResultBar "All rows", "⚠ Anomalies only", "Copy", "Copied", "Export", "Exported" are hardcoded. "All rows" is passed through <code>t()</code> but the rest are not.</div>
+</div>
+
+</body>
+</html>

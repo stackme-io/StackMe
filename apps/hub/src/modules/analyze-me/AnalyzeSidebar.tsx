@@ -37,9 +37,10 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
 
       {result && counts && (
         <div className="p-3 pb-2 border-b border-border">
-          <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-2">
+          <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
             {t('overviewLabel')}
           </p>
+
           <div className="flex flex-col">
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-xs text-muted-foreground/70">{t('rows')}</span>
@@ -66,7 +67,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
       )}
 
       <div className="p-3 pb-2">
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-2">
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
           {t('sensitivityLabel')}
         </p>
         <div className="flex flex-col gap-0.5">
