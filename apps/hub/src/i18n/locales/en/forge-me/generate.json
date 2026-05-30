@@ -1,0 +1,12 @@
+{
+  "title": "ForgeMe",
+  "version": "v0.1.0 · MIT License",
+  "description": "Synthetic dataset generator with injected anomalies. Describe your data in plain text, get a dataset with nulls, duplicates, outliers and more — ready for testing your pipelines.",
+
+  "format": "Format",
+  "rowCount": "Row count",
+  "rowLimitHint": "Max {{max}} rows",
+  "rowLimitError": "Must not exceed {{max}} rows",
+  "anomalyRate": "Anomaly rate",
+  "generating": "Generating..."
+}

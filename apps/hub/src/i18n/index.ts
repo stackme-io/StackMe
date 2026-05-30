@@ -22,9 +22,9 @@ import enAnalyzeMeWork   from './locales/en/analyze-me/work.json'
 import esAnalyzeMeWork   from './locales/es/analyze-me/work.json'
 import ukAnalyzeMeWork   from './locales/uk/analyze-me/work.json'
 
-import enForgeMeAbout    from './locales/en/forge-me/about.json'
-import esForgeMeAbout    from './locales/es/forge-me/about.json'
-import ukForgeMeAbout    from './locales/uk/forge-me/about.json'
+import enForgeMeGenerate  from './locales/en/forge-me/generate.json'
+import esForgeMeGenerate  from './locales/es/forge-me/generate.json'
+import ukForgeMeGenerate  from './locales/uk/forge-me/generate.json'
 
 import enForgeMeStack    from './locales/en/forge-me/stack.json'
 import esForgeMeStack    from './locales/es/forge-me/stack.json'
@@ -34,9 +34,9 @@ import enForgeMeFooter   from './locales/en/forge-me/footer.json'
 import esForgeMeFooter   from './locales/es/forge-me/footer.json'
 import ukForgeMeFooter   from './locales/uk/forge-me/footer.json'
 
-import enForgeMeWork     from './locales/en/forge-me/work.json'
-import esForgeMeWork     from './locales/es/forge-me/work.json'
-import ukForgeMeWork     from './locales/uk/forge-me/work.json'
+import enForgeMeRoadmap  from './locales/en/forge-me/roadmap.json'
+import esForgeMeRoadmap  from './locales/es/forge-me/roadmap.json'
+import ukForgeMeRoadmap  from './locales/uk/forge-me/roadmap.json'
 
 import enMarketMeManifest from './locales/en/market-me/manifest.json'
 import esMarketMeManifest from './locales/es/market-me/manifest.json'
@@ -59,10 +59,10 @@ i18n
           ...enAnalyzeMeWork,
         },
         'forge-me': {
-          ...enForgeMeAbout,
+          ...enForgeMeGenerate,
           ...enForgeMeStack,
           ...enForgeMeFooter,
-          ...enForgeMeWork,
+          ...enForgeMeRoadmap,
         },
         'market-me': {
           ...enMarketMeManifest,
@@ -77,10 +77,10 @@ i18n
           ...esAnalyzeMeWork,
         },
         'forge-me': {
-          ...esForgeMeAbout,
+          ...esForgeMeGenerate,
           ...esForgeMeStack,
           ...esForgeMeFooter,
-          ...esForgeMeWork,
+          ...esForgeMeRoadmap,
         },
         'market-me': {
           ...esMarketMeManifest,
@@ -95,10 +95,10 @@ i18n
           ...ukAnalyzeMeWork,
         },
         'forge-me': {
-          ...ukForgeMeAbout,
+          ...ukForgeMeGenerate,
           ...ukForgeMeStack,
           ...ukForgeMeFooter,
-          ...ukForgeMeWork,
+          ...ukForgeMeRoadmap,
         },
         'market-me': {
           ...ukMarketMeManifest,
