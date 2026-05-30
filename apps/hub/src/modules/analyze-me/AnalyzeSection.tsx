@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UploadZone } from './UploadZone'
 import { AnomalyTable } from './AnomalyTable'
@@ -33,8 +33,9 @@ export function AnalyzeSection({
   filter, forgeData, verdictCounts, onFile,
 }: AnalyzeSectionProps) {
   const { t } = useTranslation('analyze-me')
-  const [copied, setCopied]     = useState(false)
+  const [copied, setCopied]       = useState(false)
   const [collapsed, setCollapsed] = useState(false)
+  const fileInputRef              = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (result && !loading) setCollapsed(true)
@@ -65,19 +66,76 @@ export function AnalyzeSection({
 
   const handleCopy = () => {
     if (filteredTableData.length === 0) return
-    const keys = Object.keys(filteredTableData[0]).filter(k => k !== '_row_index')
+
+    const rawKeys = Object.keys(filteredTableData[0]).filter(k => k !== '_row_index')
+
+    const typeMap = new Map<number, string[]>()
+    for (const a of filteredAnomalies) {
+      const existing = typeMap.get(a.row_index) ?? []
+      existing.push(a.anomaly_type)
+      typeMap.set(a.row_index, existing)
+    }
+
+    const getVerdict = (idx: number): string => {
+      if (!forgeData) return ''
+      if (injectedSet.has(idx) && detectedSet.has(idx))  return 'detected'
+      if (injectedSet.has(idx) && !detectedSet.has(idx)) return 'missed'
+      if (!injectedSet.has(idx) && detectedSet.has(idx)) return 'false_positive'
+      return ''
+    }
+
+    const hasType    = filteredAnomalies.length > 0
+    const hasVerdict = !!forgeData
+
+    const headers = [
+      ...rawKeys,
+      ...(hasType    ? ['type']    : []),
+      ...(hasVerdict ? ['verdict'] : []),
+    ]
+
     const tsv = [
-      keys.join('\t'),
-      ...filteredTableData.map(row => keys.map(k => String(row[k] ?? '')).join('\t')),
+      headers.join('\t'),
+      ...filteredTableData.map(row => {
+        const idx     = Number(row._row_index)
+        const types   = typeMap.get(idx)?.join(', ') ?? ''
+        const verdict = getVerdict(idx)
+        return [
+          ...rawKeys.map(k => String(row[k] ?? '')),
+          ...(hasType    ? [types]   : []),
+          ...(hasVerdict ? [verdict] : []),
+        ].join('\t')
+      }),
     ].join('\n')
+
     navigator.clipboard.writeText(tsv).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
   }
 
+  const handleReplaceClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    fileInputRef.current?.click()
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      onFile(file)
+      e.target.value = ''
+    }
+  }
+
   return (
     <div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,.json"
+        className="hidden"
+        onChange={handleInputChange}
+      />
+
       <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
           <div
@@ -98,7 +156,7 @@ export function AnalyzeSection({
               </>
             )}
             <button
-              onClick={e => { e.stopPropagation(); setCollapsed(false) }}
+              onClick={handleReplaceClick}
               className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
             >
               <i className="ti ti-pencil text-[11px]" />
