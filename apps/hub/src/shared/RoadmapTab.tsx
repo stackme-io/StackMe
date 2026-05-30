@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/clerk-react'
 import apiClient from '../api/client'
 
 type RoadmapItem    = { title: string; desc: string }
@@ -53,7 +53,6 @@ interface RoadmapTabProps {
 export function RoadmapTab({ namespace }: RoadmapTabProps) {
   const { t }                   = useTranslation(namespace)
   const { isSignedIn, getToken } = useAuth()
-  const { user }                 = useUser()
 
   // Roadmap votes
   const [counts, setCounts]       = useState<Record<string, number>>({})
@@ -169,12 +168,10 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
     setSubmitError(false)
     try {
       const token = await getToken()
-      const displayName = user?.username ?? user?.firstName ?? null
       await apiClient.post('/api/suggestions', {
         module_id: namespace,
         text: suggestText.trim(),
         show_username: showUsername,
-        username: displayName,
       }, { headers: { Authorization: `Bearer ${token}` } })
       setSubmitted(true)
       setSuggestText('')

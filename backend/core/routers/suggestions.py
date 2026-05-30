@@ -7,6 +7,7 @@ from core.auth import get_current_user, get_optional_user
 from core.db import get_db
 from core.models.suggestion import Suggestion
 from core.models.suggestion_vote import SuggestionVote
+from core.models.user_profile import UserProfile
 
 router = APIRouter()
 
@@ -36,7 +37,6 @@ class SuggestionIn(BaseModel):
     module_id: str
     text: str = Field(..., min_length=10, max_length=1000)
     show_username: bool = False
-    username: str | None = Field(None, max_length=100)
 
 
 @router.post("/suggestions", status_code=201)
@@ -48,11 +48,15 @@ async def create_suggestion(
     if body.module_id not in VALID_MODULES:
         raise HTTPException(status_code=400, detail="Invalid module_id")
 
+    user_id = user.get("sub", "")
+    profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+    nickname = profile.nickname if profile and profile.nickname else None
+
     suggestion = Suggestion(
-        user_id=user.get("sub", ""),
+        user_id=user_id,
         module_id=body.module_id,
         text=body.text,
-        username=body.username,
+        username=nickname,
         show_username=body.show_username,
         published=False,
     )
