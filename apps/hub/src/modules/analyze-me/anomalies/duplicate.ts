@@ -3,7 +3,8 @@ import type { AnomalyInfo } from '../types'
 
 export async function detectDuplicates(colNames: string[]): Promise<AnomalyInfo[]> {
   const anomalies: AnomalyInfo[] = []
-  const castCols = colNames.map(c => `CAST("${c}" AS VARCHAR)`).join(' || \'|\' || ')
+  const keyColNames = colNames.filter(c => c.toLowerCase() !== 'id')
+  const castCols = keyColNames.map(c => `CAST("${c}" AS VARCHAR)`).join(' || \'|\' || ')
   const rows = await runQuery(`
     WITH grouped AS (
       SELECT ${castCols} AS _row_key,
