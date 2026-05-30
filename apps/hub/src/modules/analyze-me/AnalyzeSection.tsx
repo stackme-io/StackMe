@@ -216,18 +216,18 @@ export function AnalyzeSection({
         <div className="mt-4 flex flex-col gap-3">
           <div className="flex items-center gap-1 flex-wrap">
             {([
-              { key: 'all'       as FilterType, label: t('filterAll'),       activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
-              { key: 'anomalies' as FilterType, label: t('filterAnomalies'), activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
-              { key: 'missing'   as FilterType, label: `${t('filterNulls')} (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,     dot: 'bg-red-400',   activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
-              { key: 'duplicate' as FilterType, label: `${t('filterDuplicates')} (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400',  activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
-              { key: 'outlier'   as FilterType, label: `${t('filterOutliers')} (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,     dot: 'bg-amber-400', activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
+              { key: 'all'       as FilterType, label: t('filterAll'),       activeText: 'text-foreground' },
+              { key: 'anomalies' as FilterType, label: t('filterAnomalies'), activeText: 'text-foreground' },
+              { key: 'missing'   as FilterType, label: `${t('filterNulls')} (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,     dot: 'bg-red-400',   activeText: 'text-foreground' },
+              { key: 'duplicate' as FilterType, label: `${t('filterDuplicates')} (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400',  activeText: 'text-foreground' },
+              { key: 'outlier'   as FilterType, label: `${t('filterOutliers')} (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,     dot: 'bg-amber-400', activeText: 'text-foreground' },
               ...(verdictCounts && verdictCounts.missed > 0
-                ? [{ key: 'missed' as FilterType, label: `✗ ${t('filterMissed')} (${verdictCounts.missed})`, activeBg: 'rgb(120 53 15 / 0.3)', activeText: 'text-amber-300' }]
+                ? [{ key: 'missed' as FilterType, label: `✗ ${t('filterMissed')} (${verdictCounts.missed})`, activeText: 'text-amber-300' }]
                 : []),
               ...(verdictCounts && verdictCounts.false_positive > 0
-                ? [{ key: 'false_positive' as FilterType, label: `⚠ ${t('filterFalsePositive')} (${verdictCounts.false_positive})`, activeBg: 'rgb(69 10 10 / 0.3)', activeText: 'text-red-300' }]
+                ? [{ key: 'false_positive' as FilterType, label: `⚠ ${t('filterFalsePositive')} (${verdictCounts.false_positive})`, activeText: 'text-red-300' }]
                 : []),
-            ] as { key: FilterType; label: string; dot?: string; activeBg: string; activeText: string }[]).map(chip => (
+            ] as { key: FilterType; label: string; dot?: string; activeText: string }[]).map(chip => (
               <button
                 key={chip.key}
                 onClick={() => onFilter(chip.key)}
@@ -240,8 +240,11 @@ export function AnalyzeSection({
                 {filter === chip.key && (
                   <motion.div
                     layoutId="filter-pill"
-                    className="absolute inset-0 rounded-md"
-                    style={{ background: chip.activeBg }}
+                    className={`absolute inset-0 rounded-md ${
+                      chip.key === 'missed'         ? 'bg-amber-950/30' :
+                      chip.key === 'false_positive' ? 'bg-red-950/30'   :
+                      'bg-muted/60'
+                    }`}
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.35 }}
                   />
                 )}
