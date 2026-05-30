@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UploadZone } from './UploadZone'
 import { AnomalyTable } from './AnomalyTable'
@@ -33,7 +33,12 @@ export function AnalyzeSection({
   filter, forgeData, verdictCounts, onFile,
 }: AnalyzeSectionProps) {
   const { t } = useTranslation('analyze-me')
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied]     = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+
+  useEffect(() => {
+    if (result && !loading) setCollapsed(true)
+  }, [result, loading])
 
   const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
   const injectedSet = new Set(forgeData?.anomalies.map(a => a.row_index) ?? [])
@@ -73,7 +78,41 @@ export function AnalyzeSection({
 
   return (
     <div>
-      <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={onFile} />
+      <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className="overflow-hidden">
+          <div
+            className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5 mb-3 cursor-pointer hover:bg-muted/40 transition-colors"
+            onClick={() => setCollapsed(false)}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-muted-foreground/70 flex-shrink-0">
+              <path d="M2 1.5h5.5L10 4v6.5H2V1.5z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+              <path d="M7 1.5V4.5h3" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+            </svg>
+            <span className="text-xs text-muted-foreground/70 font-mono">{fileName}</span>
+            {result && (
+              <>
+                <span className="text-muted-foreground/30 text-sm">·</span>
+                <span className="text-xs text-muted-foreground/70">{result.rows_total} rows</span>
+                <span className="text-muted-foreground/30 text-sm">·</span>
+                <span className="text-xs text-amber-500">{result.anomalies_count} anomalies</span>
+              </>
+            )}
+            <button
+              onClick={e => { e.stopPropagation(); setCollapsed(false) }}
+              className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
+            >
+              <i className="ti ti-pencil text-[11px]" />
+              Replace
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'}`}>
+        <div className="overflow-hidden">
+          <UploadZone loading={loading} progress={progress} fileName={fileName} onFile={onFile} />
+        </div>
+      </div>
 
       {forgeData && (
         <div className="mt-3 mb-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
