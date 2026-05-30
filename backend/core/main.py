@@ -10,8 +10,14 @@ from slowapi.errors import RateLimitExceeded
 from core.db import engine, Base
 from core.models.user_module import UserModule  # noqa: F401 — registers model
 from core.models.user_profile import UserProfile  # noqa: F401 — registers model
+from core.models.roadmap_vote import RoadmapVote  # noqa: F401 — registers model
+from core.models.suggestion import Suggestion  # noqa: F401 — registers model
+from core.models.suggestion_vote import SuggestionVote  # noqa: F401 — registers model
 from core.routers.users import router as users_router
 from core.routers.modules import router as modules_router
+from core.routers.roadmap import router as roadmap_router
+from core.routers.suggestions import router as suggestions_router
+from core.routers.admin import router as admin_router
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["20/minute"])
 
@@ -45,6 +51,9 @@ async def root():
 
 app.include_router(users_router, prefix="/api", tags=["Users"])
 app.include_router(modules_router, prefix="/api", tags=["Modules"])
+app.include_router(roadmap_router, prefix="/api", tags=["Roadmap"])
+app.include_router(suggestions_router, prefix="/api", tags=["Suggestions"])
+app.include_router(admin_router, prefix="/api", tags=["Admin"])
 
 try:
     from forge_me.router import router as forge_router
