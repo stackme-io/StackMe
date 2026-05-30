@@ -23,6 +23,8 @@
   "filterNulls": "Порожні",
   "filterDuplicates": "Дублікати",
   "filterOutliers": "Аномальні значення",
+  "filterMissed": "Пропущено",
+  "filterFalsePositive": "Хибне спрацювання",
   "anomalyDetails": "Деталі аномалій",
   "row": "Рядок",
   "overviewLabel": "Огляд",

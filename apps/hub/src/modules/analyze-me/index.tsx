@@ -6,7 +6,7 @@ import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './Anal
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
 
-type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed'
+type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed' | 'false_positive'
 
 const TABS = [
   { id: 'work',  label: 'Work'  },

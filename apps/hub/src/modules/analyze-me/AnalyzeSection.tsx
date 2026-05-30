@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { UploadZone } from './UploadZone'
 import { AnomalyTable } from './AnomalyTable'
@@ -6,7 +7,7 @@ import { AnomalyCards } from './AnomalyCards'
 import type { ForgeHandoff } from '../../shared/forgeHandoff'
 import type { AnalyzeResult } from './types'
 
-type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed'
+type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed' | 'false_positive'
 
 interface VerdictCounts {
   detected: number
@@ -54,6 +55,11 @@ export function AnalyzeSection({
         const idx = Number(row._row_index)
         return injectedSet.has(idx) && !detectedSet.has(idx)
       })
+    : filter === 'false_positive'
+    ? tableData.filter(row => {
+        const idx = Number(row._row_index)
+        return detectedSet.has(idx) && !injectedSet.has(idx)
+      })
     : tableData.filter(row => {
         const idx = Number(row._row_index)
         return result?.anomalies.some(a => a.row_index === idx && a.anomaly_type === filter)
@@ -61,6 +67,8 @@ export function AnalyzeSection({
 
   const filteredAnomalies = filter === 'missed'
     ? []
+    : filter === 'false_positive'
+    ? result?.anomalies.filter(a => !injectedSet.has(a.row_index)) ?? []
     : filter === 'all' || filter === 'anomalies'
     ? result?.anomalies ?? []
     : result?.anomalies.filter(a => a.anomaly_type === filter) ?? []
@@ -225,28 +233,36 @@ export function AnalyzeSection({
         <div className="mt-4 flex flex-col gap-3">
           <div className="flex items-center gap-1 flex-wrap">
             {([
-              { key: 'all'       as FilterType, label: 'All rows' },
-              { key: 'anomalies' as FilterType, label: 'Anomalies only' },
-              { key: 'missing'   as FilterType, label: `Nulls (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,   dot: 'bg-red-400' },
-              { key: 'duplicate' as FilterType, label: `Duplicates (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400' },
-              { key: 'outlier'   as FilterType, label: `Outliers (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,  dot: 'bg-amber-400' },
+              { key: 'all'       as FilterType, label: t('filterAll'),       activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
+              { key: 'anomalies' as FilterType, label: t('filterAnomalies'), activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
+              { key: 'missing'   as FilterType, label: `${t('filterNulls')} (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,     dot: 'bg-red-400',   activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
+              { key: 'duplicate' as FilterType, label: `${t('filterDuplicates')} (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400',  activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
+              { key: 'outlier'   as FilterType, label: `${t('filterOutliers')} (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,     dot: 'bg-amber-400', activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
               ...(verdictCounts && verdictCounts.missed > 0
-                ? [{ key: 'missed' as FilterType, label: `✗ Missed (${verdictCounts.missed})`, dot: undefined }]
+                ? [{ key: 'missed' as FilterType, label: `✗ ${t('filterMissed')} (${verdictCounts.missed})`, activeBg: 'bg-amber-950/30', activeText: 'text-amber-300' }]
                 : []),
-            ] as { key: FilterType; label: string; dot?: string }[]).map(chip => (
+              ...(verdictCounts && verdictCounts.false_positive > 0
+                ? [{ key: 'false_positive' as FilterType, label: `⚠ ${t('filterFalsePositive')} (${verdictCounts.false_positive})`, activeBg: 'bg-red-950/30', activeText: 'text-red-300' }]
+                : []),
+            ] as { key: FilterType; label: string; dot?: string; activeBg: string; activeText: string }[]).map(chip => (
               <button
                 key={chip.key}
                 onClick={() => onFilter(chip.key)}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
+                className={`relative flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
                   filter === chip.key
-                    ? chip.key === 'missed'
-                      ? 'bg-amber-950/30 text-amber-300'
-                      : 'bg-muted/60 text-foreground'
+                    ? chip.activeText
                     : 'text-muted-foreground/70 hover:text-foreground hover:bg-muted/30'
                 }`}
               >
-                {chip.dot && <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${chip.dot}`} />}
-                {chip.label}
+                {filter === chip.key && (
+                  <motion.div
+                    layoutId="filter-pill"
+                    className={`absolute inset-0 rounded-md ${chip.activeBg}`}
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.35 }}
+                  />
+                )}
+                {chip.dot && <span className={`relative z-10 w-1.5 h-1.5 rounded-full flex-shrink-0 ${chip.dot}`} />}
+                <span className="relative z-10">{chip.label}</span>
               </button>
             ))}
             <button

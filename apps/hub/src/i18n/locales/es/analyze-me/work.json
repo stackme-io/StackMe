@@ -23,6 +23,8 @@
   "filterNulls": "Nulos",
   "filterDuplicates": "Duplicados",
   "filterOutliers": "Valores atípicos",
+  "filterMissed": "Perdidos",
+  "filterFalsePositive": "Falso positivo",
   "anomalyDetails": "Detalles de anomalías",
   "row": "Fila",
   "overviewLabel": "Resumen",

@@ -23,6 +23,8 @@
   "filterNulls": "Nulls",
   "filterDuplicates": "Duplicates",
   "filterOutliers": "Outliers",
+  "filterMissed": "Missed",
+  "filterFalsePositive": "False positive",
   "anomalyDetails": "Anomaly details",
   "row": "Row",
   "overviewLabel": "Overview",
