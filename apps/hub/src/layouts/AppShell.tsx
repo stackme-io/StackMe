@@ -152,7 +152,7 @@ export default function AppShell() {
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => i18n.changeLanguage(lang.code)}
-                  className={i18n.language.startsWith(lang.code) ? 'font-medium text-foreground' : ''}
+                  className={`whitespace-nowrap ${i18n.language.startsWith(lang.code) ? 'font-medium text-foreground' : ''}`}
                 >
                   {lang.label} — {lang.name}
                 </DropdownMenuItem>
