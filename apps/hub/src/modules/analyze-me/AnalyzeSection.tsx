@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { UploadZone } from './UploadZone'
@@ -37,8 +37,6 @@ export function AnalyzeSection({
   const { t } = useTranslation('analyze-me')
   const [copied, setCopied]       = useState(false)
   const [collapsed, setCollapsed] = useState(false)
-  const fileInputRef              = useRef<HTMLInputElement>(null)
-
   useEffect(() => {
     if (result && !loading) setCollapsed(true)
   }, [result, loading])
@@ -124,26 +122,11 @@ export function AnalyzeSection({
 
   const handleReplaceClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    fileInputRef.current?.click()
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      onFile(file)
-      e.target.value = ''
-    }
+    setCollapsed(false)
   }
 
   return (
     <div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".csv,.json"
-        className="hidden"
-        onChange={handleInputChange}
-      />
 
       <div className={`grid transition-all duration-200 ${collapsed ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
@@ -233,16 +216,16 @@ export function AnalyzeSection({
         <div className="mt-4 flex flex-col gap-3">
           <div className="flex items-center gap-1 flex-wrap">
             {([
-              { key: 'all'       as FilterType, label: t('filterAll'),       activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
-              { key: 'anomalies' as FilterType, label: t('filterAnomalies'), activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
-              { key: 'missing'   as FilterType, label: `${t('filterNulls')} (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,     dot: 'bg-red-400',   activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
-              { key: 'duplicate' as FilterType, label: `${t('filterDuplicates')} (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400',  activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
-              { key: 'outlier'   as FilterType, label: `${t('filterOutliers')} (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,     dot: 'bg-amber-400', activeBg: 'bg-muted/60',       activeText: 'text-foreground' },
+              { key: 'all'       as FilterType, label: t('filterAll'),       activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
+              { key: 'anomalies' as FilterType, label: t('filterAnomalies'), activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
+              { key: 'missing'   as FilterType, label: `${t('filterNulls')} (${result.anomalies.filter(a => a.anomaly_type === 'missing').length})`,     dot: 'bg-red-400',   activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
+              { key: 'duplicate' as FilterType, label: `${t('filterDuplicates')} (${result.anomalies.filter(a => a.anomaly_type === 'duplicate').length})`, dot: 'bg-blue-400',  activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
+              { key: 'outlier'   as FilterType, label: `${t('filterOutliers')} (${result.anomalies.filter(a => a.anomaly_type === 'outlier').length})`,     dot: 'bg-amber-400', activeBg: 'hsl(var(--muted) / 0.6)', activeText: 'text-foreground' },
               ...(verdictCounts && verdictCounts.missed > 0
-                ? [{ key: 'missed' as FilterType, label: `✗ ${t('filterMissed')} (${verdictCounts.missed})`, activeBg: 'bg-amber-950/30', activeText: 'text-amber-300' }]
+                ? [{ key: 'missed' as FilterType, label: `✗ ${t('filterMissed')} (${verdictCounts.missed})`, activeBg: 'rgb(120 53 15 / 0.3)', activeText: 'text-amber-300' }]
                 : []),
               ...(verdictCounts && verdictCounts.false_positive > 0
-                ? [{ key: 'false_positive' as FilterType, label: `⚠ ${t('filterFalsePositive')} (${verdictCounts.false_positive})`, activeBg: 'bg-red-950/30', activeText: 'text-red-300' }]
+                ? [{ key: 'false_positive' as FilterType, label: `⚠ ${t('filterFalsePositive')} (${verdictCounts.false_positive})`, activeBg: 'rgb(69 10 10 / 0.3)', activeText: 'text-red-300' }]
                 : []),
             ] as { key: FilterType; label: string; dot?: string; activeBg: string; activeText: string }[]).map(chip => (
               <button
@@ -257,7 +240,8 @@ export function AnalyzeSection({
                 {filter === chip.key && (
                   <motion.div
                     layoutId="filter-pill"
-                    className={`absolute inset-0 rounded-md ${chip.activeBg}`}
+                    className="absolute inset-0 rounded-md"
+                    style={{ background: chip.activeBg }}
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.35 }}
                   />
                 )}
