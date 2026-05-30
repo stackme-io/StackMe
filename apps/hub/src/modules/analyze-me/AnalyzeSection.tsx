@@ -240,10 +240,10 @@ export function AnalyzeSection({
                 {filter === chip.key && (
                   <motion.div
                     layoutId="filter-pill"
-                    className={`absolute inset-0 rounded-md ${
-                      chip.key === 'missed'         ? 'bg-amber-950/30' :
-                      chip.key === 'false_positive' ? 'bg-red-950/30'   :
-                      'bg-muted/60'
+                    className={`absolute inset-0 rounded-md border ${
+                      chip.key === 'missed'         ? 'bg-amber-950/30 border-amber-800/50' :
+                      chip.key === 'false_positive' ? 'bg-red-950/30 border-red-800/50'     :
+                      'bg-muted/40 border-border'
                     }`}
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.35 }}
                   />
