@@ -7,12 +7,13 @@ interface ModuleTab {
 }
 
 interface ModuleTabsProps {
-  tabs: ModuleTab[]
-  activeTab: string
-  onChange?: (id: string) => void
+  tabs:         ModuleTab[]
+  activeTab:    string
+  onChange?:    (id: string) => void
+  onShowHint?:  () => void
 }
 
-export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
+export function ModuleTabs({ tabs, activeTab, onChange, onShowHint }: ModuleTabsProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const mounted = useRef(false)
 
@@ -45,6 +46,15 @@ export function ModuleTabs({ tabs, activeTab, onChange }: ModuleTabsProps) {
           {tab.label}
         </button>
       ))}
+      {onShowHint && (
+        <button
+          onClick={onShowHint}
+          className="ml-auto pb-1.5 text-[11px] text-muted-foreground/40 hover:text-foreground transition-colors"
+          aria-label="Show hints"
+        >
+          ?
+        </button>
+      )}
     </div>
   )
 }

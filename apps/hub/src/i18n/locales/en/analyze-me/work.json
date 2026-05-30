@@ -48,5 +48,12 @@
   "errorUnsupportedType": "Unsupported file type",
   "errorTooLarge": "File is too large",
   "errorMaxSize": "Maximum allowed size is",
-  "errorGeneric": "Failed to analyze file."
+  "errorGeneric": "Failed to analyze file.",
+
+  "hint1Title": "Upload a file",
+  "hint1Desc": "Drop CSV or JSON — stays in your browser",
+  "hint2Title": "Tune sensitivity",
+  "hint2Desc": "Adjust outlier threshold in the sidebar",
+  "hint3Title": "Read results",
+  "hint3Desc": "Filter by type, copy TSV, or send to ForgeMe"
 }

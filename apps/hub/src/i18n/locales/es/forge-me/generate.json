@@ -20,5 +20,14 @@
   "copy": "Copiar",
   "copied": "Copiado",
   "exportLabel": "Exportar {{format}}",
-  "exported": "Exportado"
+  "exported": "Exportado",
+
+  "hint1Title": "Elige anomalías",
+  "hint1Desc": "Selecciona en la barra: nulos, duplicados, outliers",
+  "hint2Title": "Configura",
+  "hint2Desc": "Define filas, formato y semilla",
+  "hint3Title": "Genera",
+  "hint3Desc": "Pulsa Generar — revisa la tabla de datos",
+  "hint4Title": "Exporta",
+  "hint4Desc": "Descarga o envía directamente a AnalyzeMe"
 }

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { RoadmapTab } from '../../shared/RoadmapTab'
+import { OnboardingFlow } from '../../shared/OnboardingFlow'
 import { AnalyzeSection } from './AnalyzeSection'
 import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
@@ -15,14 +16,18 @@ const TABS = [
   { id: 'stack', label: 'Stack' },
 ]
 
+const HINT_KEY = 'stackme-hint-analyze-me'
+
 export default function AnalyzeMePage() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const { t } = useTranslation('analyze-me')
-  const [activeTab, setActiveTab]     = useState('work')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [filter, setFilter]           = useState<FilterType>('all')
-  const [sensitivity, setSensitivity] = useState<Sensitivity>('balanced')
-  const [forgeData, setForgeData]     = useState<ForgeHandoff | null>(null)
+  const [activeTab, setActiveTab]         = useState('work')
+  const [sidebarOpen, setSidebarOpen]     = useState(true)
+  const [filter, setFilter]               = useState<FilterType>('all')
+  const [sensitivity, setSensitivity]     = useState<Sensitivity>('balanced')
+  const [forgeData, setForgeData]         = useState<ForgeHandoff | null>(null)
+  const [hintPermanent, setHintPermanent] = useState(() => !!localStorage.getItem(HINT_KEY))
+  const [hintVisible, setHintVisible]     = useState(true)
 
   const analyzeRef     = useRef(analyze)
   const fileRef        = useRef<File | null>(null)
@@ -61,6 +66,12 @@ export default function AnalyzeMePage() {
     if (fileRef.current) analyze(fileRef.current, SENSITIVITY_MULTIPLIER[s])
   }
 
+  const handleHidePermanent = () => {
+    localStorage.setItem(HINT_KEY, '1')
+    setHintPermanent(true)
+    setHintVisible(false)
+  }
+
   const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
   const injectedSet = new Set(forgeData?.anomalies.map(a => a.row_index) ?? [])
 
@@ -69,6 +80,12 @@ export default function AnalyzeMePage() {
     missed:         [...injectedSet].filter(idx => !detectedSet.has(idx)).length,
     false_positive: [...detectedSet].filter(idx => !injectedSet.has(idx)).length,
   } : null
+
+  const hintSteps = [
+    { title: t('hint1Title'), desc: t('hint1Desc') },
+    { title: t('hint2Title'), desc: t('hint2Desc') },
+    { title: t('hint3Title'), desc: t('hint3Desc') },
+  ]
 
   return (
     <div className="flex h-full relative overflow-hidden">
@@ -94,9 +111,20 @@ export default function AnalyzeMePage() {
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto px-6 pt-5">
-          <ModuleTabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+          <ModuleTabs
+            tabs={TABS}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            onShowHint={!hintPermanent && !hintVisible ? () => setHintVisible(true) : undefined}
+          />
 
           <div style={{ display: activeTab === 'work' ? 'block' : 'none' }}>
+            <OnboardingFlow
+              steps={hintSteps}
+              visible={!hintPermanent && hintVisible}
+              onHideSession={() => setHintVisible(false)}
+              onHidePermanent={handleHidePermanent}
+            />
             <AnalyzeSection
               result={result}
               tableData={tableData}

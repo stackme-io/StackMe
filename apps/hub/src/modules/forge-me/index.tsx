@@ -1,12 +1,15 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
+import { OnboardingFlow } from '../../shared/OnboardingFlow'
 import { Sidebar } from './Sidebar'
 import { GenerateTab } from './tabs/GenerateTab'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import { StackTab } from './tabs/StackTab'
 import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, ViewMode } from './types'
+
+const HINT_KEY = 'stackme-hint-forge-me'
 
 const DEFAULT_SELECTED: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 const STORAGE_KEY = 'forgeme-settings'
@@ -29,6 +32,8 @@ export default function ForgeMePage() {
   const [rows, setRows]                  = useState<number>(stored?.rows ?? 100)
   const [anomalyRate, setAnomalyRate]    = useState<number>(stored?.anomalyRate ?? 0.05)
   const [schemaFields, setSchemaFields]  = useState<ParsedField[]>([])
+  const [hintPermanent, setHintPermanent] = useState(() => !!localStorage.getItem(HINT_KEY))
+  const [hintVisible, setHintVisible]     = useState(true)
 
   useEffect(() => {
     try {
@@ -36,6 +41,19 @@ export default function ForgeMePage() {
     } catch {}
   }, [seed, rows, anomalyRate, selected])
   const { t } = useTranslation('forge-me')
+
+  const handleHidePermanent = () => {
+    localStorage.setItem(HINT_KEY, '1')
+    setHintPermanent(true)
+    setHintVisible(false)
+  }
+
+  const hintSteps = [
+    { title: t('hint1Title'), desc: t('hint1Desc') },
+    { title: t('hint2Title'), desc: t('hint2Desc') },
+    { title: t('hint3Title'), desc: t('hint3Desc') },
+    { title: t('hint4Title'), desc: t('hint4Desc') },
+  ]
 
   const toggleAnomaly = useCallback((id: AnomalyType) => {
     setSelected(prev => {
@@ -79,9 +97,16 @@ export default function ForgeMePage() {
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
+            onShowHint={!hintPermanent && !hintVisible ? () => setHintVisible(true) : undefined}
           />
 
           <div style={{ display: activeTab === 'generate' ? 'block' : 'none' }}>
+            <OnboardingFlow
+              steps={hintSteps}
+              visible={!hintPermanent && hintVisible}
+              onHideSession={() => setHintVisible(false)}
+              onHidePermanent={handleHidePermanent}
+            />
             <GenerateTab
               selected={selected}
               viewMode={viewMode}

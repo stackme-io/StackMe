@@ -48,5 +48,12 @@
   "errorUnsupportedType": "Tipo de archivo no compatible",
   "errorTooLarge": "El archivo es demasiado grande",
   "errorMaxSize": "El tamaño máximo permitido es",
-  "errorGeneric": "Error al analizar el archivo."
+  "errorGeneric": "Error al analizar el archivo.",
+
+  "hint1Title": "Sube un archivo",
+  "hint1Desc": "CSV o JSON — permanece en tu navegador",
+  "hint2Title": "Ajusta la sensibilidad",
+  "hint2Desc": "Regula el umbral de outliers en la barra lateral",
+  "hint3Title": "Lee los resultados",
+  "hint3Desc": "Filtra por tipo, copia TSV o envía a ForgeMe"
 }
