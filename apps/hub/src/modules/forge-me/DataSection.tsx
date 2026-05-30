@@ -27,7 +27,7 @@ interface DataSectionProps {
   onRowSelect: (index: number) => void
   onInspectorClose: () => void
   onShowAll: () => void
-  t: (key: string) => string
+  t: (key: string, opts?: object) => string
 }
 
 export function DataSection({

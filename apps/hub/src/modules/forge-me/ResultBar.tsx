@@ -11,7 +11,7 @@ interface ResultBarProps {
   analyzeInstalled?: boolean
   copied: boolean
   exported: boolean
-  t: (key: string) => string
+  t: (key: string, opts?: object) => string
 }
 
 export function ResultBar({
@@ -41,7 +41,7 @@ export function ResultBar({
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {t('All rows')}
+            {t('allRows')}
           </button>
           <button
             onClick={() => onFilterChange('anomalies')}
@@ -51,7 +51,7 @@ export function ResultBar({
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            ⚠ Anomalies only
+            ⚠ {t('anomaliesOnly')}
           </button>
         </div>
 
@@ -61,7 +61,7 @@ export function ResultBar({
           className="flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
         >
           <i className={`ti ${copied ? 'ti-check' : 'ti-clipboard'} text-sm`} />
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? t('copied') : t('copy')}
         </button>
 
         <button
@@ -69,7 +69,7 @@ export function ResultBar({
           className="flex items-center justify-center gap-1.5 w-[104px] py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
         >
           <i className={`ti ${exported ? 'ti-check' : 'ti-download'} text-sm`} />
-          {exported ? 'Exported' : `Export ${format}`}
+          {exported ? t('exported') : t('exportLabel', { format })}
         </button>
 
         {onAnalyze && (

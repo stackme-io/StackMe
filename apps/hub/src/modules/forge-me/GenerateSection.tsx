@@ -230,7 +230,7 @@ export function GenerateSection({
           onRowSelect={handleRowSelect}
           onInspectorClose={() => setInspectorOpen(false)}
           onShowAll={() => setViewFilter('all')}
-          t={t as (key: string) => string}
+          t={t as (key: string, opts?: object) => string}
         />
       )}
     </div>

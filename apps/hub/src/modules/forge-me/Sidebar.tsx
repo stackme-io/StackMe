@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ANOMALY_REGISTRY } from './anomalies'
 import type { AnomalyType, ViewMode } from './types'
 
@@ -14,13 +15,14 @@ interface SidebarProps {
 
 export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: SidebarProps) {
   const [upcomingOpen, setUpcomingOpen] = useState(false)
+  const { t } = useTranslation('forge-me')
 
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
 
       <div className="p-3 pb-2 border-b border-border">
         <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
-          Anomaly mix
+          {t('sidebarAnomalyMix')}
         </p>
         <div className="flex flex-col gap-0.5">
           {ANOMALIES_ACTIVE.map(a => (
@@ -57,7 +59,9 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
               ⌄
             </span>
             <span className="text-[10px]">
-              {upcomingOpen ? 'Hide upcoming' : `+ ${ANOMALIES_UPCOMING.length} upcoming`}
+              {upcomingOpen
+                ? t('sidebarUpcomingHide')
+                : t('sidebarUpcomingShow', { count: ANOMALIES_UPCOMING.length })}
             </span>
           </button>
 
@@ -76,7 +80,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
 
       <div className="p-3 pb-2">
         <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
-          Mode
+          {t('sidebarMode')}
         </p>
         <div className="flex flex-col gap-1.5">
           {(['raw', 'schema'] as ViewMode[]).map(mode => (

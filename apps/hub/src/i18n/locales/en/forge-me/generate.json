@@ -8,5 +8,17 @@
   "rowLimitHint": "Max {{max}} rows",
   "rowLimitError": "Must not exceed {{max}} rows",
   "anomalyRate": "Anomaly rate",
-  "generating": "Generating..."
+  "generating": "Generating...",
+
+  "sidebarAnomalyMix": "Anomaly mix",
+  "sidebarMode": "Mode",
+  "sidebarUpcomingShow": "+ {{count}} upcoming",
+  "sidebarUpcomingHide": "Hide upcoming",
+
+  "allRows": "All rows",
+  "anomaliesOnly": "Anomalies only",
+  "copy": "Copy",
+  "copied": "Copied",
+  "exportLabel": "Export {{format}}",
+  "exported": "Exported"
 }

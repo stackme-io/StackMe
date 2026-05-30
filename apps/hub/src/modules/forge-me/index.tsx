@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { Sidebar } from './Sidebar'
 import { GenerateTab } from './tabs/GenerateTab'
-import { RoadmapTab } from './tabs/RoadmapTab'
+import { RoadmapTab } from '../../shared/RoadmapTab'
 import { StackTab } from './tabs/StackTab'
 import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, ViewMode } from './types'
@@ -97,7 +97,7 @@ export default function ForgeMePage() {
           </div>
 
           <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }}>
-            <RoadmapTab />
+            <RoadmapTab namespace="forge-me" />
           </div>
 
           <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>

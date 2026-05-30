@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
-import { RoadmapTab } from './tabs/RoadmapTab'
+import { RoadmapTab } from '../../shared/RoadmapTab'
 import { AnalyzeSection } from './AnalyzeSection'
 import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
@@ -114,7 +114,7 @@ export default function AnalyzeMePage() {
           </div>
 
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <RoadmapTab />
+            <RoadmapTab namespace="analyze-me" />
           </div>
 
           <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>

@@ -8,5 +8,17 @@
   "rowLimitHint": "Максимум {{max}} рядків",
   "rowLimitError": "Не повинно перевищувати {{max}} рядків",
   "anomalyRate": "Рівень аномалій",
-  "generating": "Генерування..."
+  "generating": "Генерування...",
+
+  "sidebarAnomalyMix": "Мікс аномалій",
+  "sidebarMode": "Режим",
+  "sidebarUpcomingShow": "+ {{count}} наступних",
+  "sidebarUpcomingHide": "Сховати наступні",
+
+  "allRows": "Всі рядки",
+  "anomaliesOnly": "Лише аномалії",
+  "copy": "Копіювати",
+  "copied": "Скопійовано",
+  "exportLabel": "Експорт {{format}}",
+  "exported": "Експортовано"
 }
