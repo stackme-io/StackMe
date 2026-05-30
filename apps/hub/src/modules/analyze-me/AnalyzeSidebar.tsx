@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import type { AnalyzeResult } from './types'
 
@@ -15,6 +16,14 @@ const SENSITIVITY_OPTIONS: { id: Sensitivity; label: string; desc: string; recom
   { id: 'balanced',     label: 'Balanced',     desc: 'Standard detection. Works for most datasets.', recommended: true },
   { id: 'aggressive',   label: 'Aggressive',   desc: 'Catches subtle patterns. Expect more noise.' },
 ]
+
+interface FilterDef {
+  key:         FilterType
+  label:       string
+  dot?:        string
+  pillClass?:  string
+  activeText?: string
+}
 
 interface AnalyzeSidebarProps {
   result: AnalyzeResult | null
@@ -37,14 +46,14 @@ export function AnalyzeSidebar({
     outlier:   result.anomalies.filter(a => a.anomaly_type === 'outlier').length,
   } : null
 
-  const FILTERS: { key: FilterType; label: string; activeClass?: string }[] = counts ? [
+  const FILTERS: FilterDef[] = counts ? [
     { key: 'all',       label: t('filterAll') },
     { key: 'anomalies', label: t('filterAnomalies') },
-    { key: 'missing',   label: `${t('filterNulls')} (${counts.missing})` },
-    { key: 'duplicate', label: `${t('filterDuplicates')} (${counts.duplicate})` },
-    { key: 'outlier',   label: `${t('filterOutliers')} (${counts.outlier})` },
+    { key: 'missing',   label: `${t('filterNulls')} (${counts.missing})`,        dot: 'bg-red-400' },
+    { key: 'duplicate', label: `${t('filterDuplicates')} (${counts.duplicate})`, dot: 'bg-blue-400' },
+    { key: 'outlier',   label: `${t('filterOutliers')} (${counts.outlier})`,     dot: 'bg-amber-400' },
     ...(missedCount
-      ? [{ key: 'missed' as FilterType, label: `✗ Missed (${missedCount})`, activeClass: 'bg-amber-950/30 text-amber-300' }]
+      ? [{ key: 'missed' as FilterType, label: `✗ Missed (${missedCount})`, pillClass: 'bg-amber-950/30', activeText: 'text-amber-300' }]
       : []),
   ] : []
 
@@ -90,13 +99,25 @@ export function AnalyzeSidebar({
                 <button
                   key={f.key}
                   onClick={() => onFilter(f.key)}
-                  className={`px-2 py-1.5 rounded-md text-xs text-left transition-colors ${
+                  className={`relative px-2 py-1.5 rounded-md text-xs text-left transition-colors ${
                     filter === f.key
-                      ? (f.activeClass ?? 'bg-primary/10 text-foreground')
-                      : 'text-muted-foreground/70 hover:bg-muted/50 hover:text-foreground'
+                      ? (f.activeText ?? 'text-foreground')
+                      : 'text-muted-foreground/70 hover:text-foreground'
                   }`}
                 >
-                  {f.label}
+                  {filter === f.key && (
+                    <motion.div
+                      layoutId="filter-pill"
+                      className={`absolute inset-0 rounded-md ${f.pillClass ?? 'bg-primary/10'}`}
+                      transition={{ type: 'spring', bounce: 0.15, duration: 0.35 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    {f.dot && (
+                      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${f.dot}`} />
+                    )}
+                    {f.label}
+                  </span>
                 </button>
               ))}
             </div>
