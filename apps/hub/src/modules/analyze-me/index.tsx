@@ -50,6 +50,7 @@ export default function AnalyzeMePage() {
 
   const handleFile = (file: File) => {
     fileRef.current = file
+    setForgeData(null)
     analyze(file, SENSITIVITY_MULTIPLIER[sensitivity])
   }
 
