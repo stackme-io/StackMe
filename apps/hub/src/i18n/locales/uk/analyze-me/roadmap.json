@@ -49,7 +49,7 @@
 
   "suggestLabel": "Запропонувати функцію",
   "suggestPlaceholder": "Опишіть що ви хотіли б бачити в AnalyzeMe...",
-  "suggestHint": "Одна пропозиція на день · Перевіряється перед публікацією",
+  "suggestHint": "Перевіряється перед публікацією",
   "suggestSubmit": "Надіслати",
   "suggestUsernameLabel": "Показувати моє ім'я при публікації"
 }

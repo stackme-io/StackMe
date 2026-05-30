@@ -49,7 +49,7 @@
 
   "suggestLabel": "Suggest a feature",
   "suggestPlaceholder": "Describe what you'd like to see in AnalyzeMe...",
-  "suggestHint": "One suggestion per day · Reviewed before publishing",
+  "suggestHint": "Reviewed before publishing",
   "suggestSubmit": "Submit",
   "suggestUsernameLabel": "Show my username when published"
 }

@@ -48,7 +48,7 @@
 
   "suggestLabel": "Suggest a feature",
   "suggestPlaceholder": "Describe what you'd like to see in ForgeMe...",
-  "suggestHint": "One suggestion per day · Reviewed before publishing",
+  "suggestHint": "Reviewed before publishing",
   "suggestSubmit": "Submit",
   "suggestUsernameLabel": "Show my username when published"
 }

@@ -49,7 +49,7 @@
 
   "suggestLabel": "Sugerir una función",
   "suggestPlaceholder": "Describe qué te gustaría ver en AnalyzeMe...",
-  "suggestHint": "Una sugerencia por día · Revisada antes de publicarse",
+  "suggestHint": "Revisada antes de publicarse",
   "suggestSubmit": "Enviar",
   "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar"
 }
