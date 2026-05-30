@@ -11,6 +11,7 @@ class Suggestion(Base):
     user_id: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     module_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     text: Mapped[str] = mapped_column(Text, nullable=False)
+    username: Mapped[str | None] = mapped_column(String(100), nullable=True)
     show_username: Mapped[bool] = mapped_column(Boolean, default=False)
     published: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

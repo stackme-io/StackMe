@@ -12,11 +12,31 @@ router = APIRouter()
 
 VALID_MODULES = {"forge-me", "analyze-me"}
 
+ALICE_CHARACTERS = [
+    "hatter", "cheshire", "rabbit", "dormouse",
+    "dodo", "duchess", "caterpillar", "knave",
+]
+
+
+def get_anon_name(user_id: str) -> str:
+    """Deterministic Alice character + last 5 chars of user_id."""
+    idx = sum(ord(c) for c in user_id) % len(ALICE_CHARACTERS)
+    character = ALICE_CHARACTERS[idx]
+    suffix = user_id[-5:] if len(user_id) >= 5 else user_id
+    return f"{character}·{suffix}"
+
+
+def get_display_name(suggestion: Suggestion) -> str:
+    if suggestion.show_username and suggestion.username:
+        return suggestion.username
+    return get_anon_name(suggestion.user_id)
+
 
 class SuggestionIn(BaseModel):
     module_id: str
     text: str = Field(..., min_length=10, max_length=1000)
     show_username: bool = False
+    username: str | None = Field(None, max_length=100)
 
 
 @router.post("/suggestions", status_code=201)
@@ -32,6 +52,7 @@ async def create_suggestion(
         user_id=user.get("sub", ""),
         module_id=body.module_id,
         text=body.text,
+        username=body.username,
         show_username=body.show_username,
         published=False,
     )
@@ -76,7 +97,7 @@ async def get_suggestions(
         {
             "id": s.id,
             "text": s.text,
-            "show_username": s.show_username,
+            "display_name": get_display_name(s),
             "created_at": s.created_at.isoformat(),
             "vote_count": vote_count,
             "user_voted": s.id in user_votes,
