@@ -72,6 +72,12 @@ export default function AnalyzeMePage() {
     setHintVisible(false)
   }
 
+  const handleShowHint = () => {
+    localStorage.removeItem(HINT_KEY)
+    setHintPermanent(false)
+    setHintVisible(true)
+  }
+
   const detectedSet = new Set(result?.anomalies.map(a => a.row_index) ?? [])
   const injectedSet = new Set(forgeData?.anomalies.map(a => a.row_index) ?? [])
 
@@ -115,7 +121,7 @@ export default function AnalyzeMePage() {
             tabs={TABS}
             activeTab={activeTab}
             onChange={setActiveTab}
-            onShowHint={!hintPermanent && !hintVisible ? () => setHintVisible(true) : undefined}
+            onShowHint={hintPermanent || !hintVisible ? handleShowHint : undefined}
           />
 
           <div style={{ display: activeTab === 'work' ? 'block' : 'none' }}>

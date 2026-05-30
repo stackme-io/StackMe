@@ -48,6 +48,12 @@ export default function ForgeMePage() {
     setHintVisible(false)
   }
 
+  const handleShowHint = () => {
+    localStorage.removeItem(HINT_KEY)
+    setHintPermanent(false)
+    setHintVisible(true)
+  }
+
   const hintSteps = [
     { title: t('hint1Title'), desc: t('hint1Desc') },
     { title: t('hint2Title'), desc: t('hint2Desc') },
@@ -97,7 +103,7 @@ export default function ForgeMePage() {
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
-            onShowHint={!hintPermanent && !hintVisible ? () => setHintVisible(true) : undefined}
+            onShowHint={hintPermanent || !hintVisible ? handleShowHint : undefined}
           />
 
           <div style={{ display: activeTab === 'generate' ? 'block' : 'none' }}>
