@@ -1,11 +1,14 @@
 {
   "technologiesLabel": "Technologies",
   "items": [
-    { "name": "DuckDB-Wasm", "license": "MIT", "desc": "In-browser SQL analytics engine" },
-    { "name": "React 19",    "license": "MIT", "desc": "UI framework" },
-    { "name": "Vite",        "license": "MIT", "desc": "Build tool" },
-    { "name": "Tailwind v4", "license": "MIT", "desc": "Styling" },
-    { "name": "Vitest",      "license": "MIT", "desc": "Unit testing" }
+    { "name": "DuckDB-Wasm",    "license": "MIT", "desc": "In-browser SQL analytics engine" },
+    { "name": "React 19",       "license": "MIT", "desc": "UI framework" },
+    { "name": "Vite",           "license": "MIT", "desc": "Build tool" },
+    { "name": "Tailwind v4",    "license": "MIT", "desc": "Styling" },
+    { "name": "Framer Motion",  "license": "MIT", "desc": "Animations" },
+    { "name": "react-i18next",  "license": "MIT", "desc": "Internationalization" },
+    { "name": "Zustand",        "license": "MIT", "desc": "State management" },
+    { "name": "Vitest",         "license": "MIT", "desc": "Unit testing" }
   ],
   "github": "GitHub →",
   "badge": "MIT License · free forever · self-hostable"

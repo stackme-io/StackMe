@@ -1,11 +1,14 @@
 {
   "technologiesLabel": "Tecnologías",
   "items": [
-    { "name": "DuckDB-Wasm", "license": "MIT", "desc": "Motor SQL analítico en el navegador" },
-    { "name": "React 19",    "license": "MIT", "desc": "Framework de UI" },
-    { "name": "Vite",        "license": "MIT", "desc": "Herramienta de compilación" },
-    { "name": "Tailwind v4", "license": "MIT", "desc": "Estilos" },
-    { "name": "Vitest",      "license": "MIT", "desc": "Pruebas unitarias" }
+    { "name": "DuckDB-Wasm",   "license": "MIT", "desc": "Motor SQL analítico en el navegador" },
+    { "name": "React 19",      "license": "MIT", "desc": "Framework de UI" },
+    { "name": "Vite",          "license": "MIT", "desc": "Herramienta de compilación" },
+    { "name": "Tailwind v4",   "license": "MIT", "desc": "Estilos" },
+    { "name": "Framer Motion", "license": "MIT", "desc": "Animaciones" },
+    { "name": "react-i18next", "license": "MIT", "desc": "Internacionalización" },
+    { "name": "Zustand",       "license": "MIT", "desc": "Gestión de estado" },
+    { "name": "Vitest",        "license": "MIT", "desc": "Pruebas unitarias" }
   ],
   "github": "GitHub →",
   "badge": "Licencia MIT · gratis para siempre · auto-hospedable"
