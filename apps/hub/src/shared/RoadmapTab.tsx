@@ -258,7 +258,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
       {/* From the community */}
       {suggestions.length > 0 && (
         <div className="mb-6">
-          <SectionDivider label="From the community" />
+          <SectionDivider label="From the community" accent />
           {suggestions.map(s => {
             const tipId = `sugg-${s.id}`
             return (
@@ -291,7 +291,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
 
       {/* Suggest a feature */}
       <div>
-        <SectionDivider label={t('suggestLabel')} />
+        <SectionDivider label={t('suggestLabel')} accent />
         {submitted ? (
           <p className="text-[11px] text-muted-foreground/60 py-2">
             Thanks — your suggestion is under review. We'll email you when it's published.
