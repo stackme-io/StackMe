@@ -99,7 +99,7 @@ export default function MarketMePage() {
   }
 
   return (
-    <div className="max-w-2xl px-6 pt-5">
+    <div className="max-w-3xl px-6 pt-5">
 
       <ModuleTabs
         tabs={[
@@ -126,7 +126,7 @@ export default function MarketMePage() {
             </div>
           )}
 
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {MODULE_REGISTRY.map((module) => {
               const state = moduleStates[module.id] ?? 'inactive'
               const isActive = state === 'active'
@@ -135,23 +135,23 @@ export default function MarketMePage() {
               return (
                 <div
                   key={module.id}
-                  className={`flex items-center justify-between px-5 py-4 rounded-xl border transition-colors ${
+                  className={`flex flex-col rounded-xl border transition-colors p-5 ${
                     isActive
                       ? 'border-primary/30 bg-primary/5'
                       : 'border-border bg-background hover:bg-muted/30'
                   }`}
                 >
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2.5">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
-                        {module.category}
-                      </span>
-                      <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{module.description}</p>
+                  {/* Top */}
+                  <div className="flex flex-col gap-2 flex-1">
+                    <span className={`self-start text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
+                      {module.category}
+                    </span>
+                    <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{module.description}</p>
                   </div>
 
-                  <div className="flex items-center gap-2 ml-4">
+                  {/* Bottom */}
+                  <div className="flex items-center gap-2 mt-5">
                     <button
                       onClick={() => handleOpen(module.id)}
                       className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"

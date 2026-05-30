@@ -6,7 +6,7 @@ const AnalyzeMePage = lazy(() => import('../modules/analyze-me/index'))
 export const analyzeMeManifest: ModuleManifest = {
   id: 'analyze-me',
   name: 'AnalyzeMe',
-  description: 'Detect anomalies in your real datasets before they reach production.',
+  description: 'Upload a CSV or JSON and detect missing values, duplicates, and outliers entirely in your browser. No server, no uploads, no logs — powered by DuckDB-Wasm.',
   icon: 'ScanSearch',
   route: '/analyze-me',
   category: 'analytics',
