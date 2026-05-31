@@ -120,7 +120,7 @@ export default function AppShell() {
                   return (
                     <div
                       key={panel.id}
-                      onClick={() => setActive(panel.id)}
+                      onClick={() => { setActive(panel.id); navigate(panel.manifest.route) }}
                       className={[
                         'flex items-center gap-1.5 h-7 pl-2.5 pr-1 text-xs cursor-pointer transition-all select-none',
                         isActive
