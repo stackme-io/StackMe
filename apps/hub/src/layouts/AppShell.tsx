@@ -115,6 +115,15 @@ export default function AppShell() {
     } else {
       document.title = moduleTitles[activeId ?? ''] ?? 'StackMe - We Build Tools. Not Traps.'
     }
+
+    // noindex on private pages
+    let metaRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta')
+      metaRobots.name = 'robots'
+      document.head.appendChild(metaRobots)
+    }
+    metaRobots.content = isSystemPage ? 'noindex, nofollow' : 'index, follow'
   }, [location.pathname, activeId, isSystemPage])
 
   return (
