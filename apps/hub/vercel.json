@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/forge-me",    "destination": "/forge-me.html" },
+    { "source": "/analyze-me",  "destination": "/analyze-me.html" },
+    { "source": "/market-me",   "destination": "/market-me.html" },
+    { "source": "/(.*)",        "destination": "/index.html" }
   ]
 }
