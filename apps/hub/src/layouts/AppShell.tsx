@@ -106,8 +106,8 @@ export default function AppShell() {
       '/notify-me':  'Notifications - StackMe',
     }
     const moduleTitles: Record<string, string> = {
-      'forge-me':   'ForgeMe: Synthetic Dataset Generator - StackMe',
-      'analyze-me': 'AnalyzeMe: CSV & JSON Anomaly Detector - StackMe',
+      'forge-me':   'ForgeMe - Synthetic Dataset Generator - StackMe',
+      'analyze-me': 'AnalyzeMe - CSV & JSON Anomaly Detector - StackMe',
       'market-me':  'Marketplace - StackMe',
     }
     if (isSystemPage) {
