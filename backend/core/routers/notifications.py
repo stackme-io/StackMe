@@ -161,3 +161,13 @@ async def create_notification(
     db.commit()
     db.refresh(notification)
     return {"id": notification.id, "type": notification.type, "broadcast": notification.user_id is None}
+
+
+@router.get("/admin/debug-auth")
+async def debug_auth(user: dict = Depends(get_current_user)):
+    """Temporary debug endpoint — remove after fixing."""
+    return {
+        "sub": user.get("sub"),
+        "ADMIN_USER_IDS": list(ADMIN_USER_IDS),
+        "match": user.get("sub") in ADMIN_USER_IDS,
+    }
