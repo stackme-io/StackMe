@@ -52,7 +52,20 @@
     "all": "Todo",
     "unread": "No leídos",
     "emptyUnread": "No hay notificaciones sin leer",
-    "emptyAll": "Aún no hay notificaciones"
+    "emptyAll": "Aún no hay notificaciones",
+    "timeJustNow": "ahora",
+    "timeMinutes": "hace {{count}}m",
+    "timeHours": "hace {{count}}h",
+    "timeDays": "hace {{count}}d"
+  },
+  "seo": {
+    "description": "Herramientas gratuitas para equipos de datos. Genera datasets sintéticos con anomalías, detecta problemas en CSV/JSON - sin registro, sin servidor, sin subidas.",
+    "titleDefault": "StackMe - Construimos Herramientas, No Trampas.",
+    "titleForgeMe": "ForgeMe - Generador de Datasets Sintéticos - StackMe",
+    "titleAnalyzeMe": "AnalyzeMe - Detector de Anomalías CSV/JSON - StackMe",
+    "titleMarketMe": "Marketplace - StackMe",
+    "titleAccountMe": "Mi Cuenta - StackMe",
+    "titleNotifyMe": "Notificaciones - StackMe"
   },
   "account": {
     "adminLabel": "Admin · Notificación masiva",

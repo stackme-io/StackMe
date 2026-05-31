@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { Bell } from 'lucide-react'
 import apiClient from '../api/client'
 
@@ -16,13 +17,13 @@ interface Notification {
   broadcast: boolean
 }
 
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: TFunction, lang: string): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-  if (diff < 60)  return 'just now'
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`
-  return new Date(iso).toLocaleDateString()
+  if (diff < 60)   return t('notify.timeJustNow')
+  if (diff < 3600)  return t('notify.timeMinutes', { count: Math.floor(diff / 60) })
+  if (diff < 86400) return t('notify.timeHours',   { count: Math.floor(diff / 3600) })
+  if (diff < 604800) return t('notify.timeDays',   { count: Math.floor(diff / 86400) })
+  return new Date(iso).toLocaleDateString(lang)
 }
 
 const TYPE_ICON: Record<NotifType, string> = {
@@ -33,7 +34,7 @@ const TYPE_ICON: Record<NotifType, string> = {
 }
 
 export default function NotifyMePage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { getToken } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
@@ -161,7 +162,7 @@ export default function NotifyMePage() {
 
               {/* Time */}
               <span className="text-[10px] text-muted-foreground/40 flex-shrink-0 mt-0.5">
-                {timeAgo(n.created_at)}
+                {timeAgo(n.created_at, t, i18n.language)}
               </span>
             </div>
           ))}

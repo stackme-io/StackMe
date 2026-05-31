@@ -52,7 +52,20 @@
     "all": "Всі",
     "unread": "Непрочитані",
     "emptyUnread": "Непрочитаних немає",
-    "emptyAll": "Поки немає сповіщень"
+    "emptyAll": "Поки немає сповіщень",
+    "timeJustNow": "щойно",
+    "timeMinutes": "{{count}}хв тому",
+    "timeHours": "{{count}}год тому",
+    "timeDays": "{{count}}д тому"
+  },
+  "seo": {
+    "description": "Безкоштовні браузерні інструменти для команд з даними. Генеруйте синтетичні датасети з аномаліями, виявляйте проблеми у CSV/JSON - без реєстрації, без сервера, без завантажень.",
+    "titleDefault": "StackMe - Ми Робимо Інструменти, Не Пастки.",
+    "titleForgeMe": "ForgeMe - Генератор Синтетичних Датасетів - StackMe",
+    "titleAnalyzeMe": "AnalyzeMe - Детектор Аномалій CSV/JSON - StackMe",
+    "titleMarketMe": "Маркетплейс - StackMe",
+    "titleAccountMe": "Мій Акаунт - StackMe",
+    "titleNotifyMe": "Сповіщення - StackMe"
   },
   "account": {
     "adminLabel": "Адмін · Розсилка",

@@ -52,7 +52,20 @@
     "all": "All",
     "unread": "Unread",
     "emptyUnread": "No unread notifications",
-    "emptyAll": "No notifications yet"
+    "emptyAll": "No notifications yet",
+    "timeJustNow": "just now",
+    "timeMinutes": "{{count}}m ago",
+    "timeHours": "{{count}}h ago",
+    "timeDays": "{{count}}d ago"
+  },
+  "seo": {
+    "description": "Free browser tools for data teams. Generate synthetic datasets with injected anomalies, detect issues in CSV/JSON - no sign-up, no server, no uploads.",
+    "titleDefault": "StackMe - We Build Tools. Not Traps.",
+    "titleForgeMe": "ForgeMe - Synthetic Dataset Generator - StackMe",
+    "titleAnalyzeMe": "AnalyzeMe - CSV & JSON Anomaly Detector - StackMe",
+    "titleMarketMe": "Marketplace - StackMe",
+    "titleAccountMe": "My Account - StackMe",
+    "titleNotifyMe": "Notifications - StackMe"
   },
   "account": {
     "adminLabel": "Admin · Broadcast notification",

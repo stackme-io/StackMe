@@ -111,20 +111,34 @@ export default function AppShell() {
     : (MODULE_LOGO_COLORS[activeId] ?? '#ffffff')
 
   useEffect(() => {
+    // html lang attribute
+    document.documentElement.lang = i18n.language
+
+    // Page title (translated)
     const systemTitles: Record<string, string> = {
-      '/account-me': 'My Account - StackMe',
-      '/notify-me':  'Notifications - StackMe',
+      '/account-me': t('seo.titleAccountMe'),
+      '/notify-me':  t('seo.titleNotifyMe'),
     }
     const moduleTitles: Record<string, string> = {
-      'forge-me':   'ForgeMe - Synthetic Dataset Generator - StackMe',
-      'analyze-me': 'AnalyzeMe - CSV & JSON Anomaly Detector - StackMe',
-      'market-me':  'Marketplace - StackMe',
+      'forge-me':   t('seo.titleForgeMe'),
+      'analyze-me': t('seo.titleAnalyzeMe'),
+      'market-me':  t('seo.titleMarketMe'),
     }
-    if (isSystemPage) {
-      document.title = systemTitles[location.pathname] ?? 'StackMe - We Build Tools. Not Traps.'
-    } else {
-      document.title = moduleTitles[activeId ?? ''] ?? 'StackMe - We Build Tools. Not Traps.'
+    document.title = isSystemPage
+      ? (systemTitles[location.pathname] ?? t('seo.titleDefault'))
+      : (moduleTitles[activeId ?? ''] ?? t('seo.titleDefault'))
+
+    // Meta description & og tags (helps Google; social scrapers see index.html)
+    const desc = isSystemPage ? t('seo.titleDefault') : t('seo.description')
+    const updateMeta = (selector: string, attr: string, value: string) => {
+      const el = document.querySelector<HTMLMetaElement>(selector)
+      if (el) el.setAttribute(attr, value)
     }
+    updateMeta('meta[name="description"]',         'content', desc)
+    updateMeta('meta[property="og:description"]',  'content', desc)
+    updateMeta('meta[property="og:title"]',        'content', document.title)
+    updateMeta('meta[name="twitter:description"]', 'content', desc)
+    updateMeta('meta[name="twitter:title"]',       'content', document.title)
 
     // noindex on private pages
     let metaRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
@@ -134,7 +148,7 @@ export default function AppShell() {
       document.head.appendChild(metaRobots)
     }
     metaRobots.content = isSystemPage ? 'noindex, nofollow' : 'index, follow'
-  }, [location.pathname, activeId, isSystemPage])
+  }, [location.pathname, activeId, isSystemPage, i18n.language])
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
