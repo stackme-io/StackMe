@@ -1,7 +1,7 @@
 {
   "title": "ForgeMe",
   "version": "v0.1.0 · MIT License",
-  "description": "Synthetic dataset generator with injected anomalies. Describe your data in plain text, get a dataset with nulls, duplicates, outliers and more — ready for testing your pipelines.",
+  "description": "Synthetic dataset generator with injected anomalies. Describe your data in plain text, get a dataset with nulls, duplicates, outliers and more - ready for testing your pipelines.",
 
   "format": "Format",
   "rowCount": "Row count",
@@ -25,9 +25,9 @@
   "hint1Title": "Pick anomaly types",
   "hint1Desc": "Choose from the sidebar: nulls, duplicates, outliers",
   "hint2Title": "Configure",
-  "hint2Desc": "Set rows, format, and seed — or use Schema match to fit your real data",
+  "hint2Desc": "Set rows, format, and seed - or use Schema match to fit your real data",
   "hint3Title": "Generate",
-  "hint3Desc": "Click Generate — click any row to inspect it in detail",
+  "hint3Desc": "Click Generate - click any row to inspect it in detail",
   "hint4Title": "Export",
   "hint4Desc": "Download or send directly to AnalyzeMe",
 
@@ -49,7 +49,7 @@
   "uploadFile": "Upload file",
   "uploadClick": "Click to upload CSV",
   "uploadHint": "CSV only (comma or semicolon) · schema inferred from first rows",
-  "privacyNote": "stays in your browser — never leaves this tab",
+  "privacyNote": "stays in your browser - never leaves this tab",
   "detectedSchema": "Detected schema · {{count}} fields",
   "inspector": "Inspector",
   "noAnomalies": "No anomalies found",

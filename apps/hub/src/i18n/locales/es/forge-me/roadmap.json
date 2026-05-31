@@ -4,17 +4,17 @@
     {
       "group": "Tipos de anomalías",
       "items": [
-        { "title": "Nulos",      "desc": "Elimina valores aleatoriamente — simula datos faltantes en pipelines" },
-        { "title": "Duplicados", "desc": "Repite filas — detecta bugs de deduplicación antes de prod" },
-        { "title": "Outliers",   "desc": "Inyecta extremos estadísticos — prueba tu lógica de validación" }
+        { "title": "Nulos",      "desc": "Elimina valores aleatoriamente - simula datos faltantes en pipelines" },
+        { "title": "Duplicados", "desc": "Repite filas - detecta bugs de deduplicación antes de prod" },
+        { "title": "Outliers",   "desc": "Inyecta extremos estadísticos - prueba tu lógica de validación" }
       ]
     },
     {
       "group": "Generación",
       "items": [
-        { "title": "Modo raw",        "desc": "Sin entrada necesaria — no describes nada, obtienes un dataset al instante" },
-        { "title": "Schema match",    "desc": "Pega tu esquema — obtén datos que se ajusten a tu estructura exacta" },
-        { "title": "Control de seed", "desc": "Mismo seed = mismo dataset — comparte y reproduce resultados" }
+        { "title": "Modo raw",        "desc": "Sin entrada necesaria - no describes nada, obtienes un dataset al instante" },
+        { "title": "Schema match",    "desc": "Pega tu esquema - obtén datos que se ajusten a tu estructura exacta" },
+        { "title": "Control de seed", "desc": "Mismo seed = mismo dataset - comparte y reproduce resultados" }
       ]
     },
     {
@@ -27,9 +27,9 @@
   ],
 
   "nextLabel": "Próximamente",
-  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa — eso define el alcance.",
+  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa - eso define el alcance.",
   "next": [
-    { "title": "Type mismatches",          "desc": "Los campos devuelven tipos incorrectos — string donde se espera int" },
+    { "title": "Type mismatches",          "desc": "Los campos devuelven tipos incorrectos - string donde se espera int" },
     { "title": "Eventos fuera de orden",   "desc": "Los registros llegan en secuencia cronológica incorrecta" },
     { "title": "Late arrivals",            "desc": "Eventos con timestamp posterior al momento real" },
     { "title": "Vista de tabla JSON",      "desc": "El JSON generado se mostrará como tabla navegable" },
@@ -40,7 +40,7 @@
 
   "laterLabel": "Más adelante",
   "later": [
-    { "title": "Stale timestamps",        "desc": "Los campos temporales dejan de actualizarse — el tiempo parece congelado" },
+    { "title": "Stale timestamps",        "desc": "Los campos temporales dejan de actualizarse - el tiempo parece congelado" },
     { "title": "Exportar Parquet/Excel",  "desc": "Descarga en formato columnar o de hoja de cálculo" },
     { "title": "Anomalías por columna",   "desc": "Apunta a campos específicos en lugar de todo el dataset" },
     { "title": "Historial de datasets",   "desc": "Guarda y revisa ejecuciones anteriores" }
@@ -56,6 +56,6 @@
   "signInToVote": "Inicia sesión para votar",
   "sending": "Enviando...",
   "signInToSubmit": "Inicia sesión para enviar sugerencias",
-  "suggestionThanks": "Gracias — tu sugerencia está en revisión. Te avisaremos cuando se publique.",
+  "suggestionThanks": "Gracias - tu sugerencia está en revisión. Te avisaremos cuando se publique.",
   "errorGeneric": "Algo salió mal, inténtalo de nuevo."
 }

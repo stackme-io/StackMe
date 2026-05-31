@@ -1,7 +1,7 @@
 {
   "title": "AnalyzeMe",
   "version": "v0.1.0 · Licencia MIT",
-  "description": "Detección de anomalías local para datasets reales. Sube un CSV o JSON — el archivo nunca sale de tu navegador. El análisis corre completamente en DuckDB-Wasm.",
+  "description": "Detección de anomalías local para datasets reales. Sube un CSV o JSON - el archivo nunca sale de tu navegador. El análisis corre completamente en DuckDB-Wasm.",
 
   "doneLabel": "Qué hay en v0.1.0",
   "done": [
@@ -9,14 +9,14 @@
       "group": "Tipos de anomalías",
       "items": [
         { "title": "Nulos",      "desc": "Detecta valores faltantes en todas las columnas" },
-        { "title": "Duplicados", "desc": "Encuentra filas repetidas — columnas ID excluidas automáticamente" },
-        { "title": "Outliers",   "desc": "Detección basada en IQR — omite identificadores y timestamps" }
+        { "title": "Duplicados", "desc": "Encuentra filas repetidas - columnas ID excluidas automáticamente" },
+        { "title": "Outliers",   "desc": "Detección basada en IQR - omite identificadores y timestamps" }
       ]
     },
     {
       "group": "Análisis",
       "items": [
-        { "title": "Control de sensibilidad", "desc": "Tres niveles ajustan el umbral de outliers — de conservador a agresivo" },
+        { "title": "Control de sensibilidad", "desc": "Tres niveles ajustan el umbral de outliers - de conservador a agresivo" },
         { "title": "Modo ground truth",       "desc": "Importa datos de ForgeMe para evaluar la precisión de detección" },
         { "title": "Veredicto por fila",      "desc": "Etiqueta cada anomalía como detectada, perdida o falso positivo" }
       ]
@@ -25,15 +25,15 @@
       "group": "Exportar y privacidad",
       "items": [
         { "title": "Copiar al portapapeles", "desc": "Exporta filas como TSV con columnas TYPE y VERDICT" },
-        { "title": "Solo en el navegador",   "desc": "DuckDB-Wasm — sin servidor, sin subidas, sin logs" }
+        { "title": "Solo en el navegador",   "desc": "DuckDB-Wasm - sin servidor, sin subidas, sin logs" }
       ]
     }
   ],
 
   "nextLabel": "Próximamente",
-  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa — eso define el alcance.",
+  "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa - eso define el alcance.",
   "next": [
-    { "title": "Detección Z-score / MAD",           "desc": "Alternativa al IQR — mejor para distribuciones no normales" },
+    { "title": "Detección Z-score / MAD",           "desc": "Alternativa al IQR - mejor para distribuciones no normales" },
     { "title": "Exportar como CSV",                 "desc": "Descarga el informe completo de anomalías con metadatos" },
     { "title": "Selección de columnas duplicados",  "desc": "Elige qué campos definen una fila única" },
     { "title": "Motor de reglas de dominio",        "desc": "Define reglas de validación personalizadas por columna" },
@@ -57,6 +57,6 @@
   "signInToVote": "Inicia sesión para votar",
   "sending": "Enviando...",
   "signInToSubmit": "Inicia sesión para enviar sugerencias",
-  "suggestionThanks": "Gracias — tu sugerencia está en revisión. Te avisaremos cuando se publique.",
+  "suggestionThanks": "Gracias - tu sugerencia está en revisión. Te avisaremos cuando se publique.",
   "errorGeneric": "Algo salió mal, inténtalo de nuevo."
 }

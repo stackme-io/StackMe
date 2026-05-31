@@ -199,7 +199,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
         ))}
       </div>
 
-      {/* Coming up — with voting */}
+      {/* Coming up - with voting */}
       <div className="mb-6">
         <SectionDivider label={t('nextLabel')} accent />
         <p className="text-[10px] text-muted-foreground/50 mb-3 leading-relaxed">{t('nextDesc')}</p>
@@ -238,7 +238,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
         })}
       </div>
 
-      {/* Later — collapsed */}
+      {/* Later - collapsed */}
       <div className="mb-6">
         <button
           onClick={() => setLaterOpen(o => !o)}

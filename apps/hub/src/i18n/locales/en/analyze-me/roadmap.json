@@ -1,7 +1,7 @@
 {
   "title": "AnalyzeMe",
   "version": "v0.1.0 · MIT License",
-  "description": "Local-first anomaly detection for real datasets. Upload a CSV or JSON file — the file never leaves your browser. Analysis runs entirely in DuckDB-Wasm.",
+  "description": "Local-first anomaly detection for real datasets. Upload a CSV or JSON file - the file never leaves your browser. Analysis runs entirely in DuckDB-Wasm.",
 
   "doneLabel": "What's in v0.1.0",
   "done": [
@@ -9,14 +9,14 @@
       "group": "Anomaly types",
       "items": [
         { "title": "Nulls",      "desc": "Flags missing values across all columns" },
-        { "title": "Duplicates", "desc": "Finds repeated rows — ID columns excluded automatically" },
-        { "title": "Outliers",   "desc": "IQR-based detection — skips identifiers and timestamps" }
+        { "title": "Duplicates", "desc": "Finds repeated rows - ID columns excluded automatically" },
+        { "title": "Outliers",   "desc": "IQR-based detection - skips identifiers and timestamps" }
       ]
     },
     {
       "group": "Analysis",
       "items": [
-        { "title": "Sensitivity control",  "desc": "Three levels adjust outlier threshold — conservative to aggressive" },
+        { "title": "Sensitivity control",  "desc": "Three levels adjust outlier threshold - conservative to aggressive" },
         { "title": "Ground truth mode",    "desc": "Import ForgeMe data to score detection accuracy" },
         { "title": "Verdict per row",      "desc": "Labels each anomaly as detected, missed or false positive" }
       ]
@@ -25,15 +25,15 @@
       "group": "Export & privacy",
       "items": [
         { "title": "Copy to clipboard", "desc": "Exports rows as TSV with TYPE and VERDICT columns" },
-        { "title": "In-browser only",   "desc": "DuckDB-Wasm — no server, no uploads, no logs" }
+        { "title": "In-browser only",   "desc": "DuckDB-Wasm - no server, no uploads, no logs" }
       ]
     }
   ],
 
   "nextLabel": "Coming up",
-  "nextDesc": "These are candidates for the next version. Vote for what matters to you — it shapes the scope.",
+  "nextDesc": "These are candidates for the next version. Vote for what matters to you - it shapes the scope.",
   "next": [
-    { "title": "Z-score / MAD detection",        "desc": "Alternative to IQR — better for non-normal distributions" },
+    { "title": "Z-score / MAD detection",        "desc": "Alternative to IQR - better for non-normal distributions" },
     { "title": "Export as CSV",                  "desc": "Download full anomaly report with metadata" },
     { "title": "Column selection for duplicates","desc": "Choose which fields define a unique row" },
     { "title": "Domain rules engine",            "desc": "Define custom validation rules per column" },
@@ -57,6 +57,6 @@
   "signInToVote": "Sign in to vote",
   "sending": "Sending...",
   "signInToSubmit": "Sign in to submit suggestions",
-  "suggestionThanks": "Thanks — your suggestion is under review. We'll email you when it's published.",
+  "suggestionThanks": "Thanks - your suggestion is under review. We'll email you when it's published.",
   "errorGeneric": "Something went wrong, try again."
 }

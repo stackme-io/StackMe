@@ -33,10 +33,10 @@
   },
   "modules": {
     "forge-me": {
-      "description": "Generate synthetic datasets with injected anomalies — nulls, duplicates, outliers and more. Define your schema, set the rate, then export or pipe directly into AnalyzeMe."
+      "description": "Generate synthetic datasets with injected anomalies - nulls, duplicates, outliers and more. Define your schema, set the rate, then export or pipe directly into AnalyzeMe."
     },
     "analyze-me": {
-      "description": "Upload a CSV or JSON and detect missing values, duplicates, and outliers entirely in your browser. No server, no uploads, no logs — powered by DuckDB-Wasm."
+      "description": "Upload a CSV or JSON and detect missing values, duplicates, and outliers entirely in your browser. No server, no uploads, no logs - powered by DuckDB-Wasm."
     }
   },
   "common": {

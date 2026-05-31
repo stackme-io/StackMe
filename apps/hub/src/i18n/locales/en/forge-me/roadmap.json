@@ -4,17 +4,17 @@
     {
       "group": "Anomaly types",
       "items": [
-        { "title": "Nulls",       "desc": "Randomly removes values — simulates missing data in pipelines" },
-        { "title": "Duplicates",  "desc": "Repeats rows — catches deduplication bugs before prod" },
-        { "title": "Outliers",    "desc": "Injects statistical extremes — tests your validation logic" }
+        { "title": "Nulls",       "desc": "Randomly removes values - simulates missing data in pipelines" },
+        { "title": "Duplicates",  "desc": "Repeats rows - catches deduplication bugs before prod" },
+        { "title": "Outliers",    "desc": "Injects statistical extremes - tests your validation logic" }
       ]
     },
     {
       "group": "Generation",
       "items": [
-        { "title": "Raw mode",      "desc": "No input needed — describe nothing, get a dataset instantly" },
-        { "title": "Schema match",  "desc": "Paste your schema — get data that fits your exact structure" },
-        { "title": "Seed control",  "desc": "Same seed = same dataset — share and reproduce results" }
+        { "title": "Raw mode",      "desc": "No input needed - describe nothing, get a dataset instantly" },
+        { "title": "Schema match",  "desc": "Paste your schema - get data that fits your exact structure" },
+        { "title": "Seed control",  "desc": "Same seed = same dataset - share and reproduce results" }
       ]
     },
     {
@@ -27,9 +27,9 @@
   ],
 
   "nextLabel": "Coming up",
-  "nextDesc": "These are candidates for the next version. Vote for what matters to you — it shapes the scope.",
+  "nextDesc": "These are candidates for the next version. Vote for what matters to you - it shapes the scope.",
   "next": [
-    { "title": "Type mismatches",       "desc": "Fields return wrong data types — string where int is expected" },
+    { "title": "Type mismatches",       "desc": "Fields return wrong data types - string where int is expected" },
     { "title": "Out-of-order events",   "desc": "Records arrive in wrong chronological sequence" },
     { "title": "Late arrivals",         "desc": "Events timestamped later than they actually occurred" },
     { "title": "JSON table view",       "desc": "Generated JSON will render as a browsable table" },
@@ -40,7 +40,7 @@
 
   "laterLabel": "Later",
   "later": [
-    { "title": "Stale timestamps",       "desc": "Temporal fields stop updating — time appears frozen" },
+    { "title": "Stale timestamps",       "desc": "Temporal fields stop updating - time appears frozen" },
     { "title": "Parquet / Excel export", "desc": "Download in columnar or spreadsheet format" },
     { "title": "Column-level anomalies", "desc": "Target specific fields instead of the whole dataset" },
     { "title": "Dataset history",        "desc": "Save and revisit previous generation runs" }
@@ -56,6 +56,6 @@
   "signInToVote": "Sign in to vote",
   "sending": "Sending...",
   "signInToSubmit": "Sign in to submit suggestions",
-  "suggestionThanks": "Thanks — your suggestion is under review. We'll email you when it's published.",
+  "suggestionThanks": "Thanks - your suggestion is under review. We'll email you when it's published.",
   "errorGeneric": "Something went wrong, try again."
 }

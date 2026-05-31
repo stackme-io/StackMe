@@ -33,10 +33,10 @@
   },
   "modules": {
     "forge-me": {
-      "description": "Genera datasets sintéticos con anomalías inyectadas — nulos, duplicados, valores atípicos y más. Define tu esquema, ajusta la tasa y exporta o envía directamente a AnalyzeMe."
+      "description": "Genera datasets sintéticos con anomalías inyectadas - nulos, duplicados, valores atípicos y más. Define tu esquema, ajusta la tasa y exporta o envía directamente a AnalyzeMe."
     },
     "analyze-me": {
-      "description": "Sube un CSV o JSON y detecta valores faltantes, duplicados y valores atípicos en tu navegador. Sin servidor, sin subidas, sin registros — basado en DuckDB-Wasm."
+      "description": "Sube un CSV o JSON y detecta valores faltantes, duplicados y valores atípicos en tu navegador. Sin servidor, sin subidas, sin registros - basado en DuckDB-Wasm."
     }
   },
   "common": {

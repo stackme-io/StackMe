@@ -1,7 +1,7 @@
 {
   "title": "ForgeMe",
   "version": "v0.1.0 · Licencia MIT",
-  "description": "Generador de conjuntos de datos sintéticos con anomalías inyectadas. Describe tus datos en texto plano, obtén un dataset con nulos, duplicados, valores atípicos y más — listo para probar tus pipelines.",
+  "description": "Generador de conjuntos de datos sintéticos con anomalías inyectadas. Describe tus datos en texto plano, obtén un dataset con nulos, duplicados, valores atípicos y más - listo para probar tus pipelines.",
 
   "format": "Formato",
   "rowCount": "Cantidad de filas",
@@ -25,9 +25,9 @@
   "hint1Title": "Elige anomalías",
   "hint1Desc": "Selecciona en la barra: nulos, duplicados, outliers",
   "hint2Title": "Configura",
-  "hint2Desc": "Define filas, formato y semilla — o usa Schema match para tu estructura real",
+  "hint2Desc": "Define filas, formato y semilla - o usa Schema match para tu estructura real",
   "hint3Title": "Genera",
-  "hint3Desc": "Pulsa Generar — haz clic en cualquier fila para inspeccionar en detalle",
+  "hint3Desc": "Pulsa Generar - haz clic en cualquier fila para inspeccionar en detalle",
   "hint4Title": "Exporta",
   "hint4Desc": "Descarga o envía directamente a AnalyzeMe",
 
@@ -49,7 +49,7 @@
   "uploadFile": "Subir archivo",
   "uploadClick": "Haz clic para subir CSV",
   "uploadHint": "Solo CSV (coma o punto y coma) · esquema inferido de las primeras filas",
-  "privacyNote": "se queda en tu navegador — nunca sale de esta pestaña",
+  "privacyNote": "se queda en tu navegador - nunca sale de esta pestaña",
   "detectedSchema": "Esquema · {{count}} campos",
   "inspector": "Inspector",
   "noAnomalies": "No se encontraron anomalías",

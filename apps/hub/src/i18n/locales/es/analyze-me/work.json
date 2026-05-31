@@ -11,8 +11,8 @@
   "progressOutliers": "Detectando valores atípicos...",
   "privacyBadge": "se queda en tu navegador",
   "privacyTitle": "Tus datos nunca salen de tu dispositivo",
-  "privacyBody": "El análisis se ejecuta completamente en tu navegador usando DuckDB-Wasm — un motor SQL completo compilado a WebAssembly. Sin servidor, sin subidas, sin registros.",
-  "sizeWarning": "Archivo grande detectado — el análisis puede tardar más de lo habitual.",
+  "privacyBody": "El análisis se ejecuta completamente en tu navegador usando DuckDB-Wasm - un motor SQL completo compilado a WebAssembly. Sin servidor, sin subidas, sin registros.",
+  "sizeWarning": "Archivo grande detectado - el análisis puede tardar más de lo habitual.",
   "rows": "filas",
   "anomalies": "anomalías",
   "nulls": "nulos",
@@ -51,7 +51,7 @@
   "errorGeneric": "Error al analizar el archivo.",
 
   "hint1Title": "Sube un archivo",
-  "hint1Desc": "CSV o JSON — permanece en tu navegador",
+  "hint1Desc": "CSV o JSON - permanece en tu navegador",
   "hint2Title": "Ajusta la sensibilidad",
   "hint2Desc": "Regula el umbral de outliers en la barra lateral",
   "hint3Title": "Lee los resultados",
@@ -74,7 +74,7 @@
   "verdictMissed": "✗ perdida",
   "verdictFalsePositive": "⚠ falso positivo",
   "tooltipMissed": "La anomalía inyectada no fue detectada. Intenta aumentar la sensibilidad en el panel izquierdo.",
-  "tooltipFalsePositive": "Detectada pero no inyectada — puede ser una anomalía real o una falsa alarma. Reduce la sensibilidad para menos ruido.",
+  "tooltipFalsePositive": "Detectada pero no inyectada - puede ser una anomalía real o una falsa alarma. Reduce la sensibilidad para menos ruido.",
   "colType": "tipo",
   "colVerdict": "veredicto"
 }
