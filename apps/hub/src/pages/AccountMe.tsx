@@ -2,17 +2,101 @@ import { useState, useEffect } from 'react'
 import { useUser, useAuth } from '@clerk/clerk-react'
 import apiClient from '../api/client'
 
+const ADMIN_USER_ID = import.meta.env.VITE_ADMIN_USER_ID
+
+type NotifType = 'announcement' | 'new_version' | 'survey'
+
+function AdminPanel({ getToken }: { getToken: () => Promise<string | null> }) {
+  const [title, setTitle]   = useState('')
+  const [body, setBody]     = useState('')
+  const [type, setType]     = useState<NotifType>('announcement')
+  const [sending, setSending] = useState(false)
+  const [sent, setSent]     = useState(false)
+  const [error, setError]   = useState(false)
+
+  const handleSend = async () => {
+    if (!title.trim() || sending) return
+    setSending(true)
+    setError(false)
+    try {
+      const token = await getToken()
+      await apiClient.post('/api/admin/notifications', {
+        type,
+        title: title.trim(),
+        body: body.trim() || null,
+      }, { headers: { Authorization: `Bearer ${token}` } })
+      setSent(true)
+      setTitle('')
+      setBody('')
+      setTimeout(() => setSent(false), 3000)
+    } catch {
+      setError(true)
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3 p-4 rounded-xl border border-border bg-muted/10">
+      <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 font-medium">
+        Admin · Broadcast notification
+      </p>
+
+      <div className="flex gap-1">
+        {(['announcement', 'new_version', 'survey'] as NotifType[]).map(t => (
+          <button
+            key={t}
+            onClick={() => setType(t)}
+            className={`px-2.5 py-1 rounded-md text-[10px] border transition-colors ${
+              type === t
+                ? 'border-primary/50 bg-primary/10 text-foreground'
+                : 'border-border text-muted-foreground hover:bg-muted/30'
+            }`}
+          >
+            {t === 'announcement' ? '📣 Announcement' : t === 'new_version' ? '📢 New version' : '📊 Survey'}
+          </button>
+        ))}
+      </div>
+
+      <input
+        type="text"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        maxLength={255}
+        placeholder="Title"
+        className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+      />
+      <textarea
+        value={body}
+        onChange={e => setBody(e.target.value)}
+        maxLength={2000}
+        placeholder="Body (optional)"
+        rows={3}
+        className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-xs resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+      />
+
+      {error && <p className="text-[10px] text-red-400">Something went wrong, try again.</p>}
+
+      <button
+        onClick={handleSend}
+        disabled={sending || !title.trim()}
+        className="self-start px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
+      >
+        {sent ? 'Sent ✓' : sending ? 'Sending...' : 'Send to all'}
+      </button>
+    </div>
+  )
+}
+
 export default function AccountMePage() {
   const { user } = useUser()
   const { getToken } = useAuth()
-  const [nickname, setNickname] = useState('')
+  const [nickname, setNickname]       = useState('')
   const [savedNickname, setSavedNickname] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [saving, setSaving]           = useState(false)
+  const [saved, setSaved]             = useState(false)
 
-  useEffect(() => {
-    fetchProfile()
-  }, [])
+  useEffect(() => { fetchProfile() }, [])
 
   const fetchProfile = async () => {
     try {
@@ -22,9 +106,7 @@ export default function AccountMePage() {
       })
       setSavedNickname(res.data.nickname)
       setNickname(res.data.nickname ?? '')
-    } catch (err) {
-      console.error(err)
-    }
+    } catch {}
   }
 
   const handleSave = async () => {
@@ -41,7 +123,6 @@ export default function AccountMePage() {
       if (err?.response?.status === 409) {
         alert('This nickname is already taken. Please choose another.')
       }
-      console.error(err)
     } finally {
       setSaving(false)
     }
@@ -49,10 +130,11 @@ export default function AccountMePage() {
 
   if (!user) return null
 
-  const userId = user.id
-  const email = user.emailAddresses[0]?.emailAddress
+  const userId   = user.id
+  const email    = user.emailAddresses[0]?.emailAddress
   const avatarUrl = user.imageUrl
   const displayName = user.fullName ?? user.firstName ?? email
+  const isAdmin  = ADMIN_USER_ID && userId === ADMIN_USER_ID
 
   return (
     <div className="max-w-lg mx-auto px-6 py-8 flex flex-col gap-8">
@@ -72,9 +154,7 @@ export default function AccountMePage() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Email
-        </label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</label>
         <div className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm text-muted-foreground select-none">
           {email}
         </div>
@@ -84,9 +164,7 @@ export default function AccountMePage() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Nickname
-        </label>
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Nickname</label>
         <input
           type="text"
           value={nickname}
@@ -106,6 +184,8 @@ export default function AccountMePage() {
           {saved ? 'Saved ✓' : saving ? 'Saving...' : 'Save'}
         </button>
       </div>
+
+      {isAdmin && <AdminPanel getToken={getToken} />}
 
     </div>
   )

@@ -219,11 +219,6 @@ export default function AppShell() {
                     My Account
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/market-me" className="cursor-pointer">
-                    {t('nav.marketplace')}
-                  </Link>
-                </DropdownMenuItem>
                 <SignOutButton>
                   <DropdownMenuItem className="cursor-pointer text-destructive">
                     {t('sidebar.signOut')}
