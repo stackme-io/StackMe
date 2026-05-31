@@ -6,6 +6,7 @@ import apiClient from '../api/client'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
+import LogoMark from '../components/LogoMark'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
@@ -29,6 +30,11 @@ const MARKET_ME_MANIFEST = {
   category: 'analytics' as const,
   defaultForNewUsers: false,
   component: MarketMePage,
+}
+
+const MODULE_LOGO_COLORS: Record<string, string> = {
+  'forge-me':   '#a78bfa',
+  'analyze-me': '#2dd4bf',
 }
 
 const MODULE_COLORS: Record<string, string> = {
@@ -100,6 +106,10 @@ export default function AppShell() {
   const isNotifyMe  = location.pathname === '/notify-me'
   const isSystemPage = isAccountMe || isNotifyMe
 
+  const logoColor = isSystemPage || !activeId
+    ? '#ffffff'
+    : (MODULE_LOGO_COLORS[activeId] ?? '#ffffff')
+
   useEffect(() => {
     const systemTitles: Record<string, string> = {
       '/account-me': 'My Account - StackMe',
@@ -132,6 +142,7 @@ export default function AppShell() {
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
         <div className="flex items-center gap-3">
+          <LogoMark color={logoColor} height={22} />
           <span className="text-sm font-medium text-muted-foreground">StackMe</span>
 
           {isAccountMe && (
