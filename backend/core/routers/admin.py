@@ -1,6 +1,4 @@
 import os
-import httpx
-import resend
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from core.auth import get_current_user
@@ -11,40 +9,10 @@ from core.models.notification import Notification
 router = APIRouter()
 
 ADMIN_USER_IDS = set(filter(None, os.getenv("ADMIN_USER_IDS", "").split(",")))
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "noreply@stackme.app")
-SITE_URL = os.getenv("SITE_URL", "https://stackme-app.vercel.app")
-
-resend.api_key = RESEND_API_KEY
-
-CLERK_SECRET_KEY = os.getenv("CLERK_SECRET_KEY", "")
-
-
-async def _get_user_email(user_id: str) -> str | None:
-    """Fetch user email from Clerk API."""
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(
-                f"https://api.clerk.com/v1/users/{user_id}",
-                headers={"Authorization": f"Bearer {CLERK_SECRET_KEY}"},
-                timeout=5,
-            )
-            if resp.status_code != 200:
-                return None
-            data = resp.json()
-            emails = data.get("email_addresses", [])
-            primary_id = data.get("primary_email_address_id")
-            for e in emails:
-                if e.get("id") == primary_id:
-                    return e.get("email_address")
-            return emails[0].get("email_address") if emails else None
-    except Exception:
-        return None
 
 
 def _require_admin(user: dict) -> None:
-    user_id = user.get("sub", "")
-    if not ADMIN_USER_IDS or user_id not in ADMIN_USER_IDS:
+    if not ADMIN_USER_IDS or user.get("sub", "") not in ADMIN_USER_IDS:
         raise HTTPException(status_code=403, detail="Admin only")
 
 
@@ -64,7 +32,6 @@ async def publish_suggestion(
 
     suggestion.published = True
 
-    # Create in-app notification for the author
     module_label = suggestion.module_id.replace("-", " ").title()
     notification = Notification(
         user_id=suggestion.user_id,
