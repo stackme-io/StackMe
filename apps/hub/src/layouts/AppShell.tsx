@@ -95,6 +95,8 @@ export default function AppShell() {
     : MODULE_REGISTRY.filter(m => DEFAULT_MODULE_IDS.includes(m.id))
 
   const isAccountMe = location.pathname === '/account-me'
+  const isNotifyMe  = location.pathname === '/notify-me'
+  const isSystemPage = isAccountMe || isNotifyMe
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
@@ -110,13 +112,19 @@ export default function AppShell() {
               <span className="text-xs font-medium text-foreground">AccountMe</span>
             </>
           )}
+          {isNotifyMe && (
+            <>
+              <span className="text-border">|</span>
+              <span className="text-xs font-medium text-foreground">Notifications</span>
+            </>
+          )}
 
           {panels.length > 0 && (
             <>
               <span className="text-border">|</span>
               <div className="flex items-center gap-1">
                 {panels.map((panel: Panel) => {
-                  const isActive = panel.id === activeId
+                  const isActive = panel.id === activeId && !isSystemPage
                   return (
                     <div
                       key={panel.id}
