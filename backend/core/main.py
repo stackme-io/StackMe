@@ -13,11 +13,13 @@ from core.models.user_profile import UserProfile  # noqa: F401 — registers mod
 from core.models.roadmap_vote import RoadmapVote  # noqa: F401 — registers model
 from core.models.suggestion import Suggestion  # noqa: F401 — registers model
 from core.models.suggestion_vote import SuggestionVote  # noqa: F401 — registers model
+from core.models.notification import Notification, NotificationRead  # noqa: F401 — registers models
 from core.routers.users import router as users_router
 from core.routers.modules import router as modules_router
 from core.routers.roadmap import router as roadmap_router
 from core.routers.suggestions import router as suggestions_router
 from core.routers.admin import router as admin_router
+from core.routers.notifications import router as notifications_router
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["20/minute"])
 
@@ -54,6 +56,7 @@ app.include_router(modules_router, prefix="/api", tags=["Modules"])
 app.include_router(roadmap_router, prefix="/api", tags=["Roadmap"])
 app.include_router(suggestions_router, prefix="/api", tags=["Suggestions"])
 app.include_router(admin_router, prefix="/api", tags=["Admin"])
+app.include_router(notifications_router, prefix="/api", tags=["Notifications"])
 
 try:
     from forge_me.router import router as forge_router

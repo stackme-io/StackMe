@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppShell from './layouts/AppShell'
 import AccountMePage from './pages/AccountMe'
+import NotifyMePage from './pages/NotifyMe'
 import PanelLayout from './layouts/PanelLayout'
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
         <Route element={<AppShell />}>
           <Route path="/" element={<Navigate to="/market-me" replace />} />
           <Route path="/account-me" element={<AccountMePage />} />
+          <Route path="/notify-me" element={<NotifyMePage />} />
           <Route path="*" element={<PanelLayout />} />
         </Route>
       </Routes>

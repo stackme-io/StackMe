@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from core.auth import get_current_user
 from core.db import get_db
 from core.models.suggestion import Suggestion
+from core.models.notification import Notification
 
 router = APIRouter()
 
@@ -62,36 +63,20 @@ async def publish_suggestion(
         raise HTTPException(status_code=409, detail="Already published")
 
     suggestion.published = True
+
+    # Create in-app notification for the author
+    module_label = suggestion.module_id.replace("-", " ").title()
+    notification = Notification(
+        user_id=suggestion.user_id,
+        type="suggestion_published",
+        title="Your suggestion is now live 🎉",
+        body=f'Your suggestion for {module_label} has been published: "{suggestion.text[:100]}{"..." if len(suggestion.text) > 100 else ""}"',
+    )
+    db.add(notification)
     db.commit()
-
-    # Send email notification to the author
-    author_email = await _get_user_email(suggestion.user_id)
-    email_sent = False
-
-    if author_email and RESEND_API_KEY:
-        try:
-            module_label = suggestion.module_id.replace("-", " ").title()
-            resend.Emails.send({
-                "from": FROM_EMAIL,
-                "to": author_email,
-                "subject": f"Your suggestion for {module_label} is now live 🎉",
-                "html": f"""
-                <p>Hi,</p>
-                <p>Your suggestion has been published on the <strong>{module_label}</strong> roadmap:</p>
-                <blockquote style="border-left:3px solid #ccc;padding:8px 16px;color:#555">
-                  {suggestion.text}
-                </blockquote>
-                <p>Other users can now vote on it. Thank you for helping shape StackMe!</p>
-                <p><a href="{SITE_URL}">View on StackMe</a></p>
-                """,
-            })
-            email_sent = True
-        except Exception:
-            pass  # don't fail the publish if email fails
 
     return {
         "id": suggestion.id,
         "published": True,
-        "email_sent": email_sent,
-        "author_email": author_email,
+        "notification_id": notification.id,
     }

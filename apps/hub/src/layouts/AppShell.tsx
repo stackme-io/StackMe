@@ -1,7 +1,8 @@
-import { useEffect, lazy } from 'react'
+import { useEffect, useState, useRef, lazy } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Lock, LockOpen, X, Sun, Moon, Globe } from 'lucide-react'
-import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
+import { Lock, LockOpen, X, Sun, Moon, Globe, Bell } from 'lucide-react'
+import { SignInButton, SignOutButton, useUser, useAuth } from '@clerk/clerk-react'
+import apiClient from '../api/client'
 import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
@@ -43,7 +44,10 @@ const MODULE_TEXT_COLORS: Record<string, string> = {
 export default function AppShell() {
   const location = useLocation()
   const { isSignedIn, user } = useUser()
+  const { getToken } = useAuth()
   const { t, i18n } = useTranslation()
+  const [unread, setUnread] = useState(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
   const navigate = useNavigate()
@@ -54,6 +58,23 @@ export default function AppShell() {
       openPanel(MARKET_ME_MANIFEST)
     }
   }, [])
+
+  const fetchUnread = async () => {
+    if (!isSignedIn) { setUnread(0); return }
+    try {
+      const token = await getToken()
+      const res = await apiClient.get('/api/notifications/unread-count', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setUnread(res.data.unread ?? 0)
+    } catch {}
+  }
+
+  useEffect(() => {
+    fetchUnread()
+    intervalRef.current = setInterval(fetchUnread, 60_000)
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  }, [isSignedIn])
 
   useEffect(() => {
   const active = panels.find((p: Panel) => p.id === activeId)
@@ -166,6 +187,18 @@ export default function AppShell() {
           >
             {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
+
+          {isSignedIn && (
+            <Link
+              to="/notify-me"
+              className="relative flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Bell className="w-3.5 h-3.5" />
+              {unread > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary" />
+              )}
+            </Link>
+          )}
 
           {isSignedIn ? (
             <DropdownMenu>
