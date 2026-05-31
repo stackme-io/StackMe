@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/generate-og.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate-og": "node scripts/generate-og.mjs"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.6",
@@ -48,6 +49,7 @@
     "tailwindcss": "^4.2.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
+    "sharp": "^0.33.0",
     "vite": "^8.0.10",
     "vitest": "^4.1.5"
   }

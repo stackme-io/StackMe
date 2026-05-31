@@ -134,11 +134,14 @@ export default function AppShell() {
       const el = document.querySelector<HTMLMetaElement>(selector)
       if (el) el.setAttribute(attr, value)
     }
+    const canonicalUrl = `https://stackme-app.vercel.app${location.pathname === '/' ? '' : location.pathname}`
     updateMeta('meta[name="description"]',         'content', desc)
     updateMeta('meta[property="og:description"]',  'content', desc)
     updateMeta('meta[property="og:title"]',        'content', document.title)
+    updateMeta('meta[property="og:url"]',          'content', canonicalUrl)
     updateMeta('meta[name="twitter:description"]', 'content', desc)
     updateMeta('meta[name="twitter:title"]',       'content', document.title)
+    updateMeta('meta[name="twitter:image"]',       'content', 'https://stackme-app.vercel.app/og-image.png')
 
     // noindex on private pages
     let metaRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')

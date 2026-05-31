@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#111111"/>
+  <rect x="1" y="1" width="1198" height="628" fill="none" stroke="#1e1e1e" stroke-width="2"/>
+
+  <!-- S-block logo: BW=16, STEP=20, x_base=212, y_base=167 (logo 176x296, centered in left 600px) -->
+  <!-- Row 0 — full -->
+  <rect x="212" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="167" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 1 — full -->
+  <rect x="212" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="187" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 2 — full -->
+  <rect x="212" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="207" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 3 — c=0,1,2 -->
+  <rect x="212" y="227" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="227" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="227" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 4 — c=0,1,2 -->
+  <rect x="212" y="247" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="247" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="247" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 5 — c=0,1,2 -->
+  <rect x="212" y="267" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="267" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="267" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 6 — full -->
+  <rect x="212" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="287" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 7 — full -->
+  <rect x="212" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="307" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 8 — full -->
+  <rect x="212" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="327" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 9 — c=6,7,8 -->
+  <rect x="332" y="347" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="347" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="347" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 10 — c=6,7,8 -->
+  <rect x="332" y="367" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="367" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="367" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 11 — c=6,7,8 -->
+  <rect x="332" y="387" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="387" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="387" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 12 — full -->
+  <rect x="212" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="407" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 13 — full -->
+  <rect x="212" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="427" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <!-- Row 14 — full -->
+  <rect x="212" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="232" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="252" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="272" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="292" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="312" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="332" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="352" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+  <rect x="372" y="447" width="16" height="16" rx="3" fill="#a78bfa"/>
+
+  <!-- Separator -->
+  <line x1="580" y1="100" x2="580" y2="530" stroke="#222222" stroke-width="1"/>
+
+  <!-- StackMe -->
+  <text x="640" y="295" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" fill="#ffffff" letter-spacing="-1">StackMe</text>
+
+  <!-- Tagline line 1 -->
+  <text x="642" y="358" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#6b7280">We Build Tools.</text>
+  <!-- Tagline line 2 — violet accent -->
+  <text x="642" y="400" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#a78bfa">Not Traps.</text>
+
+  <!-- URL -->
+  <text x="643" y="470" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#374151" letter-spacing="0.5">stackme-app.vercel.app</text>
+</svg>
