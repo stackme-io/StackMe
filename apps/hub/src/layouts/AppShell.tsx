@@ -77,11 +77,13 @@ export default function AppShell() {
   }, [isSignedIn])
 
   useEffect(() => {
-  const active = panels.find((p: Panel) => p.id === activeId)
-  if (active && location.pathname !== active.manifest.route) {
-    navigate(active.manifest.route)
-  }
-}, [activeId])
+    const systemPaths = ['/account-me', '/notify-me']
+    if (systemPaths.includes(location.pathname)) return
+    const active = panels.find((p: Panel) => p.id === activeId)
+    if (active && location.pathname !== active.manifest.route) {
+      navigate(active.manifest.route)
+    }
+  }, [activeId])
 
   useEffect(() => {
     const matchedPanel = panels.find((p: Panel) => p.manifest.route === location.pathname)
