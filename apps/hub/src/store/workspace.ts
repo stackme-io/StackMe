@@ -42,18 +42,15 @@ export const useWorkspace = create<WorkspaceStore>()(
 
       openPanel: (manifest: ModuleManifest) => {
         const { panels } = get()
-        const alreadyOpen = panels.find((p: Panel) => p.manifest.id === manifest.id)
+        const alreadyOpen = panels.find((p: Panel) => p.id === manifest.id)
 
         if (alreadyOpen) {
           set({ activeId: manifest.id })
           return
         }
 
-        const pinnedPanels = panels.filter((p: Panel) => p.pinned)
         const newPanel: Panel = { id: manifest.id, manifest, pinned: false }
-
-        const next = [...pinnedPanels, newPanel]
-        set({ panels: next, activeId: manifest.id })
+        set({ panels: [...panels, newPanel], activeId: manifest.id })
       },
 
       closePanel: (id: string) => {
