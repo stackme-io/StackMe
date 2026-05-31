@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stackme-app.vercel.app/sitemap.xml

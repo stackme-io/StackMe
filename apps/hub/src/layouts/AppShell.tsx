@@ -102,18 +102,18 @@ export default function AppShell() {
 
   useEffect(() => {
     const systemTitles: Record<string, string> = {
-      '/account-me': 'My Account — StackMe',
-      '/notify-me':  'Notifications — StackMe',
+      '/account-me': 'My Account - StackMe',
+      '/notify-me':  'Notifications - StackMe',
     }
     const moduleTitles: Record<string, string> = {
-      'forge-me':   'ForgeMe: Synthetic Dataset Generator — StackMe',
-      'analyze-me': 'AnalyzeMe: CSV & JSON Anomaly Detector — StackMe',
-      'market-me':  'Marketplace — StackMe',
+      'forge-me':   'ForgeMe: Synthetic Dataset Generator - StackMe',
+      'analyze-me': 'AnalyzeMe: CSV & JSON Anomaly Detector - StackMe',
+      'market-me':  'Marketplace - StackMe',
     }
     if (isSystemPage) {
-      document.title = systemTitles[location.pathname] ?? 'StackMe — We Build Tools. Not Traps.'
+      document.title = systemTitles[location.pathname] ?? 'StackMe - We Build Tools. Not Traps.'
     } else {
-      document.title = moduleTitles[activeId ?? ''] ?? 'StackMe — We Build Tools. Not Traps.'
+      document.title = moduleTitles[activeId ?? ''] ?? 'StackMe - We Build Tools. Not Traps.'
     }
   }, [location.pathname, activeId, isSystemPage])
 
@@ -202,7 +202,7 @@ export default function AppShell() {
                   onClick={() => i18n.changeLanguage(lang.code)}
                   className={`whitespace-nowrap ${i18n.language.startsWith(lang.code) ? 'font-medium text-foreground' : ''}`}
                 >
-                  {lang.label} — {lang.name}
+                  {lang.label} - {lang.name}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
