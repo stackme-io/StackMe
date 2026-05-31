@@ -36,8 +36,8 @@ async def publish_suggestion(
     notification = Notification(
         user_id=suggestion.user_id,
         type="suggestion_published",
-        title="Your suggestion is now live 🎉",
-        body=f'Your suggestion for {module_label} has been published: "{suggestion.text[:100]}{"..." if len(suggestion.text) > 100 else ""}"',
+        title=f"Your {module_label} suggestion is now live 🎉",
+        body=f'"{suggestion.text[:120]}{"..." if len(suggestion.text) > 120 else ""}"',
     )
     db.add(notification)
     db.commit()
