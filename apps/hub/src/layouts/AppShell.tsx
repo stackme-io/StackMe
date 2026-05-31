@@ -143,7 +143,6 @@ export default function AppShell() {
 
         <div className="flex items-center gap-3">
           <LogoMark color={logoColor} height={22} />
-          <span className="text-sm font-medium text-muted-foreground">StackMe</span>
 
           {isAccountMe && (
             <>
