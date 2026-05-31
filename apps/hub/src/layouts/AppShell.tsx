@@ -100,6 +100,23 @@ export default function AppShell() {
   const isNotifyMe  = location.pathname === '/notify-me'
   const isSystemPage = isAccountMe || isNotifyMe
 
+  useEffect(() => {
+    const systemTitles: Record<string, string> = {
+      '/account-me': 'My Account — StackMe',
+      '/notify-me':  'Notifications — StackMe',
+    }
+    const moduleTitles: Record<string, string> = {
+      'forge-me':   'ForgeMe: Synthetic Dataset Generator — StackMe',
+      'analyze-me': 'AnalyzeMe: CSV & JSON Anomaly Detector — StackMe',
+      'market-me':  'Marketplace — StackMe',
+    }
+    if (isSystemPage) {
+      document.title = systemTitles[location.pathname] ?? 'StackMe — We Build Tools. Not Traps.'
+    } else {
+      document.title = moduleTitles[activeId ?? ''] ?? 'StackMe — We Build Tools. Not Traps.'
+    }
+  }, [location.pathname, activeId, isSystemPage])
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
 
