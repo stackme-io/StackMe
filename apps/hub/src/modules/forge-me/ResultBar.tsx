@@ -57,7 +57,7 @@ export function ResultBar({
 
         <button
           onClick={onCopy}
-          title="Copy as TSV"
+          title={t('copyTsv')}
           className="flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
         >
           <i className={`ti ${copied ? 'ti-check' : 'ti-clipboard'} text-sm`} />

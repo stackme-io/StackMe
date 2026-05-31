@@ -29,5 +29,36 @@
   "hint3Title": "Generate",
   "hint3Desc": "Click Generate — click any row to inspect it in detail",
   "hint4Title": "Export",
-  "hint4Desc": "Download or send directly to AnalyzeMe"
+  "hint4Desc": "Download or send directly to AnalyzeMe",
+
+  "tabs": {
+    "generate": "Generate",
+    "roadmap": "Roadmap",
+    "stack": "Stack"
+  },
+  "viewRaw": "Raw generator",
+  "viewSchema": "Schema match",
+  "generateBtn": "Generate",
+  "deterministicNote": "Deterministic · local generation",
+  "randomizeSeed": "Randomize seed",
+  "edit": "Edit",
+  "corruptedRows": "corrupted rows",
+  "columnsDetected": "{{count}} columns detected",
+  "copyTsv": "Copy as TSV",
+  "pasteSample": "Paste sample",
+  "uploadFile": "Upload file",
+  "uploadClick": "Click to upload CSV",
+  "uploadHint": "CSV only (comma or semicolon) · schema inferred from first rows",
+  "privacyNote": "stays in your browser — never leaves this tab",
+  "detectedSchema": "Detected schema · {{count}} fields",
+  "inspector": "Inspector",
+  "noAnomalies": "No anomalies found",
+  "noAnomaliesTip": "Try increasing the anomaly rate or row count.",
+  "rowHidden": "Selected row is hidden by current filter.",
+  "showAllRows": "Show all rows →",
+  "healthyRow": "Healthy row",
+  "noAnomaliesDetected": "No anomalies detected",
+  "rowData": "Row data",
+  "columnHeader": "column",
+  "originalHeader": "original"
 }

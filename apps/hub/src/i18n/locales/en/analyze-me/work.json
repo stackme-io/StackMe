@@ -55,5 +55,26 @@
   "hint2Title": "Tune sensitivity",
   "hint2Desc": "Adjust outlier threshold in the sidebar",
   "hint3Title": "Read results",
-  "hint3Desc": "Filter by type, copy TSV, or send to ForgeMe"
+  "hint3Desc": "Filter by type, copy TSV, or send to ForgeMe",
+
+  "tabs": {
+    "work": "Work",
+    "roadmap": "Roadmap",
+    "stack": "Stack"
+  },
+  "replace": "Replace",
+  "importedFrom": "Imported from",
+  "injected": "injected",
+  "detected": "detected",
+  "missed": "missed",
+  "falsePositive": "false positive",
+  "copied": "Copied",
+  "copy": "Copy",
+  "verdictDetected": "✓ detected",
+  "verdictMissed": "✗ missed",
+  "verdictFalsePositive": "⚠ false positive",
+  "tooltipMissed": "Injected anomaly was not detected. Try increasing sensitivity in the left panel.",
+  "tooltipFalsePositive": "Detected but not injected — may be a real anomaly or a false alarm. Lower sensitivity to reduce noise.",
+  "colType": "type",
+  "colVerdict": "verdict"
 }

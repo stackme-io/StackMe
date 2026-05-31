@@ -64,10 +64,42 @@ StackMe/
 | `VITE_CLERK_PUBLISHABLE_KEY` | Vercel | Clerk frontend |
 | `DATABASE_URL` | Railway | PostgreSQL |
 
+## What was built (latest session)
+
+### SEO
+- Dynamic `document.title` per active panel/page via `useEffect` in AppShell
+- `meta[name="robots"]` noindex on system pages (`/account-me`, `/notify-me`)
+- `index.html` meta: description, og:title/description/type/url, twitter:card/title/description
+- `public/robots.txt` — `Allow: /`
+- Titles: `StackMe - We Build Tools. Not Traps.` (default), `ForgeMe - Synthetic Dataset Generator - StackMe`, `AnalyzeMe - CSV & JSON Anomaly Detector - StackMe`, `MarketMe - StackMe`
+
+### Logo (LogoMark)
+- `src/components/LogoMark.tsx` — S-block SVG, 9×15 grid, 99 rects, 3px blocks, 1px gap
+- Color prop: white default; ForgeMe = `#a78bfa` (violet), AnalyzeMe = `#2dd4bf` (teal)
+- Color changes dynamically on active panel, white on system pages
+- `public/favicon.svg` — same S mark on dark `#111111` background, `rx=10`
+- `index.html` — `<link rel="icon" href="/favicon.svg">`
+- Logo + "StackMe" wordmark are clickable → `/market-me` (opens MarketMe panel)
+
+### System page refresh fix
+- Navigating to `/account-me` or `/notify-me` then refreshing would redirect back to panel route
+- Fixed: AppShell `activeId` effect now checks `systemPaths` and skips navigation for system pages
+
+### Full i18n (3 locales: EN / UK / ES)
+- **17 TSX files** use `useTranslation` + `t()` for all UI strings — nothing hardcoded in English
+- **Locale files updated**:
+  - `common.json` — nav, sidebar, marketplace, categories, modules, common, panel, notify, account
+  - `forge-me/generate.json` — tabs, controls, inspector, schema, upload, privacy note, all strings
+  - `forge-me/roadmap.json` — nextLabel, fromCommunity, signInToVote, sending, signInToSubmit, suggestionThanks, errorGeneric
+  - `analyze-me/work.json` — tabs, replace, importedFrom, injected, detected, missed, falsePositive, verdicts, tooltips, colType, colVerdict
+  - `analyze-me/roadmap.json` — same keys as forge-me roadmap
+- i18next namespace: `'forge-me'` and `'analyze-me'` for module namespaces; default namespace for common keys
+
 ## Known pending / to verify
-- Admin broadcast UI works (was getting 403 — check Railway logs if issue persists)
+- Admin broadcast: was getting 403, fixed by redeploying Railway with correct `ADMIN_USER_IDS` env var
 - `admin.py` publish endpoint: notification title now includes module name (`Your Forge Me suggestion is now live 🎉`)
 - Full voting flow test after latest deploy
+- Verify translations look natural in UK and ES locales in production
 
 ## DB notes
 - All tables created via SQLAlchemy `create_all` on startup

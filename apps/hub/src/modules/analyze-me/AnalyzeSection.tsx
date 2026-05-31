@@ -152,7 +152,7 @@ export function AnalyzeSection({
               className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
             >
               <i className="ti ti-pencil text-[11px]" />
-              Replace
+              {t('replace')}
             </button>
           </div>
         </div>
@@ -168,31 +168,31 @@ export function AnalyzeSection({
         <div className="mt-3 mb-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
           <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/70" />
           <span className="text-xs text-muted-foreground/70">
-            Imported from <span className="text-violet-300">ForgeMe</span>
+            {t('importedFrom')} <span className="text-violet-300">ForgeMe</span>
           </span>
           <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-amber-500">{forgeData.anomalies.length} injected</span>
+          <span className="text-xs text-amber-500">{forgeData.anomalies.length} {t('injected')}</span>
           <span className="text-muted-foreground/30 text-sm">·</span>
           <span className="text-xs text-muted-foreground/70 font-mono">seed {forgeData.seed}</span>
           {loading ? (
             <>
               <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-muted-foreground/70">{progress ?? 'Analyzing...'}</span>
+              <span className="text-xs text-muted-foreground/70">{progress ?? t('analyzing')}</span>
             </>
           ) : verdictCounts && (
             <>
               <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-green-400">✓ {verdictCounts.detected} detected</span>
+              <span className="text-xs text-green-400">✓ {verdictCounts.detected} {t('detected')}</span>
               {verdictCounts.missed > 0 && (
                 <>
                   <span className="text-muted-foreground/30 text-sm">·</span>
-                  <span className="text-xs text-amber-400">✗ {verdictCounts.missed} missed</span>
+                  <span className="text-xs text-amber-400">✗ {verdictCounts.missed} {t('missed')}</span>
                 </>
               )}
               {verdictCounts.false_positive > 0 && (
                 <>
                   <span className="text-muted-foreground/30 text-sm">·</span>
-                  <span className="text-xs text-red-400">⚠ {verdictCounts.false_positive} false positive</span>
+                  <span className="text-xs text-red-400">⚠ {verdictCounts.false_positive} {t('falsePositive')}</span>
                 </>
               )}
             </>
@@ -257,7 +257,7 @@ export function AnalyzeSection({
               className="ml-auto flex items-center justify-center gap-1.5 w-[76px] py-1 text-xs border border-border rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-muted/40 transition-colors"
             >
               <i className={`ti ${copied ? 'ti-check' : 'ti-clipboard'} text-sm`} />
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? t('copied') : t('copy')}
             </button>
           </div>
           <AnomalyTable

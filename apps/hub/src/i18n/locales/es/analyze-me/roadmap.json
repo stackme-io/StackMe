@@ -30,7 +30,7 @@
     }
   ],
 
-  "nextLabel": "Coming up",
+  "nextLabel": "Próximamente",
   "nextDesc": "Estos son candidatos para la próxima versión. Vota por lo que más te importa — eso define el alcance.",
   "next": [
     { "title": "Detección Z-score / MAD",           "desc": "Alternativa al IQR — mejor para distribuciones no normales" },
@@ -51,5 +51,12 @@
   "suggestPlaceholder": "Describe qué te gustaría ver en AnalyzeMe...",
   "suggestHint": "Revisada antes de publicarse",
   "suggestSubmit": "Enviar",
-  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar"
+  "suggestUsernameLabel": "Mostrar mi nombre de usuario al publicar",
+
+  "fromCommunity": "De la comunidad",
+  "signInToVote": "Inicia sesión para votar",
+  "sending": "Enviando...",
+  "signInToSubmit": "Inicia sesión para enviar sugerencias",
+  "suggestionThanks": "Gracias — tu sugerencia está en revisión. Te avisaremos cuando se publique.",
+  "errorGeneric": "Algo salió mal, inténtalo de nuevo."
 }

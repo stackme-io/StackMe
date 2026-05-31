@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
+import { useTranslation } from 'react-i18next'
 import { Bell } from 'lucide-react'
 import apiClient from '../api/client'
 
@@ -32,6 +33,7 @@ const TYPE_ICON: Record<NotifType, string> = {
 }
 
 export default function NotifyMePage() {
+  const { t } = useTranslation()
   const { getToken } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
@@ -84,7 +86,7 @@ export default function NotifyMePage() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-muted-foreground" />
-          <h1 className="text-sm font-medium text-foreground">Notifications</h1>
+          <h1 className="text-sm font-medium text-foreground">{t('notify.title')}</h1>
           {unreadCount > 0 && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-medium">
               {unreadCount}
@@ -96,7 +98,7 @@ export default function NotifyMePage() {
             onClick={markAllRead}
             className="text-[10px] text-muted-foreground/50 hover:text-foreground transition-colors"
           >
-            Mark all as read
+            {t('notify.markAllRead')}
           </button>
         )}
       </div>
@@ -113,17 +115,17 @@ export default function NotifyMePage() {
                 : 'border-border text-muted-foreground hover:bg-muted/30'
             }`}
           >
-            {f === 'all' ? 'All' : 'Unread'}
+            {f === 'all' ? t('notify.all') : t('notify.unread')}
           </button>
         ))}
       </div>
 
       {/* List */}
       {loading ? (
-        <p className="text-xs text-muted-foreground/50 py-8 text-center">Loading...</p>
+        <p className="text-xs text-muted-foreground/50 py-8 text-center">{t('common.loading')}</p>
       ) : visible.length === 0 ? (
         <p className="text-xs text-muted-foreground/50 py-8 text-center">
-          {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
+          {filter === 'unread' ? t('notify.emptyUnread') : t('notify.emptyAll')}
         </p>
       ) : (
         <div className="flex flex-col border border-border rounded-xl overflow-hidden">

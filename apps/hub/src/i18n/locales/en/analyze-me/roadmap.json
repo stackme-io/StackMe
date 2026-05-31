@@ -51,5 +51,12 @@
   "suggestPlaceholder": "Describe what you'd like to see in AnalyzeMe...",
   "suggestHint": "Reviewed before publishing",
   "suggestSubmit": "Submit",
-  "suggestUsernameLabel": "Show my username when published"
+  "suggestUsernameLabel": "Show my username when published",
+
+  "fromCommunity": "From the community",
+  "signInToVote": "Sign in to vote",
+  "sending": "Sending...",
+  "signInToSubmit": "Sign in to submit suggestions",
+  "suggestionThanks": "Thanks — your suggestion is under review. We'll email you when it's published.",
+  "errorGeneric": "Something went wrong, try again."
 }

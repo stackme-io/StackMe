@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { GenerateSection } from '../GenerateSection'
 import { SchemaSection } from '../SchemaSection'
 import type { ParsedField } from '../SchemaSection'
@@ -22,6 +23,7 @@ export function GenerateTab({
   schemaFields,
   onSeedChange, onRowsChange, onAnomalyRateChange, onSchemaReady,
 }: GenerateTabProps) {
+  const { t } = useTranslation('forge-me')
   const [schemaCollapsed, setSchemaCollapsed] = useState(false)
 
   return (
@@ -51,14 +53,14 @@ export function GenerateTab({
             <div className="overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg border border-border bg-muted/10 mb-5 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => setSchemaCollapsed(false)}>
                 <span className="text-xs text-muted-foreground/70">
-                  {schemaFields.length} columns detected
+                  {t('columnsDetected', { count: schemaFields.length })}
                 </span>
                 <button
                   onClick={() => setSchemaCollapsed(false)}
                   className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
                 >
                   <i className="ti ti-pencil text-[11px]" />
-                  Edit
+                  {t('edit')}
                 </button>
               </div>
             </div>

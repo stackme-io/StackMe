@@ -10,12 +10,6 @@ import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHand
 
 type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed' | 'false_positive'
 
-const TABS = [
-  { id: 'work',  label: 'Work'  },
-  { id: 'about', label: 'Roadmap' },
-  { id: 'stack', label: 'Stack' },
-]
-
 const HINT_KEY = 'stackme-hint-analyze-me'
 
 export default function AnalyzeMePage() {
@@ -118,7 +112,11 @@ export default function AnalyzeMePage() {
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto px-6 pt-5">
           <ModuleTabs
-            tabs={TABS}
+            tabs={[
+              { id: 'work',  label: t('tabs.work')    },
+              { id: 'about', label: t('tabs.roadmap') },
+              { id: 'stack', label: t('tabs.stack')   },
+            ]}
             activeTab={activeTab}
             onChange={setActiveTab}
             onShowHint={hintPermanent || !hintVisible ? handleShowHint : undefined}

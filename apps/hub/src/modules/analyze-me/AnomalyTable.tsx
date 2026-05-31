@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AnomalyInfo } from './types'
 
 interface InjectedAnomaly {
@@ -35,13 +36,14 @@ const VERDICT_STYLES: Record<Verdict, string> = {
   false_positive: 'text-red-400',
 }
 
-const VERDICT_LABELS: Record<Verdict, string> = {
-  detected:       '✓ detected',
-  missed:         '✗ missed',
-  false_positive: '⚠ false positive',
-}
-
 export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: AnomalyTableProps) {
+  const { t } = useTranslation('analyze-me')
+
+  const VERDICT_LABELS: Record<Verdict, string> = {
+    detected:       t('verdictDetected'),
+    missed:         t('verdictMissed'),
+    false_positive: t('verdictFalsePositive'),
+  }
   if (tableData.length === 0) return null
 
   const columns = Object.keys(tableData[0]).filter(c => c !== '_row_index')
@@ -74,11 +76,11 @@ export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: A
               </th>
             ))}
             <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-28">
-              type
+              {t('colType')}
             </th>
             {hasInjected && (
               <th className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border text-[10px] uppercase tracking-wider w-32">
-                verdict
+                {t('colVerdict')}
               </th>
             )}
           </tr>
@@ -151,8 +153,8 @@ export function AnomalyTable({ tableData, anomalies, injectedAnomalies = [] }: A
                         {verdict !== 'detected' && (
                           <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
                             {verdict === 'missed'
-                              ? 'Injected anomaly was not detected. Try increasing sensitivity in the left panel.'
-                              : 'Detected but not injected — may be a real anomaly or a false alarm. Lower sensitivity to reduce noise.'}
+                              ? t('tooltipMissed')
+                              : t('tooltipFalsePositive')}
                           </div>
                         )}
                       </div>

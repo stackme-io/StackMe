@@ -227,7 +227,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
                     </button>
                     {tooltip === tipId && (
                       <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 bg-popover border border-border rounded text-[10px] text-muted-foreground whitespace-nowrap shadow-sm z-10">
-                        Sign in to vote
+                        {t('signInToVote')}
                       </div>
                     )}
                   </div>
@@ -258,7 +258,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
       {/* From the community */}
       {suggestions.length > 0 && (
         <div className="mb-6">
-          <SectionDivider label="From the community" accent />
+          <SectionDivider label={t('fromCommunity')} accent />
           {suggestions.map(s => {
             const tipId = `sugg-${s.id}`
             return (
@@ -279,7 +279,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
                   </button>
                   {tooltip === tipId && (
                     <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 bg-popover border border-border rounded text-[10px] text-muted-foreground whitespace-nowrap shadow-sm z-10">
-                      Sign in to vote
+                      {t('signInToVote')}
                     </div>
                   )}
                 </div>
@@ -294,7 +294,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
         <SectionDivider label={t('suggestLabel')} accent />
         {submitted ? (
           <p className="text-[11px] text-muted-foreground/60 py-2">
-            Thanks — your suggestion is under review. We'll email you when it's published.
+            {t('suggestionThanks')}
           </p>
         ) : (
           <>
@@ -319,7 +319,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
               <p className="text-[10px] text-muted-foreground/40">{t('suggestHint')}</p>
             </div>
             {submitError && (
-              <p className="text-[10px] text-red-400 mt-1">Something went wrong, try again.</p>
+              <p className="text-[10px] text-red-400 mt-1">{t('errorGeneric')}</p>
             )}
             <div className="relative inline-block mt-3">
               <button
@@ -327,16 +327,16 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
                 disabled={submitting || (isSignedIn === true && !suggestText.trim())}
                 className="px-4 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors disabled:opacity-40"
               >
-                {submitting ? 'Sending...' : t('suggestSubmit')}
+                {submitting ? t('sending') : t('suggestSubmit')}
               </button>
               {tooltip === 'submit' && (
                 <div className="absolute bottom-full left-0 mb-1.5 px-2 py-1 bg-popover border border-border rounded text-[10px] text-muted-foreground whitespace-nowrap shadow-sm z-10">
-                  Sign in to submit suggestions
+                  {t('signInToSubmit')}
                 </div>
               )}
             </div>
             {!isSignedIn && (
-              <p className="text-[10px] text-muted-foreground/40 mt-1">Sign in to submit suggestions</p>
+              <p className="text-[10px] text-muted-foreground/40 mt-1">{t('signInToSubmit')}</p>
             )}
           </>
         )}

@@ -150,13 +150,13 @@ export default function AppShell() {
           {isAccountMe && (
             <>
               <span className="text-border">|</span>
-              <span className="text-xs font-medium text-foreground">AccountMe</span>
+              <span className="text-xs font-medium text-foreground">{t('nav.accountMe')}</span>
             </>
           )}
           {isNotifyMe && (
             <>
               <span className="text-border">|</span>
-              <span className="text-xs font-medium text-foreground">Notifications</span>
+              <span className="text-xs font-medium text-foreground">{t('nav.notifications')}</span>
             </>
           )}
 
@@ -186,7 +186,7 @@ export default function AppShell() {
                           'flex items-center justify-center w-4 h-4 rounded transition-colors hover:bg-muted',
                           panel.pinned ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                         ].join(' ')}
-                        title={panel.pinned ? 'Unlock' : 'Lock'}
+                        title={panel.pinned ? t('nav.unlock') : t('nav.lock')}
                       >
                         {panel.pinned
                           ? <Lock className="w-3 h-3" />
@@ -196,7 +196,7 @@ export default function AppShell() {
                       <button
                         onClick={(e) => { e.stopPropagation(); closePanel(panel.id) }}
                         className="flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                        title="Close"
+                        title={t('nav.close')}
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -301,7 +301,7 @@ export default function AppShell() {
             </DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="end" className="w-48">
               <div className="px-2 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border mb-1">
-                Services
+                {t('nav.services')}
               </div>
               {visibleModules.map(module => {
                 const isOpen = panels.some((p: Panel) => p.id === module.id)
@@ -309,7 +309,7 @@ export default function AppShell() {
                   <DropdownMenuItem
                     key={module.id}
                     className={`cursor-pointer ${isOpen ? 'font-medium text-foreground' : ''}`}
-                    onClick={() => openPanel(module)}
+                    onClick={() => { openPanel(module); navigate(module.route) }}
                   >
                     {module.name}
                   </DropdownMenuItem>
@@ -318,7 +318,7 @@ export default function AppShell() {
               <div className="border-t border-border mt-1 pt-1">
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => openPanel(MARKET_ME_MANIFEST)}
+                  onClick={() => { openPanel(MARKET_ME_MANIFEST); navigate(MARKET_ME_MANIFEST.route) }}
                 >
                   + {t('nav.marketplace')}
                 </DropdownMenuItem>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { AnomalyInfo } from './types'
 
 const BADGE_STYLES: Record<string, string> = {
@@ -35,6 +36,7 @@ export function RowInspect({
   rowIndex, rowData, anomalies,
   hiddenByFilter, onClose, onShowAll,
 }: RowInspectProps) {
+  const { t } = useTranslation('forge-me')
   const rowAnomalies = rowIndex !== null
     ? anomalies.filter(a => a.row_index === rowIndex)
     : []
@@ -44,7 +46,7 @@ export function RowInspect({
 
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
-          {rowIndex !== null ? `Row #${rowIndex + 1}` : 'Inspector'}
+          {rowIndex !== null ? `Row #${rowIndex + 1}` : t('inspector')}
         </p>
         <button
           onClick={onClose}
@@ -58,9 +60,9 @@ export function RowInspect({
 
         {rowIndex === null && (
           <div className="flex flex-col gap-1.5 mt-2">
-            <p className="text-sm font-medium text-foreground">No anomalies found</p>
+            <p className="text-sm font-medium text-foreground">{t('noAnomalies')}</p>
             <p className="text-xs text-muted-foreground/70">
-              Try increasing the anomaly rate or row count.
+              {t('noAnomaliesTip')}
             </p>
           </div>
         )}
@@ -68,13 +70,13 @@ export function RowInspect({
         {rowIndex !== null && hiddenByFilter && (
           <div className="flex flex-col gap-2 mt-2">
             <p className="text-xs text-muted-foreground/75">
-              Selected row is hidden by current filter.
+              {t('rowHidden')}
             </p>
             <button
               onClick={onShowAll}
               className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors text-left"
             >
-              Show all rows →
+              {t('showAllRows')}
             </button>
           </div>
         )}
@@ -83,8 +85,8 @@ export function RowInspect({
           <>
             {rowAnomalies.length === 0 ? (
               <div className="flex flex-col gap-1 mt-2">
-                <p className="text-sm font-medium text-foreground">Healthy row</p>
-                <p className="text-xs text-muted-foreground/70">No anomalies detected</p>
+                <p className="text-sm font-medium text-foreground">{t('healthyRow')}</p>
+                <p className="text-xs text-muted-foreground/70">{t('noAnomaliesDetected')}</p>
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -98,12 +100,12 @@ export function RowInspect({
                       </span>
                       <div className="flex flex-col gap-1">
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-muted-foreground/70 flex-shrink-0">column</span>
+                          <span className="text-xs text-muted-foreground/70 flex-shrink-0">{t('columnHeader')}</span>
                           <span className="text-xs text-foreground font-mono">{a.column}</span>
                         </div>
                         {a.original_value !== null && (
                           <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-xs text-muted-foreground/70 flex-shrink-0">original</span>
+                            <span className="text-xs text-muted-foreground/70 flex-shrink-0">{t('originalHeader')}</span>
                             <span className="text-xs text-foreground font-mono">{a.original_value}</span>
                           </div>
                         )}
@@ -122,7 +124,7 @@ export function RowInspect({
             {rowData && (
               <div className="border-t border-border/40 pt-3 mt-1">
                 <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70 mb-2">
-                  Row data
+                  {t('rowData')}
                 </p>
                 <div className="flex flex-col gap-1">
                   {Object.entries(rowData).map(([key, val]) => (

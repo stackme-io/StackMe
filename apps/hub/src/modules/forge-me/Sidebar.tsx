@@ -93,7 +93,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
                   : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-muted/30'
               }`}
             >
-              {mode === 'raw' ? 'Raw generator' : 'Schema match'}
+              {mode === 'raw' ? t('viewRaw') : t('viewSchema')}
             </button>
           ))}
         </div>

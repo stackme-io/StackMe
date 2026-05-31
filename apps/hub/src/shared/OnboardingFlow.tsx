@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface Step {
   title: string
   desc:  string
@@ -11,6 +13,7 @@ interface OnboardingFlowProps {
 }
 
 export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent }: OnboardingFlowProps) {
+  const { t } = useTranslation()
   return (
     <div className={`grid transition-all duration-200 ${visible ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
       <div className="overflow-hidden">
@@ -55,7 +58,7 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
               onClick={onHidePermanent}
               className="text-[10px] text-muted-foreground/40 hover:text-foreground transition-colors"
             >
-              Got it, don't show again
+              {t('common.gotIt')}
             </button>
           </div>
 

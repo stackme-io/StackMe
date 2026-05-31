@@ -1,6 +1,12 @@
 {
   "nav": {
-    "marketplace": "MarketMe"
+    "marketplace": "MarketMe",
+    "accountMe": "AccountMe",
+    "notifications": "Notifications",
+    "services": "Services",
+    "lock": "Lock",
+    "unlock": "Unlock",
+    "close": "Close"
   },
   "sidebar": {
     "darkMode": "Dark mode",
@@ -13,11 +19,60 @@
     "subtitle": "Add tools to your workspace",
     "add": "Add",
     "remove": "Remove",
+    "open": "Open",
+    "modules": "Modules",
+    "manifest": "Manifest",
     "signInToAdd": "Sign in to add",
     "signInBanner": "Sign in to activate tools and save your workspace.",
     "signInLink": "Sign in →"
   },
+  "categories": {
+    "generation": "Generation",
+    "analytics": "Analytics",
+    "testing": "Testing"
+  },
+  "modules": {
+    "forge-me": {
+      "description": "Generate synthetic datasets with injected anomalies — nulls, duplicates, outliers and more. Define your schema, set the rate, then export or pipe directly into AnalyzeMe."
+    },
+    "analyze-me": {
+      "description": "Upload a CSV or JSON and detect missing values, duplicates, and outliers entirely in your browser. No server, no uploads, no logs — powered by DuckDB-Wasm."
+    }
+  },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "gotIt": "Got it, don't show again"
+  },
+  "panel": {
+    "emptyState": "Open a service from the menu above"
+  },
+  "notify": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "all": "All",
+    "unread": "Unread",
+    "emptyUnread": "No unread notifications",
+    "emptyAll": "No notifications yet"
+  },
+  "account": {
+    "adminLabel": "Admin · Broadcast notification",
+    "typeAnnouncement": "📣 Announcement",
+    "typeVersion": "📢 New version",
+    "typeSurvey": "📊 Survey",
+    "titlePlaceholder": "Title",
+    "bodyPlaceholder": "Body (optional)",
+    "errorGeneric": "Something went wrong, try again.",
+    "sent": "Sent ✓",
+    "sending": "Sending...",
+    "sendToAll": "Send to all",
+    "emailLabel": "Email",
+    "emailNote": "We do not store or share your email address.",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "e.g. data_wizard",
+    "nicknameNote": "Displayed under your actions on the site. You can change it anytime.",
+    "saved": "Saved ✓",
+    "saving": "Saving...",
+    "save": "Save",
+    "nicknameTaken": "This nickname is already taken. Please choose another."
   }
 }

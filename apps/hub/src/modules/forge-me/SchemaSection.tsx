@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export interface ParsedField {
   name: string
@@ -51,6 +52,7 @@ interface SchemaSectionProps {
 }
 
 export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
+  const { t } = useTranslation('forge-me')
   const [tab, setTab]           = useState<'paste' | 'upload'>('paste')
   const [raw, setRaw]           = useState('')
   const [fields, setFields]     = useState<ParsedField[]>([])
@@ -81,17 +83,17 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
     <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/10 mb-5">
 
       <div className="flex gap-1">
-        {(['paste', 'upload'] as const).map(t => (
+        {(['paste', 'upload'] as const).map(tabId => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={tabId}
+            onClick={() => setTab(tabId)}
             className={`px-3 py-1 rounded-md text-xs border transition-colors ${
-              tab === t
+              tab === tabId
                 ? 'border-primary/50 bg-primary/10 text-foreground'
                 : 'border-border text-muted-foreground hover:bg-muted/30'
             }`}
           >
-            {t === 'paste' ? 'Paste sample' : 'Upload file'}
+            {tabId === 'paste' ? t('pasteSample') : t('uploadFile')}
           </button>
         ))}
       </div>
@@ -108,9 +110,9 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
       {tab === 'upload' && (
         <label className="flex flex-col items-center justify-center gap-1.5 h-[88px] px-4 rounded-lg border-2 border-dashed border-border bg-background cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-colors">
           <span className="text-xs text-muted-foreground">
-            {fileName ?? 'Click to upload CSV'}
+            {fileName ?? t('uploadClick')}
           </span>
-          <span className="text-[10px] text-muted-foreground/40">CSV only (comma or semicolon) · schema inferred from first rows</span>
+          <span className="text-[10px] text-muted-foreground/40">{t('uploadHint')}</span>
           <input
             type="file"
             accept=".csv"
@@ -126,14 +128,14 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
       <div className="flex items-center gap-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
         <span className="text-[10px] text-muted-foreground/50">
-          stays in your browser — never leaves this tab
+          {t('privacyNote')}
         </span>
       </div>
 
       {fields.length > 0 && (
         <div className="flex flex-col gap-2">
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-            Detected schema · {fields.length} fields
+            {t('detectedSchema', { count: fields.length })}
           </p>
           <div className="flex flex-wrap gap-1">
             {fields.map(f => (

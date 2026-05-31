@@ -102,7 +102,7 @@ export function GenerateControls({
           disabled={isLoading || rowError || selectedAnomalies.size === 0}
           className="px-8 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? t('generating') : 'Generate'}
+          {isLoading ? t('generating') : t('generateBtn')}
         </button>
         <div className="flex items-center gap-1.5">
           <span className="text-xs text-muted-foreground">seed=</span>
@@ -121,13 +121,13 @@ export function GenerateControls({
           <button
             onClick={() => onSeedChange(Math.floor(Math.random() * 99999))}
             className="text-[13px] text-muted-foreground/50 hover:text-foreground transition-colors"
-            title="Randomize seed"
+            title={t('randomizeSeed')}
           >
             ↺
           </button>
         </div>
         <span className="ml-auto text-[10px] text-muted-foreground/40">
-          Deterministic · local generation
+          {t('deterministicNote')}
         </span>
       </div>
     </div>

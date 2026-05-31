@@ -55,5 +55,26 @@
   "hint2Title": "Ajusta la sensibilidad",
   "hint2Desc": "Regula el umbral de outliers en la barra lateral",
   "hint3Title": "Lee los resultados",
-  "hint3Desc": "Filtra por tipo, copia TSV o envía a ForgeMe"
+  "hint3Desc": "Filtra por tipo, copia TSV o envía a ForgeMe",
+
+  "tabs": {
+    "work": "Trabajo",
+    "roadmap": "Hoja de ruta",
+    "stack": "Stack"
+  },
+  "replace": "Reemplazar",
+  "importedFrom": "Importado de",
+  "injected": "inyectadas",
+  "detected": "detectadas",
+  "missed": "perdidas",
+  "falsePositive": "falso positivo",
+  "copied": "Copiado",
+  "copy": "Copiar",
+  "verdictDetected": "✓ detectada",
+  "verdictMissed": "✗ perdida",
+  "verdictFalsePositive": "⚠ falso positivo",
+  "tooltipMissed": "La anomalía inyectada no fue detectada. Intenta aumentar la sensibilidad en el panel izquierdo.",
+  "tooltipFalsePositive": "Detectada pero no inyectada — puede ser una anomalía real o una falsa alarma. Reduce la sensibilidad para menos ruido.",
+  "colType": "tipo",
+  "colVerdict": "veredicto"
 }

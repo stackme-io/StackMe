@@ -29,5 +29,36 @@
   "hint3Title": "Genera",
   "hint3Desc": "Pulsa Generar — haz clic en cualquier fila para inspeccionar en detalle",
   "hint4Title": "Exporta",
-  "hint4Desc": "Descarga o envía directamente a AnalyzeMe"
+  "hint4Desc": "Descarga o envía directamente a AnalyzeMe",
+
+  "tabs": {
+    "generate": "Generar",
+    "roadmap": "Hoja de ruta",
+    "stack": "Stack"
+  },
+  "viewRaw": "Generador raw",
+  "viewSchema": "Por esquema",
+  "generateBtn": "Generar",
+  "deterministicNote": "Determinístico · generación local",
+  "randomizeSeed": "Seed aleatorio",
+  "edit": "Editar",
+  "corruptedRows": "filas corruptas",
+  "columnsDetected": "{{count}} columnas detectadas",
+  "copyTsv": "Copiar como TSV",
+  "pasteSample": "Pegar muestra",
+  "uploadFile": "Subir archivo",
+  "uploadClick": "Haz clic para subir CSV",
+  "uploadHint": "Solo CSV (coma o punto y coma) · esquema inferido de las primeras filas",
+  "privacyNote": "se queda en tu navegador — nunca sale de esta pestaña",
+  "detectedSchema": "Esquema · {{count}} campos",
+  "inspector": "Inspector",
+  "noAnomalies": "No se encontraron anomalías",
+  "noAnomaliesTip": "Intenta aumentar la tasa de anomalías o el número de filas.",
+  "rowHidden": "La fila seleccionada está oculta por el filtro actual.",
+  "showAllRows": "Mostrar todas las filas →",
+  "healthyRow": "Fila saludable",
+  "noAnomaliesDetected": "No se detectaron anomalías",
+  "rowData": "Datos de la fila",
+  "columnHeader": "columna",
+  "originalHeader": "original"
 }

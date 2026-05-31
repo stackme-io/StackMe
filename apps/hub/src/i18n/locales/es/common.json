@@ -1,6 +1,12 @@
 {
   "nav": {
-    "marketplace": "+ MarketMe"
+    "marketplace": "+ MarketMe",
+    "accountMe": "AccountMe",
+    "notifications": "Notificaciones",
+    "services": "Servicios",
+    "lock": "Fijar",
+    "unlock": "Desfijar",
+    "close": "Cerrar"
   },
   "sidebar": {
     "darkMode": "Modo oscuro",
@@ -13,11 +19,60 @@
     "subtitle": "Añade herramientas a tu espacio de trabajo",
     "add": "Añadir",
     "remove": "Eliminar",
+    "open": "Abrir",
+    "modules": "Módulos",
+    "manifest": "Manifiesto",
     "signInToAdd": "Inicia sesión para añadir",
     "signInBanner": "Inicia sesión para activar herramientas y guardar tu espacio de trabajo.",
     "signInLink": "Iniciar sesión →"
   },
+  "categories": {
+    "generation": "Generación",
+    "analytics": "Analítica",
+    "testing": "Testing"
+  },
+  "modules": {
+    "forge-me": {
+      "description": "Genera datasets sintéticos con anomalías inyectadas — nulos, duplicados, valores atípicos y más. Define tu esquema, ajusta la tasa y exporta o envía directamente a AnalyzeMe."
+    },
+    "analyze-me": {
+      "description": "Sube un CSV o JSON y detecta valores faltantes, duplicados y valores atípicos en tu navegador. Sin servidor, sin subidas, sin registros — basado en DuckDB-Wasm."
+    }
+  },
   "common": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "gotIt": "Entendido, no mostrar de nuevo"
+  },
+  "panel": {
+    "emptyState": "Abre un servicio desde el menú de arriba"
+  },
+  "notify": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todo como leído",
+    "all": "Todo",
+    "unread": "No leídos",
+    "emptyUnread": "No hay notificaciones sin leer",
+    "emptyAll": "Aún no hay notificaciones"
+  },
+  "account": {
+    "adminLabel": "Admin · Notificación masiva",
+    "typeAnnouncement": "📣 Anuncio",
+    "typeVersion": "📢 Nueva versión",
+    "typeSurvey": "📊 Encuesta",
+    "titlePlaceholder": "Título",
+    "bodyPlaceholder": "Cuerpo (opcional)",
+    "errorGeneric": "Algo salió mal, inténtalo de nuevo.",
+    "sent": "Enviado ✓",
+    "sending": "Enviando...",
+    "sendToAll": "Enviar a todos",
+    "emailLabel": "Email",
+    "emailNote": "No almacenamos ni compartimos tu dirección de correo.",
+    "nicknameLabel": "Apodo",
+    "nicknamePlaceholder": "ej. data_wizard",
+    "nicknameNote": "Se muestra bajo tus acciones en el sitio. Puedes cambiarlo en cualquier momento.",
+    "saved": "Guardado ✓",
+    "saving": "Guardando...",
+    "save": "Guardar",
+    "nicknameTaken": "Este apodo ya está en uso. Elige otro."
   }
 }

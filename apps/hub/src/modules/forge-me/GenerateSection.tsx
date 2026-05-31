@@ -174,13 +174,13 @@ export function GenerateSection({
             <span className="text-muted-foreground/30 text-sm">·</span>
             <span className="text-xs text-muted-foreground/70 font-mono">seed {seed}</span>
             <span className="text-muted-foreground/30 text-sm">·</span>
-            <span className="text-xs text-muted-foreground/70">≈ {total} corrupted rows: {breakdown}</span>
+            <span className="text-xs text-muted-foreground/70">≈ {total} {t('corruptedRows')}: {breakdown}</span>
             <button
               onClick={() => setCollapsed(false)}
               className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-foreground transition-colors"
             >
               <i className="ti ti-pencil text-[11px]" />
-              Edit
+              {t('edit')}
             </button>
           </div>
         </div>

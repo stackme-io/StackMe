@@ -103,8 +103,8 @@ export default function MarketMePage() {
 
       <ModuleTabs
         tabs={[
-          { id: 'modules', label: 'Modules' },
-          { id: 'manifest', label: 'Manifest' },
+          { id: 'modules', label: tc('marketplace.modules') },
+          { id: 'manifest', label: tc('marketplace.manifest') },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
@@ -144,10 +144,10 @@ export default function MarketMePage() {
                   {/* Top */}
                   <div className="flex flex-col gap-2 flex-1">
                     <span className={`self-start text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
-                      {module.category}
+                      {tc(`categories.${module.category}`, module.category)}
                     </span>
                     <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{module.description}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{tc(`modules.${module.id}.description`, module.description)}</p>
                   </div>
 
                   {/* Bottom */}
@@ -156,7 +156,7 @@ export default function MarketMePage() {
                       onClick={() => handleOpen(module.id)}
                       className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
                     >
-                      Open
+                      {tc('marketplace.open')}
                     </button>
                     <button
                       onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}

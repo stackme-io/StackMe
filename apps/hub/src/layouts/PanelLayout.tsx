@@ -1,13 +1,15 @@
 import { Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useWorkspace, type Panel } from '../store/workspace'
 
 export default function PanelLayout() {
+  const { t } = useTranslation()
   const { panels, activeId } = useWorkspace()
 
   if (panels.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-        Open a service from the menu above
+        {t('panel.emptyState')}
       </div>
     )
   }
@@ -22,7 +24,7 @@ export default function PanelLayout() {
         >
           <Suspense fallback={
             <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-              Loading...
+              {t('common.loading')}
             </div>
           }>
             <panel.manifest.component />

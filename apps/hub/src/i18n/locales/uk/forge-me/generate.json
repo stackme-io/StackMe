@@ -29,5 +29,36 @@
   "hint3Title": "Генеруй",
   "hint3Desc": "Натисни Generate — клікни будь-який рядок щоб інспектувати деталі",
   "hint4Title": "Експортуй",
-  "hint4Desc": "Завантаж або надішли напряму в AnalyzeMe"
+  "hint4Desc": "Завантаж або надішли напряму в AnalyzeMe",
+
+  "tabs": {
+    "generate": "Генерація",
+    "roadmap": "Роадмап",
+    "stack": "Стек"
+  },
+  "viewRaw": "Сирий генератор",
+  "viewSchema": "За схемою",
+  "generateBtn": "Генерувати",
+  "deterministicNote": "Детерміновано · локальна генерація",
+  "randomizeSeed": "Випадковий seed",
+  "edit": "Редагувати",
+  "corruptedRows": "пошкоджених рядків",
+  "columnsDetected": "{{count}} колонок виявлено",
+  "copyTsv": "Копіювати як TSV",
+  "pasteSample": "Вставити приклад",
+  "uploadFile": "Завантажити файл",
+  "uploadClick": "Натисніть щоб завантажити CSV",
+  "uploadHint": "Лише CSV (кома або крапка з комою) · схема визначається за першими рядками",
+  "privacyNote": "залишається у браузері — не покидає цю вкладку",
+  "detectedSchema": "Схема · {{count}} полів",
+  "inspector": "Інспектор",
+  "noAnomalies": "Аномалій не знайдено",
+  "noAnomaliesTip": "Спробуйте збільшити рівень аномалій або кількість рядків.",
+  "rowHidden": "Вибраний рядок прихований поточним фільтром.",
+  "showAllRows": "Показати всі рядки →",
+  "healthyRow": "Здоровий рядок",
+  "noAnomaliesDetected": "Аномалій не виявлено",
+  "rowData": "Дані рядка",
+  "columnHeader": "колонка",
+  "originalHeader": "оригінал"
 }
