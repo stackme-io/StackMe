@@ -123,13 +123,10 @@
   <line x1="580" y1="100" x2="580" y2="530" stroke="#222222" stroke-width="1"/>
 
   <!-- StackMe -->
-  <text x="640" y="295" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" fill="#ffffff" letter-spacing="-1">StackMe</text>
+  <text x="640" y="268" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="700" fill="#ffffff" letter-spacing="-2">StackMe</text>
 
   <!-- Tagline line 1 -->
-  <text x="642" y="358" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#6b7280">We Build Tools.</text>
+  <text x="643" y="348" font-family="Arial, Helvetica, sans-serif" font-size="50" fill="#6b7280">We Build Tools.</text>
   <!-- Tagline line 2 — violet accent -->
-  <text x="642" y="400" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#a78bfa">Not Traps.</text>
-
-  <!-- URL -->
-  <text x="643" y="470" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#374151" letter-spacing="0.5">stackme-app.vercel.app</text>
+  <text x="643" y="414" font-family="Arial, Helvetica, sans-serif" font-size="50" fill="#a78bfa">Not Traps.</text>
 </svg>
