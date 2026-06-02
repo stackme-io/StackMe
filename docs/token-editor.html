@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StackMe Token Editor</title>
+  <style id="token-overrides"></style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Editor chrome */
+    :root {
+      --e-bg:      #0e0e0e;
+      --e-surface: #181818;
+      --e-border:  rgba(255,255,255,0.08);
+      --e-text:    #d8d8d8;
+      --e-muted:   #555;
+      --e-violet:  #a78bfa;
+      --e-green:   #34d399;
+    }
+
+    body {
+      background: var(--e-bg);
+      color: var(--e-text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ──────────────────────────────── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; height: 44px;
+      border-bottom: 1px solid var(--e-border);
+      flex-shrink: 0;
+    }
+    .hd-left { display: flex; align-items: center; gap: 10px; }
+    .hd-left h1 { font-size: 13px; font-weight: 600; color: #fff; }
+    .pill {
+      font-size: 10px; font-family: monospace;
+      padding: 2px 7px; border-radius: 20px;
+    }
+    .pill-violet { background: rgba(167,139,250,.15); color: var(--e-violet); }
+    .pill-green  { background: rgba(52,211,153,.15);  color: var(--e-green); display: none; }
+    .hd-right { display: flex; gap: 8px; align-items: center; }
+
+    button { cursor: pointer; font-family: inherit; border: none; outline: none; }
+    .btn { padding: 5px 11px; border-radius: 6px; font-size: 12px; font-weight: 500; transition: opacity .1s; }
+    .btn:hover { opacity: .8; }
+    .btn-ghost   { background: rgba(255,255,255,.07); color: var(--e-text); }
+    .btn-danger  { background: rgba(248,113,113,.12); color: #f87171; }
+    .btn-primary { background: var(--e-violet); color: #0e0e0e; }
+
+    /* ── LAYOUT ──────────────────────────────── */
+    .layout {
+      display: grid; grid-template-columns: 360px 1fr;
+      flex: 1; overflow: hidden;
+    }
+
+    /* ── LEFT: tokens ────────────────────────── */
+    .tokens-panel {
+      overflow-y: auto; border-right: 1px solid var(--e-border); padding: 12px;
+    }
+    .tokens-panel::-webkit-scrollbar { width: 4px; }
+    .tokens-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
+
+    .group { margin-bottom: 20px; }
+    .group-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--e-muted); padding: 0 4px 6px; border-bottom: 1px solid var(--e-border); margin-bottom: 4px;
+    }
+
+    .token-row {
+      display: grid; grid-template-columns: 18px 1fr 18px;
+      align-items: start; gap: 8px; padding: 5px 4px; border-radius: 5px;
+      transition: background .1s;
+    }
+    .token-row:hover { background: rgba(255,255,255,.025); }
+
+    .swatch {
+      width: 18px; height: 18px; border-radius: 3px;
+      border: 1px solid rgba(255,255,255,.12); flex-shrink: 0;
+      margin-top: 1px; position: relative; cursor: pointer; overflow: hidden;
+    }
+    .swatch input[type="color"] {
+      position: absolute; inset: 0; opacity: 0;
+      width: 100%; height: 100%; padding: 0; cursor: pointer;
+    }
+
+    .token-info { min-width: 0; }
+    .token-name {
+      font-size: 11px; font-family: monospace; color: var(--e-text);
+      margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .token-name.changed { color: var(--e-green); }
+    .token-original {
+      font-size: 10px; font-family: monospace; color: var(--e-muted);
+      margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .val-input {
+      font-size: 10px; font-family: monospace; width: 100%;
+      background: rgba(255,255,255,.05); border: 1px solid transparent; border-radius: 3px;
+      color: var(--e-text); padding: 3px 5px; outline: none; transition: border-color .15s;
+    }
+    .val-input:focus { border-color: rgba(167,139,250,.4); }
+    .val-input.changed { border-color: rgba(52,211,153,.3); color: var(--e-green); }
+
+    .reset-btn {
+      width: 18px; height: 18px; border-radius: 3px; font-size: 13px;
+      background: transparent; color: var(--e-muted);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .1s; margin-top: 1px;
+    }
+    .token-row:hover .reset-btn { opacity: 1; }
+    .reset-btn.active { opacity: 1; color: var(--e-green); }
+    .reset-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+    /* ── RIGHT: preview ──────────────────────── */
+    .preview-panel { overflow-y: auto; padding: 16px 20px; background: var(--bg, #16171d); }
+    .preview-panel::-webkit-scrollbar { width: 4px; }
+    .preview-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
+
+    .psec { margin-bottom: 24px; }
+    .psec-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+      color: rgba(255,255,255,.25); margin-bottom: 10px; padding-bottom: 7px;
+      border-bottom: 1px solid var(--border, rgba(255,255,255,.1));
+    }
+
+    /* ── Preview: Typography ─────────────────── */
+    .p-type-row {
+      display: flex; align-items: baseline; gap: 20px;
+      padding: 8px 0; border-bottom: 1px solid var(--border, rgba(255,255,255,.1));
+    }
+    .p-type-row:last-child { border-bottom: none; }
+    .p-type-meta {
+      font-size: 10px; color: rgba(255,255,255,.3); font-family: monospace;
+      min-width: 180px; flex-shrink: 0; line-height: 1.5;
+    }
+
+    /* ── Preview: Color swatches ─────────────── */
+    .p-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+    .p-swatch { display: flex; flex-direction: column; gap: 5px; }
+    .p-swatch-box {
+      width: 60px; height: 36px; border-radius: 6px;
+      border: 1px solid var(--border, rgba(255,255,255,.1));
+    }
+    .p-swatch-name { font-size: 10px; color: var(--muted-foreground, #888); font-family: monospace; line-height: 1.4; }
+
+    /* ── Preview: Opacity scale ──────────────── */
+    .p-opscale { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px; }
+    .p-opitem  { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .p-oplabel { font-size: 10px; font-family: monospace; text-align: center; line-height: 1.4; }
+
+    /* ── Preview: Badges ─────────────────────── */
+    .p-badge {
+      display: inline-flex; align-items: center; font-size: 11px;
+      padding: 2px 7px; border-radius: 4px; border: 1px solid; font-family: monospace;
+    }
+    .p-missing   { background: rgba(239,68,68,.25);  color: var(--domain-missing, #f87171);   border-color: #7f1d1d; }
+    .p-duplicate { background: rgba(59,130,246,.25); color: var(--domain-duplicate, #60a5fa); border-color: #1e3a8a; }
+    .p-outlier   { background: rgba(245,158,11,.25); color: var(--domain-outlier, #fbbf24);   border-color: #78350f; }
+
+    /* ── Preview: Anomaly cards ──────────────── */
+    .p-anom {
+      padding: 12px 14px; border-radius: var(--radius, .625rem);
+      border-left: 2px solid; margin-bottom: 7px;
+    }
+    .p-anom-m { border-color: var(--domain-missing, #ef4444);   background: rgba(239,68,68,.06); }
+    .p-anom-d { border-color: var(--domain-duplicate, #3b82f6); background: rgba(59,130,246,.06); }
+    .p-anom-o { border-color: var(--domain-outlier, #f59e0b);   background: rgba(245,158,11,.06); }
+    .p-anom-title {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 13px;
+      color: var(--foreground, #f0f0f0);
+    }
+    .p-anom-desc { font-size: 12px; color: var(--muted-foreground, #888); }
+
+    /* ── Preview: Filter chips ───────────────── */
+    .p-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .p-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px;
+      border-radius: 6px; font-size: 12px; border: 1px solid; cursor: default;
+    }
+    .p-chip-default {
+      background: rgba(255,255,255,.04); border-color: var(--border, rgba(255,255,255,.1));
+      color: var(--foreground, #f0f0f0);
+    }
+    .p-chip-inactive { border-color: transparent; color: var(--muted-foreground, #888); }
+    .p-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* ── Preview: Sensitivity ────────────────── */
+    .p-sens-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .p-sens {
+      padding: 9px 11px; border-radius: 7px; border: 1px solid; width: 150px; cursor: default;
+    }
+    .p-sens-active   { background: rgba(19,78,74,.4); border-color: rgba(20,83,45,.5); }
+    .p-sens-inactive { background: transparent; border-color: transparent; color: var(--muted-foreground, #888); }
+    .p-sens-label { font-size: 12px; font-weight: 500; }
+    .p-sens-desc  { font-size: 11px; margin-top: 2px; }
+    .p-sens-active .p-sens-label { color: var(--domain-teal, #5eead4); }
+    .p-sens-active .p-sens-desc  { color: rgba(94,234,212,.6); }
+
+    /* ── Preview: Buttons ────────────────────── */
+    .p-buttons { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+    .p-btn-primary {
+      padding: 7px 20px; border-radius: 8px;
+      background: var(--primary, #ebebeb); color: var(--primary-foreground, #1a1a1a);
+      font-size: 13px; font-weight: 600; cursor: default; border: none; font-family: inherit;
+    }
+    .p-btn-util {
+      display: flex; align-items: center; gap: 5px; padding: 4px 10px;
+      border: 1px solid var(--border, rgba(255,255,255,.1)); border-radius: 6px;
+      background: none; font-size: 12px; color: var(--muted-foreground, #888);
+      cursor: default; font-family: inherit;
+    }
+
+    /* ── Preview: Radius ─────────────────────── */
+    .p-radius-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .p-rbox {
+      width: 44px; height: 44px;
+      background: var(--muted, #2a2a2a);
+      border: 1px solid var(--border, rgba(255,255,255,.1));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-family: monospace; color: var(--muted-foreground, #666);
+    }
+
+    /* ── Preview: Domain palette ─────────────── */
+    .p-domain { display: flex; gap: 10px; flex-wrap: wrap; }
+    .p-domain-swatch {
+      display: flex; flex-direction: column; gap: 5px; align-items: center;
+    }
+    .p-domain-box { width: 48px; height: 32px; border-radius: 5px; }
+    .p-domain-name { font-size: 10px; font-family: monospace; color: var(--muted-foreground, #666); text-align: center; }
+
+    #import-input { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hd-left">
+    <h1>StackMe Token Editor</h1>
+    <span class="pill pill-violet">dark mode</span>
+    <span class="pill pill-green" id="changed-pill">0 changed</span>
+  </div>
+  <div class="hd-right">
+    <button class="btn btn-danger"  onclick="resetAll()">↺ Reset all</button>
+    <label  class="btn btn-ghost"   style="cursor:pointer">↑ Import
+      <input type="file" id="import-input" accept=".css" onchange="importCSS(event)">
+    </label>
+    <button class="btn btn-primary" onclick="exportCSS()">↓ Export CSS</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── LEFT ── -->
+  <div class="tokens-panel" id="tokens-panel"></div>
+
+  <!-- ── RIGHT: live preview ── -->
+  <div class="preview-panel">
+
+    <!-- Typography -->
+    <div class="psec">
+      <div class="psec-label">Typography scale</div>
+      <div class="p-type-row">
+        <div class="p-type-meta">9px · uppercase · tracking-[0.20em]<br>muted-foreground / 100%</div>
+        <span style="font-size:9px;text-transform:uppercase;letter-spacing:.20em;color:var(--muted-foreground,#b2b2b2)">ANOMALY MIX · OVERVIEW · SENSITIVITY</span>
+      </div>
+      <div class="p-type-row">
+        <div class="p-type-meta">10px · muted-foreground / 95%<br>footer badges</div>
+        <span style="font-size:10px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 95%,transparent)">// Zero-knowledge &nbsp;// Local-only &nbsp;// Privacy-first</span>
+      </div>
+      <div class="p-type-row">
+        <div class="p-type-meta">10px · muted-foreground / 95%<br>descriptions, hints</div>
+        <span style="font-size:10px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 95%,transparent)">IQR-based detection — skips identifiers and timestamps</span>
+      </div>
+      <div class="p-type-row">
+        <div class="p-type-meta">12px · muted-foreground / 95% · medium<br>secondary text, labels</div>
+        <span style="font-size:12px;font-weight:500;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 95%,transparent)">Upload a CSV or JSON — the file never leaves your browser</span>
+      </div>
+      <div class="p-type-row">
+        <div class="p-type-meta">12px · foreground<br>primary content</div>
+        <span style="font-size:12px;color:var(--foreground,#f0f0f0)">dataset-2024-q4.csv · 1200 rows · 23 anomalies</span>
+      </div>
+      <div class="p-type-row">
+        <div class="p-type-meta">14px · destructive<br>error messages</div>
+        <span style="font-size:14px;color:var(--destructive,#f87171)">File format not supported — use CSV or JSON</span>
+      </div>
+    </div>
+
+    <!-- Semantic color tokens -->
+    <div class="psec">
+      <div class="psec-label">Semantic tokens</div>
+      <div class="p-swatches">
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--background,#16171d)"></div>
+          <div class="p-swatch-name">background</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--foreground,rgba(255,255,255,.985))"></div>
+          <div class="p-swatch-name">foreground</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--muted,rgba(60,62,75,1))"></div>
+          <div class="p-swatch-name">muted</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--muted-foreground,rgb(178,178,178))"></div>
+          <div class="p-swatch-name">muted-fg</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--primary,rgba(235,235,235,1))"></div>
+          <div class="p-swatch-name">primary</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--border,rgba(255,255,255,.1))"></div>
+          <div class="p-swatch-name">border</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--destructive,#f87171)"></div>
+          <div class="p-swatch-name">destructive</div>
+        </div>
+        <div class="p-swatch">
+          <div class="p-swatch-box" style="background:var(--card,#1c1c1c)"></div>
+          <div class="p-swatch-name">card</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Domain colors -->
+    <div class="psec">
+      <div class="psec-label">Domain colors</div>
+      <div class="p-domain">
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-missing,#f87171)"></div>
+          <div class="p-domain-name">missing<br>null · fp</div>
+        </div>
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-duplicate,#60a5fa)"></div>
+          <div class="p-domain-name">duplicate</div>
+        </div>
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-outlier,#fbbf24)"></div>
+          <div class="p-domain-name">outlier<br>missed</div>
+        </div>
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-detected,#4ade80)"></div>
+          <div class="p-domain-name">detected ✓</div>
+        </div>
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-teal,#5eead4)"></div>
+          <div class="p-domain-name">teal<br>AnalyzeMe</div>
+        </div>
+        <div class="p-domain-swatch">
+          <div class="p-domain-box" style="background:var(--domain-violet,#c084fc)"></div>
+          <div class="p-domain-name">violet<br>ForgeMe</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Muted-foreground opacity scale -->
+    <div class="psec">
+      <div class="psec-label">Muted-foreground opacity scale</div>
+      <div class="p-opscale">
+        <div class="p-opitem">
+          <span style="font-size:20px;color:var(--muted-foreground,#b2b2b2)">Aa</span>
+          <div class="p-oplabel" style="color:var(--muted-foreground,#b2b2b2)">100%<br>section labels</div>
+        </div>
+        <div class="p-opitem">
+          <span style="font-size:20px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 75%,transparent)">Aa</span>
+          <div class="p-oplabel" style="color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">/75<br>footer</div>
+        </div>
+        <div class="p-opitem">
+          <span style="font-size:20px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 70%,transparent)">Aa</span>
+          <div class="p-oplabel" style="color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">/70<br>secondary</div>
+        </div>
+        <div class="p-opitem">
+          <span style="font-size:20px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 60%,transparent)">Aa</span>
+          <div class="p-oplabel" style="color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">/60<br>labels</div>
+        </div>
+        <div class="p-opitem">
+          <span style="font-size:20px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">Aa</span>
+          <div class="p-oplabel" style="color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">/50<br>hints</div>
+        </div>
+        <div class="p-opitem">
+          <span style="font-size:20px;color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 40%,transparent)">Aa</span>
+          <div class="p-oplabel" style="color:color-mix(in srgb,var(--muted-foreground,#b2b2b2) 50%,transparent)">/40<br>decorators</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anomaly cards -->
+    <div class="psec">
+      <div class="psec-label">Anomaly cards</div>
+      <div style="max-width:480px">
+        <div class="p-anom p-anom-m">
+          <div class="p-anom-title">
+            <span style="font-weight:500">Row 14</span>
+            <span style="color:var(--muted-foreground,#888)">· email</span>
+            <span class="p-badge p-missing">missing</span>
+          </div>
+          <div class="p-anom-desc">Null value detected in required column</div>
+        </div>
+        <div class="p-anom p-anom-d">
+          <div class="p-anom-title">
+            <span style="font-weight:500">Row 27</span>
+            <span class="p-badge p-duplicate">duplicate</span>
+          </div>
+          <div class="p-anom-desc">Identical row found at index 12</div>
+        </div>
+        <div class="p-anom p-anom-o">
+          <div class="p-anom-title">
+            <span style="font-weight:500">Row 83</span>
+            <span style="color:var(--muted-foreground,#888)">· revenue</span>
+            <span class="p-badge p-outlier">outlier</span>
+          </div>
+          <div class="p-anom-desc">Value 48 200 is 4.2× IQR above Q3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="psec">
+      <div class="psec-label">Filter chips</div>
+      <div class="p-chips">
+        <div class="p-chip p-chip-default">All</div>
+        <div class="p-chip p-chip-inactive">Anomalies</div>
+        <div class="p-chip p-chip-inactive">
+          <span class="p-dot" style="background:var(--domain-missing,#f87171)"></span>Nulls (12)
+        </div>
+        <div class="p-chip p-chip-inactive">
+          <span class="p-dot" style="background:var(--domain-duplicate,#60a5fa)"></span>Duplicates (4)
+        </div>
+        <div class="p-chip p-chip-inactive">
+          <span class="p-dot" style="background:var(--domain-outlier,#fbbf24)"></span>Outliers (7)
+        </div>
+        <div class="p-chip" style="background:rgba(120,53,15,.3);border-color:rgba(146,64,14,.5);color:var(--domain-outlier,#fbbf24)">✗ Missed (3)</div>
+        <div class="p-chip" style="background:rgba(127,29,29,.3);border-color:rgba(153,27,27,.5);color:var(--domain-missing,#f87171)">⚠ False pos. (2)</div>
+      </div>
+    </div>
+
+    <!-- Sensitivity -->
+    <div class="psec">
+      <div class="psec-label">Sensitivity options</div>
+      <div class="p-sens-row">
+        <div class="p-sens p-sens-inactive">
+          <div class="p-sens-label">Conservative</div>
+          <div class="p-sens-desc" style="color:color-mix(in srgb,var(--muted-foreground,#888) 50%,transparent)">IQR × 3.0</div>
+        </div>
+        <div class="p-sens p-sens-active">
+          <div class="p-sens-label">Balanced</div>
+          <div class="p-sens-desc">IQR × 1.5 — recommended</div>
+        </div>
+        <div class="p-sens p-sens-inactive">
+          <div class="p-sens-label">Aggressive</div>
+          <div class="p-sens-desc" style="color:color-mix(in srgb,var(--muted-foreground,#888) 50%,transparent)">IQR × 1.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="psec">
+      <div class="psec-label">Buttons</div>
+      <div class="p-buttons">
+        <button class="p-btn-primary">Generate</button>
+        <button class="p-btn-util">Copy</button>
+        <button class="p-btn-util">Export JSON</button>
+        <button class="p-btn-util" style="color:var(--domain-teal,#5eead4);border-color:rgba(94,234,212,.3)">AnalyzeMe →</button>
+      </div>
+    </div>
+
+    <!-- Border radius -->
+    <div class="psec">
+      <div class="psec-label">Border radius</div>
+      <div class="p-radius-row">
+        <div class="p-rbox" style="border-radius:calc(var(--radius,.625rem)*.6)">sm</div>
+        <div class="p-rbox" style="border-radius:calc(var(--radius,.625rem)*.8)">md</div>
+        <div class="p-rbox" style="border-radius:var(--radius,.625rem)">lg</div>
+        <div class="p-rbox" style="border-radius:calc(var(--radius,.625rem)*1.4)">xl</div>
+        <div class="p-rbox" style="border-radius:calc(var(--radius,.625rem)*2.2)">3xl</div>
+        <div class="p-rbox" style="border-radius:50%">∞</div>
+      </div>
+    </div>
+
+  </div><!-- /preview-panel -->
+</div><!-- /layout -->
+
+<script>
+// ── TOKEN DEFINITIONS ──────────────────────────────────────────────────────────
+const GROUPS = [
+  {
+    label: 'Base — index.css .dark',
+    tokens: [
+      { name: '--background',          original: 'oklch(0.145 0 0)' },
+      { name: '--foreground',          original: 'oklch(0.985 0 0)' },
+      { name: '--card',                original: 'oklch(0.205 0 0)' },
+      { name: '--card-foreground',     original: 'oklch(0.985 0 0)' },
+    ]
+  },
+  {
+    label: 'Interactive',
+    tokens: [
+      { name: '--primary',             original: 'oklch(0.922 0 0)' },
+      { name: '--primary-foreground',  original: 'oklch(0.205 0 0)' },
+      { name: '--secondary',           original: 'oklch(0.269 0 0)' },
+      { name: '--secondary-foreground',original: 'oklch(0.985 0 0)' },
+    ]
+  },
+  {
+    label: 'Muted',
+    tokens: [
+      { name: '--muted',               original: 'oklch(0.269 0 0)' },
+      { name: '--muted-foreground',    original: 'oklch(0.708 0 0)' },
+    ]
+  },
+  {
+    label: 'Semantic',
+    tokens: [
+      { name: '--destructive',         original: 'oklch(0.704 0.191 22.216)' },
+      { name: '--border',              original: 'oklch(1 0 0 / 10%)' },
+      { name: '--input',               original: 'oklch(1 0 0 / 15%)' },
+      { name: '--ring',                original: 'oklch(0.556 0 0)' },
+    ]
+  },
+  {
+    label: 'Shape',
+    tokens: [
+      { name: '--radius',              original: '0.625rem', nonColor: true },
+    ]
+  },
+  {
+    label: 'Sidebar',
+    tokens: [
+      { name: '--sidebar',                     original: 'oklch(0.205 0 0)' },
+      { name: '--sidebar-foreground',          original: 'oklch(0.985 0 0)' },
+      { name: '--sidebar-primary',             original: 'oklch(0.488 0.243 264.376)' },
+      { name: '--sidebar-primary-foreground',  original: 'oklch(0.985 0 0)' },
+      { name: '--sidebar-accent',              original: 'oklch(0.269 0 0)' },
+      { name: '--sidebar-accent-foreground',   original: 'oklch(0.985 0 0)' },
+      { name: '--sidebar-border',              original: 'oklch(1 0 0 / 10%)' },
+      { name: '--sidebar-ring',                original: 'oklch(0.556 0 0)' },
+    ]
+  },
+  {
+    label: 'Charts',
+    tokens: [
+      { name: '--chart-1', original: 'oklch(0.87 0 0)' },
+      { name: '--chart-2', original: 'oklch(0.556 0 0)' },
+      { name: '--chart-3', original: 'oklch(0.439 0 0)' },
+      { name: '--chart-4', original: 'oklch(0.371 0 0)' },
+      { name: '--chart-5', original: 'oklch(0.269 0 0)' },
+    ]
+  },
+  {
+    label: 'Domain colors (hardcoded)',
+    tokens: [
+      { name: '--domain-missing',   original: '#f87171', note: 'red-400 · missing/null/fp' },
+      { name: '--domain-duplicate', original: '#60a5fa', note: 'blue-400 · duplicate' },
+      { name: '--domain-outlier',   original: '#fbbf24', note: 'amber-400 · outlier/missed' },
+      { name: '--domain-detected',  original: '#4ade80', note: 'green-400 · detected ✓' },
+      { name: '--domain-teal',      original: '#5eead4', note: 'teal-300 · AnalyzeMe' },
+      { name: '--domain-violet',    original: '#c084fc', note: 'violet-300 · ForgeMe brand' },
+    ]
+  },
+]
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+const current = {}
+GROUPS.forEach(g => g.tokens.forEach(t => { current[t.name] = t.original }))
+const allTokens = () => GROUPS.flatMap(g => g.tokens)
+
+// ── APPLY ──────────────────────────────────────────────────────────────────────
+function applyTokens() {
+  const vars = Object.entries(current).map(([k, v]) => `  ${k}: ${v};`).join('\n')
+  document.getElementById('token-overrides').textContent = `:root {\n${vars}\n}`
+  // Also apply to preview panel background
+  const pp = document.querySelector('.preview-panel')
+  if (pp) pp.style.background = current['--background'] || ''
+  updateChangedPill()
+}
+
+function updateChangedPill() {
+  const n = allTokens().filter(t => current[t.name] !== t.original).length
+  const pill = document.getElementById('changed-pill')
+  pill.textContent = `${n} changed`
+  pill.style.display = n > 0 ? 'inline' : 'none'
+}
+
+// ── RENDER TOKEN LIST ──────────────────────────────────────────────────────────
+function renderTokens() {
+  const panel = document.getElementById('tokens-panel')
+  panel.innerHTML = ''
+
+  GROUPS.forEach(group => {
+    const groupEl = document.createElement('div')
+    groupEl.className = 'group'
+    groupEl.innerHTML = `<div class="group-label">${group.label}</div>`
+
+    group.tokens.forEach(token => {
+      const row = document.createElement('div')
+      row.className = 'token-row'
+
+      // Swatch
+      const swatch = document.createElement('div')
+      swatch.className = 'swatch'
+      swatch.id = `swatch-${token.name}`
+      if (!token.nonColor) {
+        swatch.style.background = current[token.name]
+        const cp = document.createElement('input')
+        cp.type = 'color'
+        cp.title = 'Color picker (approx hex)'
+        cp.addEventListener('input', e => {
+          current[token.name] = e.target.value
+          updateRow(token)
+          applyTokens()
+        })
+        swatch.appendChild(cp)
+        initColorPicker(cp, current[token.name])
+      } else {
+        swatch.style.background = 'var(--e-surface)'
+        swatch.style.cursor = 'default'
+      }
+
+      // Info
+      const info = document.createElement('div')
+      info.className = 'token-info'
+
+      const nameEl = document.createElement('div')
+      nameEl.className = 'token-name'
+      nameEl.id = `name-${token.name}`
+      nameEl.textContent = token.name
+
+      const origEl = document.createElement('div')
+      origEl.className = 'token-original'
+      origEl.title = token.original
+      origEl.textContent = (token.note ? token.note + ' · ' : '') + token.original
+
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.className = 'val-input'
+      input.id = `input-${token.name}`
+      input.value = current[token.name]
+      input.spellcheck = false
+      input.addEventListener('input', e => {
+        current[token.name] = e.target.value.trim()
+        updateRow(token)
+        applyTokens()
+      })
+
+      info.appendChild(nameEl)
+      info.appendChild(origEl)
+      info.appendChild(input)
+
+      // Reset
+      const resetBtn = document.createElement('button')
+      resetBtn.className = 'reset-btn'
+      resetBtn.id = `reset-${token.name}`
+      resetBtn.title = 'Reset to original'
+      resetBtn.textContent = '↺'
+      resetBtn.addEventListener('click', () => {
+        current[token.name] = token.original
+        updateRow(token)
+        applyTokens()
+      })
+
+      row.appendChild(swatch)
+      row.appendChild(info)
+      row.appendChild(resetBtn)
+      groupEl.appendChild(row)
+    })
+
+    panel.appendChild(groupEl)
+  })
+}
+
+function initColorPicker(cp, val) {
+  try {
+    const tmp = document.createElement('div')
+    tmp.style.cssText = `background:${val};position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;`
+    document.body.appendChild(tmp)
+    const rgb = getComputedStyle(tmp).backgroundColor
+    document.body.removeChild(tmp)
+    const m = rgb.match(/\d+/g)
+    if (m) cp.value = '#' + [m[0],m[1],m[2]].map(n=>(+n).toString(16).padStart(2,'0')).join('')
+  } catch(e) {}
+}
+
+function updateRow(token) {
+  const isChanged = current[token.name] !== token.original
+
+  const nameEl = document.getElementById(`name-${token.name}`)
+  if (nameEl) nameEl.className = `token-name${isChanged ? ' changed' : ''}`
+
+  const input = document.getElementById(`input-${token.name}`)
+  if (input) {
+    input.value = current[token.name]
+    input.className = `val-input${isChanged ? ' changed' : ''}`
+  }
+
+  const resetBtn = document.getElementById(`reset-${token.name}`)
+  if (resetBtn) resetBtn.className = `reset-btn${isChanged ? ' active' : ''}`
+
+  const swatch = document.getElementById(`swatch-${token.name}`)
+  if (swatch && !token.nonColor) {
+    swatch.style.background = current[token.name]
+    const cp = swatch.querySelector('input[type="color"]')
+    if (cp) initColorPicker(cp, current[token.name])
+  }
+}
+
+// ── RESET ALL ──────────────────────────────────────────────────────────────────
+function resetAll() {
+  allTokens().forEach(t => { current[t.name] = t.original; updateRow(t) })
+  applyTokens()
+}
+
+// ── EXPORT ─────────────────────────────────────────────────────────────────────
+function exportCSS() {
+  const date = new Date().toISOString().slice(0,10)
+  const changed = allTokens().filter(t => current[t.name] !== t.original)
+
+  // Separate semantic (index.css) from domain tokens
+  const domainNames = GROUPS.find(g => g.label.includes('Domain'))?.tokens.map(t => t.name) || []
+
+  let css = `/* StackMe Design Tokens — ${date} */\n`
+  if (changed.length) css += `/* ${changed.length} token(s) modified */\n`
+
+  css += `\n/* Apply to: apps/hub/src/index.css → .dark { ... } */\n.dark {\n`
+  GROUPS.filter(g => !g.label.includes('Domain')).forEach(g => {
+    css += `\n  /* ${g.label} */\n`
+    g.tokens.forEach(t => {
+      const ch = current[t.name] !== t.original
+      css += `  ${t.name}: ${current[t.name]};${ch ? `  /* was: ${t.original} */` : ''}\n`
+    })
+  })
+  css += `}\n`
+
+  // Domain colors as a separate comment block (need manual Tailwind changes)
+  const domainChanged = GROUPS.find(g => g.label.includes('Domain'))?.tokens.filter(t => current[t.name] !== t.original) || []
+  if (domainChanged.length) {
+    css += `\n/* Domain colors changed — update Tailwind classes in components manually: */\n`
+    domainChanged.forEach(t => {
+      css += `/* ${t.name}: ${t.original} → ${current[t.name]} */\n`
+    })
+  }
+
+  const blob = new Blob([css], { type: 'text/css' })
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob), download: `stackme-tokens-${date}.css`
+  })
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+
+// ── IMPORT ─────────────────────────────────────────────────────────────────────
+function importCSS(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    const text = ev.target.result
+    let count = 0
+    for (const [, name, value] of text.matchAll(/(-{2}[\w-]+)\s*:\s*([^;/*]+);/g)) {
+      const n = name.trim(), v = value.trim()
+      if (n in current) { current[n] = v; const t = allTokens().find(x=>x.name===n); if (t) updateRow(t); count++ }
+    }
+    applyTokens()
+    alert(count > 0 ? `Imported ${count} token(s) from ${file.name}` : 'No matching tokens found.')
+    e.target.value = ''
+  }
+  reader.readAsText(file)
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+renderTokens()
+applyTokens()
+</script>
+</body>
+</html>

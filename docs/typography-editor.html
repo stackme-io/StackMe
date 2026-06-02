@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StackMe Typography Editor</title>
+<style>
+  :root {
+    --bg:      #16171d;
+    --bg-2:    #1c1d25;
+    --bg-3:    #222330;
+    --muted-fg: rgb(178,178,178);
+    --fg:      rgba(255,255,255,0.985);
+    --border:  rgba(255,255,255,0.10);
+    --primary: rgba(235,235,235,1);
+    --destructive: #f87171;
+    --font:    system-ui, 'Segoe UI', sans-serif;
+    --mono:    ui-monospace, Consolas, monospace;
+    --violet:  #a78bfa;
+    --green:   #34d399;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg);
+  }
+  .hd-left { display: flex; align-items: center; gap: 10px; }
+  .hd-left h1 { font-size: 14px; font-weight: 600; }
+  .tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 20px; font-family: var(--mono);
+    background: rgba(167,139,250,.15); color: var(--violet);
+  }
+  .tag-changed {
+    background: rgba(52,211,153,.15); color: var(--green); display: none;
+  }
+  .hd-right { display: flex; gap: 8px; }
+  .btn {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: none; font-family: var(--font); transition: opacity .1s;
+  }
+  .btn:hover { opacity: .8; }
+  .btn-ghost   { background: rgba(255,255,255,.08); color: var(--fg); }
+  .btn-primary { background: var(--violet); color: #0e0e0e; }
+  .btn-danger  { background: rgba(248,113,113,.12); color: var(--destructive); }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+    padding: 24px;
+  }
+
+  /* ── Element card ── */
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title { font-size: 11px; color: rgba(255,255,255,.6); font-weight: 500; }
+  .card-header-right { display: flex; align-items: center; gap: 8px; }
+
+  /* Spec badge — updates live */
+  .spec-badge {
+    font-size: 10px; font-family: var(--mono);
+    color: var(--violet); background: rgba(167,139,250,.1);
+    padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  .spec-badge.changed { color: var(--green); background: rgba(52,211,153,.1); }
+
+  /* Reset button */
+  .reset-btn {
+    font-size: 13px; width: 22px; height: 22px; border-radius: 4px;
+    background: transparent; color: rgba(255,255,255,.3); cursor: pointer;
+    border: none; display: flex; align-items: center; justify-content: center;
+    transition: all .1s; flex-shrink: 0;
+  }
+  .reset-btn:hover { background: rgba(255,255,255,.08); color: var(--fg); }
+  .reset-btn.active { color: var(--green); }
+
+  /* Preview area */
+  .card-preview {
+    padding: 20px 14px;
+    background: var(--bg-3);
+    min-height: 64px;
+    display: flex; align-items: center;
+  }
+
+  /* Original spec shown below preview */
+  .card-original {
+    padding: 5px 14px 8px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px; font-family: var(--mono);
+    color: rgba(255,255,255,.2);
+  }
+
+  /* Controls */
+  .card-controls { padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+
+  .control { display: grid; grid-template-columns: 72px 1fr 36px; align-items: center; gap: 8px; }
+  .control-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.35); }
+  .control-value { font-size: 10px; font-family: var(--mono); color: rgba(255,255,255,.5); text-align: right; }
+
+  input[type="range"] {
+    width: 100%; accent-color: var(--violet); cursor: pointer; height: 4px;
+  }
+
+  select {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); font-size: 11px; font-family: var(--font);
+    padding: 4px 6px; border-radius: 4px; cursor: pointer; outline: none;
+  }
+  select:focus { border-color: rgba(167,139,250,.4); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-left">
+    <h1>StackMe Typography Editor</h1>
+    <span class="tag">style-guide · dark mode</span>
+    <span class="tag tag-changed" id="changed-tag">0 changed</span>
+  </div>
+  <div class="hd-right">
+    <button class="btn btn-danger"  onclick="resetAll()">↺ Reset all</button>
+    <button class="btn btn-primary" onclick="exportChanges()">↓ Export</button>
+  </div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+// ── ELEMENT DEFINITIONS ───────────────────────────────────────────────────────
+const ELEMENTS = [
+  {
+    id: 'section-labels',
+    name: 'Section Labels (sidebar)',
+    sample: 'ANOMALY MIX · OVERVIEW · SENSITIVITY · MODE',
+    defaults: { size: 9, opacity: 100, weight: 'normal', tracking: 0.20, transform: 'uppercase', mono: false },
+    controls: ['size', 'opacity', 'weight', 'tracking'],
+    sizeRange: [7, 13],
+    specFn: (v) => `text-[${v.size}px] uppercase tracking-[${v.tracking}em] muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', textTransform: 'uppercase', letterSpacing: v.tracking+'em',
+      fontWeight: weightValue(v.weight),
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'divider-accent',
+    name: 'Divider Labels — accent',
+    sample: 'DONE IN V0.1.0 · COMING UP',
+    defaults: { size: 9, opacity: 100, weight: 'medium', tracking: 0.14, transform: 'uppercase', mono: false },
+    controls: ['size', 'opacity', 'weight', 'tracking'],
+    sizeRange: [7, 13],
+    specFn: (v) => `text-[${v.size}px] uppercase tracking-[${v.tracking}em] foreground/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', textTransform: 'uppercase', letterSpacing: v.tracking+'em',
+      fontWeight: weightValue(v.weight),
+      color: `rgba(255,255,255,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'divider-plain',
+    name: 'Divider Labels — plain',
+    sample: 'LATER · SUGGEST A FEATURE',
+    defaults: { size: 9, opacity: 95, weight: 'normal', tracking: 0.14, transform: 'uppercase', mono: false },
+    controls: ['size', 'opacity', 'weight', 'tracking'],
+    sizeRange: [7, 13],
+    specFn: (v) => `text-[${v.size}px] uppercase tracking-[${v.tracking}em] muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', textTransform: 'uppercase', letterSpacing: v.tracking+'em',
+      fontWeight: weightValue(v.weight),
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'footer-badges',
+    name: 'Footer Badges',
+    sample: '// Zero-knowledge  // Local-only  // Privacy-first',
+    defaults: { size: 10, opacity: 95, weight: 'normal', tracking: 0, mono: false },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [8, 14],
+    specFn: (v) => `text-[${v.size}px] muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'descriptions',
+    name: 'Descriptions & Hints',
+    sample: 'IQR-based detection — skips identifiers and timestamps. One suggestion per day.',
+    defaults: { size: 10, opacity: 95, weight: 'normal', tracking: 0, mono: false },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [8, 14],
+    specFn: (v) => `text-[${v.size}px] muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'secondary-text',
+    name: 'Secondary Text & Labels',
+    sample: 'Upload a CSV or JSON — the file never leaves your browser',
+    defaults: { size: 12, opacity: 95, weight: 'medium', tracking: 0, mono: false },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [9, 16],
+    specFn: (v) => `text-[${v.size}px] muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'primary-content',
+    name: 'Primary Content',
+    sample: 'dataset-2024-q4.csv · 1200 rows · 23 anomalies',
+    defaults: { size: 12, opacity: 100, weight: 'normal', tracking: 0, mono: false },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [9, 16],
+    specFn: (v) => `text-[${v.size}px] foreground/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      color: `rgba(255,255,255,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'mono-filenames',
+    name: 'Mono — Filenames, Seeds',
+    sample: 'forgeme-42.json   seed 42   row_count: 1200',
+    defaults: { size: 12, opacity: 100, weight: 'normal', tracking: 0, mono: true },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [9, 16],
+    specFn: (v) => `text-[${v.size}px] font-mono muted-fg/${v.opacity} ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      fontFamily: 'ui-monospace, Consolas, monospace',
+      color: `rgba(178,178,178,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'error-text',
+    name: 'Error Messages',
+    sample: 'File format not supported — use CSV or JSON',
+    defaults: { size: 14, opacity: 100, weight: 'normal', tracking: 0, mono: false },
+    controls: ['size', 'opacity', 'weight'],
+    sizeRange: [10, 18],
+    specFn: (v) => `text-[${v.size}px] text-destructive ${v.weight}`,
+    styleFn:  (v) => ({
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      color: `rgba(248,113,113,${v.opacity/100})`,
+    }),
+  },
+  {
+    id: 'cta-button',
+    name: 'Primary CTA Button',
+    sample: 'Generate',
+    defaults: { size: 14, opacity: 100, weight: 'bold', tracking: 0, mono: false, isButton: true },
+    controls: ['size', 'weight'],
+    sizeRange: [11, 20],
+    specFn: (v) => `text-[${v.size}px] bg-primary text-primary-fg ${v.weight} px-7 py-2 rounded-[9px]`,
+    styleFn:  (v) => ({
+      display: 'inline-block',
+      fontSize: v.size+'px', fontWeight: weightValue(v.weight),
+      padding: '8px 28px', borderRadius: '9px',
+      background: 'rgba(235,235,235,1)', color: '#16171d',
+      border: 'none', fontFamily: 'inherit',
+    }),
+  },
+]
+
+function weightValue(w) {
+  return { normal: 400, medium: 500, semibold: 600, bold: 700 }[w] || 400
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const state = {}
+ELEMENTS.forEach(el => { state[el.id] = { ...el.defaults } })
+
+function isChanged(el) {
+  return JSON.stringify(state[el.id]) !== JSON.stringify(el.defaults)
+}
+
+function countChanged() {
+  return ELEMENTS.filter(el => isChanged(el)).length
+}
+
+function updateChangedTag() {
+  const n = countChanged()
+  const tag = document.getElementById('changed-tag')
+  tag.textContent = `${n} changed`
+  tag.style.display = n > 0 ? 'inline' : 'none'
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderAll() {
+  const grid = document.getElementById('grid')
+  grid.innerHTML = ''
+  ELEMENTS.forEach(el => grid.appendChild(buildCard(el)))
+}
+
+function buildCard(el) {
+  const card = document.createElement('div')
+  card.className = 'card'
+  card.id = `card-${el.id}`
+
+  // Header
+  const header = document.createElement('div')
+  header.className = 'card-header'
+
+  const title = document.createElement('div')
+  title.className = 'card-title'
+  title.textContent = el.name
+
+  const right = document.createElement('div')
+  right.className = 'card-header-right'
+
+  const spec = document.createElement('span')
+  spec.className = 'spec-badge'
+  spec.id = `spec-${el.id}`
+  spec.textContent = el.specFn(state[el.id])
+  spec.title = spec.textContent
+
+  const resetBtn = document.createElement('button')
+  resetBtn.className = 'reset-btn'
+  resetBtn.id = `reset-${el.id}`
+  resetBtn.title = 'Reset to original'
+  resetBtn.textContent = '↺'
+  resetBtn.onclick = () => resetElement(el)
+
+  right.appendChild(spec)
+  right.appendChild(resetBtn)
+  header.appendChild(title)
+  header.appendChild(right)
+  card.appendChild(header)
+
+  // Preview
+  const preview = document.createElement('div')
+  preview.className = 'card-preview'
+  const previewEl = el.defaults.isButton ? document.createElement('button') : document.createElement('span')
+  previewEl.id = `preview-${el.id}`
+  previewEl.textContent = el.sample
+  applyStyle(previewEl, el)
+  preview.appendChild(previewEl)
+  card.appendChild(preview)
+
+  // Original spec
+  const origEl = document.createElement('div')
+  origEl.className = 'card-original'
+  origEl.textContent = 'Original: ' + el.specFn(el.defaults)
+  card.appendChild(origEl)
+
+  // Controls
+  const controls = document.createElement('div')
+  controls.className = 'card-controls'
+
+  if (el.controls.includes('size')) {
+    controls.appendChild(buildSlider(el, 'size', 'Size', el.sizeRange[0], el.sizeRange[1], 1, v => v + 'px'))
+  }
+  if (el.controls.includes('opacity') && !el.defaults.isButton) {
+    controls.appendChild(buildSlider(el, 'opacity', 'Opacity', 10, 100, 5, v => v + '%'))
+  }
+  if (el.controls.includes('tracking') && el.defaults.tracking > 0) {
+    controls.appendChild(buildSlider(el, 'tracking', 'Tracking', 0.02, 0.30, 0.01, v => v.toFixed(2) + 'em'))
+  }
+  if (el.controls.includes('weight')) {
+    controls.appendChild(buildDropdown(el, 'weight', 'Weight', ['normal', 'medium', 'semibold', 'bold']))
+  }
+
+  card.appendChild(controls)
+  return card
+}
+
+function buildSlider(el, prop, label, min, max, step, fmt) {
+  const row = document.createElement('div')
+  row.className = 'control'
+
+  const lbl = document.createElement('span')
+  lbl.className = 'control-label'
+  lbl.textContent = label
+
+  const input = document.createElement('input')
+  input.type = 'range'
+  input.min = min; input.max = max; input.step = step
+  input.value = state[el.id][prop]
+  input.addEventListener('input', () => {
+    state[el.id][prop] = prop === 'tracking' ? parseFloat(input.value) : parseInt(input.value)
+    valEl.textContent = fmt(state[el.id][prop])
+    updateCard(el)
+  })
+
+  const valEl = document.createElement('span')
+  valEl.className = 'control-value'
+  valEl.textContent = fmt(state[el.id][prop])
+
+  row.appendChild(lbl)
+  row.appendChild(input)
+  row.appendChild(valEl)
+  return row
+}
+
+function buildDropdown(el, prop, label, options) {
+  const row = document.createElement('div')
+  row.className = 'control'
+
+  const lbl = document.createElement('span')
+  lbl.className = 'control-label'
+  lbl.textContent = label
+
+  const sel = document.createElement('select')
+  options.forEach(opt => {
+    const o = document.createElement('option')
+    o.value = opt; o.textContent = opt.charAt(0).toUpperCase() + opt.slice(1)
+    if (state[el.id][prop] === opt) o.selected = true
+    sel.appendChild(o)
+  })
+  sel.addEventListener('change', () => {
+    state[el.id][prop] = sel.value
+    updateCard(el)
+  })
+
+  // Empty 3rd column for grid alignment
+  const empty = document.createElement('span')
+
+  row.appendChild(lbl)
+  row.appendChild(sel)
+  row.appendChild(empty)
+  return row
+}
+
+function applyStyle(el_dom, el_def) {
+  const styles = el_def.styleFn(state[el_def.id])
+  Object.assign(el_dom.style, styles)
+}
+
+function updateCard(el) {
+  const previewEl = document.getElementById(`preview-${el.id}`)
+  if (previewEl) applyStyle(previewEl, el)
+
+  const spec = document.getElementById(`spec-${el.id}`)
+  if (spec) {
+    const newSpec = el.specFn(state[el.id])
+    spec.textContent = newSpec
+    spec.title = newSpec
+    spec.className = `spec-badge${isChanged(el) ? ' changed' : ''}`
+  }
+
+  const resetBtn = document.getElementById(`reset-${el.id}`)
+  if (resetBtn) resetBtn.className = `reset-btn${isChanged(el) ? ' active' : ''}`
+
+  updateChangedTag()
+}
+
+function resetElement(el) {
+  state[el.id] = { ...el.defaults }
+  // Re-render the card in place
+  const oldCard = document.getElementById(`card-${el.id}`)
+  const newCard = buildCard(el)
+  oldCard.replaceWith(newCard)
+  updateChangedTag()
+}
+
+function resetAll() {
+  ELEMENTS.forEach(el => { state[el.id] = { ...el.defaults } })
+  renderAll()
+  updateChangedTag()
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportChanges() {
+  const date = new Date().toISOString().slice(0,10)
+  const changed = ELEMENTS.filter(el => isChanged(el))
+
+  let out = `StackMe Typography Changes — ${date}\n${'='.repeat(50)}\n\n`
+
+  if (changed.length === 0) {
+    out += 'No changes from defaults.\n'
+  } else {
+    changed.forEach(el => {
+      out += `${el.name}\n${'-'.repeat(el.name.length)}\n`
+      out += `  Was:  ${el.specFn(el.defaults)}\n`
+      out += `  Now:  ${el.specFn(state[el.id])}\n`
+      const d = el.defaults, c = state[el.id]
+      if (d.size    !== c.size)    out += `  size:     ${d.size}px → ${c.size}px\n`
+      if (d.opacity !== c.opacity) out += `  opacity:  ${d.opacity}% → ${c.opacity}%\n`
+      if (d.weight  !== c.weight)  out += `  weight:   ${d.weight} → ${c.weight}\n`
+      if (d.tracking!== c.tracking)out += `  tracking: ${d.tracking}em → ${c.tracking}em\n`
+      out += '\n'
+    })
+  }
+
+  out += `\nAll current values:\n${'─'.repeat(50)}\n`
+  ELEMENTS.forEach(el => {
+    out += `${el.name.padEnd(32)} ${el.specFn(state[el.id])}\n`
+  })
+
+  const blob = new Blob([out], { type: 'text/plain' })
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: `stackme-typography-${date}.txt`
+  })
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderAll()
+</script>
+</body>
+</html>
