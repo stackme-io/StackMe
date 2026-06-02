@@ -34,14 +34,17 @@ export function GenerateControls({
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             {t('format')}
           </label>
-          <select
-            value={format}
-            onChange={e => onFormatChange(e.target.value)}
-            className="px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring appearance-none w-full"
-          >
-            <option value="JSON">JSON</option>
-            <option value="CSV">CSV</option>
-          </select>
+          <div className="relative">
+            <select
+              value={format}
+              onChange={e => onFormatChange(e.target.value)}
+              className="px-3 py-1.5 pr-7 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring appearance-none w-full cursor-pointer"
+            >
+              <option value="JSON">JSON</option>
+              <option value="CSV">CSV</option>
+            </select>
+            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 text-[10px]">▾</span>
+          </div>
           <div className="h-4" />
         </div>
 

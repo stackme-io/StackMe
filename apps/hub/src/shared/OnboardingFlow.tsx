@@ -29,14 +29,14 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           </button>
 
           {/* Steps row */}
-          <div className="flex items-start gap-3 pr-6">
+          <div className="flex items-center gap-2 pr-6">
             {steps.map((step, i) => (
               <>
-                <div key={step.title} className="flex flex-col gap-0.5 min-w-0">
+                <div key={step.title} className="flex-1 flex flex-col gap-0.5 bg-muted/20 border border-border/40 rounded-lg px-3 py-2.5 min-w-0">
                   <span className="text-[9px] font-mono text-muted-foreground/80 uppercase tracking-widest">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className="text-xs font-medium text-foreground whitespace-nowrap">
+                  <span className="text-xs font-medium text-foreground">
                     {step.title}
                   </span>
                   <span className="text-[10px] text-muted-foreground/95 leading-relaxed">
@@ -44,7 +44,7 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
                   </span>
                 </div>
                 {i < steps.length - 1 && (
-                  <span key={`arrow-${i}`} className="text-muted-foreground/25 text-base flex-shrink-0 mt-4">
+                  <span key={`arrow-${i}`} className="text-muted-foreground/40 text-sm flex-shrink-0">
                     →
                   </span>
                 )}
