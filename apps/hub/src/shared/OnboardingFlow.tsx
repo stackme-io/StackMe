@@ -32,7 +32,7 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           <div className="flex items-center gap-2 pr-6">
             {steps.map((step, i) => (
               <>
-                <div key={step.title} className="flex-1 flex flex-col gap-0.5 bg-muted/20 border border-muted-foreground/40 rounded-lg px-3 py-2.5 min-w-0">
+                <div key={step.title} className="flex-1 flex flex-col gap-0.5 bg-muted/20 border border-muted-foreground/30 rounded-lg px-3 py-2.5 min-w-0">
                   <span className="text-[9px] font-mono text-muted-foreground/80 uppercase tracking-widest">
                     {String(i + 1).padStart(2, '0')}
                   </span>
