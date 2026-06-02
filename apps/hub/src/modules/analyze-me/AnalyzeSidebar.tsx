@@ -43,11 +43,11 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
 
           <div className="flex flex-col">
             <div className="flex items-center justify-between px-2 py-1">
-              <span className="text-xs text-muted-foreground/70">{t('rows')}</span>
+              <span className="text-xs text-muted-foreground/95">{t('rows')}</span>
               <strong className="text-xs text-foreground">{result.rows_total}</strong>
             </div>
             <div className="flex items-center justify-between px-2 py-1">
-              <span className="text-xs text-muted-foreground/70">{t('anomalies')}</span>
+              <span className="text-xs text-muted-foreground/95">{t('anomalies')}</span>
               <strong className="text-xs text-foreground">{result.anomalies_count}</strong>
             </div>
             <div className="flex items-center justify-between px-2 py-1">
@@ -82,14 +82,14 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <span className={`text-xs font-medium ${sensitivity === opt.id ? 'text-teal-300' : 'text-muted-foreground/70'}`}>
+                <span className={`text-xs font-medium ${sensitivity === opt.id ? 'text-teal-300' : 'text-muted-foreground/95'}`}>
                   {t(opt.labelKey)}
                 </span>
                 {opt.recommended && (
-                  <span className="text-[9px] text-muted-foreground/40">{t('sensitivityRec')}</span>
+                  <span className="text-[9px] text-muted-foreground/80">{t('sensitivityRec')}</span>
                 )}
               </div>
-              <span className="text-[10px] text-muted-foreground/50 leading-relaxed mt-0.5">
+              <span className="text-[10px] text-muted-foreground/95 leading-relaxed mt-0.5">
                 {t(opt.descKey)}
               </span>
             </button>
@@ -99,7 +99,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
           onClick={() => setHintOpen(o => !o)}
           className="flex items-center gap-1 mt-2 px-2 text-left group"
         >
-          <span className="text-[9px] text-muted-foreground/50 group-hover:text-muted-foreground/70 transition-colors">
+          <span className="text-[9px] text-muted-foreground/80 group-hover:text-muted-foreground/70 transition-colors">
             {t('sensitivityAffects')}
           </span>
           <span
@@ -111,7 +111,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
         </button>
         <div className={`grid transition-all duration-200 ${hintOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="overflow-hidden">
-            <p className="mt-1.5 mx-2 px-2 py-2 rounded-md bg-muted/30 border border-border/40 text-[9px] text-muted-foreground/70 leading-relaxed">
+            <p className="mt-1.5 mx-2 px-2 py-2 rounded-md bg-muted/30 border border-border/40 text-[9px] text-muted-foreground/95 leading-relaxed">
               {t('sensitivityHint')}
             </p>
           </div>

@@ -48,7 +48,7 @@ export function GenerateControls({
         <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center justify-between">
             {t('rowCount')}
-            <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/75">
+            <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/95">
               {t('rowLimitHint', { max: MAX_ROWS })}
             </span>
           </label>
@@ -86,7 +86,7 @@ export function GenerateControls({
               className="w-[180px] px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
-              <p className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
+              <p className="text-[10px] text-muted-foreground/95 whitespace-nowrap">
                 ≈ {total} corrupted rows: {breakdown}
               </p>
             )}
@@ -126,7 +126,7 @@ export function GenerateControls({
             ↺
           </button>
         </div>
-        <span className="ml-auto text-[10px] text-muted-foreground/40">
+        <span className="ml-auto text-[10px] text-muted-foreground/80">
           {t('deterministicNote')}
         </span>
       </div>

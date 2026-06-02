@@ -123,9 +123,9 @@ export default function NotifyMePage() {
 
       {/* List */}
       {loading ? (
-        <p className="text-xs text-muted-foreground/50 py-8 text-center">{t('common.loading')}</p>
+        <p className="text-xs text-muted-foreground/95 py-8 text-center">{t('common.loading')}</p>
       ) : visible.length === 0 ? (
-        <p className="text-xs text-muted-foreground/50 py-8 text-center">
+        <p className="text-xs text-muted-foreground/95 py-8 text-center">
           {filter === 'unread' ? t('notify.emptyUnread') : t('notify.emptyAll')}
         </p>
       ) : (
@@ -154,14 +154,14 @@ export default function NotifyMePage() {
                   {n.title}
                 </p>
                 {n.body && (
-                  <p className="text-[11px] text-muted-foreground/60 mt-0.5 leading-relaxed">
+                  <p className="text-[11px] text-muted-foreground/95 mt-0.5 leading-relaxed">
                     {n.body}
                   </p>
                 )}
               </div>
 
               {/* Time */}
-              <span className="text-[10px] text-muted-foreground/40 flex-shrink-0 mt-0.5">
+              <span className="text-[10px] text-muted-foreground/80 flex-shrink-0 mt-0.5">
                 {timeAgo(n.created_at, t, i18n.language)}
               </span>
             </div>

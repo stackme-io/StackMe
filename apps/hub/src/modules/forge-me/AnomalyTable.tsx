@@ -119,7 +119,7 @@ export function AnomalyTable({
                       key={col}
                       className={`px-3 py-2 truncate border-b border-border/40 ${
                         isId
-                          ? 'text-xs font-mono text-muted-foreground/50'
+                          ? 'text-xs font-mono text-muted-foreground/80'
                           : isAnomalyCell
                           ? 'text-sm text-amber-400 font-medium'
                           : 'text-sm text-foreground'

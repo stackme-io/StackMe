@@ -45,7 +45,7 @@ export function RowInspect({
     <div className="w-80 flex-shrink-0 border-l border-border bg-background flex flex-col overflow-hidden">
 
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/95">
           {rowIndex !== null ? `Row #${rowIndex + 1}` : t('inspector')}
         </p>
         <button
@@ -61,7 +61,7 @@ export function RowInspect({
         {rowIndex === null && (
           <div className="flex flex-col gap-1.5 mt-2">
             <p className="text-sm font-medium text-foreground">{t('noAnomalies')}</p>
-            <p className="text-xs text-muted-foreground/70">
+            <p className="text-xs text-muted-foreground/95">
               {t('noAnomaliesTip')}
             </p>
           </div>
@@ -69,7 +69,7 @@ export function RowInspect({
 
         {rowIndex !== null && hiddenByFilter && (
           <div className="flex flex-col gap-2 mt-2">
-            <p className="text-xs text-muted-foreground/75">
+            <p className="text-xs text-muted-foreground/95">
               {t('rowHidden')}
             </p>
             <button
@@ -86,7 +86,7 @@ export function RowInspect({
             {rowAnomalies.length === 0 ? (
               <div className="flex flex-col gap-1 mt-2">
                 <p className="text-sm font-medium text-foreground">{t('healthyRow')}</p>
-                <p className="text-xs text-muted-foreground/70">{t('noAnomaliesDetected')}</p>
+                <p className="text-xs text-muted-foreground/95">{t('noAnomaliesDetected')}</p>
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -100,17 +100,17 @@ export function RowInspect({
                       </span>
                       <div className="flex flex-col gap-1">
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-muted-foreground/70 flex-shrink-0">{t('columnHeader')}</span>
+                          <span className="text-xs text-muted-foreground/95 flex-shrink-0">{t('columnHeader')}</span>
                           <span className="text-xs text-foreground font-mono">{a.column}</span>
                         </div>
                         {a.original_value !== null && (
                           <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-xs text-muted-foreground/70 flex-shrink-0">{t('originalHeader')}</span>
+                            <span className="text-xs text-muted-foreground/95 flex-shrink-0">{t('originalHeader')}</span>
                             <span className="text-xs text-foreground font-mono">{a.original_value}</span>
                           </div>
                         )}
                         {a.description && (
-                          <p className="text-xs text-muted-foreground/75 leading-relaxed mt-0.5">
+                          <p className="text-xs text-muted-foreground/95 leading-relaxed mt-0.5">
                             {a.description}
                           </p>
                         )}
@@ -123,13 +123,13 @@ export function RowInspect({
 
             {rowData && (
               <div className="border-t border-border/40 pt-3 mt-1">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70 mb-2">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/95 mb-2">
                   {t('rowData')}
                 </p>
                 <div className="flex flex-col gap-1">
                   {Object.entries(rowData).map(([key, val]) => (
                     <div key={key} className="flex items-baseline justify-between gap-2">
-                      <span className="text-xs text-muted-foreground/70 flex-shrink-0">{key}</span>
+                      <span className="text-xs text-muted-foreground/95 flex-shrink-0">{key}</span>
                       <span className="text-xs text-foreground font-mono break-all text-right">
                         {val === null || val === undefined
                           ? <span className="text-red-400">NULL</span>

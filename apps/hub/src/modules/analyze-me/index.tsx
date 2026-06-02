@@ -151,7 +151,7 @@ export default function AnalyzeMePage() {
 
           <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>
             <div className="max-w-xl">
-              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/70 mb-3">
+              <p className="text-[9px] uppercase tracking-widest text-muted-foreground/95 mb-3">
                 {t('technologiesLabel')}
               </p>
               <div className="flex flex-col gap-1.5 mb-6">
@@ -159,9 +159,9 @@ export default function AnalyzeMePage() {
                   <div key={item.name} className="flex items-center justify-between py-1.5 border-b border-border/50">
                     <div>
                       <span className="text-xs text-foreground">{item.name}</span>
-                      <span className="text-xs text-muted-foreground/70 ml-2">{item.desc}</span>
+                      <span className="text-xs text-muted-foreground/95 ml-2">{item.desc}</span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground/70">{item.license}</span>
+                    <span className="text-[10px] text-muted-foreground/95">{item.license}</span>
                   </div>
                 ))}
               </div>
@@ -174,7 +174,7 @@ export default function AnalyzeMePage() {
                 >
                   {t('github')}
                 </a>
-                <span className="text-xs text-muted-foreground/70">{t('badge')}</span>
+                <span className="text-xs text-muted-foreground/95">{t('badge')}</span>
               </div>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function AnalyzeMePage() {
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-[10px] text-muted-foreground/75">
+            <span key={item} className="text-[10px] text-muted-foreground/95">
               <span className="mr-1 text-muted-foreground/40">//</span>{item}
             </span>
           ))}

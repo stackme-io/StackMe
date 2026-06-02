@@ -82,7 +82,7 @@ export function ResultBar({
               AnalyzeMe
             </button>
             {!analyzeInstalled && (
-              <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/70 leading-relaxed whitespace-normal">
+              <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block z-20 w-52 px-2.5 py-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground/95 leading-relaxed whitespace-normal">
                 Install <span className="text-primary">AnalyzeMe</span> via MarketMe to unlock this feature.
               </div>
             )}

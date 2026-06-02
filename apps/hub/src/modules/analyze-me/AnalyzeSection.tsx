@@ -134,15 +134,15 @@ export function AnalyzeSection({
             className="flex items-center gap-2 bg-muted/20 rounded-xl px-4 py-1.5 mb-3 cursor-pointer hover:bg-muted/40 transition-colors"
             onClick={() => setCollapsed(false)}
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-muted-foreground/70 flex-shrink-0">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-muted-foreground/95 flex-shrink-0">
               <path d="M2 1.5h5.5L10 4v6.5H2V1.5z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
               <path d="M7 1.5V4.5h3" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
             </svg>
-            <span className="text-xs text-muted-foreground/70 font-mono">{fileName}</span>
+            <span className="text-xs text-muted-foreground/95 font-mono">{fileName}</span>
             {result && (
               <>
                 <span className="text-muted-foreground/30 text-sm">·</span>
-                <span className="text-xs text-muted-foreground/70">{result.rows_total} rows</span>
+                <span className="text-xs text-muted-foreground/95">{result.rows_total} rows</span>
                 <span className="text-muted-foreground/30 text-sm">·</span>
                 <span className="text-xs text-amber-500">{result.anomalies_count} anomalies</span>
               </>
@@ -166,18 +166,18 @@ export function AnalyzeSection({
 
       {forgeData && (
         <div className="mt-3 mb-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-muted/20">
-          <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/70" />
-          <span className="text-xs text-muted-foreground/70">
+          <i className="ti ti-arrows-transfer-up text-sm text-muted-foreground/95" />
+          <span className="text-xs text-muted-foreground/95">
             {t('importedFrom')} <span className="text-violet-300">ForgeMe</span>
           </span>
           <span className="text-muted-foreground/30 text-sm">·</span>
           <span className="text-xs text-amber-500">{forgeData.anomalies.length} {t('injected')}</span>
           <span className="text-muted-foreground/30 text-sm">·</span>
-          <span className="text-xs text-muted-foreground/70 font-mono">seed {forgeData.seed}</span>
+          <span className="text-xs text-muted-foreground/95 font-mono">seed {forgeData.seed}</span>
           {loading ? (
             <>
               <span className="text-muted-foreground/30 text-sm">·</span>
-              <span className="text-xs text-muted-foreground/70">{progress ?? t('analyzing')}</span>
+              <span className="text-xs text-muted-foreground/95">{progress ?? t('analyzing')}</span>
             </>
           ) : verdictCounts && (
             <>

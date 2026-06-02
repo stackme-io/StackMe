@@ -139,7 +139,7 @@ export default function ForgeMePage() {
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-[10px] text-muted-foreground/75">
+            <span key={item} className="text-[10px] text-muted-foreground/95">
               <span className="mr-1 text-muted-foreground/40">//</span>{item}
             </span>
           ))}

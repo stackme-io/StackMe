@@ -112,7 +112,7 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
           <span className="text-xs text-muted-foreground">
             {fileName ?? t('uploadClick')}
           </span>
-          <span className="text-[10px] text-muted-foreground/40">{t('uploadHint')}</span>
+          <span className="text-[10px] text-muted-foreground/80">{t('uploadHint')}</span>
           <input
             type="file"
             accept=".csv"
@@ -127,7 +127,7 @@ export function SchemaSection({ onSchemaReady }: SchemaSectionProps) {
 
       <div className="flex items-center gap-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
-        <span className="text-[10px] text-muted-foreground/50">
+        <span className="text-[10px] text-muted-foreground/95">
           {t('privacyNote')}
         </span>
       </div>

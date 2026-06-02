@@ -22,7 +22,7 @@ function SectionDivider({ label, accent }: { label: string; accent?: boolean }) 
   return (
     <div className="flex items-center gap-3 mb-3">
       <div className={`h-px flex-1 ${accent ? 'bg-primary/30' : 'bg-border'}`} />
-      <p className={`text-[9px] uppercase tracking-widest font-medium ${accent ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+      <p className={`text-[9px] uppercase tracking-widest font-medium ${accent ? 'text-foreground' : 'text-muted-foreground/95'}`}>
         {label}
       </p>
       <div className={`h-px flex-1 ${accent ? 'bg-primary/30' : 'bg-border'}`} />
@@ -40,7 +40,7 @@ function RoadmapRow({ prefix, title, desc, action }: {
     <div className="flex items-baseline gap-2 py-1 border-b border-border/20 last:border-0">
       <span className="text-muted-foreground/40 text-xs flex-shrink-0 w-3">{prefix}</span>
       <span className="text-xs text-foreground w-36 flex-shrink-0 whitespace-nowrap overflow-hidden text-ellipsis">{title}</span>
-      <span className="text-xs text-muted-foreground/75 flex-1">{desc}</span>
+      <span className="text-xs text-muted-foreground/95 flex-1">{desc}</span>
       {action}
     </div>
   )
@@ -191,7 +191,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
         {(t('done', { returnObjects: true }) as DoneGroup[]).map((group, gi) => (
           <div key={group.group} className="mb-2">
             {gi > 0 && <div className="mt-4" />}
-            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">{group.group}</p>
+            <p className="text-[9px] uppercase tracking-widest text-muted-foreground/95 mb-1">{group.group}</p>
             {group.items.map(item => (
               <RoadmapRow key={item.title} prefix="✓" title={item.title} desc={item.desc} />
             ))}
@@ -202,7 +202,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
       {/* Coming up - with voting */}
       <div className="mb-6">
         <SectionDivider label={t('nextLabel')} accent />
-        <p className="text-[10px] text-muted-foreground/50 mb-3 leading-relaxed">{t('nextDesc')}</p>
+        <p className="text-[10px] text-muted-foreground/95 mb-3 leading-relaxed">{t('nextDesc')}</p>
         {(t('next', { returnObjects: true }) as RoadmapItem[]).map(item => {
           const key   = toKey(item.title)
           const voted = userVotes.has(key)
@@ -245,7 +245,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
           className="w-full flex items-center gap-3 mb-3 group"
         >
           <div className="h-px flex-1 bg-border" />
-          <p className="text-[9px] uppercase tracking-widest font-medium text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
+          <p className="text-[9px] uppercase tracking-widest font-medium text-muted-foreground/95 group-hover:text-muted-foreground transition-colors">
             {t('laterLabel')} {laterOpen ? '−' : '+'}
           </p>
           <div className="h-px flex-1 bg-border" />
@@ -263,10 +263,10 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
             const tipId = `sugg-${s.id}`
             return (
               <div key={s.id} className="flex items-start gap-2 py-1.5 border-b border-border/20 last:border-0">
-                <span className="text-[10px] text-muted-foreground/40 flex-shrink-0 font-mono mt-0.5">
+                <span className="text-[10px] text-muted-foreground/80 flex-shrink-0 font-mono mt-0.5">
                   {s.display_name}
                 </span>
-                <span className="text-xs text-muted-foreground/75 flex-1 leading-relaxed">{s.text}</span>
+                <span className="text-xs text-muted-foreground/95 flex-1 leading-relaxed">{s.text}</span>
                 <div className="relative flex-shrink-0">
                   <button
                     onClick={() => handleSuggVote(s)}
@@ -293,7 +293,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
       <div>
         <SectionDivider label={t('suggestLabel')} accent />
         {submitted ? (
-          <p className="text-[11px] text-muted-foreground/60 py-2">
+          <p className="text-[11px] text-muted-foreground/95 py-2">
             {t('suggestionThanks')}
           </p>
         ) : (
@@ -307,7 +307,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
               rows={3}
             />
             <div className="flex items-center justify-between mt-2">
-              <label className="flex items-center gap-2 text-[10px] text-muted-foreground/50 cursor-pointer">
+              <label className="flex items-center gap-2 text-[10px] text-muted-foreground/95 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={showUsername}
@@ -316,7 +316,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
                 />
                 {t('suggestUsernameLabel')}
               </label>
-              <p className="text-[10px] text-muted-foreground/40">{t('suggestHint')}</p>
+              <p className="text-[10px] text-muted-foreground/80">{t('suggestHint')}</p>
             </div>
             {submitError && (
               <p className="text-[10px] text-red-400 mt-1">{t('errorGeneric')}</p>
@@ -336,7 +336,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
               )}
             </div>
             {!isSignedIn && (
-              <p className="text-[10px] text-muted-foreground/40 mt-1">{t('signInToSubmit')}</p>
+              <p className="text-[10px] text-muted-foreground/80 mt-1">{t('signInToSubmit')}</p>
             )}
           </>
         )}

@@ -33,13 +33,13 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
             {steps.map((step, i) => (
               <>
                 <div key={step.title} className="flex flex-col gap-0.5 min-w-0">
-                  <span className="text-[9px] font-mono text-muted-foreground/35 uppercase tracking-widest">
+                  <span className="text-[9px] font-mono text-muted-foreground/80 uppercase tracking-widest">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <span className="text-xs font-medium text-foreground whitespace-nowrap">
                     {step.title}
                   </span>
-                  <span className="text-[10px] text-muted-foreground/50 leading-relaxed">
+                  <span className="text-[10px] text-muted-foreground/95 leading-relaxed">
                     {step.desc}
                   </span>
                 </div>

@@ -40,7 +40,7 @@ function AdminPanel({ getToken }: { getToken: () => Promise<string | null> }) {
 
   return (
     <div className="flex flex-col gap-3 p-4 rounded-xl border border-border bg-muted/10">
-      <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 font-medium">
+      <p className="text-[9px] uppercase tracking-widest text-muted-foreground/95 font-medium">
         {t('account.adminLabel')}
       </p>
 
@@ -161,7 +161,7 @@ export default function AccountMePage() {
         <div className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm text-muted-foreground select-none">
           {email}
         </div>
-        <p className="text-[11px] text-muted-foreground/60">
+        <p className="text-[11px] text-muted-foreground/95">
           {t('account.emailNote')}
         </p>
       </div>
@@ -176,7 +176,7 @@ export default function AccountMePage() {
           placeholder={t('account.nicknamePlaceholder')}
           className="px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         />
-        <p className="text-[11px] text-muted-foreground/60">
+        <p className="text-[11px] text-muted-foreground/95">
           {t('account.nicknameNote')}
         </p>
         <button
