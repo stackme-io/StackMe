@@ -44,7 +44,10 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
                   </svg>
                 )}
               </span>
-              <span className="text-xs flex-1">{a.label}</span>
+              <span className="flex flex-col flex-1 min-w-0">
+                <span className="text-xs">{a.label}</span>
+                <span className="text-[10px] text-muted-foreground/80 leading-relaxed">{a.description}</span>
+              </span>
             </button>
           ))}
 
