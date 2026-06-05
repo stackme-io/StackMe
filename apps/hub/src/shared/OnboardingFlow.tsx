@@ -31,9 +31,16 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           </button>
 
           {/* Header */}
-          <div className="flex items-center gap-2 mb-3 pr-8">
+          <div className="flex items-center gap-2 mb-3 pr-10">
             <Lightbulb className="w-4 h-4 text-primary flex-shrink-0" />
             <span className="text-sm font-semibold text-foreground">{t('common.howItWorks')}</span>
+            <span className="text-muted-foreground/30 select-none mx-0.5">|</span>
+            <button
+              onClick={onHidePermanent}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t('common.gotIt')}
+            </button>
           </div>
 
           {/* Steps */}
@@ -56,15 +63,6 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
             ))}
           </div>
 
-          {/* Got it */}
-          <div className="flex justify-end mt-3">
-            <button
-              onClick={onHidePermanent}
-              className="text-xs font-medium text-muted-foreground border border-border rounded-md px-3 py-1.5 hover:bg-muted hover:text-foreground transition-colors"
-            >
-              {t('common.gotIt')}
-            </button>
-          </div>
 
         </div>
       </div>

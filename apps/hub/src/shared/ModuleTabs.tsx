@@ -49,7 +49,7 @@ export function ModuleTabs({ tabs, activeTab, onChange, onShowHint }: ModuleTabs
       {onShowHint && (
         <button
           onClick={onShowHint}
-          className="ml-auto pb-1.5 text-[11px] text-muted-foreground/40 hover:text-foreground transition-colors"
+          className="ml-auto text-xs font-medium text-muted-foreground border border-border/60 rounded-md px-2 py-0.5 hover:text-foreground hover:border-border hover:bg-muted/40 transition-colors"
           aria-label="Show hints"
         >
           ?
