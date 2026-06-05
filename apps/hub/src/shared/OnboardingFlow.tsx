@@ -19,7 +19,7 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
   return (
     <div className={`grid transition-all duration-300 ease-out ${visible ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
       <div className="overflow-hidden">
-        <div className="relative border border-border border-l-[3px] border-l-primary bg-card shadow-sm rounded-xl px-5 py-4 mb-5">
+        <div className="relative border border-border border-l-[3px] border-l-primary bg-card shadow-sm rounded-xl px-5 pt-3 pb-4 mb-5">
 
           {/* × session close */}
           <button
@@ -31,7 +31,7 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           </button>
 
           {/* Header */}
-          <div className="flex items-center gap-1.5 mb-3 pr-10">
+          <div className="flex items-center gap-1.5 pb-2.5 mb-2.5 border-b border-border/30 pr-10">
             <Lightbulb className="w-3 h-3 text-primary flex-shrink-0" />
             <span className="text-[11px] font-semibold text-foreground">{t('common.howItWorks')}</span>
             <span className="text-muted-foreground/30 select-none mx-0.5">|</span>
