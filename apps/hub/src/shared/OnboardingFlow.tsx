@@ -1,4 +1,6 @@
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
+import { X, ChevronRight, Lightbulb } from 'lucide-react'
 
 interface Step {
   title: string
@@ -15,48 +17,50 @@ interface OnboardingFlowProps {
 export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent }: OnboardingFlowProps) {
   const { t } = useTranslation()
   return (
-    <div className={`grid transition-all duration-200 ${visible ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+    <div className={`grid transition-all duration-300 ease-out ${visible ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
       <div className="overflow-hidden">
-        <div className="relative border border-border/70 bg-muted/10 rounded-xl px-5 py-3 mb-5">
+        <div className="relative border border-border border-l-[3px] border-l-primary bg-card shadow-sm rounded-xl px-5 py-4 mb-5">
 
           {/* × session close */}
           <button
             onClick={onHideSession}
-            className="absolute top-2.5 right-3 text-muted-foreground/70 hover:text-foreground transition-colors text-sm leading-none"
-            aria-label="Hide"
+            aria-label={t('common.hide')}
+            className="absolute top-2.5 right-2.5 p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
-            ×
+            <X className="w-4 h-4" />
           </button>
 
-          {/* Steps row */}
-          <div className="flex items-center gap-2 pr-6">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-3 pr-8">
+            <Lightbulb className="w-4 h-4 text-primary flex-shrink-0" />
+            <span className="text-sm font-semibold text-foreground">{t('common.howItWorks')}</span>
+          </div>
+
+          {/* Steps */}
+          <div className="flex flex-col md:flex-row md:items-start gap-3">
             {steps.map((step, i) => (
-              <>
-                <div key={step.title} className="flex-1 flex flex-col gap-0.5 bg-muted/20 border border-muted-foreground/30 rounded-lg px-3 py-2.5 min-w-0">
-                  <span className="text-[9px] font-mono text-muted-foreground/80 uppercase tracking-widest">
-                    {String(i + 1).padStart(2, '0')}
+              <Fragment key={step.title}>
+                <div className="flex-1 flex gap-3 min-w-0">
+                  <span className="flex-shrink-0 text-sm font-semibold text-primary w-4 text-center leading-relaxed">
+                    {i + 1}
                   </span>
-                  <span className="text-xs font-medium text-foreground">
-                    {step.title}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground/95 leading-relaxed">
-                    {step.desc}
-                  </span>
+                  <div className="min-w-0">
+                    <span className="block text-sm font-semibold text-foreground">{step.title}</span>
+                    <span className="block text-xs text-muted-foreground leading-relaxed">{step.desc}</span>
+                  </div>
                 </div>
                 {i < steps.length - 1 && (
-                  <span key={`arrow-${i}`} className="text-muted-foreground/80 text-sm flex-shrink-0">
-                    →
-                  </span>
+                  <ChevronRight className="hidden md:block w-4 h-4 mt-1 text-muted-foreground/60 flex-shrink-0" />
                 )}
-              </>
+              </Fragment>
             ))}
           </div>
 
           {/* Got it */}
-          <div className="flex justify-end mt-2">
+          <div className="flex justify-end mt-3">
             <button
               onClick={onHidePermanent}
-              className="text-[10px] text-muted-foreground/80 hover:text-foreground transition-colors"
+              className="text-xs font-medium text-muted-foreground border border-border rounded-md px-3 py-1.5 hover:bg-muted hover:text-foreground transition-colors"
             >
               {t('common.gotIt')}
             </button>

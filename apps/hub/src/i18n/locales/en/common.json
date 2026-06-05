@@ -41,7 +41,9 @@
   },
   "common": {
     "loading": "Loading...",
-    "gotIt": "Got it, don't show again"
+    "gotIt": "Got it, don't show again",
+    "howItWorks": "How it works",
+    "hide": "Hide"
   },
   "panel": {
     "emptyState": "Open a service from the menu above"

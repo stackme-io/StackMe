@@ -41,7 +41,9 @@
   },
   "common": {
     "loading": "Cargando...",
-    "gotIt": "Entendido, no mostrar de nuevo"
+    "gotIt": "Entendido, no mostrar de nuevo",
+    "howItWorks": "Cómo funciona",
+    "hide": "Ocultar"
   },
   "panel": {
     "emptyState": "Abre un servicio desde el menú de arriba"
