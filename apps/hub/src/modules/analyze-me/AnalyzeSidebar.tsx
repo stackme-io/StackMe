@@ -35,12 +35,11 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
 
-      {result && counts && (
+      {result && counts ? (
         <div className="p-3 pb-2 border-b border-border">
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
             {t('overviewLabel')}
           </p>
-
           <div className="flex flex-col">
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-xs text-muted-foreground/95">{t('rows')}</span>
@@ -61,6 +60,35 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-xs text-amber-400">{t('outliers')}</span>
               <strong className="text-xs text-amber-400">{counts.outlier}</strong>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-3 pb-2 border-b border-border">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+            {t('detectsLabel')}
+          </p>
+          <div className="flex flex-col">
+            <div className="flex items-start gap-2 px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0 mt-[5px]" />
+              <div>
+                <span className="block text-xs text-foreground">{t('nulls')}</span>
+                <span className="block text-[11px] text-muted-foreground/95 leading-relaxed">{t('detectsNullsDesc')}</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0 mt-[5px]" />
+              <div>
+                <span className="block text-xs text-foreground">{t('duplicates')}</span>
+                <span className="block text-[11px] text-muted-foreground/95 leading-relaxed">{t('detectsDuplicatesDesc')}</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-[5px]" />
+              <div>
+                <span className="block text-xs text-foreground">{t('outliers')}</span>
+                <span className="block text-[11px] text-muted-foreground/95 leading-relaxed">{t('detectsOutliersDesc')}</span>
+              </div>
             </div>
           </div>
         </div>
