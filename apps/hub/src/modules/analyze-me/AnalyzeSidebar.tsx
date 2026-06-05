@@ -78,7 +78,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
               className={`flex flex-col px-2 py-2 rounded-md text-left transition-colors ${
                 sensitivity === opt.id
                   ? 'bg-teal-950/40 border border-teal-800/50'
-                  : 'hover:bg-muted/50 border border-border/30'
+                  : 'hover:bg-muted/50 border border-transparent'
               }`}
             >
               <div className="flex items-center gap-1.5">
@@ -89,7 +89,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
                   <span className="text-[10px] text-muted-foreground">{t('sensitivityRec')}</span>
                 )}
               </div>
-              <span className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+              <span className="text-[10px] text-muted-foreground/95 leading-relaxed mt-0.5">
                 {t(opt.descKey)}
               </span>
             </button>
