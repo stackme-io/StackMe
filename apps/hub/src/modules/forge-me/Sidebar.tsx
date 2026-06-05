@@ -46,7 +46,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
               </span>
               <span className="flex flex-col flex-1 min-w-0">
                 <span className="text-xs">{a.label}</span>
-                <span className="text-[10px] text-muted-foreground/80 leading-relaxed">{a.description}</span>
+                <span className="text-[11px] text-muted-foreground/80 leading-relaxed">{a.description}</span>
               </span>
             </button>
           ))}
@@ -73,7 +73,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
               {ANOMALIES_UPCOMING.map(a => (
                 <div key={a.id} className="flex flex-col px-2 py-1.5 rounded-md">
                   <span className="text-xs text-muted-foreground/95">{a.label}</span>
-                  <span className="text-[10px] text-muted-foreground/95">{a.description}</span>
+                  <span className="text-[11px] text-muted-foreground/95">{a.description}</span>
                 </div>
               ))}
             </div>

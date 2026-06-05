@@ -89,7 +89,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
                   <span className="text-[10px] text-muted-foreground">{t('sensitivityRec')}</span>
                 )}
               </div>
-              <span className="text-[10px] text-muted-foreground/95 leading-relaxed mt-0.5">
+              <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
                 {t(opt.descKey)}
               </span>
             </button>
