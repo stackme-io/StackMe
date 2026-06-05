@@ -21,7 +21,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
 
       <div className="p-3 pb-2 border-b border-border">
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
           {t('sidebarAnomalyMix')}
         </p>
         <div className="flex flex-col gap-0.5">
@@ -46,22 +46,22 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
               </span>
               <span className="flex flex-col flex-1 min-w-0">
                 <span className="text-xs">{a.label}</span>
-                <span className="text-[10px] text-muted-foreground/80 leading-relaxed">{a.description}</span>
+                <span className="text-xs text-muted-foreground leading-relaxed">{a.description}</span>
               </span>
             </button>
           ))}
 
           <button
             onClick={() => setUpcomingOpen(o => !o)}
-            className="flex items-center gap-1.5 px-2 py-1.5 mt-1 text-left text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            className="flex items-center gap-1.5 px-2 py-1.5 mt-1 text-left text-muted-foreground/70 hover:text-muted-foreground transition-colors"
           >
             <span
-              className="text-[10px] inline-block transition-transform duration-150"
+              className="text-xs inline-block transition-transform duration-150"
               style={{ transform: upcomingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               ⌄
             </span>
-            <span className="text-[10px]">
+            <span className="text-xs">
               {upcomingOpen
                 ? t('sidebarUpcomingHide')
                 : t('sidebarUpcomingShow', { count: ANOMALIES_UPCOMING.length })}
@@ -73,7 +73,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
               {ANOMALIES_UPCOMING.map(a => (
                 <div key={a.id} className="flex flex-col px-2 py-1.5 rounded-md">
                   <span className="text-xs text-muted-foreground/95">{a.label}</span>
-                  <span className="text-[10px] text-muted-foreground/95">{a.description}</span>
+                  <span className="text-xs text-muted-foreground">{a.description}</span>
                 </div>
               ))}
             </div>
@@ -82,7 +82,7 @@ export function Sidebar({ selected, onToggle, viewMode, onViewModeChange }: Side
       </div>
 
       <div className="p-3 pb-2">
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-2">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
           {t('sidebarMode')}
         </p>
         <div className="flex flex-col gap-1.5">

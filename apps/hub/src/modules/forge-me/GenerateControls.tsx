@@ -51,7 +51,7 @@ export function GenerateControls({
         <div className="flex flex-col gap-1.5 w-[180px]">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center justify-between">
             {t('rowCount')}
-            <span className="text-[10px] normal-case tracking-normal font-normal text-muted-foreground/95">
+            <span className="text-xs normal-case tracking-normal font-normal text-muted-foreground">
               {t('rowLimitHint', { max: MAX_ROWS })}
             </span>
           </label>
@@ -67,7 +67,7 @@ export function GenerateControls({
           />
           <div className="h-4 flex items-center">
             {rowError && (
-              <span className="text-[10px] text-destructive">
+              <span className="text-xs text-destructive">
                 {t('rowLimitError', { max: MAX_ROWS })}
               </span>
             )}
@@ -89,7 +89,7 @@ export function GenerateControls({
               className="w-[180px] px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
             />
             {selectedAnomalies.size > 0 && !rowError && anomalyRate > 0 && (
-              <p className="text-[10px] text-muted-foreground/95 whitespace-nowrap">
+              <p className="text-xs text-muted-foreground whitespace-nowrap">
                 ≈ {total} corrupted rows: {breakdown}
               </p>
             )}
@@ -123,13 +123,13 @@ export function GenerateControls({
           />
           <button
             onClick={() => onSeedChange(Math.floor(Math.random() * 99999))}
-            className="text-[13px] text-muted-foreground/50 hover:text-foreground transition-colors"
+            className="text-[13px] text-muted-foreground/70 hover:text-foreground transition-colors"
             title={t('randomizeSeed')}
           >
             ↺
           </button>
         </div>
-        <span className="ml-auto text-[10px] text-muted-foreground/80">
+        <span className="ml-auto text-xs text-muted-foreground">
           {t('deterministicNote')}
         </span>
       </div>
