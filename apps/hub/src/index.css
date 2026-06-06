@@ -262,3 +262,25 @@ code {
     @apply bg-background text-foreground;}
   html {
     @apply font-sans;}}
+
+@media print {
+  html, body, #root {
+    height: auto !important;
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+  .overflow-y-auto,
+  .overflow-hidden,
+  .overflow-x-hidden {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .flex-1 {
+    flex: none !important;
+    height: auto !important;
+  }
+  [data-no-print] {
+    display: none !important;
+  }
+}
