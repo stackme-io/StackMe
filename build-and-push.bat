@@ -18,6 +18,21 @@ if "%COMMIT_MSG%"=="" (
 )
 
 echo.
+echo [0/3] Checking for changes...
+echo --------------------------------------
+
+cd /d "D:\My projects\StackMe"
+git status --porcelain > "%TEMP%\gitstatus.txt" 2>&1
+set /p GIT_STATUS=<"%TEMP%\gitstatus.txt"
+
+if "%GIT_STATUS%"=="" (
+  echo [SKIP] Nothing to commit. No build needed.
+  goto ask
+)
+
+echo [OK] Changes detected. Starting build...
+
+echo.
 echo [1/3] Building hub...
 echo --------------------------------------
 
@@ -39,7 +54,7 @@ git add .
 git commit -m "%COMMIT_MSG%"
 
 if %ERRORLEVEL% neq 0 (
-  echo [WARN] Nothing to commit or commit failed.
+  echo [WARN] Commit failed.
   goto ask
 )
 
