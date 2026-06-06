@@ -29,6 +29,10 @@ export default function AnalyzeMePage() {
     const tab = searchParams.get('tab')
     if (tab && VALID_TABS.includes(tab)) setActiveTab(tab)
   }, [searchParams])
+
+  useEffect(() => {
+    if (activeTab === 'security') setSidebarOpen(false)
+  }, [activeTab])
   const [sidebarOpen, setSidebarOpen]     = useState(true)
   const [filter, setFilter]               = useState<FilterType>('all')
   const [sensitivity, setSensitivity]       = useState<Sensitivity>('balanced')
@@ -125,27 +129,35 @@ export default function AnalyzeMePage() {
         />
       </aside>
 
-      <button
-        onClick={() => setSidebarOpen(o => !o)}
-        className="absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground/70 hover:text-foreground hover:bg-muted transition-all"
-        style={{ left: sidebarOpen ? '208px' : '0px' }}
-      >
-        <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
-      </button>
+      {activeTab !== 'security' && (
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          className="absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground/70 hover:text-foreground hover:bg-muted transition-all"
+          style={{ left: sidebarOpen ? '208px' : '0px' }}
+        >
+          <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
+        </button>
+      )}
 
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <div className="flex-1 overflow-y-auto px-6 pt-5">
-          <ModuleTabs
-            tabs={[
-              { id: 'work',     label: t('tabs.work')     },
-              { id: 'about',    label: t('tabs.roadmap')  },
-              { id: 'stack',    label: t('tabs.stack')    },
-              { id: 'security', label: t('tabs.security') },
-            ]}
-            activeTab={activeTab}
-            onChange={setActiveTab}
-            onShowHint={hintPermanent || !hintVisible ? handleShowHint : undefined}
-          />
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300"
+        style={activeTab === 'security' ? { background: '#f0efed' } : undefined}
+      >
+        <div
+          className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-6 pt-5'}`}
+        >
+          <div className={activeTab === 'security' ? 'px-6 pt-5' : ''}>
+            <ModuleTabs
+              tabs={[
+                { id: 'work',     label: t('tabs.work')     },
+                { id: 'about',    label: t('tabs.roadmap')  },
+                { id: 'stack',    label: t('tabs.stack')    },
+                { id: 'security', label: t('tabs.security') },
+              ]}
+              activeTab={activeTab}
+              onChange={setActiveTab}
+              onShowHint={hintPermanent || !hintVisible ? handleShowHint : undefined}
+            />
+          </div>
 
           <div style={{ display: activeTab === 'work' ? 'block' : 'none' }}>
             <OnboardingFlow
