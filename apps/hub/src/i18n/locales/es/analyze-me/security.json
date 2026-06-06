@@ -1,5 +1,5 @@
 {
-  "securityTitle": "StackMe — Revisión de Seguridad y Privacidad",
+  "securityTitle": "AnalyzeMe - Revisión de Seguridad y Privacidad",
   "securityFor": "Para Delegados de Protección de Datos y equipos de Seguridad de la Información · stackme-app.vercel.app · MIT License",
   "securityShare": "Copiar enlace",
   "securityPrint": "Imprimir",
@@ -7,12 +7,12 @@
 
   "securityDataTitle": "Resumen de arquitectura",
   "securityData": [
-    { "label": "Ubicación del procesamiento",   "status": "safe",  "badge": "Solo navegador",       "value": "Todo el análisis se ejecuta en el navegador del usuario mediante DuckDB-Wasm (motor SQL WebAssembly). Sin API de backend para datos." },
-    { "label": "Subida del archivo al servidor","status": "never", "badge": "Nunca.",               "value": "Los archivos son leídos por la File API del navegador y pasados directamente al motor WASM en memoria. Ningún archivo es transmitido." },
-    { "label": "Nombres de columnas / esquema", "status": "never", "badge": "Nunca transmitidos.",  "value": "El esquema se infiere localmente dentro de DuckDB-Wasm." },
-    { "label": "Resultados / datos de filas",   "status": "never", "badge": "Nunca transmitidos.",  "value": "Los resultados permanecen en la memoria del navegador hasta cerrar la pestaña." },
-    { "label": "Retención de datos",            "status": "zero",  "badge": "Cero.",               "value": "No se persiste ningún dato. Cerrar la pestaña borra todo." },
-    { "label": "API backend para datos",        "status": "none",  "badge": "Ninguna.",            "value": "El módulo api/client.ts existe solo para funciones de cuenta (no relacionado con herramientas de datos)." }
+    { "label": "Ubicación del procesamiento",    "status": "safe",  "badge": "Solo navegador",      "value": "Todo el análisis se ejecuta en el navegador del usuario mediante DuckDB-Wasm (motor SQL WebAssembly). Sin API de backend para datos." },
+    { "label": "Subida del archivo al servidor", "status": "never", "badge": "Nunca.",              "value": "Los archivos son leídos por la File API del navegador y pasados directamente al motor WASM en memoria. Ningún archivo es transmitido." },
+    { "label": "Nombres de columnas / esquema",  "status": "never", "badge": "Nunca transmitidos.", "value": "El esquema se infiere localmente dentro de DuckDB-Wasm." },
+    { "label": "Resultados / datos de filas",    "status": "never", "badge": "Nunca transmitidos.", "value": "Los resultados permanecen en la memoria del navegador hasta cerrar la pestaña." },
+    { "label": "Retención de datos",             "status": "zero",  "badge": "Cero.",              "value": "No se persiste ningún dato. Cerrar la pestaña borra todo." },
+    { "label": "API backend para datos",         "status": "none",  "badge": "Ninguna.",           "value": "El módulo api/client.ts existe solo para funciones de cuenta (no relacionado con herramientas de datos)." }
   ],
 
   "securityNetworkTitle": "Solicitudes de red",
@@ -26,31 +26,31 @@
 
   "securityHostingTitle": "Alojamiento e Infraestructura",
   "securityHosting": [
-    { "label": "Alojamiento estático", "status": "safe", "badge": "Vercel Edge",  "value": "Vercel Edge Network (certificado SOC 2 Tipo II). Sirve solo archivos estáticos precompilados." },
-    { "label": "Región del servidor",  "status": "safe", "badge": "Nodos edge",   "value": "Vercel Edge — punto de presencia más cercano. Usuarios de la UE servidos desde nodos europeos." },
-    { "label": "Código en servidor",   "status": "none", "badge": "Ninguno",      "value": "Sin código en servidor para herramientas de datos. SPA estática pura." },
-    { "label": "HTTPS",                "status": "yes",  "badge": "Forzado.",     "value": "Todo el tráfico sobre TLS 1.2+." },
+    { "label": "Alojamiento estático", "status": "safe", "badge": "Vercel Edge",   "value": "Vercel Edge Network (certificado SOC 2 Tipo II). Sirve solo archivos estáticos precompilados." },
+    { "label": "Región del servidor",  "status": "safe", "badge": "Nodos edge",    "value": "Vercel Edge - punto de presencia más cercano. Usuarios de la UE servidos desde nodos europeos." },
+    { "label": "Código en servidor",   "status": "none", "badge": "Ninguno",       "value": "Sin código en servidor para herramientas de datos. SPA estática pura." },
+    { "label": "HTTPS",                "status": "yes",  "badge": "Forzado.",      "value": "Todo el tráfico sobre TLS 1.2+." },
     { "label": "Código fuente",        "status": "safe", "badge": "Código abierto","value": "Licencia MIT. Auditable en github.com/stackme-io/StackMe." }
   ],
 
   "securityGdprTitle": "RGPD / Cumplimiento",
   "securityGdpr": [
-    { "label": "Datos personales en servidor",      "status": "none",  "badge": "Ninguno.",       "value": "El contenido de los archivos nunca llega a un servidor." },
-    { "label": "Acuerdo de Tratamiento de Datos",   "status": "na",    "badge": "No requerido",   "value": "No requerido para herramientas principales — StackMe no procesa datos personales. Puede aplicarse a Clerk si tu organización requiere ATDs con todos los sub-encargados." },
-    { "label": "Cookies",                           "status": "warn",  "badge": "Solo sesión",    "value": "Clerk establece una cookie de sesión solo para usuarios autenticados. Sin cookies de rastreo." },
-    { "label": "Derechos de datos (Art. 17 RGPD)",  "status": "na",    "badge": "N/A",            "value": "No conservamos ningún dato de usuario." },
-    { "label": "Sub-encargados",                    "status": "warn",  "badge": "2 listados",     "value": "Vercel (alojamiento), Clerk (autenticación). Ninguno recibe datos de archivos." }
+    { "label": "Datos personales en servidor",    "status": "none", "badge": "Ninguno.",     "value": "El contenido de los archivos nunca llega a un servidor." },
+    { "label": "Acuerdo de Tratamiento de Datos", "status": "na",   "badge": "No requerido", "value": "No requerido para herramientas principales - StackMe no procesa datos personales. Puede aplicarse a Clerk si tu organización requiere ATDs con todos los sub-encargados." },
+    { "label": "Cookies",                         "status": "warn", "badge": "Solo sesión",  "value": "Clerk establece una cookie de sesión solo para usuarios autenticados. Sin cookies de rastreo." },
+    { "label": "Derechos de datos (Art. 17 RGPD)","status": "na",   "badge": "N/A",          "value": "No conservamos ningún dato de usuario." },
+    { "label": "Sub-encargados",                  "status": "warn", "badge": "2 listados",   "value": "Vercel (alojamiento), Clerk (autenticación). Ninguno recibe datos de archivos." }
   ],
 
   "securityVerifyTitle": "Verificación independiente (recomendada)",
   "securityVerifyIntro": "Cualquier auditor puede verificar la ausencia de egreso de datos sin necesidad de confiar en este documento:",
   "securityVerifySteps": [
     "Abre stackme-app.vercel.app/analyze-me en un navegador",
-    "Presiona F12 → DevTools → pestaña Red → limpia el registro",
+    "Presiona F12 - DevTools - pestaña Red - limpia el registro",
     "Arrastra cualquier archivo CSV o JSON a la zona de carga",
     "Observa: cero solicitudes salientes con contenido del archivo, nombres de columnas o valores"
   ],
 
-  "securityNote": "Este documento refleja la arquitectura a fecha del commit. La aplicación es de código abierto — la fuente definitiva de verdad es el código en github.com/stackme-io/StackMe. Archivos clave: src/shared/analytics/index.ts (motor WASM + DuckDB) · src/modules/analyze-me/useAnalyze.ts (pipeline de análisis) · src/main.tsx (sin importación de analytics).",
+  "securityNote": "Este documento refleja la arquitectura a fecha del commit. La aplicación es de código abierto - la fuente definitiva de verdad es el código en github.com/stackme-io/StackMe. Archivos clave: src/shared/analytics/index.ts (motor WASM + DuckDB) · src/modules/analyze-me/useAnalyze.ts (pipeline de análisis) · src/main.tsx (sin importación de analytics).",
   "securityFooter": "StackMe · stackme-app.vercel.app · MIT License"
 }

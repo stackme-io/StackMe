@@ -117,6 +117,7 @@ export default function AnalyzeMePage() {
     <div className="flex h-full relative overflow-hidden">
 
       <aside
+        data-no-print
         className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
         style={{ width: sidebarOpen ? '208px' : '0px' }}
       >
@@ -145,7 +146,7 @@ export default function AnalyzeMePage() {
         <div
           className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-6 pt-5'}`}
         >
-          <div className={activeTab === 'security' ? 'px-6 pt-5' : ''}>
+          <div data-no-print className={activeTab === 'security' ? 'px-6 pt-5' : ''}>
             <ModuleTabs
               tabs={[
                 { id: 'work',     label: t('tabs.work')     },
@@ -221,10 +222,10 @@ export default function AnalyzeMePage() {
           </div>
         </div>
 
-        <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
+        <div data-no-print className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-[10px] text-muted-foreground/95">
-              <span className="mr-1 text-muted-foreground/40">//</span>{item}
+            <span key={item} className="text-[10px] text-muted-foreground/70">
+              <span className="mr-1 text-muted-foreground/70">//</span>{item}
             </span>
           ))}
         </div>

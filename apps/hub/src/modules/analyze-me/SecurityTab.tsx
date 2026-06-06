@@ -8,34 +8,29 @@ interface SecurityRow {
   value: string
 }
 
-// Все цвета жёсткие — документ не зависит от темы приложения
 const C = {
-  text:        '#1a1a1a',
-  textMuted:   '#555555',
-  textLight:   '#888888',
-  border:      '#e5e5e5',
-  borderHeader:'#111111',
-  cellBg:      '#fafafa',
-  green:       '#059669',
-  greenBg:     '#ecfdf5',
-  greenBorder: '#d1fae5',
-  red:         '#dc2626',
-  amber:       '#92400e',
-  amberBg:     '#fefce8',
-  amberBorder: '#fde68a',
-  noteBg:      '#f8f8f8',
-  noteBorder:  '#d1d5db',
-  verifyBg:    '#f0fdf4',
-  verifyBorder:'#bbf7d0',
+  text:         '#1a1a1a',
+  textMuted:    '#555555',
+  textLight:    '#888888',
+  border:       '#e5e5e5',
+  borderHeader: '#111111',
+  cellBg:       '#fafafa',
+  green:        '#059669',
+  greenBg:      '#ecfdf5',
+  greenBorder:  '#d1fae5',
+  red:          '#dc2626',
+  amber:        '#92400e',
+  amberBg:      '#fefce8',
+  amberBorder:  '#fde68a',
+  noteBg:       '#f8f8f8',
+  noteBorder:   '#d1d5db',
+  verifyBg:     '#f0fdf4',
+  verifyBorder: '#bbf7d0',
 }
 
 function Badge({ status, text }: { status: string; text: string }) {
-  if (status === 'never') {
-    return <span style={{ color: C.red, fontWeight: 700 }}>{text} </span>
-  }
-  if (status === 'yes') {
-    return <span style={{ color: C.green, fontWeight: 700 }}>{text} </span>
-  }
+  if (status === 'never') return <span style={{ color: C.red, fontWeight: 700 }}>{text} </span>
+  if (status === 'yes')   return <span style={{ color: C.green, fontWeight: 700 }}>{text} </span>
   if (status === 'safe' || status === 'zero' || status === 'none') {
     return (
       <span style={{
@@ -54,7 +49,6 @@ function Badge({ status, text }: { status: string; text: string }) {
       }}>{text}</span>
     )
   }
-  // na
   return <span style={{ color: C.textLight, fontWeight: 600, marginRight: 4 }}>{text}</span>
 }
 
@@ -86,8 +80,7 @@ function SecurityTable({ rows }: { rows: SecurityRow[] }) {
               {row.label}
             </td>
             <td style={{
-              padding: '7px 10px',
-              border: `1px solid ${C.border}`,
+              padding: '7px 10px', border: `1px solid ${C.border}`,
               verticalAlign: 'top', fontSize: 12,
               lineHeight: 1.6, color: C.text,
             }}>
@@ -119,10 +112,27 @@ export function SecurityTab() {
     })
   }
 
+  const handlePrint = () => {
+    const style = document.createElement('style')
+    style.id = '__security_print_style'
+    style.textContent = `
+      @media print {
+        html, body { height: auto !important; overflow: visible !important; background: white !important; }
+        .overflow-y-auto { overflow: visible !important; height: auto !important; max-height: none !important; }
+        .overflow-hidden { overflow: visible !important; height: auto !important; }
+        .flex-1 { flex: none !important; height: auto !important; }
+        [data-no-print] { display: none !important; }
+      }
+    `
+    document.head.appendChild(style)
+    window.addEventListener('afterprint', () => style.remove(), { once: true })
+    window.print()
+  }
+
   return (
-    // Серый фон — бумажный вид
-    <div style={{ minHeight: '100%', padding: '24px 24px 48px', display: 'flex', justifyContent: 'center' }}>
-      {/* Белая карточка */}
+    // Серый фон — самодостаточный, не зависит от темы приложения
+    <div style={{ minHeight: '100%', background: '#f0efed', padding: '24px 24px 48px', display: 'flex', justifyContent: 'center' }}>
+      {/* Белая карточка-документ */}
       <div style={{
         background: '#ffffff',
         borderRadius: 4,
@@ -139,11 +149,8 @@ export function SecurityTab() {
         {/* Header */}
         <div style={{
           borderBottom: `2px solid ${C.borderHeader}`,
-          paddingBottom: 16,
-          marginBottom: 28,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
+          paddingBottom: 16, marginBottom: 28,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
         }}>
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px', color: C.text, margin: 0 }}>
@@ -154,22 +161,16 @@ export function SecurityTab() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0, marginLeft: 16 }}>
-            <button
-              onClick={handleShare}
-              style={{
-                fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
-                borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
-              }}
-            >
+            <button onClick={handleShare} style={{
+              fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
+              borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
+            }}>
               {copied ? t('securityCopied') : t('securityShare')}
             </button>
-            <button
-              onClick={() => window.print()}
-              style={{
-                fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
-                borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
-              }}
-            >
+            <button onClick={handlePrint} style={{
+              fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
+              borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
+            }}>
               {t('securityPrint')}
             </button>
           </div>
@@ -187,14 +188,13 @@ export function SecurityTab() {
         <H2>{t('securityGdprTitle')}</H2>
         <SecurityTable rows={gdprRows} />
 
-        {/* Devtools verification box */}
+        {/* Verification box */}
         <div style={{
           marginTop: 28, padding: '14px 16px',
-          background: C.verifyBg, border: `1px solid ${C.verifyBorder}`,
-          borderRadius: 6,
+          background: C.verifyBg, border: `1px solid ${C.verifyBorder}`, borderRadius: 6,
         }}>
-          <p style={{ fontSize: 12, color: C.text, margin: '0 0 6px' }}>
-            <strong>{t('securityVerifyTitle')}</strong>
+          <p style={{ fontSize: 12, color: C.text, margin: '0 0 6px', fontWeight: 600 }}>
+            {t('securityVerifyTitle')}
           </p>
           <p style={{ fontSize: 12, color: C.text, margin: '0 0 8px' }}>
             {t('securityVerifyIntro')}
@@ -215,15 +215,13 @@ export function SecurityTab() {
           {t('securityNote')}
         </p>
 
-        {/* Footer */}
+        {/* Footer — без даты */}
         <div style={{
           marginTop: 36, paddingTop: 14,
           borderTop: `1px solid ${C.border}`,
           fontSize: 11, color: C.textLight,
-          display: 'flex', justifyContent: 'space-between',
         }}>
-          <span>{t('securityFooter')}</span>
-          <span>{new Date().toISOString().slice(0, 10)}</span>
+          {t('securityFooter')}
         </div>
 
       </div>

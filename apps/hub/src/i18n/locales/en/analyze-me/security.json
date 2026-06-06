@@ -1,5 +1,5 @@
 {
-  "securityTitle": "StackMe — Security & Privacy Review",
+  "securityTitle": "AnalyzeMe - Security & Privacy Review",
   "securityFor": "For Data Protection Officers and Information Security teams · stackme-app.vercel.app · MIT License",
   "securityShare": "Copy link",
   "securityPrint": "Print",
@@ -26,17 +26,17 @@
 
   "securityHostingTitle": "Hosting & Infrastructure",
   "securityHosting": [
-    { "label": "Static hosting",     "status": "safe", "badge": "Vercel Edge",  "value": "Vercel Edge Network (SOC 2 Type II certified). Serves only pre-built static files." },
-    { "label": "Data center region", "status": "safe", "badge": "Edge nodes",   "value": "Vercel Edge — closest point of presence. EU users served from EU edge nodes." },
-    { "label": "Server-side code",   "status": "none", "badge": "None",         "value": "No server-side code for data tools. Pure static SPA." },
-    { "label": "HTTPS",              "status": "yes",  "badge": "Enforced.",    "value": "All traffic over TLS 1.2+." },
-    { "label": "Source code",        "status": "safe", "badge": "Open source",  "value": "MIT License. Auditable at github.com/stackme-io/StackMe." }
+    { "label": "Static hosting",     "status": "safe", "badge": "Vercel Edge",   "value": "Vercel Edge Network (SOC 2 Type II certified). Serves only pre-built static files." },
+    { "label": "Data center region", "status": "safe", "badge": "Edge nodes",    "value": "Vercel Edge - closest point of presence. EU users served from EU edge nodes." },
+    { "label": "Server-side code",   "status": "none", "badge": "None",          "value": "No server-side code for data tools. Pure static SPA." },
+    { "label": "HTTPS",              "status": "yes",  "badge": "Enforced.",     "value": "All traffic over TLS 1.2+." },
+    { "label": "Source code",        "status": "safe", "badge": "Open source",   "value": "MIT License. Auditable at github.com/stackme-io/StackMe." }
   ],
 
   "securityGdprTitle": "GDPR / Compliance",
   "securityGdpr": [
     { "label": "Personal data processed server-side", "status": "none",  "badge": "None.",        "value": "File contents never reach a server." },
-    { "label": "Data Processing Agreement (DPA)",     "status": "na",    "badge": "Not required", "value": "Not required for core data tools — no personal data is processed by StackMe. May apply to Clerk (auth) if your organisation requires DPAs with all sub-processors." },
+    { "label": "Data Processing Agreement (DPA)",     "status": "na",    "badge": "Not required", "value": "Not required for core data tools - no personal data is processed by StackMe. May apply to Clerk (auth) if your organisation requires DPAs with all sub-processors." },
     { "label": "Cookies",                             "status": "warn",  "badge": "Session only", "value": "Clerk sets a session cookie for authenticated users only. No tracking cookies." },
     { "label": "Data subject rights (GDPR Art. 17)",  "status": "na",    "badge": "N/A",          "value": "We hold no user data to delete." },
     { "label": "Sub-processors",                      "status": "warn",  "badge": "2 listed",     "value": "Vercel (hosting), Clerk (authentication). Neither receives file data." }
@@ -46,11 +46,11 @@
   "securityVerifyIntro": "Any reviewer can verify the zero-data-egress claim without trusting this document:",
   "securityVerifySteps": [
     "Open stackme-app.vercel.app/analyze-me in a browser",
-    "Press F12 → DevTools → Network tab → clear the log",
+    "Press F12 - DevTools - Network tab - clear the log",
     "Drop any CSV or JSON file onto the upload zone",
     "Observe: zero outbound requests containing file contents, column names, or data values"
   ],
 
-  "securityNote": "This document reflects the architecture as of the commit date. The application is open source — the definitive source of truth is the code at github.com/stackme-io/StackMe. Key files: src/shared/analytics/index.ts (WASM engine + DuckDB init) · src/modules/analyze-me/useAnalyze.ts (analysis pipeline) · src/main.tsx (no analytics import).",
+  "securityNote": "This document reflects the architecture as of the commit date. The application is open source - the definitive source of truth is the code at github.com/stackme-io/StackMe. Key files: src/shared/analytics/index.ts (WASM engine + DuckDB init) · src/modules/analyze-me/useAnalyze.ts (analysis pipeline) · src/main.tsx (no analytics import).",
   "securityFooter": "StackMe · stackme-app.vercel.app · MIT License"
 }
