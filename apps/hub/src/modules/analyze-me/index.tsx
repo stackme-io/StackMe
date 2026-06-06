@@ -24,6 +24,11 @@ export default function AnalyzeMePage() {
     const tab = searchParams.get('tab')
     return tab && VALID_TABS.includes(tab) ? tab : 'work'
   })
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab && VALID_TABS.includes(tab)) setActiveTab(tab)
+  }, [searchParams])
   const [sidebarOpen, setSidebarOpen]     = useState(true)
   const [filter, setFilter]               = useState<FilterType>('all')
   const [sensitivity, setSensitivity]       = useState<Sensitivity>('balanced')

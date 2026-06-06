@@ -18,12 +18,20 @@ if (!src) {
 
 if (!existsSync(dst)) mkdirSync(dst, { recursive: true })
 
-const allFiles = readdirSync(src)
-const files = allFiles.filter(f => f.endsWith('.wasm') || f.endsWith('.worker.js'))
+// MVP bundle only — eh and coi bundles are not used
+const MVP_FILES = [
+  'duckdb-mvp.wasm',
+  'duckdb-browser-mvp.worker.js',
+]
 
-files.forEach(f => {
-  copyFileSync(`${src}/${f}`, `${dst}/${f}`)
+MVP_FILES.forEach(f => {
+  const srcFile = `${src}/${f}`
+  if (!existsSync(srcFile)) {
+    console.error(`❌ Missing: ${f}`)
+    process.exit(1)
+  }
+  copyFileSync(srcFile, `${dst}/${f}`)
   console.log(`✓ ${f}`)
 })
 
-console.log('Done — DuckDB WASM files copied to public/duckdb/')
+console.log('Done — DuckDB MVP bundle copied to public/duckdb/')

@@ -1,36 +1,48 @@
 {
-  "securityTitle": "Privacy & Security",
-  "securitySubtitle": "How your data is handled - and how to verify it independently.",
+  "securityTitle": "StackMe — Security & Privacy Review",
+  "securityFor": "For Data Protection Officers and Information Security teams · stackme-app.vercel.app · MIT License",
   "securityShare": "Copy link",
   "securityPrint": "Print",
   "securityCopied": "Copied!",
 
-  "securityDataTitle": "Your data",
+  "securityDataTitle": "Architecture Summary",
   "securityData": [
-    { "label": "Processing location", "status": "safe", "badge": "Browser only", "value": "All analysis runs inside your browser via DuckDB-Wasm — a full SQL engine compiled to WebAssembly. No backend API for data." },
-    { "label": "File upload to server", "status": "never", "badge": "Never.", "value": "Files are read by the browser File API and passed directly to the WASM engine in memory. No file is transmitted." },
-    { "label": "Column names / schema", "status": "never", "badge": "Never transmitted.", "value": "Schema is inferred locally inside DuckDB-Wasm." },
-    { "label": "Query results / row data", "status": "never", "badge": "Never transmitted.", "value": "Results stay in browser memory until the tab is closed." },
-    { "label": "Data retention", "status": "zero", "badge": "Zero.", "value": "No data is persisted. Closing the tab wipes everything. No localStorage, no IndexedDB." }
+    { "label": "Data processing location", "status": "safe",  "badge": "Browser only",       "value": "All analysis runs inside the user's browser via DuckDB-Wasm (WebAssembly SQL engine). No backend API for data." },
+    { "label": "File upload to server",     "status": "never", "badge": "Never.",              "value": "Files are read by the browser File API and passed directly to the WASM engine in memory. No file is transmitted." },
+    { "label": "Column names / schema",     "status": "never", "badge": "Never transmitted.",  "value": "Schema is inferred locally inside DuckDB-Wasm." },
+    { "label": "Query results / row data",  "status": "never", "badge": "Never transmitted.",  "value": "Results stay in browser memory until the tab is closed." },
+    { "label": "Data retention",            "status": "zero",  "badge": "Zero.",               "value": "No data is persisted. Closing the tab wipes everything." },
+    { "label": "Backend API for data",      "status": "none",  "badge": "None.",               "value": "The api/client.ts module exists for account features only (unrelated to data tools)." }
   ],
 
-  "securityNetworkTitle": "Network requests",
+  "securityNetworkTitle": "Network Requests",
   "securityNetwork": [
-    { "label": "Page load", "status": "warn", "badge": "CDN only", "value": "JS, CSS, WASM engine binary served from Vercel Edge. Standard CDN delivery, no user data." },
-    { "label": "Authentication (Clerk)", "status": "warn", "badge": "Session check only", "value": "Clerk handles authentication for account features. Does not receive any file data, column names, or query results." },
-    { "label": "After file upload", "status": "zero", "badge": "Zero.", "value": "Once a file is loaded, all processing is local. No outbound requests carry user data. Works offline." },
-    { "label": "Analytics / tracking", "status": "none", "badge": "None.", "value": "No page-view tracking, no cookies, no fingerprinting on data tool pages." }
+    { "label": "Vercel CDN (static assets)",    "status": "warn", "badge": "Page load only",    "value": "JS, CSS, WASM binaries served from Vercel Edge. Standard CDN delivery, no user data." },
+    { "label": "Clerk (auth sessions)",         "status": "warn", "badge": "Session check only","value": "Clerk handles authentication for account features. Makes a session-validity request on page load. Does not receive any file data, column names, or query results." },
+    { "label": "Analytics / tracking",          "status": "none", "badge": "None.",             "value": "Vercel Analytics was removed. No page-view tracking, no cookies, no fingerprinting on data tool pages." },
+    { "label": "Third-party scripts",           "status": "none", "badge": "None.",             "value": "No Google Analytics, Meta Pixel, Hotjar, or similar SDKs." },
+    { "label": "Requests after file upload",    "status": "zero", "badge": "Zero.",             "value": "Once a file is loaded, all processing is local. No outbound requests carry user data." }
+  ],
+
+  "securityHostingTitle": "Hosting & Infrastructure",
+  "securityHosting": [
+    { "label": "Static hosting",     "status": "safe", "badge": "Vercel Edge",  "value": "Vercel Edge Network (SOC 2 Type II certified). Serves only pre-built static files." },
+    { "label": "Data center region", "status": "safe", "badge": "Edge nodes",   "value": "Vercel Edge — closest point of presence. EU users served from EU edge nodes." },
+    { "label": "Server-side code",   "status": "none", "badge": "None",         "value": "No server-side code for data tools. Pure static SPA." },
+    { "label": "HTTPS",              "status": "yes",  "badge": "Enforced.",    "value": "All traffic over TLS 1.2+." },
+    { "label": "Source code",        "status": "safe", "badge": "Open source",  "value": "MIT License. Auditable at github.com/stackme-io/StackMe." }
   ],
 
   "securityGdprTitle": "GDPR / Compliance",
   "securityGdpr": [
-    { "label": "Personal data server-side", "status": "none", "badge": "None.", "value": "File contents never reach a server." },
-    { "label": "Data Processing Agreement", "status": "na", "badge": "Not required", "value": "No personal data is processed by StackMe. May apply to Clerk (auth) if your organisation requires DPAs with all sub-processors." },
-    { "label": "Cookies", "status": "warn", "badge": "Session only", "value": "Clerk sets a session cookie for authenticated users only. No tracking cookies." },
-    { "label": "Right to erasure (GDPR Art. 17)", "status": "na", "badge": "N/A", "value": "We hold no user data to delete." }
+    { "label": "Personal data processed server-side", "status": "none",  "badge": "None.",        "value": "File contents never reach a server." },
+    { "label": "Data Processing Agreement (DPA)",     "status": "na",    "badge": "Not required", "value": "Not required for core data tools — no personal data is processed by StackMe. May apply to Clerk (auth) if your organisation requires DPAs with all sub-processors." },
+    { "label": "Cookies",                             "status": "warn",  "badge": "Session only", "value": "Clerk sets a session cookie for authenticated users only. No tracking cookies." },
+    { "label": "Data subject rights (GDPR Art. 17)",  "status": "na",    "badge": "N/A",          "value": "We hold no user data to delete." },
+    { "label": "Sub-processors",                      "status": "warn",  "badge": "2 listed",     "value": "Vercel (hosting), Clerk (authentication). Neither receives file data." }
   ],
 
-  "securityVerifyTitle": "Independent verification",
+  "securityVerifyTitle": "Independent verification (recommended)",
   "securityVerifyIntro": "Any reviewer can verify the zero-data-egress claim without trusting this document:",
   "securityVerifySteps": [
     "Open stackme-app.vercel.app/analyze-me in a browser",
@@ -38,6 +50,7 @@
     "Drop any CSV or JSON file onto the upload zone",
     "Observe: zero outbound requests containing file contents, column names, or data values"
   ],
-  "securitySourceNote": "Open source · MIT License · github.com/stackme-io/StackMe",
-  "securitySourceFile": "Key files: src/shared/analytics/index.ts · src/modules/analyze-me/useAnalyze.ts"
+
+  "securityNote": "This document reflects the architecture as of the commit date. The application is open source — the definitive source of truth is the code at github.com/stackme-io/StackMe. Key files: src/shared/analytics/index.ts (WASM engine + DuckDB init) · src/modules/analyze-me/useAnalyze.ts (analysis pipeline) · src/main.tsx (no analytics import).",
+  "securityFooter": "StackMe · stackme-app.vercel.app · MIT License"
 }
