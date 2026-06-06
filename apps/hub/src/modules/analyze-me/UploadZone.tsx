@@ -91,10 +91,11 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
             </svg>
             <span className="text-[10px] text-muted-foreground">{t('privacyBadge')}</span>
           </div>
-          <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-64 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground hidden group-hover:block pointer-events-none">
+          <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-72 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground hidden group-hover:block pointer-events-none">
             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
             <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
-            <p>{t('privacyBody')}</p>
+            <p className="mb-2">{t('privacyBody')}</p>
+            <p className="text-teal-400/80 border-t border-border/40 pt-2">{t('privacyDevTools')}</p>
           </div>
         </div>
       </div>
