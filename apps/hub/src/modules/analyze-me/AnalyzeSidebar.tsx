@@ -141,42 +141,47 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
             </button>
           ))}
 
-          <button
-            onClick={() => onSensitivityChange('custom')}
-            className={`flex flex-col px-2 py-2 rounded-md text-left transition-colors ${
-              sensitivity === 'custom'
-                ? 'bg-teal-950/40 border border-teal-800/50'
-                : 'hover:bg-muted/50 border border-transparent'
-            }`}
-          >
-            <span className={`text-xs font-medium ${sensitivity === 'custom' ? 'text-teal-300' : 'text-muted-foreground/95'}`}>
-              {t('sensitivityCustomLabel')}
-            </span>
-            <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
-              {t('sensitivityCustomDesc')}
-            </span>
-          </button>
-
-          {sensitivity === 'custom' && (
-            <div className="flex items-center gap-2 px-2 py-1.5">
-              <span className="text-xs text-muted-foreground">IQR ×</span>
-              <input
-                type="number"
-                min="0.1"
-                max="20"
-                step="0.1"
-                value={customInput}
-                onChange={e => setCustomInput(e.target.value)}
-                onBlur={commitCustom}
-                onKeyDown={e => e.key === 'Enter' && commitCustom()}
-                className="w-16 px-2 py-0.5 text-xs bg-background border border-teal-800/50 rounded text-teal-300 text-center focus:outline-none focus:border-teal-600"
-              />
+          {sensitivity === 'custom' ? (
+            <div className="flex flex-col px-2 py-2 rounded-md bg-teal-950/40 border border-teal-800/50">
+              <span className="text-xs font-medium text-teal-300">
+                {t('sensitivityCustomLabel')}
+              </span>
+              <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
+                {t('sensitivityCustomDesc')}
+              </span>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-xs text-muted-foreground">IQR ×</span>
+                <input
+                  type="number"
+                  min="0.1"
+                  max="20"
+                  step="0.1"
+                  value={customInput}
+                  onChange={e => setCustomInput(e.target.value)}
+                  onBlur={commitCustom}
+                  onKeyDown={e => e.key === 'Enter' && commitCustom()}
+                  className="w-16 px-2 py-0.5 text-xs bg-background border border-teal-800/50 rounded text-teal-300 text-center focus:outline-none focus:border-teal-600"
+                />
+              </div>
             </div>
+          ) : (
+            <button
+              onClick={() => onSensitivityChange('custom')}
+              className="flex flex-col px-2 py-2 rounded-md text-left transition-colors hover:bg-muted/50 border border-transparent"
+            >
+              <span className="text-xs font-medium text-muted-foreground/95">
+                {t('sensitivityCustomLabel')}
+              </span>
+              <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
+                {t('sensitivityCustomDesc')}
+              </span>
+            </button>
           )}
         </div>
+        <div className="border-t border-border/40 mt-2 mb-1" />
         <button
           onClick={() => setHintOpen(o => !o)}
-          className="flex items-center gap-1 mt-2 px-2 text-left group"
+          className="flex items-center gap-1 mt-1 px-2 text-left group"
         >
           <span className="text-xs text-muted-foreground group-hover:text-foreground/70 transition-colors">
             {t('sensitivityAffects')}
