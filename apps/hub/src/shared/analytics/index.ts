@@ -1,9 +1,7 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
 
-// DuckDB bundles served locally (copied by scripts/copy-duckdb-wasm.mjs).
-// We force the MVP bundle only — the EH (Exception Handling) bundle triggers
-// a WASM "function signature mismatch" on the first runQuery when served
-// from Service Worker cache offline. MVP avoids WebAssembly EH entirely.
+// Only MVP bundle — EH bundle triggers function signature mismatch when
+// served from Service Worker cache offline.
 const LOCAL_BUNDLES: duckdb.DuckDBBundles = {
   mvp: {
     mainModule: '/duckdb/duckdb-mvp.wasm',
@@ -19,13 +17,17 @@ async function initDuckDB(): Promise<void> {
   const bundle = await duckdb.selectBundle(LOCAL_BUNDLES)
   if (!bundle.mainWorker) throw new Error('No mainWorker in DuckDB bundle')
 
-  // Direct Worker from the main thread — SW-interceptable, no nesting
   const worker = new Worker(bundle.mainWorker, { type: 'classic' })
   const logger = new duckdb.VoidLogger()
 
   db = new duckdb.AsyncDuckDB(logger, worker)
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker)
   conn = await db.connect()
+
+  // Disable auto-downloading extensions from extensions.duckdb.org
+  // — critical for offline mode. We use read_csv_auto which is built-in.
+  await conn.query('SET autoinstall_known_extensions=false')
+  await conn.query('SET autoload_known_extensions=false')
 }
 
 function ensureInit(): Promise<void> {
@@ -33,47 +35,51 @@ function ensureInit(): Promise<void> {
   return initPromise
 }
 
-function csvToJson(csv: string): Record<string, string>[] {
-  const lines = csv.trim().split('\n')
-  if (lines.length < 2) return []
-  const headers = lines[0].split(',').map(h => h.trim())
-  return lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim())
-    return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']))
-  })
+// Convert JSON array to CSV string for DuckDB's built-in read_csv_auto.
+// read_json_auto requires the json extension (downloaded from internet) —
+// read_csv_auto is part of DuckDB core and works fully offline.
+function jsonArrayToCSV(records: Record<string, any>[]): string {
+  if (records.length === 0) return ''
+  const headers = Object.keys(records[0])
+  const escape = (v: any): string => {
+    if (v === null || v === undefined) return ''
+    const s = String(v)
+    return s.includes(',') || s.includes('"') || s.includes('\n')
+      ? `"${s.replace(/"/g, '""')}"`
+      : s
+  }
+  return [
+    headers.join(','),
+    ...records.map(row => headers.map(h => escape(row[h])).join(',')),
+  ].join('\n')
+}
+
+async function loadCSVBytes(csvBytes: Uint8Array, tableName: string): Promise<void> {
+  if (!db || !conn) throw new Error('DuckDB not initialized')
+  await conn.query(`DROP TABLE IF EXISTS "${tableName}"`)
+  await db.registerFileBuffer(`${tableName}.csv`, csvBytes)
+  await conn.query(
+    `CREATE TABLE "${tableName}" AS SELECT * FROM read_csv_auto('${tableName}.csv')`
+  )
 }
 
 export async function loadCSV(csvText: string, tableName: string): Promise<void> {
   await ensureInit()
-  if (!db || !conn) throw new Error('DuckDB not initialized')
-
-  const json  = JSON.stringify(csvToJson(csvText))
-  const bytes = new TextEncoder().encode(json)
-
-  await conn.query(`DROP TABLE IF EXISTS ${tableName}`)
-  await db.registerFileBuffer(`${tableName}.json`, bytes)
-  await conn.query(
-    `CREATE TABLE ${tableName} AS SELECT * FROM read_json_auto('${tableName}.json')`
-  )
+  // Feed raw CSV directly — DuckDB's built-in CSV parser handles quoting,
+  // escapes, and type inference natively without any extension.
+  await loadCSVBytes(new TextEncoder().encode(csvText), tableName)
 }
 
 export async function loadJSON(jsonData: string, tableName: string): Promise<void> {
   await ensureInit()
-  if (!db || !conn) throw new Error('DuckDB not initialized')
-
-  const bytes = new TextEncoder().encode(jsonData)
-
-  await conn.query(`DROP TABLE IF EXISTS ${tableName}`)
-  await db.registerFileBuffer(`${tableName}.json`, bytes)
-  await conn.query(
-    `CREATE TABLE ${tableName} AS SELECT * FROM read_json_auto('${tableName}.json')`
-  )
+  const records = JSON.parse(jsonData) as Record<string, any>[]
+  const csvText = jsonArrayToCSV(records)
+  await loadCSVBytes(new TextEncoder().encode(csvText), tableName)
 }
 
 export async function runQuery(sql: string): Promise<any[]> {
   await ensureInit()
   if (!conn) throw new Error('DuckDB not initialized')
-
   const result = await conn.query(sql)
   return result.toArray().map((row: any) => row.toJSON())
 }
