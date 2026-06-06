@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-og.mjs && tsc -b && vite build && node scripts/generate-route-html.mjs",
+    "build": "node scripts/copy-duckdb-wasm.mjs && node scripts/generate-og.mjs && tsc -b && vite build && node scripts/generate-route-html.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
