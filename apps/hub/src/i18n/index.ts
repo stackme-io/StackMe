@@ -18,9 +18,13 @@ import enAnalyzeMeFooter from './locales/en/analyze-me/footer.json'
 import esAnalyzeMeFooter from './locales/es/analyze-me/footer.json'
 import ukAnalyzeMeFooter from './locales/uk/analyze-me/footer.json'
 
-import enAnalyzeMeWork   from './locales/en/analyze-me/work.json'
-import esAnalyzeMeWork   from './locales/es/analyze-me/work.json'
-import ukAnalyzeMeWork   from './locales/uk/analyze-me/work.json'
+import enAnalyzeMeWork     from './locales/en/analyze-me/work.json'
+import esAnalyzeMeWork     from './locales/es/analyze-me/work.json'
+import ukAnalyzeMeWork     from './locales/uk/analyze-me/work.json'
+
+import enAnalyzeMeSecurity from './locales/en/analyze-me/security.json'
+import esAnalyzeMeSecurity from './locales/es/analyze-me/security.json'
+import ukAnalyzeMeSecurity from './locales/uk/analyze-me/security.json'
 
 import enForgeMeGenerate  from './locales/en/forge-me/generate.json'
 import esForgeMeGenerate  from './locales/es/forge-me/generate.json'
@@ -57,6 +61,7 @@ i18n
           ...enAnalyzeMeStack,
           ...enAnalyzeMeFooter,
           ...enAnalyzeMeWork,
+          ...enAnalyzeMeSecurity,
         },
         'forge-me': {
           ...enForgeMeGenerate,
@@ -75,6 +80,7 @@ i18n
           ...esAnalyzeMeStack,
           ...esAnalyzeMeFooter,
           ...esAnalyzeMeWork,
+          ...esAnalyzeMeSecurity,
         },
         'forge-me': {
           ...esForgeMeGenerate,
@@ -93,6 +99,7 @@ i18n
           ...ukAnalyzeMeStack,
           ...ukAnalyzeMeFooter,
           ...ukAnalyzeMeWork,
+          ...ukAnalyzeMeSecurity,
         },
         'forge-me': {
           ...ukForgeMeGenerate,

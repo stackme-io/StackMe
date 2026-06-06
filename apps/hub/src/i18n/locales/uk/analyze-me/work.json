@@ -68,7 +68,8 @@
   "tabs": {
     "work": "Робота",
     "roadmap": "Роадмап",
-    "stack": "Стек"
+    "stack": "Стек",
+    "security": "Безпека"
   },
   "replace": "Замінити",
   "importedFrom": "Імпортовано з",

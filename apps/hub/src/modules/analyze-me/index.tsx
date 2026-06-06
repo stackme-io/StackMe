@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { RoadmapTab } from '../../shared/RoadmapTab'
@@ -6,7 +7,10 @@ import { OnboardingFlow } from '../../shared/OnboardingFlow'
 import { AnalyzeSection } from './AnalyzeSection'
 import { AnalyzeSidebar, getMultiplier, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
+import { SecurityTab } from './SecurityTab'
 import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
+
+const VALID_TABS = ['work', 'about', 'stack', 'security']
 
 type FilterType = 'all' | 'anomalies' | 'missing' | 'duplicate' | 'outlier' | 'missed' | 'false_positive'
 
@@ -15,7 +19,11 @@ const HINT_KEY = 'stackme-hint-analyze-me'
 export default function AnalyzeMePage() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const { t } = useTranslation('analyze-me')
-  const [activeTab, setActiveTab]         = useState('work')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab]         = useState(() => {
+    const tab = searchParams.get('tab')
+    return tab && VALID_TABS.includes(tab) ? tab : 'work'
+  })
   const [sidebarOpen, setSidebarOpen]     = useState(true)
   const [filter, setFilter]               = useState<FilterType>('all')
   const [sensitivity, setSensitivity]       = useState<Sensitivity>('balanced')
@@ -124,9 +132,10 @@ export default function AnalyzeMePage() {
         <div className="flex-1 overflow-y-auto px-6 pt-5">
           <ModuleTabs
             tabs={[
-              { id: 'work',  label: t('tabs.work')    },
-              { id: 'about', label: t('tabs.roadmap') },
-              { id: 'stack', label: t('tabs.stack')   },
+              { id: 'work',     label: t('tabs.work')     },
+              { id: 'about',    label: t('tabs.roadmap')  },
+              { id: 'stack',    label: t('tabs.stack')    },
+              { id: 'security', label: t('tabs.security') },
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
@@ -158,6 +167,10 @@ export default function AnalyzeMePage() {
 
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
             <RoadmapTab namespace="analyze-me" />
+          </div>
+
+          <div style={{ display: activeTab === 'security' ? 'block' : 'none' }}>
+            <SecurityTab />
           </div>
 
           <div style={{ display: activeTab === 'stack' ? 'block' : 'none' }}>

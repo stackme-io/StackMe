@@ -68,7 +68,8 @@
   "tabs": {
     "work": "Work",
     "roadmap": "Roadmap",
-    "stack": "Stack"
+    "stack": "Stack",
+    "security": "Security"
   },
   "replace": "Replace",
   "importedFrom": "Imported from",

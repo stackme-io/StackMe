@@ -101,7 +101,7 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
         <p className="text-[11px] text-muted-foreground/70 text-center max-w-xs leading-relaxed">
           {t('privacyDevTools')}{' '}
           <a
-            href="/security.html"
+            href="/analyze-me?tab=security"
             target="_blank"
             rel="noopener noreferrer"
             className="text-teal-400/70 hover:text-teal-400 underline underline-offset-2 transition-colors"

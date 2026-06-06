@@ -1,0 +1,42 @@
+{
+  "securityTitle": "Privacy & Security",
+  "securitySubtitle": "How your data is handled — and how to verify it independently.",
+  "securityShare": "Copy link",
+  "securityPrint": "Print",
+  "securityCopied": "Copied!",
+
+  "securityDataTitle": "Your data",
+  "securityData": [
+    { "label": "Where analysis runs", "status": "safe", "value": "Inside your browser only. DuckDB-Wasm is a full SQL engine compiled to WebAssembly — it runs entirely on your machine, not on any server." },
+    { "label": "Is the file uploaded?", "status": "never", "value": "No. Your file is read by the browser's File API and passed to the engine in memory. It is never transmitted over the network." },
+    { "label": "Are column names sent anywhere?", "status": "never", "value": "No. Column names and schema are inferred locally inside DuckDB-Wasm." },
+    { "label": "Are query results stored?", "status": "never", "value": "No. Results stay in browser memory and disappear when you close the tab." },
+    { "label": "Data retention", "status": "zero", "value": "Zero. Closing the tab wipes everything. No localStorage, no IndexedDB, no server-side storage." }
+  ],
+
+  "securityNetworkTitle": "Network requests",
+  "securityNetwork": [
+    { "label": "Page load", "status": "warn", "value": "JS, CSS, and the WASM engine binary are served from Vercel CDN. Standard delivery — no user data involved." },
+    { "label": "Authentication (Clerk)", "status": "warn", "value": "A session-validity check is made on page load. Clerk does not receive any file data, column names, or analysis results." },
+    { "label": "After file upload", "status": "zero", "value": "Zero outbound requests. Once a file is loaded, all processing is local. You can even go offline." },
+    { "label": "Analytics / tracking", "status": "none", "value": "None. No cookies, no fingerprinting, no Google Analytics or similar SDKs on data tool pages." }
+  ],
+
+  "securityGdprTitle": "GDPR",
+  "securityGdpr": [
+    { "label": "Personal data server-side", "status": "none", "value": "None. File contents never reach a server." },
+    { "label": "Data Processing Agreement", "status": "na", "value": "Not required for core data tools — StackMe processes no personal data. May apply to Clerk (auth) if your organisation requires DPAs with all sub-processors." },
+    { "label": "Cookies", "status": "warn", "value": "Clerk sets a session cookie for authenticated users only. No tracking cookies." },
+    { "label": "Right to erasure (GDPR Art. 17)", "status": "na", "value": "N/A — we hold no user data to delete." }
+  ],
+
+  "securityVerifyTitle": "Verify it yourself",
+  "securityVerifyIntro": "You don't have to trust this page. Any auditor can verify the zero-egress claim independently:",
+  "securityVerifySteps": [
+    "Press F12 → Network tab → clear the request log",
+    "Drop any CSV or JSON file onto the upload zone",
+    "Watch the Network tab: zero outbound requests carrying your data"
+  ],
+  "securitySourceNote": "Open source · MIT License · github.com/stackme-io/StackMe",
+  "securitySourceFile": "Key files: src/shared/analytics/index.ts · src/modules/analyze-me/useAnalyze.ts"
+}
