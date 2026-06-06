@@ -32,6 +32,7 @@ export default function AnalyzeMePage() {
 
   useEffect(() => {
     if (activeTab === 'security') setSidebarOpen(false)
+    else setSidebarOpen(true)
   }, [activeTab])
   const [sidebarOpen, setSidebarOpen]     = useState(true)
   const [filter, setFilter]               = useState<FilterType>('all')
