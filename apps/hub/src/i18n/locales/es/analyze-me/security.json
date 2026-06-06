@@ -1,41 +1,42 @@
 {
   "securityTitle": "Privacidad y Seguridad",
-  "securitySubtitle": "Cómo se tratan tus datos — y cómo verificarlo de forma independiente.",
+  "securitySubtitle": "Cómo se tratan tus datos - y cómo verificarlo de forma independiente.",
   "securityShare": "Copiar enlace",
   "securityPrint": "Imprimir",
   "securityCopied": "¡Copiado!",
 
   "securityDataTitle": "Tus datos",
   "securityData": [
-    { "label": "¿Dónde se ejecuta el análisis?", "status": "safe", "value": "Solo en tu navegador. DuckDB-Wasm es un motor SQL completo compilado a WebAssembly — funciona enteramente en tu máquina, no en ningún servidor." },
-    { "label": "¿Se sube el archivo?", "status": "never", "value": "No. El archivo es leído por la API File del navegador y pasado al motor en memoria. Nunca se transmite por la red." },
-    { "label": "¿Se envían los nombres de columnas?", "status": "never", "value": "No. Los nombres de columnas y el esquema se infieren localmente dentro de DuckDB-Wasm." },
-    { "label": "¿Se almacenan los resultados?", "status": "never", "value": "No. Los resultados permanecen en la memoria del navegador y desaparecen al cerrar la pestaña." },
-    { "label": "Retención de datos", "status": "zero", "value": "Cero. Cerrar la pestaña borra todo. Sin localStorage, sin IndexedDB, sin almacenamiento en servidor." }
+    { "label": "Ubicación del procesamiento", "status": "safe", "badge": "Solo navegador", "value": "Todo el análisis se ejecuta en tu navegador mediante DuckDB-Wasm, un motor SQL completo compilado a WebAssembly. Sin API de backend para datos." },
+    { "label": "Subida del archivo al servidor", "status": "never", "badge": "Nunca.", "value": "Los archivos son leídos por la File API del navegador y pasados directamente al motor WASM en memoria. Ningún archivo es transmitido." },
+    { "label": "Nombres de columnas / esquema", "status": "never", "badge": "Nunca transmitidos.", "value": "El esquema se infiere localmente dentro de DuckDB-Wasm." },
+    { "label": "Resultados / datos de filas", "status": "never", "badge": "Nunca transmitidos.", "value": "Los resultados permanecen en la memoria del navegador hasta cerrar la pestaña." },
+    { "label": "Retención de datos", "status": "zero", "badge": "Cero.", "value": "No se persiste ningún dato. Cerrar la pestaña borra todo. Sin localStorage, sin IndexedDB." }
   ],
 
   "securityNetworkTitle": "Solicitudes de red",
   "securityNetwork": [
-    { "label": "Carga de página", "status": "warn", "value": "JS, CSS y el binario WASM se sirven desde Vercel CDN. Entrega estándar — sin datos de usuario." },
-    { "label": "Autenticación (Clerk)", "status": "warn", "value": "Se realiza una verificación de sesión al cargar la página. Clerk no recibe datos de archivos, nombres de columnas ni resultados." },
-    { "label": "Tras subir un archivo", "status": "zero", "value": "Cero solicitudes salientes. Una vez cargado el archivo, todo el procesamiento es local. Puedes incluso trabajar sin conexión." },
-    { "label": "Analytics / rastreo", "status": "none", "value": "Ninguno. Sin cookies, sin huellas digitales, sin Google Analytics ni scripts similares en las páginas de herramientas." }
+    { "label": "Carga de página", "status": "warn", "badge": "Solo CDN", "value": "JS, CSS y el binario WASM se sirven desde Vercel Edge. Entrega CDN estándar, sin datos de usuario." },
+    { "label": "Autenticación (Clerk)", "status": "warn", "badge": "Solo sesión", "value": "Clerk gestiona la autenticación para funciones de cuenta. No recibe datos de archivos, nombres de columnas ni resultados." },
+    { "label": "Tras subir un archivo", "status": "zero", "badge": "Cero.", "value": "Una vez cargado el archivo, todo el procesamiento es local. Sin solicitudes salientes con datos de usuario. Funciona sin conexión." },
+    { "label": "Analytics / rastreo", "status": "none", "badge": "Ninguno.", "value": "Sin seguimiento de páginas vistas, sin cookies, sin huellas digitales en las páginas de herramientas." }
   ],
 
-  "securityGdprTitle": "RGPD",
+  "securityGdprTitle": "RGPD / Cumplimiento",
   "securityGdpr": [
-    { "label": "Datos personales en servidor", "status": "none", "value": "Ninguno. El contenido de los archivos nunca llega a un servidor." },
-    { "label": "Acuerdo de Tratamiento de Datos", "status": "na", "value": "No requerido para las herramientas principales — StackMe no procesa datos personales. Puede aplicarse a Clerk si tu organización requiere ATDs con todos los sub-encargados." },
-    { "label": "Cookies", "status": "warn", "value": "Clerk establece una cookie de sesión solo para usuarios autenticados. Sin cookies de rastreo." },
-    { "label": "Derecho de supresión (Art. 17 RGPD)", "status": "na", "value": "N/A — no conservamos ningún dato de usuario." }
+    { "label": "Datos personales en servidor", "status": "none", "badge": "Ninguno.", "value": "El contenido de los archivos nunca llega a un servidor." },
+    { "label": "Acuerdo de Tratamiento de Datos", "status": "na", "badge": "No requerido", "value": "StackMe no procesa datos personales. Puede aplicarse a Clerk si tu organización requiere ATDs con todos los sub-encargados." },
+    { "label": "Cookies", "status": "warn", "badge": "Solo sesión", "value": "Clerk establece una cookie de sesión solo para usuarios autenticados. Sin cookies de rastreo." },
+    { "label": "Derecho de supresión (Art. 17 RGPD)", "status": "na", "badge": "N/A", "value": "No conservamos ningún dato de usuario." }
   ],
 
-  "securityVerifyTitle": "Verifícalo tú mismo",
-  "securityVerifyIntro": "No tienes que confiar en esta página. Cualquier auditor puede verificar la afirmación de cero egreso de forma independiente:",
+  "securityVerifyTitle": "Verificación independiente",
+  "securityVerifyIntro": "Cualquier auditor puede verificar la ausencia de egreso de datos sin necesidad de confiar en este documento:",
   "securityVerifySteps": [
-    "Presiona F12 → pestaña Red → limpia el registro de solicitudes",
+    "Abre stackme-app.vercel.app/analyze-me en un navegador",
+    "Presiona F12 → DevTools → pestaña Red → limpia el registro",
     "Arrastra cualquier archivo CSV o JSON a la zona de carga",
-    "Observa la pestaña Red: cero solicitudes salientes con tus datos"
+    "Observa: cero solicitudes salientes con contenido del archivo, nombres de columnas o valores"
   ],
   "securitySourceNote": "Código abierto · Licencia MIT · github.com/stackme-io/StackMe",
   "securitySourceFile": "Archivos clave: src/shared/analytics/index.ts · src/modules/analyze-me/useAnalyze.ts"

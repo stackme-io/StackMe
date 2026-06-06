@@ -4,33 +4,57 @@ import { useTranslation } from 'react-i18next'
 interface SecurityRow {
   label: string
   status: 'safe' | 'never' | 'zero' | 'none' | 'warn' | 'na'
+  badge: string
   value: string
 }
 
-const STATUS_DOT: Record<string, string> = {
-  safe:  'bg-emerald-500',
-  never: 'bg-red-500',
-  zero:  'bg-emerald-500',
-  none:  'bg-emerald-500',
-  warn:  'bg-amber-400',
-  na:    'bg-muted-foreground/30',
+function Badge({ status, text }: { status: string; text: string }) {
+  if (status === 'never') {
+    return <span className="font-bold text-red-500 mr-1">{text}</span>
+  }
+  if (status === 'safe' || status === 'zero' || status === 'none') {
+    return (
+      <span className="inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25 mr-2 whitespace-nowrap">
+        {text}
+      </span>
+    )
+  }
+  if (status === 'warn') {
+    return (
+      <span className="inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded border bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25 mr-2 whitespace-nowrap">
+        {text}
+      </span>
+    )
+  }
+  // na
+  return <span className="text-muted-foreground/60 mr-1">{text}</span>
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[9px] uppercase tracking-widest text-muted-foreground/95 mb-2 mt-5 first:mt-0">
+    <p className="text-[9px] uppercase tracking-widest text-muted-foreground/80 mb-2 mt-5 first:mt-0">
       {children}
     </p>
   )
 }
 
-function Row({ row }: { row: SecurityRow }) {
+function SecurityTable({ rows }: { rows: SecurityRow[] }) {
   return (
-    <div className="flex items-start gap-3 py-2 border-b border-border/50">
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-[5px] ${STATUS_DOT[row.status] ?? 'bg-muted-foreground/30'}`} />
-      <span className="text-xs text-muted-foreground/90 w-44 flex-shrink-0 leading-relaxed">{row.label}</span>
-      <span className="text-xs text-foreground leading-relaxed">{row.value}</span>
-    </div>
+    <table className="w-full border-collapse mb-1 text-xs">
+      <tbody>
+        {rows.map(row => (
+          <tr key={row.label}>
+            <td className="py-2 px-3 border border-border/60 font-semibold bg-muted/20 align-top w-[36%] text-foreground/90 whitespace-nowrap">
+              {row.label}
+            </td>
+            <td className="py-2 px-3 border border-border/60 align-top text-muted-foreground/90 leading-relaxed">
+              <Badge status={row.status} text={row.badge} />
+              {row.value}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
@@ -58,7 +82,7 @@ export function SecurityTab() {
       <div className="flex items-start justify-between mb-5">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{t('securityTitle')}</h2>
-          <p className="text-xs text-muted-foreground/90 mt-0.5">{t('securitySubtitle')}</p>
+          <p className="text-xs text-muted-foreground/80 mt-0.5">{t('securitySubtitle')}</p>
         </div>
         <div className="flex gap-2 flex-shrink-0 ml-4">
           <button
@@ -77,35 +101,29 @@ export function SecurityTab() {
       </div>
 
       <SectionLabel>{t('securityDataTitle')}</SectionLabel>
-      <div className="mb-2">
-        {dataRows.map(row => <Row key={row.label} row={row} />)}
-      </div>
+      <SecurityTable rows={dataRows} />
 
       <SectionLabel>{t('securityNetworkTitle')}</SectionLabel>
-      <div className="mb-2">
-        {networkRows.map(row => <Row key={row.label} row={row} />)}
-      </div>
+      <SecurityTable rows={networkRows} />
 
       <SectionLabel>{t('securityGdprTitle')}</SectionLabel>
-      <div className="mb-2">
-        {gdprRows.map(row => <Row key={row.label} row={row} />)}
-      </div>
+      <SecurityTable rows={gdprRows} />
 
       <SectionLabel>{t('securityVerifyTitle')}</SectionLabel>
-      <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 mb-4">
+      <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 mb-4">
         <p className="text-xs text-muted-foreground/90 mb-2.5">{t('securityVerifyIntro')}</p>
         <ol className="space-y-1.5">
           {verifySteps.map((step, i) => (
             <li key={i} className="text-xs text-foreground flex gap-2">
-              <span className="text-muted-foreground/50 flex-shrink-0">{i + 1}.</span>
+              <span className="text-muted-foreground/50 flex-shrink-0 select-none">{i + 1}.</span>
               {step}
             </li>
           ))}
         </ol>
       </div>
 
-      <p className="text-[10px] text-muted-foreground/70">{t('securitySourceNote')}</p>
-      <p className="text-[10px] text-muted-foreground/50 mt-0.5">{t('securitySourceFile')}</p>
+      <p className="text-[10px] text-muted-foreground/60">{t('securitySourceNote')}</p>
+      <p className="text-[10px] text-muted-foreground/40 mt-0.5">{t('securitySourceFile')}</p>
     </div>
   )
 }
