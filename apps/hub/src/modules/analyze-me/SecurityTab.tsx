@@ -34,8 +34,8 @@ function Badge({ status, text }: { status: string; text: string }) {
   if (status === 'safe' || status === 'zero' || status === 'none') {
     return (
       <span style={{
-        display: 'inline-block', fontSize: 11, fontWeight: 600,
-        padding: '1px 7px', borderRadius: 3, marginRight: 6,
+        display: 'inline-block', fontSize: 13, fontWeight: 600,
+        padding: '2px 10px', borderRadius: 4, marginRight: 8,
         background: C.greenBg, color: C.green, border: `1px solid ${C.greenBorder}`,
       }}>{text}</span>
     )
@@ -43,21 +43,21 @@ function Badge({ status, text }: { status: string; text: string }) {
   if (status === 'warn') {
     return (
       <span style={{
-        display: 'inline-block', fontSize: 11, fontWeight: 600,
-        padding: '1px 7px', borderRadius: 3, marginRight: 6,
+        display: 'inline-block', fontSize: 13, fontWeight: 600,
+        padding: '2px 10px', borderRadius: 4, marginRight: 8,
         background: C.amberBg, color: C.amber, border: `1px solid ${C.amberBorder}`,
       }}>{text}</span>
     )
   }
-  return <span style={{ color: C.textLight, fontWeight: 600, marginRight: 4 }}>{text}</span>
+  return <span style={{ color: C.textLight, fontWeight: 600, marginRight: 6 }}>{text}</span>
 }
 
 function H2({ children }: { children: React.ReactNode }) {
   return (
     <h2 style={{
-      fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+      fontSize: 12, fontWeight: 700, letterSpacing: '0.09em',
       textTransform: 'uppercase', color: C.textMuted,
-      margin: '24px 0 10px',
+      margin: '32px 0 12px',
     }}>
       {children}
     </h2>
@@ -71,18 +71,18 @@ function SecurityTable({ rows }: { rows: SecurityRow[] }) {
         {rows.map(row => (
           <tr key={row.label}>
             <td style={{
-              width: '38%', padding: '7px 10px',
+              width: '36%', padding: '11px 14px',
               border: `1px solid ${C.border}`,
               fontWeight: 600, background: C.cellBg,
               verticalAlign: 'top', whiteSpace: 'nowrap',
-              fontSize: 12, color: C.text,
+              fontSize: 14, color: C.text,
             }}>
               {row.label}
             </td>
             <td style={{
-              padding: '7px 10px', border: `1px solid ${C.border}`,
-              verticalAlign: 'top', fontSize: 12,
-              lineHeight: 1.6, color: C.text,
+              padding: '11px 14px', border: `1px solid ${C.border}`,
+              verticalAlign: 'top', fontSize: 14,
+              lineHeight: 1.65, color: C.text,
             }}>
               <Badge status={row.status} text={row.badge} />
               {row.value}
@@ -137,12 +137,12 @@ export function SecurityTab() {
         background: '#ffffff',
         borderRadius: 4,
         boxShadow: '0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04)',
-        padding: '48px 32px',
+        padding: '56px 48px',
         width: '100%',
-        maxWidth: 760,
+        maxWidth: 920,
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        fontSize: 13,
-        lineHeight: 1.6,
+        fontSize: 15,
+        lineHeight: 1.65,
         color: C.text,
       }}>
 
@@ -153,23 +153,23 @@ export function SecurityTab() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
         }}>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px', color: C.text, margin: 0 }}>
+            <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.4px', color: C.text, margin: 0 }}>
               {t('securityTitle')}
             </h1>
-            <p style={{ color: C.textMuted, marginTop: 4, fontSize: 12, margin: '4px 0 0' }}>
+            <p style={{ color: C.textMuted, marginTop: 6, fontSize: 14, margin: '6px 0 0' }}>
               {t('securityFor')}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0, marginLeft: 16 }}>
             <button onClick={handleShare} style={{
-              fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
-              borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
+              fontSize: 13, color: C.textMuted, border: `1px solid ${C.border}`,
+              borderRadius: 4, padding: '5px 14px', background: '#fff', cursor: 'pointer',
             }}>
               {copied ? t('securityCopied') : t('securityShare')}
             </button>
             <button onClick={handlePrint} style={{
-              fontSize: 11, color: C.textMuted, border: `1px solid ${C.border}`,
-              borderRadius: 4, padding: '3px 10px', background: '#fff', cursor: 'pointer',
+              fontSize: 13, color: C.textMuted, border: `1px solid ${C.border}`,
+              borderRadius: 4, padding: '5px 14px', background: '#fff', cursor: 'pointer',
             }}>
               {t('securityPrint')}
             </button>
@@ -193,14 +193,14 @@ export function SecurityTab() {
           marginTop: 28, padding: '14px 16px',
           background: C.verifyBg, border: `1px solid ${C.verifyBorder}`, borderRadius: 6,
         }}>
-          <p style={{ fontSize: 12, color: C.text, margin: '0 0 6px', fontWeight: 600 }}>
+          <p style={{ fontSize: 14, color: C.text, margin: '0 0 8px', fontWeight: 600 }}>
             {t('securityVerifyTitle')}
           </p>
-          <p style={{ fontSize: 12, color: C.text, margin: '0 0 8px' }}>
+          <p style={{ fontSize: 14, color: C.text, margin: '0 0 10px' }}>
             {t('securityVerifyIntro')}
           </p>
           {verifySteps.map((step, i) => (
-            <p key={i} style={{ fontSize: 12, color: C.text, margin: '0 0 3px' }}>
+            <p key={i} style={{ fontSize: 14, color: C.text, margin: '0 0 4px' }}>
               {i + 1}. {step}
             </p>
           ))}
@@ -208,18 +208,18 @@ export function SecurityTab() {
 
         {/* Note */}
         <p style={{
-          fontSize: 11, color: C.textMuted, marginTop: 16,
-          padding: '8px 12px', background: C.noteBg,
-          borderLeft: `3px solid ${C.noteBorder}`, lineHeight: 1.6,
+          fontSize: 13, color: C.textMuted, marginTop: 20,
+          padding: '12px 16px', background: C.noteBg,
+          borderLeft: `3px solid ${C.noteBorder}`, lineHeight: 1.65,
         }}>
           {t('securityNote')}
         </p>
 
         {/* Footer — без даты */}
         <div style={{
-          marginTop: 36, paddingTop: 14,
+          marginTop: 40, paddingTop: 16,
           borderTop: `1px solid ${C.border}`,
-          fontSize: 11, color: C.textLight,
+          fontSize: 13, color: C.textLight,
         }}>
           {t('securityFooter')}
         </div>
