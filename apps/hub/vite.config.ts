@@ -13,6 +13,7 @@ export default defineConfig({
       manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
+        maximumFileSizeToCacheInBytes: 50 * 1024 * 1024, // 50 MB — covers DuckDB WASM (~42 MB max)
       },
     }),
   ],
