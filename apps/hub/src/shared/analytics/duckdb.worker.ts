@@ -16,13 +16,11 @@ async function initDuckDB() {
   }
   const bundle = await duckdb.selectBundle(LOCAL_BUNDLES)
 
-  const worker_url = URL.createObjectURL(
-    new Blob([`importScripts("${bundle.mainWorker}");`], {
-      type: 'text/javascript',
-    })
-  )
-
-  const worker = new Worker(worker_url)
+  // Blob URL workers bypass the Service Worker — their importScripts calls
+  // are not intercepted, so cached files can't be served offline.
+  // Using the direct URL lets the SW serve the worker from cache.
+  if (!bundle.mainWorker) throw new Error('No mainWorker in selected DuckDB bundle')
+  const worker = new Worker(bundle.mainWorker, { type: 'classic' })
   const logger = new duckdb.VoidLogger()
 
   db = new duckdb.AsyncDuckDB(logger, worker)
