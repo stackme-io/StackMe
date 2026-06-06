@@ -23,9 +23,9 @@ echo --------------------------------------
 
 cd /d "D:\My projects\StackMe"
 git status --porcelain > "%TEMP%\gitstatus.txt" 2>&1
-set /p GIT_STATUS=<"%TEMP%\gitstatus.txt"
 
-if "%GIT_STATUS%"=="" (
+for %%A in ("%TEMP%\gitstatus.txt") do set FSIZE=%%~zA
+if "%FSIZE%"=="0" (
   echo [SKIP] Nothing to commit. No build needed.
   goto ask
 )
