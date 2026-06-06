@@ -5,14 +5,16 @@ echo.
 echo ======================================
 echo   StackMe - Build and Push
 echo ======================================
+
+:ask
 echo.
+set COMMIT_MSG=
+set /p COMMIT_MSG=Commit message (or "q" to quit):
 
-set /p COMMIT_MSG=Commit message:
-
+if /i "%COMMIT_MSG%"=="q" exit /b 0
 if "%COMMIT_MSG%"=="" (
   echo [ERROR] Commit message cannot be empty.
-  pause
-  exit /b 1
+  goto ask
 )
 
 echo.
@@ -24,11 +26,8 @@ call npm run build
 
 if %ERRORLEVEL% neq 0 (
   echo.
-  echo ======================================
-  echo [FAIL] Build failed. See errors above.
-  echo ======================================
-  pause
-  exit /b 1
+  echo [FAIL] Build failed. Fix errors and try again.
+  goto ask
 )
 
 echo.
@@ -40,10 +39,8 @@ git add .
 git commit -m "%COMMIT_MSG%"
 
 if %ERRORLEVEL% neq 0 (
-  echo.
   echo [WARN] Nothing to commit or commit failed.
-  pause
-  exit /b 1
+  goto ask
 )
 
 echo.
@@ -53,15 +50,10 @@ echo --------------------------------------
 git push
 
 if %ERRORLEVEL% neq 0 (
-  echo.
   echo [FAIL] Push failed.
-  pause
-  exit /b 1
+  goto ask
 )
 
 echo.
-echo ======================================
-echo [OK] Built, committed and pushed!
-echo ======================================
-echo.
-timeout /t 5
+echo [OK] Done! Ready for next commit.
+goto ask
