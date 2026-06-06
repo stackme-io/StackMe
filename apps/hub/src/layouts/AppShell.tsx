@@ -61,6 +61,17 @@ export default function AppShell() {
 
   useEffect(() => {
     if (panels.length === 0) {
+      // On direct URL navigation (e.g. /analyze-me shared link) open the matching panel,
+      // not always market-me.
+      const systemPaths = ['/account-me', '/notify-me', '/']
+      if (!systemPaths.includes(location.pathname)) {
+        const allManifests = [...MODULE_REGISTRY, MARKET_ME_MANIFEST]
+        const matched = allManifests.find(m => m.route === location.pathname)
+        if (matched) {
+          openPanel(matched)
+          return
+        }
+      }
       openPanel(MARKET_ME_MANIFEST)
     }
   }, [])

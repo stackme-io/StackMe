@@ -19,11 +19,19 @@ const HINT_KEY = 'stackme-hint-analyze-me'
 export default function AnalyzeMePage() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const { t } = useTranslation('analyze-me')
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [activeTab, setActiveTab]         = useState(() => {
     const tab = searchParams.get('tab')
     return tab && VALID_TABS.includes(tab) ? tab : 'work'
   })
+
+  // Clean up stale/renamed tab params (e.g. ?tab=generate → ?tab=work)
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab && !VALID_TABS.includes(tab)) {
+      setSearchParams({ tab: 'work' }, { replace: true })
+    }
+  }, [])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
