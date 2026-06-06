@@ -44,10 +44,10 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           </div>
 
           {/* Steps */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex flex-col md:flex-row md:items-stretch gap-0">
             {steps.map((step, i) => (
               <Fragment key={step.title}>
-                <div className="flex-1 flex gap-3 min-w-0 items-start">
+                <div className="flex-1 flex gap-3 min-w-0 items-start py-1 px-2">
                   <span className="flex-shrink-0 text-sm font-semibold text-primary w-4 text-center leading-relaxed">
                     {i + 1}
                   </span>
@@ -57,7 +57,9 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
                   </div>
                 </div>
                 {i < steps.length - 1 && (
-                  <ChevronRight className="hidden md:block w-4 h-4 text-muted-foreground/60 flex-shrink-0 self-center" />
+                  <div className="hidden md:flex items-center justify-center w-8 flex-shrink-0">
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/60" />
+                  </div>
                 )}
               </Fragment>
             ))}
