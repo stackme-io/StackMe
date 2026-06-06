@@ -6,14 +6,14 @@ interface AnomalyCardsProps {
 }
 
 export function AnomalyCards({ anomalies }: AnomalyCardsProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation('analyze-me')
 
   if (anomalies.length === 0) return null
 
   return (
     <div className="flex flex-col gap-2 mt-1">
       <p className="text-[9px] uppercase tracking-widest text-muted-foreground px-1">
-        {t('analyze.anomalyDetails')}
+        {t('anomalyDetails')}
       </p>
       {anomalies.map((a, i) => (
         <div

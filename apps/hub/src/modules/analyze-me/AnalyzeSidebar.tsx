@@ -114,7 +114,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
 
       <div className="p-3 pb-2">
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
-          {t('sensitivityLabel')}
+          {t('sensitivityLabel')}<span className="text-muted-foreground/50 ml-0.5">*</span>
         </p>
         <div className="flex flex-col gap-0.5">
           {SENSITIVITY_OPTIONS.map(opt => (
@@ -184,7 +184,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
           className="flex items-center gap-1 mt-1 px-2 text-left group"
         >
           <span className="text-xs text-muted-foreground group-hover:text-foreground/70 transition-colors">
-            {t('sensitivityAffects')}
+            <span className="mr-0.5">*</span>{t('sensitivityAffects')}
           </span>
           <span
             className="text-xs text-muted-foreground/50 group-hover:text-muted-foreground/80 transition-all duration-150"
