@@ -2,12 +2,17 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AnalyzeResult } from './types'
 
-export type Sensitivity = 'conservative' | 'balanced' | 'aggressive'
+export type Sensitivity = 'conservative' | 'balanced' | 'aggressive' | 'custom'
 
-export const SENSITIVITY_MULTIPLIER: Record<Sensitivity, number> = {
+export const SENSITIVITY_MULTIPLIER: Record<Exclude<Sensitivity, 'custom'>, number> = {
   conservative: 3.0,
   balanced:     1.5,
   aggressive:   1.0,
+}
+
+export function getMultiplier(sensitivity: Sensitivity, customMultiplier: number): number {
+  if (sensitivity === 'custom') return customMultiplier
+  return SENSITIVITY_MULTIPLIER[sensitivity as Exclude<Sensitivity, 'custom'>]
 }
 
 const SENSITIVITY_OPTIONS: { id: Sensitivity; labelKey: string; descKey: string; recommended?: boolean }[] = [
@@ -20,11 +25,24 @@ interface AnalyzeSidebarProps {
   result: AnalyzeResult | null
   sensitivity: Sensitivity
   onSensitivityChange: (s: Sensitivity) => void
+  customMultiplier: number
+  onCustomMultiplierChange: (v: number) => void
 }
 
-export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: AnalyzeSidebarProps) {
+export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, customMultiplier, onCustomMultiplierChange }: AnalyzeSidebarProps) {
   const { t } = useTranslation('analyze-me')
   const [hintOpen, setHintOpen] = useState(false)
+  const [customInput, setCustomInput] = useState(String(customMultiplier))
+
+  const commitCustom = () => {
+    const v = parseFloat(customInput)
+    if (!isNaN(v) && v > 0) {
+      setCustomInput(String(v))
+      onCustomMultiplierChange(v)
+    } else {
+      setCustomInput(String(customMultiplier))
+    }
+  }
 
   const counts = result ? {
     missing:   result.anomalies.filter(a => a.anomaly_type === 'missing').length,
@@ -122,6 +140,39 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange }: Ana
               </span>
             </button>
           ))}
+
+          <button
+            onClick={() => onSensitivityChange('custom')}
+            className={`flex flex-col px-2 py-2 rounded-md text-left transition-colors ${
+              sensitivity === 'custom'
+                ? 'bg-teal-950/40 border border-teal-800/50'
+                : 'hover:bg-muted/50 border border-transparent'
+            }`}
+          >
+            <span className={`text-xs font-medium ${sensitivity === 'custom' ? 'text-teal-300' : 'text-muted-foreground/95'}`}>
+              {t('sensitivityCustomLabel')}
+            </span>
+            <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
+              {t('sensitivityCustomDesc')}
+            </span>
+          </button>
+
+          {sensitivity === 'custom' && (
+            <div className="flex items-center gap-2 px-2 py-1.5">
+              <span className="text-xs text-muted-foreground">IQR ×</span>
+              <input
+                type="number"
+                min="0.1"
+                max="20"
+                step="0.1"
+                value={customInput}
+                onChange={e => setCustomInput(e.target.value)}
+                onBlur={commitCustom}
+                onKeyDown={e => e.key === 'Enter' && commitCustom()}
+                className="w-16 px-2 py-0.5 text-xs bg-background border border-teal-800/50 rounded text-teal-300 text-center focus:outline-none focus:border-teal-600"
+              />
+            </div>
+          )}
         </div>
         <button
           onClick={() => setHintOpen(o => !o)}

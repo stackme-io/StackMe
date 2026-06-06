@@ -41,6 +41,8 @@
   "sensitivityAggressiveDesc": "Catches subtle patterns. Expect more noise. (IQR × 1.0)",
   "sensitivityRec": "rec.",
   "sensitivityAffects": "Affects outlier detection only",
+  "sensitivityCustomLabel": "Custom",
+  "sensitivityCustomDesc": "Enter any IQR multiplier",
   "sensitivityHint": "Outlier detection runs only on numeric measurement columns. Columns named `id`, `*_id`, `timestamp` and columns where every value is unique are excluded automatically.",
   "errorEmpty": "File is empty.",
   "errorNoHeaders": "CSV file has no valid column headers.",

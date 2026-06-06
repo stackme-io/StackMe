@@ -40,6 +40,8 @@
   "sensitivityAggressiveLabel": "Agresivo",
   "sensitivityAggressiveDesc": "Detecta patrones sutiles. Espera más ruido. (IQR × 1.0)",
   "sensitivityRec": "rec.",
+  "sensitivityCustomLabel": "Personalizado",
+  "sensitivityCustomDesc": "Introduce cualquier multiplicador IQR",
   "sensitivityAffects": "Afecta solo la detección de valores atípicos",
   "sensitivityHint": "La detección de valores atípicos solo se aplica a columnas numéricas de medición. Las columnas llamadas `id`, `*_id`, `timestamp` y las columnas donde cada valor es único se excluyen automáticamente.",
   "errorEmpty": "El archivo está vacío.",

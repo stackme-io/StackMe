@@ -40,6 +40,8 @@
   "sensitivityAggressiveLabel": "Агресивний",
   "sensitivityAggressiveDesc": "Виявляє тонкі патерни. Очікуйте більше шуму. (IQR × 1.0)",
   "sensitivityRec": "рек.",
+  "sensitivityCustomLabel": "Власний",
+  "sensitivityCustomDesc": "Введіть будь-який множник IQR",
   "sensitivityAffects": "Впливає лише на виявлення аномальних значень",
   "sensitivityHint": "Виявлення аномалій застосовується лише до числових колонок-вимірювань. Колонки з назвами `id`, `*_id`, `timestamp` та колонки де всі значення унікальні - виключаються автоматично.",
   "errorEmpty": "Файл порожній.",

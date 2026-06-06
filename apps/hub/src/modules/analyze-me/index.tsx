@@ -4,7 +4,7 @@ import { useAnalyze } from './useAnalyze'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import { OnboardingFlow } from '../../shared/OnboardingFlow'
 import { AnalyzeSection } from './AnalyzeSection'
-import { AnalyzeSidebar, SENSITIVITY_MULTIPLIER, type Sensitivity } from './AnalyzeSidebar'
+import { AnalyzeSidebar, getMultiplier, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
 
@@ -18,16 +18,19 @@ export default function AnalyzeMePage() {
   const [activeTab, setActiveTab]         = useState('work')
   const [sidebarOpen, setSidebarOpen]     = useState(true)
   const [filter, setFilter]               = useState<FilterType>('all')
-  const [sensitivity, setSensitivity]     = useState<Sensitivity>('balanced')
-  const [forgeData, setForgeData]         = useState<ForgeHandoff | null>(null)
+  const [sensitivity, setSensitivity]       = useState<Sensitivity>('balanced')
+  const [customMultiplier, setCustomMultiplier] = useState(2.0)
+  const [forgeData, setForgeData]           = useState<ForgeHandoff | null>(null)
   const [hintPermanent, setHintPermanent] = useState(() => !!localStorage.getItem(HINT_KEY))
   const [hintVisible, setHintVisible]     = useState(true)
 
-  const analyzeRef     = useRef(analyze)
-  const fileRef        = useRef<File | null>(null)
-  const sensitivityRef = useRef(sensitivity)
+  const analyzeRef          = useRef(analyze)
+  const fileRef             = useRef<File | null>(null)
+  const sensitivityRef      = useRef(sensitivity)
+  const customMultiplierRef = useRef(customMultiplier)
   useEffect(() => { analyzeRef.current = analyze }, [analyze])
   useEffect(() => { sensitivityRef.current = sensitivity }, [sensitivity])
+  useEffect(() => { customMultiplierRef.current = customMultiplier }, [customMultiplier])
 
   useEffect(() => {
     function consume(handoff: ForgeHandoff) {
@@ -36,7 +39,7 @@ export default function AnalyzeMePage() {
       const json = JSON.stringify(handoff.rows)
       const file = new File([json], `forgeme-${handoff.seed}.json`, { type: 'application/json' })
       fileRef.current = file
-      analyzeRef.current(file, SENSITIVITY_MULTIPLIER[sensitivityRef.current])
+      analyzeRef.current(file, getMultiplier(sensitivityRef.current, customMultiplierRef.current))
     }
 
     const immediate = popHandoff()
@@ -52,12 +55,18 @@ export default function AnalyzeMePage() {
     fileRef.current = file
     setForgeData(null)
     setFilter('all')
-    analyze(file, SENSITIVITY_MULTIPLIER[sensitivity])
+    analyze(file, getMultiplier(sensitivity, customMultiplier))
   }
 
   const handleSensitivityChange = (s: Sensitivity) => {
     setSensitivity(s)
-    if (fileRef.current) analyze(fileRef.current, SENSITIVITY_MULTIPLIER[s])
+    if (fileRef.current) analyze(fileRef.current, getMultiplier(s, customMultiplierRef.current))
+  }
+
+  const handleCustomMultiplierChange = (v: number) => {
+    setCustomMultiplier(v)
+    customMultiplierRef.current = v
+    if (fileRef.current) analyze(fileRef.current, v)
   }
 
   const handleHidePermanent = () => {
@@ -98,6 +107,8 @@ export default function AnalyzeMePage() {
           result={result}
           sensitivity={sensitivity}
           onSensitivityChange={handleSensitivityChange}
+          customMultiplier={customMultiplier}
+          onCustomMultiplierChange={handleCustomMultiplierChange}
         />
       </aside>
 
