@@ -183,7 +183,7 @@ export function SecurityTab() {
           background: C.verifyBg, border: `1px solid ${C.verifyBorder}`, borderRadius: 6,
         }}>
           {/* Шапка: заголовок (всегда) + chevron (только на экране) */}
-          <div style={{ display: 'flex', alignItems: 'center', padding: '14px 16px 0', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', padding: verifyOpen ? '14px 16px 0' : '14px 16px', gap: 8 }}>
             <p style={{ fontSize: 14, color: C.text, fontWeight: 600, margin: 0, flex: 1 }}>
               {t('securityVerifyTitle')}
             </p>
@@ -204,11 +204,28 @@ export function SecurityTab() {
               <p style={{ fontSize: 14, color: C.text, margin: '0 0 10px' }}>
                 {t('securityVerifyIntro')}
               </p>
-              {verifySteps.map((step, i) => (
-                <p key={i} style={{ fontSize: 14, color: C.text, margin: '0 0 4px' }}>
-                  {i + 1}. {step}
-                </p>
-              ))}
+              {verifySteps.map((step, i) => {
+                const urlMatch = step.match(/(https?:\/\/\S+|[\w-]+\.[\w.-]+\/\S*)/)
+                return (
+                  <p key={i} style={{ fontSize: 14, color: C.text, margin: '0 0 4px' }}>
+                    {i + 1}.{' '}
+                    {urlMatch ? (
+                      <>
+                        {step.slice(0, urlMatch.index)}
+                        <a
+                          href={urlMatch[0].startsWith('http') ? urlMatch[0] : `https://${urlMatch[0]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: C.green, textDecoration: 'underline' }}
+                        >
+                          {urlMatch[0]}
+                        </a>
+                        {step.slice((urlMatch.index ?? 0) + urlMatch[0].length)}
+                      </>
+                    ) : step}
+                  </p>
+                )
+              })}
             </div>
           )}
         </div>
@@ -224,15 +241,6 @@ export function SecurityTab() {
 
         <H2>{t('securityGdprTitle')}</H2>
         <SecurityTable rows={gdprRows} />
-
-        {/* Note */}
-        <p style={{
-          fontSize: 13, color: C.textMuted, marginTop: 20,
-          padding: '12px 16px', background: C.noteBg,
-          borderLeft: `3px solid ${C.noteBorder}`, lineHeight: 1.65,
-        }}>
-          {t('securityNote')}
-        </p>
 
         {/* Footer — без даты */}
         <div style={{
