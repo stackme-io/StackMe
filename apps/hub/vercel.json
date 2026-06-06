@@ -1,7 +1,4 @@
 {
-  "redirects": [
-    { "source": "/analyze-me", "destination": "/analyze-me?tab=work", "permanent": false }
-  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
