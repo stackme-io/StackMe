@@ -11,7 +11,7 @@
   "progressOutliers": "Detecting outliers...",
   "privacyBadge": "stays in your browser",
   "privacyTitle": "Your data never leaves your browser",
-  "privacyBody": "Analysis runs entirely in your browser using DuckDB-Wasm — a full SQL engine compiled to WebAssembly. No server, no uploads, no logs.",
+  "privacyBody": "Analysis runs entirely in your browser using DuckDB-Wasm - a full SQL engine compiled to WebAssembly. No server, no uploads, no logs.",
   "privacyDevTools": "Skeptical? You should be - and you can check.",
   "privacyLearnMore": "Technical proof →",
   "sizeWarning": "Large file detected - analysis may take longer than usual.",

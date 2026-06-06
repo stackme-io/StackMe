@@ -11,7 +11,7 @@
   "progressOutliers": "Detectando valores atípicos...",
   "privacyBadge": "se queda en tu navegador",
   "privacyTitle": "Tus datos nunca salen de tu navegador",
-  "privacyBody": "El análisis se ejecuta completamente en tu navegador usando DuckDB-Wasm — un motor SQL completo compilado a WebAssembly. Sin servidor, sin subidas, sin registros.",
+  "privacyBody": "El análisis se ejecuta completamente en tu navegador usando DuckDB-Wasm - un motor SQL completo compilado a WebAssembly. Sin servidor, sin subidas, sin registros.",
   "privacyDevTools": "¿Escéptico? Deberías estarlo - y puedes comprobarlo.",
   "privacyLearnMore": "Prueba técnica →",
   "sizeWarning": "Archivo grande detectado - el análisis puede tardar más de lo habitual.",

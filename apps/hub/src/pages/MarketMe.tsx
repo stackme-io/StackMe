@@ -17,6 +17,12 @@ const categoryColors: Record<string, string> = {
   testing: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
 }
 
+const addButtonColors: Record<string, string> = {
+  generation: 'border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-500/40 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-900/40 dark:hover:text-violet-200',
+  analytics:  'border border-teal-300 bg-teal-50 text-teal-700 hover:bg-teal-100 dark:border-teal-500/40 dark:bg-teal-950/30 dark:text-teal-300 dark:hover:bg-teal-900/40 dark:hover:text-teal-200',
+  testing:    'border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/40 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 dark:hover:text-amber-200',
+}
+
 export default function MarketMePage() {
   const { isSignedIn } = useUser()
   const { openSignIn } = useClerk()
@@ -154,7 +160,7 @@ export default function MarketMePage() {
                   <div className="flex items-center gap-2 mt-5">
                     <button
                       onClick={() => handleOpen(module.id)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                      className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
                     >
                       {tc('marketplace.open')}
                     </button>
@@ -164,7 +170,7 @@ export default function MarketMePage() {
                       className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
                         isActive
                           ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                          : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : addButtonColors[module.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
                       }`}
                     >
                       {isLoading ? '...' : isActive
