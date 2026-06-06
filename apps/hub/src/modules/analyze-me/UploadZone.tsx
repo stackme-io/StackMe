@@ -83,7 +83,7 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
         )}
       </label>
 
-      <div className="flex justify-center mt-1.5">
+      <div className="flex flex-col items-center gap-2 mt-2">
         <div className="relative group">
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/60 bg-background hover:border-border transition-colors cursor-default">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
@@ -94,10 +94,12 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
           <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-72 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground hidden group-hover:block pointer-events-none">
             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
             <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
-            <p className="mb-2">{t('privacyBody')}</p>
-            <p className="text-teal-400/80 border-t border-border/40 pt-2">{t('privacyDevTools')}</p>
+            <p>{t('privacyBody')}</p>
           </div>
         </div>
+        <p className="text-[11px] text-teal-400/70 text-center max-w-xs leading-relaxed">
+          {t('privacyDevTools')}
+        </p>
       </div>
     </div>
   )
