@@ -25,11 +25,11 @@ export default function AnalyzeMePage() {
     return tab && VALID_TABS.includes(tab) ? tab : 'work'
   })
 
-  // Clean up stale/renamed tab params (e.g. ?tab=generate → ?tab=work)
+  // Sync URL ?tab= on first render: fix stale names (generate, modules…) and add if missing
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab && !VALID_TABS.includes(tab)) {
-      setSearchParams({ tab: 'work' }, { replace: true })
+    if (!tab || !VALID_TABS.includes(tab)) {
+      setSearchParams({ tab: activeTab }, { replace: true })
     }
   }, [])
 
