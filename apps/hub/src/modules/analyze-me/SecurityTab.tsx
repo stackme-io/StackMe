@@ -177,6 +177,42 @@ export function SecurityTab() {
           </div>
         </div>
 
+        {/* Verification box — первым, сворачиваемый */}
+        <div style={{
+          marginBottom: 32,
+          background: C.verifyBg, border: `1px solid ${C.verifyBorder}`, borderRadius: 6,
+        }}>
+          {/* Шапка: заголовок (всегда) + chevron (только на экране) */}
+          <div style={{ display: 'flex', alignItems: 'center', padding: '14px 16px 0', gap: 8 }}>
+            <p style={{ fontSize: 14, color: C.text, fontWeight: 600, margin: 0, flex: 1 }}>
+              {t('securityVerifyTitle')}
+            </p>
+            <button
+              data-no-print
+              onClick={() => setVerifyOpen(o => !o)}
+              title={verifyOpen ? 'Collapse' : 'Expand'}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px',
+                color: C.textLight, fontSize: 11, flexShrink: 0,
+                transform: verifyOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                display: 'inline-block', transition: 'transform 0.2s',
+              }}
+            >▼</button>
+          </div>
+          {verifyOpen && (
+            <div style={{ padding: '8px 16px 14px' }}>
+              <p style={{ fontSize: 14, color: C.text, margin: '0 0 10px' }}>
+                {t('securityVerifyIntro')}
+              </p>
+              {verifySteps.map((step, i) => (
+                <p key={i} style={{ fontSize: 14, color: C.text, margin: '0 0 4px' }}>
+                  {i + 1}. {step}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+
         <H2>{t('securityDataTitle')}</H2>
         <SecurityTable rows={dataRows} />
 
@@ -188,24 +224,6 @@ export function SecurityTab() {
 
         <H2>{t('securityGdprTitle')}</H2>
         <SecurityTable rows={gdprRows} />
-
-        {/* Verification box */}
-        <div style={{
-          marginTop: 28, padding: '14px 16px',
-          background: C.verifyBg, border: `1px solid ${C.verifyBorder}`, borderRadius: 6,
-        }}>
-          <p style={{ fontSize: 14, color: C.text, margin: '0 0 8px', fontWeight: 600 }}>
-            {t('securityVerifyTitle')}
-          </p>
-          <p style={{ fontSize: 14, color: C.text, margin: '0 0 10px' }}>
-            {t('securityVerifyIntro')}
-          </p>
-          {verifySteps.map((step, i) => (
-            <p key={i} style={{ fontSize: 14, color: C.text, margin: '0 0 4px' }}>
-              {i + 1}. {step}
-            </p>
-          ))}
-        </div>
 
         {/* Note */}
         <p style={{
