@@ -1,16 +1,13 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
 
-// DuckDB bundles served locally (copied by scripts/copy-duckdb-wasm.mjs)
-// Using direct Worker URLs (not nested) so the Service Worker can intercept
-// all fetches (WASM + worker scripts) and serve them from cache offline.
+// DuckDB bundles served locally (copied by scripts/copy-duckdb-wasm.mjs).
+// We force the MVP bundle only — the EH (Exception Handling) bundle triggers
+// a WASM "function signature mismatch" on the first runQuery when served
+// from Service Worker cache offline. MVP avoids WebAssembly EH entirely.
 const LOCAL_BUNDLES: duckdb.DuckDBBundles = {
   mvp: {
     mainModule: '/duckdb/duckdb-mvp.wasm',
     mainWorker: '/duckdb/duckdb-browser-mvp.worker.js',
-  },
-  eh: {
-    mainModule: '/duckdb/duckdb-eh.wasm',
-    mainWorker: '/duckdb/duckdb-browser-eh.worker.js',
   },
 }
 
