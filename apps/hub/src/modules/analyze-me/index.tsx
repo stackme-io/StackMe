@@ -115,7 +115,7 @@ export default function AnalyzeMePage() {
   ]
 
   return (
-    <div className="flex h-full relative overflow-hidden">
+    <div data-print-expand className="flex h-full relative overflow-hidden">
 
       <aside
         data-no-print
@@ -141,7 +141,7 @@ export default function AnalyzeMePage() {
         </button>
       )}
 
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300">
+      <main data-print-expand className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300">
         <div
           className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-6 pt-5'}`}
         >

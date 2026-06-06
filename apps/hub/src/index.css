@@ -274,14 +274,15 @@ code {
     overflow: visible !important;
     display: block !important;
   }
-  .overflow-y-auto {
+  [data-print-expand] {
     overflow: visible !important;
     height: auto !important;
     max-height: none !important;
   }
-  .overflow-hidden {
+  .overflow-y-auto {
     overflow: visible !important;
     height: auto !important;
+    max-height: none !important;
   }
   .overflow-x-hidden {
     overflow-x: visible !important;
