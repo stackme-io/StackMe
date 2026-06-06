@@ -1,65 +1,39 @@
-type QueryCallback = (data: any[] | null, error?: string) => void
-type LoadCallback = (error?: string) => void
+import * as duckdb from '@duckdb/duckdb-wasm'
 
-const pendingQueries = new Map<string, QueryCallback>()
-const pendingLoads = new Map<string, LoadCallback>()
-
-let worker: Worker | null = null
-let isReady = false
-const readyCallbacks: (() => void)[] = []
-
-function getWorker(): Worker {
-  if (worker) return worker
-
-  worker = new Worker(
-    new URL('./duckdb.worker.ts', import.meta.url),
-    { type: 'module' }
-  )
-
-  worker.onmessage = (event) => {
-    const { type, id, data, error } = event.data
-
-    if (type === 'READY') {
-      isReady = true
-      console.log('✓ DuckDB Worker ready')
-      readyCallbacks.forEach(cb => cb())
-      readyCallbacks.length = 0
-      return
-    }
-
-    if (type === 'LOAD_DONE') {
-      const cb = pendingLoads.get(id)
-      if (cb) { cb(); pendingLoads.delete(id) }
-      return
-    }
-
-    if (type === 'LOAD_ERROR') {
-      const cb = pendingLoads.get(id)
-      if (cb) { cb(error); pendingLoads.delete(id) }
-      return
-    }
-
-    if (type === 'QUERY_RESULT') {
-      const cb = pendingQueries.get(id)
-      if (cb) { cb(data); pendingQueries.delete(id) }
-      return
-    }
-
-    if (type === 'QUERY_ERROR') {
-      const cb = pendingQueries.get(id)
-      if (cb) { cb(null, error); pendingQueries.delete(id) }
-    }
-  }
-
-  worker.postMessage({ type: 'INIT' })
-  return worker
+// DuckDB bundles served locally (copied by scripts/copy-duckdb-wasm.mjs)
+// Using direct Worker URLs (not nested) so the Service Worker can intercept
+// all fetches (WASM + worker scripts) and serve them from cache offline.
+const LOCAL_BUNDLES: duckdb.DuckDBBundles = {
+  mvp: {
+    mainModule: '/duckdb/duckdb-mvp.wasm',
+    mainWorker: '/duckdb/duckdb-browser-mvp.worker.js',
+  },
+  eh: {
+    mainModule: '/duckdb/duckdb-eh.wasm',
+    mainWorker: '/duckdb/duckdb-browser-eh.worker.js',
+  },
 }
 
-function waitForReady(): Promise<void> {
-  return new Promise((resolve) => {
-    if (isReady) { resolve(); return }
-    readyCallbacks.push(resolve)
-  })
+let db:   duckdb.AsyncDuckDB           | null = null
+let conn: duckdb.AsyncDuckDBConnection | null = null
+let initPromise: Promise<void>         | null = null
+
+async function initDuckDB(): Promise<void> {
+  const bundle = await duckdb.selectBundle(LOCAL_BUNDLES)
+  if (!bundle.mainWorker) throw new Error('No mainWorker in DuckDB bundle')
+
+  // Direct Worker from the main thread — SW-interceptable, no nesting
+  const worker = new Worker(bundle.mainWorker, { type: 'classic' })
+  const logger = new duckdb.VoidLogger()
+
+  db = new duckdb.AsyncDuckDB(logger, worker)
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker)
+  conn = await db.connect()
+}
+
+function ensureInit(): Promise<void> {
+  if (!initPromise) initPromise = initDuckDB()
+  return initPromise
 }
 
 function csvToJson(csv: string): Record<string, string>[] {
@@ -73,66 +47,41 @@ function csvToJson(csv: string): Record<string, string>[] {
 }
 
 export async function loadCSV(csvText: string, tableName: string): Promise<void> {
-  getWorker()
-  await waitForReady()
+  await ensureInit()
+  if (!db || !conn) throw new Error('DuckDB not initialized')
 
-  const json = JSON.stringify(csvToJson(csvText))
+  const json  = JSON.stringify(csvToJson(csvText))
+  const bytes = new TextEncoder().encode(json)
 
-  return new Promise((resolve, reject) => {
-    const id = crypto.randomUUID()
-    pendingLoads.set(id, (error) => {
-      if (error) reject(new Error(error))
-      else resolve()
-    })
-    worker!.postMessage({ type: 'LOAD_JSON', id, jsonData: json, tableName })
-  })
+  await conn.query(`DROP TABLE IF EXISTS ${tableName}`)
+  await db.registerFileBuffer(`${tableName}.json`, bytes)
+  await conn.query(
+    `CREATE TABLE ${tableName} AS SELECT * FROM read_json_auto('${tableName}.json')`
+  )
 }
 
 export async function loadJSON(jsonData: string, tableName: string): Promise<void> {
-  getWorker()
-  await waitForReady()
+  await ensureInit()
+  if (!db || !conn) throw new Error('DuckDB not initialized')
 
-  return new Promise((resolve, reject) => {
-    const id = crypto.randomUUID()
-    pendingLoads.set(id, (error) => {
-      if (error) reject(new Error(error))
-      else resolve()
-    })
-    worker!.postMessage({ type: 'LOAD_JSON', id, jsonData, tableName })
-  })
+  const bytes = new TextEncoder().encode(jsonData)
+
+  await conn.query(`DROP TABLE IF EXISTS ${tableName}`)
+  await db.registerFileBuffer(`${tableName}.json`, bytes)
+  await conn.query(
+    `CREATE TABLE ${tableName} AS SELECT * FROM read_json_auto('${tableName}.json')`
+  )
 }
 
 export async function runQuery(sql: string): Promise<any[]> {
-  getWorker()
-  await waitForReady()
+  await ensureInit()
+  if (!conn) throw new Error('DuckDB not initialized')
 
-  return new Promise((resolve, reject) => {
-    const id = crypto.randomUUID()
-    pendingQueries.set(id, (data, error) => {
-      if (error) reject(new Error(error))
-      else resolve(data ?? [])
-    })
-    worker!.postMessage({ type: 'QUERY', id, sql })
-  })
+  const result = await conn.query(sql)
+  return result.toArray().map((row: any) => row.toJSON())
 }
 
 export async function loadAnomalyIndex(anomalyRowIndexes: number[]): Promise<void> {
-  getWorker()
-  await waitForReady()
-
-  const json = JSON.stringify(anomalyRowIndexes.map(i => ({ row_index: i })))
-
-  return new Promise((resolve, reject) => {
-    const id = crypto.randomUUID()
-    pendingLoads.set(id, (error) => {
-      if (error) reject(new Error(error))
-      else resolve()
-    })
-    worker!.postMessage({
-      type: 'LOAD_JSON',
-      id,
-      jsonData: json,
-      tableName: 'anomaly_index',
-    })
-  })
+  const jsonData = JSON.stringify(anomalyRowIndexes.map(i => ({ row_index: i })))
+  await loadJSON(jsonData, 'anomaly_index')
 }
