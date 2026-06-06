@@ -86,13 +86,14 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
       <div className="flex flex-col items-center gap-2 mt-2">
         <div className="relative group">
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/60 bg-background hover:border-border transition-colors cursor-default">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="text-muted-foreground">
-              <path d="M5 1L1.5 2.5v3C1.5 7.5 3 9 5 9.5 7 9 8.5 7.5 8.5 5.5v-3L5 1z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" className="text-muted-foreground flex-shrink-0">
+              <rect x="2" y="5" width="7" height="5" rx="0.8" stroke="currentColor" strokeWidth="1"/>
+              <path d="M3.5 5V3.5a2 2 0 014 0V5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
             </svg>
-            <span className="text-[10px] text-muted-foreground">{t('privacyBadge')}</span>
+            <span className="text-xs text-muted-foreground">{t('privacyBadge')}</span>
           </div>
-          <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-72 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground hidden group-hover:block pointer-events-none">
-            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-l border-t border-border bg-background" />
+          <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-72 px-3 py-2.5 rounded-lg border border-border bg-background shadow-lg z-20 text-xs text-muted-foreground hidden group-hover:block pointer-events-none">
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-r border-b border-border bg-background" />
             <p className="font-medium text-foreground mb-1">{t('privacyTitle')}</p>
             <p>{t('privacyBody')}</p>
           </div>
