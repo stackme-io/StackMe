@@ -44,24 +44,37 @@ export function OnboardingFlow({ steps, visible, onHideSession, onHidePermanent 
           </div>
 
           {/* Steps */}
-          <div className="flex flex-col md:flex-row md:items-stretch gap-0">
+          <div className="hidden md:flex items-center">
             {steps.map((step, i) => (
               <Fragment key={step.title}>
-                <div className="flex-1 flex gap-3 min-w-0 items-start py-1 px-2">
+                <div className="flex gap-3 items-start flex-shrink-0">
                   <span className="flex-shrink-0 text-sm font-semibold text-primary w-4 text-center leading-relaxed">
                     {i + 1}
                   </span>
-                  <div className="min-w-0">
+                  <div>
                     <span className="block text-sm font-semibold text-foreground">{step.title}</span>
                     <span className="block text-xs text-muted-foreground leading-relaxed">{step.desc}</span>
                   </div>
                 </div>
                 {i < steps.length - 1 && (
-                  <div className="hidden md:flex items-center justify-center w-8 flex-shrink-0">
-                    <ChevronRight className="w-4 h-4 text-muted-foreground/60" />
+                  <div className="flex-1 flex items-center justify-center px-4 min-w-[40px]">
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/60 flex-shrink-0" />
                   </div>
                 )}
               </Fragment>
+            ))}
+          </div>
+          <div className="flex flex-col md:hidden gap-3">
+            {steps.map((step, i) => (
+              <div key={step.title} className="flex gap-3 items-start">
+                <span className="flex-shrink-0 text-sm font-semibold text-primary w-4 text-center leading-relaxed">
+                  {i + 1}
+                </span>
+                <div>
+                  <span className="block text-sm font-semibold text-foreground">{step.title}</span>
+                  <span className="block text-xs text-muted-foreground leading-relaxed">{step.desc}</span>
+                </div>
+              </div>
             ))}
           </div>
 

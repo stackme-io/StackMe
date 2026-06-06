@@ -97,6 +97,7 @@ function SecurityTable({ rows }: { rows: SecurityRow[] }) {
 export function SecurityTab() {
   const { t } = useTranslation('analyze-me')
   const [copied, setCopied] = useState(false)
+  const [verifyOpen, setVerifyOpen] = useState(true)
 
   const dataRows    = t('securityData',    { returnObjects: true }) as SecurityRow[]
   const networkRows = t('securityNetwork', { returnObjects: true }) as SecurityRow[]
