@@ -140,9 +140,7 @@ export default function AnalyzeMePage() {
         </button>
       )}
 
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300"
-        style={activeTab === 'security' ? { background: '#f0efed' } : undefined}
-      >
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300">
         <div
           className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-6 pt-5'}`}
         >

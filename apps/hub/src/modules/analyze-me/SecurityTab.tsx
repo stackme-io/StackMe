@@ -131,7 +131,7 @@ export function SecurityTab() {
 
   return (
     // Серый фон — самодостаточный, не зависит от темы приложения
-    <div style={{ minHeight: '100%', background: '#f0efed', padding: '24px 24px 48px', display: 'flex', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100%', background: '#0f0f0f', padding: '24px 24px 48px', display: 'flex', justifyContent: 'center' }}>
       {/* Белая карточка-документ */}
       <div style={{
         background: '#ffffff',
