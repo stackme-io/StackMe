@@ -141,12 +141,17 @@ export default function MarketMePage() {
               return (
                 <div
                   key={module.id}
-                  className={`flex flex-col rounded-xl border transition-colors p-5 ${
+                  className={`relative flex flex-col rounded-xl border transition-colors p-5 ${
                     isActive
                       ? 'border-primary/30 bg-primary/5'
                       : 'border-border bg-background hover:bg-muted/30'
                   }`}
                 >
+                  {module.beta && (
+                    <span className="absolute top-3 right-3 text-[10px] font-medium px-2 py-0.5 rounded-full border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">
+                      Beta
+                    </span>
+                  )}
                   {/* Top */}
                   <div className="flex flex-col gap-2 flex-1">
                     <span className={`self-start text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>

@@ -9,5 +9,6 @@ export const forgeMeManifest: ModuleManifest = {
   route: '/forge-me',
   category: 'generation',
   defaultForNewUsers: true,
+  beta: true,
   component: lazy(() => import('../modules/forge-me')),
 }

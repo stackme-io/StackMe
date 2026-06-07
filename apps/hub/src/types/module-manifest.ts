@@ -8,5 +8,6 @@ export interface ModuleManifest {
   route: string
   category: 'analytics' | 'testing' | 'generation'
   defaultForNewUsers: boolean
+  beta?: boolean
   component: LazyExoticComponent<ComponentType>
 }
