@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react'
-import { useSearchParams, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { OnboardingFlow } from '../../shared/OnboardingFlow'
@@ -11,7 +10,6 @@ import type { ParsedField } from './SchemaSection'
 import type { AnomalyType, ViewMode } from './types'
 
 const HINT_KEY = 'stackme-hint-forge-me'
-const VALID_TABS = ['generate', 'roadmap', 'stack']
 
 const DEFAULT_SELECTED: AnomalyType[] = ['nulls', 'duplicates', 'outliers']
 const STORAGE_KEY = 'forgeme-settings'
@@ -26,12 +24,7 @@ function loadSettings() {
 
 export default function ForgeMePage() {
   const stored                           = useState(loadSettings)[0]
-  const [searchParams, setSearchParams]  = useSearchParams()
-  const location                         = useLocation()
-  const [activeTab, setActiveTab]        = useState(() => {
-    const tab = searchParams.get('tab')
-    return tab && VALID_TABS.includes(tab) ? tab : 'generate'
-  })
+  const [activeTab, setActiveTab]        = useState('generate')
   const [sidebarOpen, setSidebarOpen]    = useState(true)
   const [viewMode, setViewMode]          = useState<ViewMode>('raw')
   const [selected, setSelected]          = useState<Set<AnomalyType>>(new Set(stored?.selected ?? DEFAULT_SELECTED))
@@ -47,21 +40,6 @@ export default function ForgeMePage() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ seed, rows, anomalyRate, selected: [...selected] }))
     } catch {}
   }, [seed, rows, anomalyRate, selected])
-
-  // Sync URL ?tab= on mount — only when this route is active
-  useEffect(() => {
-    if (location.pathname !== '/forge-me') return
-    const tab = searchParams.get('tab')
-    if (!tab || !VALID_TABS.includes(tab)) {
-      setSearchParams({ tab: activeTab }, { replace: true })
-    }
-  }, [])
-
-  // Keep activeTab in sync with URL (e.g. browser back/forward)
-  useEffect(() => {
-    const tab = searchParams.get('tab')
-    if (tab && VALID_TABS.includes(tab)) setActiveTab(tab)
-  }, [searchParams])
 
   const { t } = useTranslation('forge-me')
 
