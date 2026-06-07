@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
 import { useTranslation } from 'react-i18next'
 import { MODULE_REGISTRY } from '../registry'
@@ -6,6 +7,8 @@ import apiClient from '../api/client'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace } from '../store/workspace'
 import { ModuleTabs } from '../shared/ModuleTabs'
+
+const VALID_TABS = ['modules', 'manifest']
 
 interface ModuleState {
   [moduleId: string]: 'active' | 'loading' | 'inactive'
@@ -31,9 +34,29 @@ export default function MarketMePage() {
   const { t } = useTranslation('market-me')
   const { refresh } = useModules()
   const { openPanel, closePanel } = useWorkspace()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
-  const [activeTab, setActiveTab] = useState('modules')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = searchParams.get('tab')
+    return tab && VALID_TABS.includes(tab) ? tab : 'modules'
+  })
+
+  // Sync URL ?tab= on mount — only when this route is active
+  useEffect(() => {
+    if (location.pathname !== '/market-me') return
+    const tab = searchParams.get('tab')
+    if (!tab || !VALID_TABS.includes(tab)) {
+      setSearchParams({ tab: activeTab }, { replace: true })
+    }
+  }, [])
+
+  // Keep activeTab in sync with URL
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab && VALID_TABS.includes(tab)) setActiveTab(tab)
+  }, [searchParams])
 
   useEffect(() => {
     if (!isSignedIn) {

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAnalyze } from './useAnalyze'
 import { RoadmapTab } from '../../shared/RoadmapTab'
@@ -20,13 +20,15 @@ export default function AnalyzeMePage() {
   const { result, tableData, loading, progress, sizeWarn, error, fileName, analyze } = useAnalyze()
   const { t } = useTranslation('analyze-me')
   const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
   const [activeTab, setActiveTab]         = useState(() => {
     const tab = searchParams.get('tab')
     return tab && VALID_TABS.includes(tab) ? tab : 'work'
   })
 
-  // Sync URL ?tab= on first render: fix stale names (generate, modules…) and add if missing
+  // Sync URL ?tab= on first render — only when this route is actually active
   useEffect(() => {
+    if (location.pathname !== '/analyze-me') return
     const tab = searchParams.get('tab')
     if (!tab || !VALID_TABS.includes(tab)) {
       setSearchParams({ tab: activeTab }, { replace: true })
