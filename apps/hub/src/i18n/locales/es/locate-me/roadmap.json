@@ -1,0 +1,59 @@
+{
+  "doneLabel": "Qué incluye v0",
+  "done": [
+    {
+      "group": "Análisis",
+      "items": [
+        { "title": "Auditoría estática",     "desc": "Lee solo el código de tests - sin runtime, sin ejecución" },
+        { "title": "Clases de fragilidad",   "desc": "Clasifica locators en fragile / stable / context / dynamic por forma" },
+        { "title": "Cobertura",              "desc": "Muestra qué se clasificó y qué es dinámico (el punto ciego)" }
+      ]
+    },
+    {
+      "group": "Informe",
+      "items": [
+        { "title": "El porqué, no solo el qué", "desc": "Explica por qué un locator es frágil - nunca lo corrige solo" },
+        { "title": "Duplicados",                "desc": "Mismo selector en N sitios - arregla uno, cierra N" },
+        { "title": "Archivos calientes",        "desc": "Archivos ordenados por número de frágiles" }
+      ]
+    },
+    {
+      "group": "Privacidad",
+      "items": [
+        { "title": "Se ejecuta localmente", "desc": "La carpeta se analiza en tu navegador - el código no sale de la página" },
+        { "title": "Código abierto",        "desc": "MIT, sin registro, sin recopilación de datos" }
+      ]
+    }
+  ],
+
+  "nextLabel": "Próximamente",
+  "nextDesc": "Candidatos para la próxima versión. Vota lo que te importa - define el alcance.",
+  "next": [
+    { "title": "Archivos JavaScript",     "desc": "Auditar tests .js, no solo .ts" },
+    { "title": "Soporte Cypress",         "desc": "cy.get / cy.contains / find" },
+    { "title": "Silenciar una regla",     "desc": "Suaviza o silencia una regla para tu proyecto" },
+    { "title": "Mi lista de estables",    "desc": "Marca atributos que consideras estables" },
+    { "title": "Filtros de vista",        "desc": "Mostrar solo frágiles, u ocultar un tipo" },
+    { "title": "Delta vs ejecución previa", "desc": "Carga un informe anterior - mira qué cambió" }
+  ],
+
+  "laterLabel": "Más adelante",
+  "later": [
+    { "title": "Selenium (JS)",          "desc": "By.xpath / By.css con selenium-webdriver" },
+    { "title": "Selenium (Java/Python)", "desc": "Suites legacy - parser multilenguaje" },
+    { "title": "Exportar informe",       "desc": "Guarda o comparte la auditoría como archivo" }
+  ],
+
+  "suggestLabel": "Sugerir una función",
+  "suggestPlaceholder": "Describe qué te gustaría ver en LocateMe...",
+  "suggestHint": "Revisado antes de publicar",
+  "suggestSubmit": "Enviar",
+  "suggestUsernameLabel": "Mostrar mi usuario al publicar",
+
+  "fromCommunity": "De la comunidad",
+  "signInToVote": "Inicia sesión para votar",
+  "sending": "Enviando...",
+  "signInToSubmit": "Inicia sesión para enviar sugerencias",
+  "suggestionThanks": "Gracias - tu sugerencia está en revisión. Te avisaremos por email cuando se publique.",
+  "errorGeneric": "Algo salió mal, inténtalo de nuevo."
+}

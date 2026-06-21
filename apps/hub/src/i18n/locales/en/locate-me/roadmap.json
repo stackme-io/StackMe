@@ -1,0 +1,59 @@
+{
+  "doneLabel": "What's in v0",
+  "done": [
+    {
+      "group": "Analysis",
+      "items": [
+        { "title": "Static audit",      "desc": "Reads test code only - no runtime, no test execution" },
+        { "title": "Fragility classes", "desc": "Sorts locators into fragile / stable / context / dynamic by shape" },
+        { "title": "Coverage",          "desc": "Shows what was classified and what is dynamic (the blind spot)" }
+      ]
+    },
+    {
+      "group": "Report",
+      "items": [
+        { "title": "Why, not just what", "desc": "Explains why a locator is brittle - never auto-fixes" },
+        { "title": "Duplicates",         "desc": "Same selector in N places - fix once, close N" },
+        { "title": "Hot files",          "desc": "Files ranked by fragile count" }
+      ]
+    },
+    {
+      "group": "Privacy",
+      "items": [
+        { "title": "Runs locally", "desc": "Folder analyzed in your browser - code never leaves the page" },
+        { "title": "Open source",  "desc": "MIT, no signup, no data collected" }
+      ]
+    }
+  ],
+
+  "nextLabel": "Coming up",
+  "nextDesc": "Candidates for the next version. Vote for what matters - it shapes the scope.",
+  "next": [
+    { "title": "JavaScript files",   "desc": "Audit .js tests, not only .ts" },
+    { "title": "Cypress support",    "desc": "cy.get / cy.contains / find" },
+    { "title": "Mute a rule",        "desc": "Soften or silence a rule for your project" },
+    { "title": "My stable list",     "desc": "Mark attributes you treat as stable" },
+    { "title": "View filters",       "desc": "Show only fragile, or hide a kind" },
+    { "title": "Delta vs last run",  "desc": "Load a previous report - see what changed" }
+  ],
+
+  "laterLabel": "Later",
+  "later": [
+    { "title": "Selenium (JS)",            "desc": "By.xpath / By.css via selenium-webdriver" },
+    { "title": "Selenium (Java/Python)",   "desc": "Legacy suites - multi-language parser" },
+    { "title": "Export report",            "desc": "Save or share the audit as a file" }
+  ],
+
+  "suggestLabel": "Suggest a feature",
+  "suggestPlaceholder": "Describe what you'd like to see in LocateMe...",
+  "suggestHint": "Reviewed before publishing",
+  "suggestSubmit": "Submit",
+  "suggestUsernameLabel": "Show my username when published",
+
+  "fromCommunity": "From the community",
+  "signInToVote": "Sign in to vote",
+  "sending": "Sending...",
+  "signInToSubmit": "Sign in to submit suggestions",
+  "suggestionThanks": "Thanks - your suggestion is under review. We'll email you when it's published.",
+  "errorGeneric": "Something went wrong, try again."
+}

@@ -47,7 +47,7 @@ function RoadmapRow({ prefix, title, desc, action }: {
 }
 
 interface RoadmapTabProps {
-  namespace: 'forge-me' | 'analyze-me'
+  namespace: 'forge-me' | 'analyze-me' | 'locate-me'
 }
 
 export function RoadmapTab({ namespace }: RoadmapTabProps) {

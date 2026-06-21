@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
+import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 
 // B1: paste a single file. B2: pick a folder → engine runs in a Web Worker.
 // i18n + report parity (duplicates / hot files) = B3.
-
-const BADGES = ['no setup', 'runs locally', 'no data collected', 'open source']
 
 const SAMPLE = `import { test } from '@playwright/test'
 
@@ -384,6 +384,7 @@ function AboutTab() {
 }
 
 export default function LocateMePage() {
+  const { t } = useTranslation('locate-me')
   const [activeTab, setActiveTab] = useState('audit')
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
@@ -409,8 +410,9 @@ export default function LocateMePage() {
         <div className="flex-1 overflow-y-auto px-6 pt-5">
           <ModuleTabs
             tabs={[
-              { id: 'audit', label: 'Audit' },
-              { id: 'about', label: 'About' },
+              { id: 'audit',   label: t('tabs.audit') },
+              { id: 'roadmap', label: t('tabs.roadmap') },
+              { id: 'about',   label: t('tabs.about') },
             ]}
             activeTab={activeTab}
             onChange={setActiveTab}
@@ -419,13 +421,16 @@ export default function LocateMePage() {
           <div style={{ display: activeTab === 'audit' ? 'block' : 'none' }}>
             <AuditTab />
           </div>
+          <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }}>
+            <RoadmapTab namespace="locate-me" />
+          </div>
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
             <AboutTab />
           </div>
         </div>
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
-          {BADGES.map(item => (
+          {(t('badges', { returnObjects: true }) as string[]).map(item => (
             <span key={item} className="text-[10px] text-muted-foreground/95">
               <span className="mr-1 text-muted-foreground/40">//</span>{item}
             </span>

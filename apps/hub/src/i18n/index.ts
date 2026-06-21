@@ -42,6 +42,14 @@ import enForgeMeRoadmap  from './locales/en/forge-me/roadmap.json'
 import esForgeMeRoadmap  from './locales/es/forge-me/roadmap.json'
 import ukForgeMeRoadmap  from './locales/uk/forge-me/roadmap.json'
 
+import enLocateMeFooter  from './locales/en/locate-me/footer.json'
+import esLocateMeFooter  from './locales/es/locate-me/footer.json'
+import ukLocateMeFooter  from './locales/uk/locate-me/footer.json'
+
+import enLocateMeRoadmap from './locales/en/locate-me/roadmap.json'
+import esLocateMeRoadmap from './locales/es/locate-me/roadmap.json'
+import ukLocateMeRoadmap from './locales/uk/locate-me/roadmap.json'
+
 import enMarketMeManifest from './locales/en/market-me/manifest.json'
 import esMarketMeManifest from './locales/es/market-me/manifest.json'
 import ukMarketMeManifest from './locales/uk/market-me/manifest.json'
@@ -69,6 +77,10 @@ i18n
           ...enForgeMeFooter,
           ...enForgeMeRoadmap,
         },
+        'locate-me': {
+          ...enLocateMeFooter,
+          ...enLocateMeRoadmap,
+        },
         'market-me': {
           ...enMarketMeManifest,
         },
@@ -88,6 +100,10 @@ i18n
           ...esForgeMeFooter,
           ...esForgeMeRoadmap,
         },
+        'locate-me': {
+          ...esLocateMeFooter,
+          ...esLocateMeRoadmap,
+        },
         'market-me': {
           ...esMarketMeManifest,
         },
@@ -106,6 +122,10 @@ i18n
           ...ukForgeMeStack,
           ...ukForgeMeFooter,
           ...ukForgeMeRoadmap,
+        },
+        'locate-me': {
+          ...ukLocateMeFooter,
+          ...ukLocateMeRoadmap,
         },
         'market-me': {
           ...ukMarketMeManifest,
