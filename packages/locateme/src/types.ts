@@ -9,6 +9,8 @@ export interface Finding {
   method: string;
   selector: string | null; // null === dynamic
   kind: Kind;
+  reason: string; // human explanation of why this kind (which rule fired)
+  snippet?: string; // source lines around the locator (captured for fragile findings)
 }
 
 export interface ReportData {

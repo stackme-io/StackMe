@@ -84,7 +84,11 @@ export function renderHtml(d: ReportData): string {
 
   const fragile = d.findings.filter((f) => f.kind === "fragile");
   const fragileRows = fragile.slice(0, 50)
-    .map((f) => `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(f.file)}:${f.line}</span></div>`)
+    .map((f) => {
+      const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(f.file)}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
+      if (!f.snippet) return `<div class="finding">${head}</div>`;
+      return `<details class="finding"><summary>${head}</summary><pre class="snip">${esc(f.snippet)}</pre></details>`;
+    })
     .join("") || `<div class="muted">none</div>`;
   const moreFragile = fragile.length > 50 ? `<div class="muted small">…and ${fragile.length - 50} more</div>` : "";
 
@@ -112,6 +116,15 @@ h1{font-size:19px;margin:0 0 2px}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
 .row{display:flex;justify-content:space-between;gap:14px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line)}
 .card .row:first-of-type{border-top:0}
+.finding{border-top:1px solid var(--line);padding:8px 0}
+.card .finding:first-of-type{border-top:0}
+.finding .row{border-top:0;padding:0}
+.why{color:var(--muted);font-size:12px;margin-top:3px}
+summary{cursor:pointer;list-style:none;display:block}
+summary::-webkit-details-marker{display:none}
+summary::marker{content:""}
+details.finding[open]>summary .loc::after{content:" ▾"}
+.snip{margin:8px 0 0;background:#0c1020;border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow:auto;font:12px/1.5 ui-monospace,Consolas,monospace;color:#aab2cc;white-space:pre}
 code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;word-break:break-all}
 .loc{color:var(--muted);font-size:12px;white-space:nowrap}
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
