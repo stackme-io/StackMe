@@ -63,7 +63,15 @@ function duplicates(findings: Finding[]) {
   return [...map.values()].filter((l) => l.length >= 2).sort((a, b) => b.length - a.length).slice(0, 10);
 }
 
-export function renderHtml(d: ReportData): string {
+export interface RenderOptions {
+  share?: boolean; // client-report mode: mask paths, hide code snippets
+}
+
+const HOMEPAGE = ""; // set to the public showcase / repo URL once it exists
+
+export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
+  const share = !!opts.share;
+  const showPath = (p: string) => (share ? (p.split(/[\\/]/).pop() ?? p) : p);
   const k = d.summary.byKind;
 
   const chips = (["fragile", "stable", "context", "dynamic"] as Kind[])
@@ -71,12 +79,12 @@ export function renderHtml(d: ReportData): string {
     .join("");
 
   const hot = hotFiles(d.findings)
-    .map(([file, e]) => `<div class="row"><code>${esc(file)}</code><span class="loc">${e.fragile} fragile / ${e.total}</span></div>`)
+    .map(([file, e]) => `<div class="row"><code>${esc(showPath(file))}</code><span class="loc">${e.fragile} fragile / ${e.total}</span></div>`)
     .join("") || `<div class="muted">none — no fragile locators</div>`;
 
   const dupes = duplicates(d.findings)
     .map((list) => {
-      const where = list.slice(0, 4).map((f) => `${esc(f.file)}:${f.line}`).join(", ");
+      const where = list.slice(0, 4).map((f) => `${esc(showPath(f.file))}:${f.line}`).join(", ");
       const more = list.length > 4 ? ` +${list.length - 4}` : "";
       return `<div class="row"><code>${esc(list[0].selector ?? "")}</code><span class="loc">×${list.length} <span style="color:${KIND_COLOR[list[0].kind]}">${list[0].kind}</span></span></div><div class="muted small">${where}${more}</div>`;
     })
@@ -85,8 +93,8 @@ export function renderHtml(d: ReportData): string {
   const fragile = d.findings.filter((f) => f.kind === "fragile");
   const fragileRows = fragile.slice(0, 50)
     .map((f) => {
-      const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(f.file)}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
-      if (!f.snippet) return `<div class="finding">${head}</div>`;
+      const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(showPath(f.file))}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
+      if (share || !f.snippet) return `<div class="finding">${head}</div>`;
       return `<details class="finding"><summary>${head}</summary><pre class="snip">${esc(f.snippet)}</pre></details>`;
     })
     .join("") || `<div class="muted">none</div>`;
@@ -128,10 +136,11 @@ details.finding[open]>summary .loc::after{content:" ▾"}
 code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;word-break:break-all}
 .loc{color:var(--muted);font-size:12px;white-space:nowrap}
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
+a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
 </style></head>
 <body><div class="wrap">
   <h1>LocateMe — locator audit</h1>
-  <div class="muted small">${esc(d.target)} · ${d.summary.files} files · ${new Date(d.scannedAt).toLocaleString()}</div>
+  <div class="muted small">${esc(showPath(d.target))} · ${d.summary.files} files · ${new Date(d.scannedAt).toLocaleString()}</div>
 
   <div class="verdict">${verdict(d)}</div>
   <div class="plaque">ⓘ ${plaque}</div>
@@ -141,6 +150,7 @@ footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid va
   <div class="card"><h2>Duplicates (fragile / context, ≥2)</h2>${dupes}</div>
   <div class="card"><h2>Fragile locators (${fragile.length})</h2>${fragileRows}${moreFragile}</div>
 
-  <footer>Made with <b>LocateMe</b> — static, local, open-source. Shape only; verify before acting.</footer>
+  <div class="plaque" style="margin-top:22px">Before you act or send this — it's <b>locator shape only</b>, not a full verdict. Open the top findings and confirm them in context first.</div>
+  <footer>Made with <b>LocateMe</b>${HOMEPAGE ? ` · <a href="${HOMEPAGE}">run your own audit</a>` : ""} — static, local, open-source. Shape only; verify before acting.</footer>
 </div></body></html>`;
 }

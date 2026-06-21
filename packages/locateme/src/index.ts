@@ -109,8 +109,10 @@ function collectFindings(project: Project): Finding[] {
 }
 
 function main(): void {
-  // CLI arg: a folder to scan. Default = bundled fixture.
-  const inputArg = process.argv[2];
+  // CLI: <folder> [--share].  --share = client-report mode (mask paths, no code snippets).
+  const args = process.argv.slice(2);
+  const share = args.includes("--share");
+  const inputArg = args.find((a) => !a.startsWith("--"));
   const targetDir = inputArg ? path.resolve(inputArg) : path.resolve(__dirname, "../fixtures/sample");
 
   if (!fs.existsSync(targetDir)) {
@@ -228,8 +230,8 @@ function main(): void {
 
   // Phase 2 — first visual: single-file HTML report.
   const htmlOut = path.join(process.cwd(), "locateme-report.html");
-  fs.writeFileSync(htmlOut, renderHtml(report), "utf8");
-  console.log(`html written:  ${htmlOut}`);
+  fs.writeFileSync(htmlOut, renderHtml(report, { share }), "utf8");
+  console.log(`html written:  ${htmlOut}${share ? "  (share mode: paths masked, no snippets)" : ""}`);
 }
 
 main();
