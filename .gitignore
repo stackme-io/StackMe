@@ -16,6 +16,7 @@ __pycache__/
 # --- Node.js / Frontend ---
 node_modules/
 dist/
+locateme-report.json
 .turbo/
 .vercel/
 .npm
@@ -30,8 +31,11 @@ dist/
 *.db
 *.sqlite
 
-# --- DOCS ---
-doc/
+# --- NOTES / Obsidian (не пускать заметки в открытый код-репо) ---
+notes/
+.obsidian/
+*.iml
+FlagMe.md
 
 .env
 .env.local
