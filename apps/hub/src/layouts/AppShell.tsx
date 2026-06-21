@@ -19,7 +19,7 @@ const LANGUAGES = [
   { code: 'uk', label: 'UK', name: 'Українська' },
 ]
 
-const DEFAULT_MODULE_IDS = ['forge-me', 'analyze-me']
+const DEFAULT_MODULE_IDS = ['forge-me', 'analyze-me', 'locate-me']
 
 const MARKET_ME_MANIFEST = {
   id: 'market-me',
@@ -35,16 +35,19 @@ const MARKET_ME_MANIFEST = {
 const MODULE_LOGO_COLORS: Record<string, string> = {
   'forge-me':   '#a78bfa',
   'analyze-me': '#2dd4bf',
+  'locate-me':  '#22d3ee',
 }
 
 const MODULE_COLORS: Record<string, string> = {
   'forge-me': 'border-l-violet-400',
   'analyze-me': 'border-l-teal-400',
+  'locate-me': 'border-l-cyan-400',
 }
 
 const MODULE_TEXT_COLORS: Record<string, string> = {
   'forge-me': 'text-violet-400',
   'analyze-me': 'text-teal-400',
+  'locate-me': 'text-cyan-400',
 }
 
 export default function AppShell() {

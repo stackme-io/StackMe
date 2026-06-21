@@ -25,7 +25,8 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@locateme/core/*": ["../../packages/locateme/src/core/*"]
     }
   },
   "include": ["src"]

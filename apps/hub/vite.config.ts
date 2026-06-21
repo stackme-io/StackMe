@@ -22,6 +22,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // LocateMe engine — shared browser-safe core from packages/locateme
+      '@locateme/core': path.resolve(__dirname, '../../packages/locateme/src/core'),
+    },
+  },
+  server: {
+    fs: {
+      // allow importing the LocateMe core source from the monorepo root
+      allow: [path.resolve(__dirname, '../..')],
     },
   },
 })
