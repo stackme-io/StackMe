@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ModuleTabs } from '../../shared/ModuleTabs'
-import { analyze } from '@locateme/core/analyze'
-import type { ReportData, Finding, Kind } from '@locateme/core/types'
+import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
+import { pickAndReadFolder, supportsFolderPicker } from './folder'
 
-// B1 vertical slice: the real engine runs in the browser on pasted test code.
-// Folder input + Web Worker = B2; i18n + Roadmap + detail panel = B3.
+// B1: paste a single file. B2: pick a folder → engine runs in a Web Worker.
+// i18n + report parity (duplicates / hot files) = B3.
 
 const BADGES = ['no setup', 'runs locally', 'no data collected', 'open source']
 
@@ -22,13 +22,19 @@ test('checkout', async ({ page }) => {
 `
 
 const KIND_META: Record<Kind, { label: string; text: string; dot: string; desc: string }> = {
-  fragile: { label: 'Fragile', text: 'text-red-400',         dot: 'bg-red-400',         desc: 'Positional / structural — breaks on layout changes.' },
-  stable:  { label: 'Stable',  text: 'text-emerald-400',     dot: 'bg-emerald-400',     desc: 'Role / test-id / label — resilient, recommended.' },
-  context: { label: 'Context', text: 'text-amber-400',       dot: 'bg-amber-400',       desc: 'Text / class / attribute — depends on your project.' },
+  fragile: { label: 'Fragile', text: 'text-red-400',          dot: 'bg-red-400',          desc: 'Positional / structural — breaks on layout changes.' },
+  stable:  { label: 'Stable',  text: 'text-emerald-400',      dot: 'bg-emerald-400',      desc: 'Role / test-id / label — resilient, recommended.' },
+  context: { label: 'Context', text: 'text-amber-400',        dot: 'bg-amber-400',        desc: 'Text / class / attribute — depends on your project.' },
   dynamic: { label: 'Dynamic', text: 'text-muted-foreground', dot: 'bg-muted-foreground', desc: 'Built at runtime — not classified (blind spot).' },
 }
 
 const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
+
+interface WorkerResult {
+  ok: boolean
+  report?: ReportData
+  error?: string
+}
 
 function Sidebar() {
   return (
@@ -86,7 +92,7 @@ function Results({ report }: { report: ReportData }) {
       <div className="rounded-md border border-border/60 p-4">
         <p className="text-sm text-foreground mb-1">No Playwright locators found.</p>
         <p className="text-xs text-muted-foreground">
-          This doesn't look like a Playwright/TS test — there's simply nothing to analyze here.
+          This doesn't look like a Playwright/TS test suite — there's simply nothing to analyze here.
           That's not a verdict.
         </p>
       </div>
@@ -109,8 +115,8 @@ function Results({ report }: { report: ReportData }) {
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        {report.summary.locatorCalls} locator calls · classified {report.summary.coverage.classified} ·
-        dynamic {report.summary.coverage.dynamic} (not classified)
+        {report.summary.files} files · {report.summary.locatorCalls} locator calls ·
+        classified {report.summary.coverage.classified} · dynamic {report.summary.coverage.dynamic} (not classified)
       </p>
 
       <div>
@@ -140,54 +146,143 @@ function AuditTab() {
   const [code, setCode] = useState('')
   const [report, setReport] = useState<ReportData | null>(null)
   const [ran, setRan] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [source, setSource] = useState<string | null>(null)
+  const workerRef = useRef<Worker | null>(null)
 
-  const run = (text: string) => {
+  useEffect(() => () => { workerRef.current?.terminate() }, [])
+
+  const getWorker = (): Worker => {
+    if (!workerRef.current) {
+      workerRef.current = new Worker(new URL('./locate.worker.ts', import.meta.url), { type: 'module' })
+    }
+    return workerRef.current
+  }
+
+  const runOnWorker = (files: SourceFileInput[], target: string, label: string) => {
+    setLoading(true)
+    setError(null)
     setRan(true)
-    if (!text.trim()) { setReport(null); return }
-    setReport(analyze([{ path: 'pasted.spec.ts', text }], 'pasted'))
+    setReport(null)
+    const w = getWorker()
+    w.onmessage = (e: MessageEvent<WorkerResult>) => {
+      setLoading(false)
+      const d = e.data
+      if (d.ok && d.report) {
+        setReport(d.report)
+        setSource(label)
+      } else {
+        setError(d.error ?? 'Analysis failed.')
+      }
+    }
+    w.postMessage({ files, target })
+  }
+
+  const analyzePaste = (text: string) => {
+    if (!text.trim()) { setRan(true); setReport(null); setError(null); setSource(null); return }
+    runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', 'pasted snippet')
+  }
+
+  const selectFolder = async () => {
+    if (!supportsFolderPicker()) {
+      setRan(true)
+      setError('Folder picking needs a Chromium browser (Chrome / Edge). You can still paste a file below.')
+      return
+    }
+    setError(null)
+    setLoading(true)
+    try {
+      const { files, rootName } = await pickAndReadFolder()
+      if (files.length === 0) {
+        setLoading(false)
+        setRan(true)
+        setReport(null)
+        setError(`No .ts files found in "${rootName}".`)
+        return
+      }
+      runOnWorker(files, rootName, `${rootName} — ${files.length} .ts files`)
+    } catch (e) {
+      setLoading(false)
+      // user dismissed the picker → AbortError, ignore quietly
+      if ((e as DOMException)?.name !== 'AbortError') {
+        setRan(true)
+        setError((e as Error).message)
+      }
+    }
+  }
+
+  const clearAll = () => {
+    setCode(''); setReport(null); setRan(false); setError(null); setSource(null)
   }
 
   return (
     <div className="flex flex-col gap-4 max-w-3xl">
       <p className="text-xs text-muted-foreground">
-        Paste a Playwright/TypeScript test below and audit its locators — fully in your browser, nothing leaves the page.
+        Audit the locators in your Playwright/TypeScript tests — fully in your browser, nothing leaves the page.
+        Point it at a folder, or paste a single file.
       </p>
 
-      <textarea
-        value={code}
-        onChange={e => setCode(e.target.value)}
-        placeholder="// paste your *.spec.ts here"
-        spellCheck={false}
-        className="w-full h-56 bg-muted/30 border border-border rounded-md p-3 font-mono text-xs text-foreground resize-y focus:outline-none focus:border-foreground/40"
-      />
-
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <button
-          onClick={() => run(code)}
-          className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          onClick={selectFolder}
+          disabled={loading}
+          className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
-          Analyze
+          Select folder
         </button>
         <button
-          onClick={() => { setCode(SAMPLE); run(SAMPLE) }}
-          className="px-3 py-2 rounded-md text-xs text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors"
+          onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }}
+          disabled={loading}
+          className="px-3 py-2 rounded-md text-xs text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors"
         >
           Try sample
         </button>
-        {code && (
-          <button
-            onClick={() => { setCode(''); setReport(null); setRan(false) }}
-            className="px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Clear
-          </button>
-        )}
+        {loading && <span className="text-xs text-muted-foreground animate-pulse">Analyzing…</span>}
         <span className="ml-auto text-[10px] text-muted-foreground/70">runs locally · nothing uploaded</span>
       </div>
 
+      <details className="border border-border/60 rounded-md">
+        <summary className="px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none">
+          …or paste a single file
+        </summary>
+        <div className="p-3 pt-0 flex flex-col gap-2">
+          <textarea
+            value={code}
+            onChange={e => setCode(e.target.value)}
+            placeholder="// paste your *.spec.ts here"
+            spellCheck={false}
+            className="w-full h-44 bg-muted/30 border border-border rounded-md p-3 font-mono text-xs text-foreground resize-y focus:outline-none focus:border-foreground/40"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => analyzePaste(code)}
+              disabled={loading}
+              className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            >
+              Analyze
+            </button>
+            <button
+              onClick={clearAll}
+              className="px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </details>
+
+      {error && (
+        <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2">{error}</p>
+      )}
+
+      {source && report && (
+        <p className="text-[11px] text-muted-foreground">Analyzed: <span className="text-foreground">{source}</span></p>
+      )}
+
       {report && <Results report={report} />}
-      {ran && !report && (
-        <p className="text-xs text-muted-foreground">Nothing to analyze — paste some test code first.</p>
+      {ran && !report && !error && !loading && (
+        <p className="text-xs text-muted-foreground">Nothing to analyze — pick a folder or paste some test code.</p>
       )}
     </div>
   )
