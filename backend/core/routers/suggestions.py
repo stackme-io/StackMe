@@ -11,7 +11,7 @@ from core.models.user_profile import UserProfile
 
 router = APIRouter()
 
-VALID_MODULES = {"forge-me", "analyze-me"}
+VALID_MODULES = {"forge-me", "analyze-me", "locate-me"}
 
 ALICE_CHARACTERS = [
     "hatter", "cheshire", "rabbit", "dormouse",

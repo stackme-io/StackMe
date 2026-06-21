@@ -8,7 +8,7 @@ from core.models.roadmap_vote import RoadmapVote
 
 router = APIRouter()
 
-VALID_MODULES = {"forge-me", "analyze-me"}
+VALID_MODULES = {"forge-me", "analyze-me", "locate-me"}
 
 
 def _check_module(module: str) -> None:
