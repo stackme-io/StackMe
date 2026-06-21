@@ -1,0 +1,41 @@
+{
+  "kindsTitle": "Tipos de locator",
+  "kinds": {
+    "fragile": { "label": "Frágil",   "desc": "Posicional / estructural — se rompe al cambiar el layout." },
+    "stable":  { "label": "Estable",  "desc": "Role / test-id / label — resistente, recomendado." },
+    "context": { "label": "Contexto", "desc": "Texto / clase / atributo — depende de tu proyecto." },
+    "dynamic": { "label": "Dinámico", "desc": "Construido en runtime — no clasificado (punto ciego)." }
+  },
+  "intro": "Audita los locators de tus tests Playwright/TypeScript — todo en tu navegador, nada sale de la página. Apúntalo a una carpeta o pega un archivo.",
+  "selectFolder": "Elegir carpeta",
+  "trySample": "Probar ejemplo",
+  "analyze": "Analizar",
+  "clear": "Limpiar",
+  "pasteToggle": "…o pega un archivo",
+  "pastePlaceholder": "// pega tu *.spec.ts aquí",
+  "analyzing": "Analizando…",
+  "runsLocally": "se ejecuta localmente · nada se sube",
+  "needChromium": "Elegir carpeta requiere un navegador Chromium (Chrome / Edge). Aún puedes pegar un archivo abajo.",
+  "noTsFiles": "No se encontraron archivos .ts en \"{{name}}\".",
+  "analysisFailed": "El análisis falló.",
+  "nothingToAnalyze": "Nada que analizar — elige una carpeta o pega código de tests.",
+  "analyzedLabel": "Analizado:",
+  "pastedSnippet": "fragmento pegado",
+  "folderLabel": "{{name}} — {{count}} archivos .ts",
+  "noLocators": "No se encontraron locators de Playwright.",
+  "noLocatorsDesc": "Esto no parece una suite de tests Playwright/TS — simplemente no hay nada que analizar. No es un veredicto.",
+  "mostRepeated": "Más repetido:",
+  "fixOnceClose": "en {{count}} sitios — arregla uno, cierra {{count}}.",
+  "coverage": "{{files}} archivos · {{calls}} locators · clasificados {{classified}} · dinámicos {{dynamic}} (sin clasificar)",
+  "hotFiles": "Archivos calientes (por frágiles)",
+  "fragileWord": "frágiles",
+  "duplicated": "Selectores duplicados ({{count}})",
+  "fragileLocators": "Locators frágiles ({{count}})",
+  "noFragile": "Ningún locator frágil en esta pasada. Buena señal — pero es una primera pasada, no un veredicto (tests no ejecutados).",
+  "honesty": "LocateMe lee el código de tests de forma estática y agrupa locators por forma. Explica el porqué, nunca corrige solo, y no da una puntuación única. Primera pasada, no un veredicto completo — los tests no se ejecutan.",
+  "about": {
+    "p1": "LocateMe es una auditoría estática de fragilidad de locators para suites de tests Playwright / TypeScript. Lee solo tu código de tests — sin runtime, sin ejecución — y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
+    "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que arregles un sitio y cierres muchos. Nunca reescribe tus tests y no da una puntuación única — solo hechos sobre los que actuar.",
+    "p3": "Todo se ejecuta en tu navegador. Tu código nunca sale de la página. Código abierto, MIT."
+  }
+}

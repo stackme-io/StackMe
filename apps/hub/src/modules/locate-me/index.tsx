@@ -6,7 +6,7 @@ import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 
 // B1: paste a single file. B2: pick a folder → engine runs in a Web Worker.
-// i18n + report parity (duplicates / hot files) = B3.
+// B3: report parity (duplicates / hot files) + i18n (en/es/uk).
 
 const SAMPLE = `import { test } from '@playwright/test'
 
@@ -21,11 +21,12 @@ test('checkout', async ({ page }) => {
 })
 `
 
-const KIND_META: Record<Kind, { label: string; text: string; dot: string; desc: string }> = {
-  fragile: { label: 'Fragile', text: 'text-red-400',          dot: 'bg-red-400',          desc: 'Positional / structural — breaks on layout changes.' },
-  stable:  { label: 'Stable',  text: 'text-emerald-400',      dot: 'bg-emerald-400',      desc: 'Role / test-id / label — resilient, recommended.' },
-  context: { label: 'Context', text: 'text-amber-400',        dot: 'bg-amber-400',        desc: 'Text / class / attribute — depends on your project.' },
-  dynamic: { label: 'Dynamic', text: 'text-muted-foreground', dot: 'bg-muted-foreground', desc: 'Built at runtime — not classified (blind spot).' },
+// Colors only — labels and descriptions come from i18n.
+const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
+  fragile: { text: 'text-red-400',          dot: 'bg-red-400' },
+  stable:  { text: 'text-emerald-400',      dot: 'bg-emerald-400' },
+  context: { text: 'text-amber-400',        dot: 'bg-amber-400' },
+  dynamic: { text: 'text-muted-foreground', dot: 'bg-muted-foreground' },
 }
 
 const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
@@ -37,20 +38,21 @@ interface WorkerResult {
 }
 
 function Sidebar() {
+  const { t } = useTranslation('locate-me')
   return (
     <div className="h-full w-[208px] flex flex-col gap-3 p-3 overflow-y-auto">
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
-        Locator kinds
+        {t('kindsTitle')}
       </div>
       {KIND_ORDER.map(k => {
-        const m = KIND_META[k]
+        const s = KIND_STYLE[k]
         return (
           <div key={k} className="rounded-md border border-border/60 p-2.5">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className={`w-2 h-2 rounded-full ${m.dot}`} />
-              <span className={`text-xs font-medium ${m.text}`}>{m.label}</span>
+              <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+              <span className={`text-xs font-medium ${s.text}`}>{t(`kinds.${k}.label`)}</span>
             </div>
-            <p className="text-[11px] leading-snug text-muted-foreground">{m.desc}</p>
+            <p className="text-[11px] leading-snug text-muted-foreground">{t(`kinds.${k}.desc`)}</p>
           </div>
         )
       })}
@@ -59,11 +61,11 @@ function Sidebar() {
 }
 
 function FindingRow({ f }: { f: Finding }) {
-  const m = KIND_META[f.kind]
+  const s = KIND_STYLE[f.kind]
   return (
     <details className="border border-border/60 rounded-md overflow-hidden">
       <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-muted/40 transition-colors list-none">
-        <span className={`w-1.5 h-1.5 rounded-full ${m.dot} flex-shrink-0`} />
+        <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0`} />
         <span className="text-[11px] text-muted-foreground tabular-nums flex-shrink-0">
           {f.file}:{f.line}
         </span>
@@ -84,6 +86,7 @@ function FindingRow({ f }: { f: Finding }) {
 }
 
 function Results({ report }: { report: ReportData }) {
+  const { t } = useTranslation('locate-me')
   const k = report.summary.byKind
   const findings = report.findings
   const fragile = findings.filter(f => f.kind === 'fragile')
@@ -91,11 +94,8 @@ function Results({ report }: { report: ReportData }) {
   if (report.summary.locatorCalls === 0) {
     return (
       <div className="rounded-md border border-border/60 p-4">
-        <p className="text-sm text-foreground mb-1">No Playwright locators found.</p>
-        <p className="text-xs text-muted-foreground">
-          This doesn't look like a Playwright/TS test suite — there's simply nothing to analyze here.
-          That's not a verdict.
-        </p>
+        <p className="text-sm text-foreground mb-1">{t('noLocators')}</p>
+        <p className="text-xs text-muted-foreground">{t('noLocatorsDesc')}</p>
       </div>
     )
   }
@@ -130,40 +130,44 @@ function Results({ report }: { report: ReportData }) {
       {topDup && (
         <div className="rounded-md border border-border/60 bg-muted/20 px-3 py-2">
           <span className="text-xs text-foreground">
-            Most repeated:{' '}
+            {t('mostRepeated')}{' '}
             <code className="font-mono text-amber-400">{JSON.stringify(topDup[0].selector)}</code>{' '}
-            in {topDup.length} places — fix once, close {topDup.length}.
+            {t('fixOnceClose', { count: topDup.length })}
           </span>
         </div>
       )}
 
       <div className="flex flex-wrap gap-2">
         {KIND_ORDER.map(kind => {
-          const m = KIND_META[kind]
+          const s = KIND_STYLE[kind]
           return (
             <div key={kind} className="flex items-center gap-1.5 rounded-md border border-border/60 px-2.5 py-1">
-              <span className={`w-2 h-2 rounded-full ${m.dot}`} />
-              <span className="text-xs text-muted-foreground">{m.label}</span>
-              <span className={`text-xs font-medium tabular-nums ${m.text}`}>{k[kind]}</span>
+              <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+              <span className="text-xs text-muted-foreground">{t(`kinds.${kind}.label`)}</span>
+              <span className={`text-xs font-medium tabular-nums ${s.text}`}>{k[kind]}</span>
             </div>
           )
         })}
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        {report.summary.files} files · {report.summary.locatorCalls} locator calls ·
-        classified {report.summary.coverage.classified} · dynamic {report.summary.coverage.dynamic} (not classified)
+        {t('coverage', {
+          files: report.summary.files,
+          calls: report.summary.locatorCalls,
+          classified: report.summary.coverage.classified,
+          dynamic: report.summary.coverage.dynamic,
+        })}
       </p>
 
       {hot.length > 0 && (
         <div>
-          <div className="text-xs font-medium text-foreground mb-2">Hot files (by fragile)</div>
+          <div className="text-xs font-medium text-foreground mb-2">{t('hotFiles')}</div>
           <div className="flex flex-col gap-1">
             {hot.map(([file, e]) => (
               <div key={file} className="flex items-center justify-between text-[11px] border border-border/40 rounded px-2.5 py-1.5">
                 <span className="font-mono text-muted-foreground truncate">{file}</span>
                 <span className="text-muted-foreground flex-shrink-0 ml-2">
-                  <span className="text-red-400 font-medium">{e.fragile}</span> fragile / {e.total}
+                  <span className="text-red-400 font-medium">{e.fragile}</span> {t('fragileWord')} / {e.total}
                 </span>
               </div>
             ))}
@@ -173,18 +177,18 @@ function Results({ report }: { report: ReportData }) {
 
       {dupes.length > 0 && (
         <div>
-          <div className="text-xs font-medium text-foreground mb-2">Duplicated selectors ({dupes.length})</div>
+          <div className="text-xs font-medium text-foreground mb-2">{t('duplicated', { count: dupes.length })}</div>
           <div className="flex flex-col gap-1">
             {dupes.map((list, i) => {
-              const m = KIND_META[list[0].kind]
+              const s = KIND_STYLE[list[0].kind]
               const where = list.slice(0, 3).map(f => `${f.file}:${f.line}`).join(', ')
               const more = list.length > 3 ? ` +${list.length - 3}` : ''
               return (
                 <div key={i} className="text-[11px] border border-border/40 rounded px-2.5 py-1.5">
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
                     <code className="font-mono text-foreground truncate">{JSON.stringify(list[0].selector)}</code>
-                    <span className={`${m.text} font-medium flex-shrink-0`}>×{list.length}</span>
+                    <span className={`${s.text} font-medium flex-shrink-0`}>×{list.length}</span>
                   </div>
                   <div className="text-muted-foreground/70 mt-0.5 truncate">{where}{more}</div>
                 </div>
@@ -196,12 +200,10 @@ function Results({ report }: { report: ReportData }) {
 
       <div>
         <div className="text-xs font-medium text-foreground mb-2">
-          Fragile locators ({fragile.length})
+          {t('fragileLocators', { count: fragile.length })}
         </div>
         {fragile.length === 0 ? (
-          <p className="text-xs text-muted-foreground">
-            No fragile locators in this pass. Good sign — but a first pass, not a full verdict (tests not run).
-          </p>
+          <p className="text-xs text-muted-foreground">{t('noFragile')}</p>
         ) : (
           <div className="flex flex-col gap-1.5">
             {fragile.map((f, i) => <FindingRow key={i} f={f} />)}
@@ -210,14 +212,14 @@ function Results({ report }: { report: ReportData }) {
       </div>
 
       <p className="text-[10px] text-muted-foreground/70 border-t border-border/40 pt-2">
-        LocateMe reads test code statically and groups locators by shape. It explains why, never auto-fixes,
-        and gives no single score. First pass, not a full verdict — tests are not executed.
+        {t('honesty')}
       </p>
     </div>
   )
 }
 
 function AuditTab() {
+  const { t } = useTranslation('locate-me')
   const [code, setCode] = useState('')
   const [report, setReport] = useState<ReportData | null>(null)
   const [ran, setRan] = useState(false)
@@ -248,7 +250,7 @@ function AuditTab() {
         setReport(d.report)
         setSource(label)
       } else {
-        setError(d.error ?? 'Analysis failed.')
+        setError(d.error ?? t('analysisFailed'))
       }
     }
     w.postMessage({ files, target })
@@ -256,13 +258,13 @@ function AuditTab() {
 
   const analyzePaste = (text: string) => {
     if (!text.trim()) { setRan(true); setReport(null); setError(null); setSource(null); return }
-    runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', 'pasted snippet')
+    runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', t('pastedSnippet'))
   }
 
   const selectFolder = async () => {
     if (!supportsFolderPicker()) {
       setRan(true)
-      setError('Folder picking needs a Chromium browser (Chrome / Edge). You can still paste a file below.')
+      setError(t('needChromium'))
       return
     }
     setError(null)
@@ -273,10 +275,10 @@ function AuditTab() {
         setLoading(false)
         setRan(true)
         setReport(null)
-        setError(`No .ts files found in "${rootName}".`)
+        setError(t('noTsFiles', { name: rootName }))
         return
       }
-      runOnWorker(files, rootName, `${rootName} — ${files.length} .ts files`)
+      runOnWorker(files, rootName, t('folderLabel', { name: rootName, count: files.length }))
     } catch (e) {
       setLoading(false)
       // user dismissed the picker → AbortError, ignore quietly
@@ -293,10 +295,7 @@ function AuditTab() {
 
   return (
     <div className="flex flex-col gap-4 max-w-3xl">
-      <p className="text-xs text-muted-foreground">
-        Audit the locators in your Playwright/TypeScript tests — fully in your browser, nothing leaves the page.
-        Point it at a folder, or paste a single file.
-      </p>
+      <p className="text-xs text-muted-foreground">{t('intro')}</p>
 
       <div className="flex items-center gap-2 flex-wrap">
         <button
@@ -304,28 +303,28 @@ function AuditTab() {
           disabled={loading}
           className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
         >
-          Select folder
+          {t('selectFolder')}
         </button>
         <button
           onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }}
           disabled={loading}
           className="px-3 py-2 rounded-md text-xs text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors"
         >
-          Try sample
+          {t('trySample')}
         </button>
-        {loading && <span className="text-xs text-muted-foreground animate-pulse">Analyzing…</span>}
-        <span className="ml-auto text-[10px] text-muted-foreground/70">runs locally · nothing uploaded</span>
+        {loading && <span className="text-xs text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+        <span className="ml-auto text-[10px] text-muted-foreground/70">{t('runsLocally')}</span>
       </div>
 
       <details className="border border-border/60 rounded-md">
         <summary className="px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none">
-          …or paste a single file
+          {t('pasteToggle')}
         </summary>
         <div className="p-3 pt-0 flex flex-col gap-2">
           <textarea
             value={code}
             onChange={e => setCode(e.target.value)}
-            placeholder="// paste your *.spec.ts here"
+            placeholder={t('pastePlaceholder')}
             spellCheck={false}
             className="w-full h-44 bg-muted/30 border border-border rounded-md p-3 font-mono text-xs text-foreground resize-y focus:outline-none focus:border-foreground/40"
           />
@@ -335,13 +334,13 @@ function AuditTab() {
               disabled={loading}
               className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
-              Analyze
+              {t('analyze')}
             </button>
             <button
               onClick={clearAll}
               className="px-3 py-2 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Clear
+              {t('clear')}
             </button>
           </div>
         </div>
@@ -352,33 +351,26 @@ function AuditTab() {
       )}
 
       {source && report && (
-        <p className="text-[11px] text-muted-foreground">Analyzed: <span className="text-foreground">{source}</span></p>
+        <p className="text-[11px] text-muted-foreground">
+          {t('analyzedLabel')} <span className="text-foreground">{source}</span>
+        </p>
       )}
 
       {report && <Results report={report} />}
       {ran && !report && !error && !loading && (
-        <p className="text-xs text-muted-foreground">Nothing to analyze — pick a folder or paste some test code.</p>
+        <p className="text-xs text-muted-foreground">{t('nothingToAnalyze')}</p>
       )}
     </div>
   )
 }
 
 function AboutTab() {
+  const { t } = useTranslation('locate-me')
   return (
     <div className="max-w-2xl flex flex-col gap-3 text-sm text-muted-foreground">
-      <p>
-        <span className="text-foreground font-medium">LocateMe</span> is a static locator-fragility audit
-        for Playwright / TypeScript test suites. It reads your test code only — no runtime, no test execution —
-        and groups locators by shape: fragile, stable, context, or dynamic.
-      </p>
-      <p>
-        It surfaces <span className="text-foreground">why</span> a locator may be brittle and where the same
-        selector repeats, so you can fix one place and close many. It never auto-rewrites your tests and gives
-        no single quality score — just facts you can act on.
-      </p>
-      <p className="text-xs text-muted-foreground/80">
-        Everything runs in your browser. Your code never leaves the page. Open source, MIT.
-      </p>
+      <p>{t('about.p1')}</p>
+      <p>{t('about.p2')}</p>
+      <p className="text-xs text-muted-foreground/80">{t('about.p3')}</p>
     </div>
   )
 }
@@ -436,6 +428,7 @@ export default function LocateMePage() {
             </span>
           ))}
         </div>
+
       </main>
     </div>
   )

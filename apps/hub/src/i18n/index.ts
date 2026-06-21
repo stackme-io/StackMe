@@ -50,6 +50,10 @@ import enLocateMeRoadmap from './locales/en/locate-me/roadmap.json'
 import esLocateMeRoadmap from './locales/es/locate-me/roadmap.json'
 import ukLocateMeRoadmap from './locales/uk/locate-me/roadmap.json'
 
+import enLocateMeUi      from './locales/en/locate-me/ui.json'
+import esLocateMeUi      from './locales/es/locate-me/ui.json'
+import ukLocateMeUi      from './locales/uk/locate-me/ui.json'
+
 import enMarketMeManifest from './locales/en/market-me/manifest.json'
 import esMarketMeManifest from './locales/es/market-me/manifest.json'
 import ukMarketMeManifest from './locales/uk/market-me/manifest.json'
@@ -80,6 +84,7 @@ i18n
         'locate-me': {
           ...enLocateMeFooter,
           ...enLocateMeRoadmap,
+          ...enLocateMeUi,
         },
         'market-me': {
           ...enMarketMeManifest,
@@ -103,6 +108,7 @@ i18n
         'locate-me': {
           ...esLocateMeFooter,
           ...esLocateMeRoadmap,
+          ...esLocateMeUi,
         },
         'market-me': {
           ...esMarketMeManifest,
@@ -126,6 +132,7 @@ i18n
         'locate-me': {
           ...ukLocateMeFooter,
           ...ukLocateMeRoadmap,
+          ...ukLocateMeUi,
         },
         'market-me': {
           ...ukMarketMeManifest,
