@@ -17,6 +17,7 @@ __pycache__/
 node_modules/
 dist/
 locateme-report.json
+locateme-report.html
 .turbo/
 .vercel/
 .npm
