@@ -85,7 +85,8 @@ function FindingRow({ f }: { f: Finding }) {
 
 function Results({ report }: { report: ReportData }) {
   const k = report.summary.byKind
-  const fragile = report.findings.filter(f => f.kind === 'fragile')
+  const findings = report.findings
+  const fragile = findings.filter(f => f.kind === 'fragile')
 
   if (report.summary.locatorCalls === 0) {
     return (
@@ -99,8 +100,43 @@ function Results({ report }: { report: ReportData }) {
     )
   }
 
+  // hot files (by fragile count)
+  const perFile = new Map<string, { fragile: number; total: number }>()
+  for (const f of findings) {
+    const e = perFile.get(f.file) ?? { fragile: 0, total: 0 }
+    e.total++
+    if (f.kind === 'fragile') e.fragile++
+    perFile.set(f.file, e)
+  }
+  const hot = [...perFile.entries()]
+    .filter(([, e]) => e.fragile > 0)
+    .sort((a, b) => b[1].fragile - a[1].fragile)
+    .slice(0, 10)
+
+  // duplicated selectors (fragile/context in >=2 places; skip stable & dynamic)
+  const byKey = new Map<string, Finding[]>()
+  for (const f of findings) {
+    if (f.selector === null || f.kind === 'stable') continue
+    const key = `${f.method} ${f.selector}`
+    const arr = byKey.get(key)
+    if (arr) arr.push(f)
+    else byKey.set(key, [f])
+  }
+  const dupes = [...byKey.values()].filter(l => l.length >= 2).sort((a, b) => b.length - a.length).slice(0, 10)
+  const topDup = dupes[0]
+
   return (
     <div className="flex flex-col gap-4">
+      {topDup && (
+        <div className="rounded-md border border-border/60 bg-muted/20 px-3 py-2">
+          <span className="text-xs text-foreground">
+            Most repeated:{' '}
+            <code className="font-mono text-amber-400">{JSON.stringify(topDup[0].selector)}</code>{' '}
+            in {topDup.length} places — fix once, close {topDup.length}.
+          </span>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-2">
         {KIND_ORDER.map(kind => {
           const m = KIND_META[kind]
@@ -118,6 +154,45 @@ function Results({ report }: { report: ReportData }) {
         {report.summary.files} files · {report.summary.locatorCalls} locator calls ·
         classified {report.summary.coverage.classified} · dynamic {report.summary.coverage.dynamic} (not classified)
       </p>
+
+      {hot.length > 0 && (
+        <div>
+          <div className="text-xs font-medium text-foreground mb-2">Hot files (by fragile)</div>
+          <div className="flex flex-col gap-1">
+            {hot.map(([file, e]) => (
+              <div key={file} className="flex items-center justify-between text-[11px] border border-border/40 rounded px-2.5 py-1.5">
+                <span className="font-mono text-muted-foreground truncate">{file}</span>
+                <span className="text-muted-foreground flex-shrink-0 ml-2">
+                  <span className="text-red-400 font-medium">{e.fragile}</span> fragile / {e.total}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {dupes.length > 0 && (
+        <div>
+          <div className="text-xs font-medium text-foreground mb-2">Duplicated selectors ({dupes.length})</div>
+          <div className="flex flex-col gap-1">
+            {dupes.map((list, i) => {
+              const m = KIND_META[list[0].kind]
+              const where = list.slice(0, 3).map(f => `${f.file}:${f.line}`).join(', ')
+              const more = list.length > 3 ? ` +${list.length - 3}` : ''
+              return (
+                <div key={i} className="text-[11px] border border-border/40 rounded px-2.5 py-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
+                    <code className="font-mono text-foreground truncate">{JSON.stringify(list[0].selector)}</code>
+                    <span className={`${m.text} font-medium flex-shrink-0`}>×{list.length}</span>
+                  </div>
+                  <div className="text-muted-foreground/70 mt-0.5 truncate">{where}{more}</div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div>
         <div className="text-xs font-medium text-foreground mb-2">
