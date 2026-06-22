@@ -42,22 +42,28 @@ interface WorkerResult {
 function Sidebar() {
   const { t } = useTranslation('locate-me')
   return (
-    <div className="h-full w-[208px] flex flex-col gap-3 p-3 overflow-y-auto">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
-        {t('kindsTitle')}
+    <div className="w-[208px] h-full flex flex-col overflow-hidden">
+      <div className="p-3">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+          {t('kindsTitle')}
+        </p>
+        <div className="flex flex-col gap-0.5">
+          {KIND_ORDER.map(k => {
+            const s = KIND_STYLE[k]
+            return (
+              <div key={k} className="flex flex-col px-2 py-1.5 rounded-md">
+                <span className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+                  <span className={`text-xs font-medium ${s.text}`}>{t(`kinds.${k}.label`)}</span>
+                </span>
+                <span className="text-[11px] text-muted-foreground/80 leading-relaxed mt-0.5">
+                  {t(`kinds.${k}.desc`)}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </div>
-      {KIND_ORDER.map(k => {
-        const s = KIND_STYLE[k]
-        return (
-          <div key={k} className="rounded-md border border-border/60 p-2.5">
-            <div className="flex items-center gap-1.5 mb-1">
-              <span className={`w-2 h-2 rounded-full ${s.dot}`} />
-              <span className={`text-xs font-medium ${s.text}`}>{t(`kinds.${k}.label`)}</span>
-            </div>
-            <p className="text-[11px] leading-snug text-muted-foreground">{t(`kinds.${k}.desc`)}</p>
-          </div>
-        )
-      })}
     </div>
   )
 }
@@ -199,7 +205,7 @@ function FindingsList({ findings, selected, onSelect }: {
   const fragile = findings.filter(f => f.kind === 'fragile')
 
   return (
-    <div className="flex-1 min-w-0">
+    <div className="w-[380px] flex-shrink-0">
       <div className="text-xs font-medium text-foreground mb-2">
         {t('fragileLocators', { count: fragile.length })}
       </div>
@@ -451,7 +457,7 @@ function AuditTab() {
 
           <div className="flex gap-4 items-start">
             <FindingsList findings={report.findings} selected={selected} onSelect={setSelected} />
-            <div className="w-[340px] flex-shrink-0">
+            <div className="flex-1 min-w-0">
               {selected ? (
                 <DetailPanel finding={selected} onClose={() => setSelected(null)} />
               ) : (
@@ -503,12 +509,11 @@ export default function LocateMePage() {
 
       <button
         onClick={() => setSidebarOpen(o => !o)}
-        className="absolute top-1/2 -translate-y-1/2 z-10 flex flex-col items-center justify-center gap-0.5 w-6 h-16 bg-background border border-border rounded-r-md hover:bg-muted transition-all"
-        style={{ left: sidebarOpen ? '208px' : '0px' }}
+        className="absolute top-2.5 z-20 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-border text-sm font-bold text-cyan-400 hover:bg-muted transition-all"
+        style={{ left: sidebarOpen ? '208px' : '22px' }}
         title="Toggle panel"
       >
-        <span className="text-xs font-bold text-cyan-400">S</span>
-        <span className="text-[10px] text-muted-foreground">{sidebarOpen ? '‹' : '›'}</span>
+        S
       </button>
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
