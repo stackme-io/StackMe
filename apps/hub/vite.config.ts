@@ -8,15 +8,13 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    // The previous PWA setup cached index.html and, on redeploys, served a stale
+    // shell that referenced missing chunks (white screen) and looped reloads.
+    // Ship a self-destroying service worker: it unregisters the old SW and clears
+    // its caches for every returning visitor, then the app runs online-only
+    // (network) — which is what it needs anyway (auth + backend).
     VitePWA({
-      registerType: 'autoUpdate',
-      manifest: false,
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
-        maximumFileSizeToCacheInBytes: 50 * 1024 * 1024, // 50 MB — covers DuckDB WASM (~42 MB max)
-        skipWaiting: true,
-        clientsClaim: true,
-      },
+      selfDestroying: true,
     }),
   ],
   resolve: {
