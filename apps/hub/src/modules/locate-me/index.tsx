@@ -6,9 +6,9 @@ import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 
-// B5 layout (after design review): one headline + ratio bar instead of chips;
-// hot files / duplicates become sort modes + a ×N badge; slim detail panel;
-// a dedicated empty state.
+// B6 (design review #2): filters + sort live in the left rail (controls, like ForgeMe);
+// the kinds taxonomy lives only in the ratio-bar legend + the idle detail panel.
+// Plain selector in the list, plural-correct counts, centered empty state.
 
 const SAMPLE = `import { test } from '@playwright/test'
 
@@ -30,7 +30,7 @@ const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
   dynamic: { text: 'text-muted-foreground', dot: 'bg-muted-foreground' },
 }
 
-// Ratio-bar segment fills — only fragile is fully saturated; stable recedes.
+// Ratio-bar fills — fragile saturated, the rest recede.
 const KIND_SEG: Record<Kind, string> = {
   fragile: 'bg-red-400',
   context: 'bg-amber-400/70',
@@ -75,27 +75,53 @@ function sortFindings(list: Finding[], mode: SortMode, dup: Map<string, number>,
   return arr
 }
 
-function Sidebar() {
+function selectorText(f: Finding): string {
+  return `${f.method}(${f.selector === null ? '…' : JSON.stringify(f.selector)})`
+}
+
+// ---- Left rail: filters + sort (only on Audit, only with results) ----
+function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
+  byKind: Record<Kind, number>
+  filterKinds: Set<Kind>
+  onToggle: (k: Kind) => void
+  sortMode: SortMode
+  onSort: (m: SortMode) => void
+}) {
   const { t } = useTranslation('locate-me')
+  const sorts: [SortMode, string][] = [['file', t('sortFile')], ['repeated', t('sortRepeated')], ['hot', t('sortHot')]]
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
-      <div className="p-3">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{t('kindsTitle')}</p>
+      <div className="p-3 border-b border-border">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{t('filterTitle')}</p>
         <div className="flex flex-col gap-0.5">
-          {KIND_ORDER.map(k => {
-            const s = KIND_STYLE[k]
+          {FILTER_KINDS.map(k => {
+            const on = filterKinds.has(k)
             return (
-              <div key={k} className="flex flex-col px-2 py-1.5 rounded-md">
-                <span className="flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${s.dot}`} />
-                  <span className={`text-xs font-medium ${s.text}`}>{t(`kinds.${k}.label`)}</span>
+              <button key={k} onClick={() => onToggle(k)}
+                className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
+                <span className={`w-3 h-3 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? `${KIND_STYLE[k].dot} border-transparent` : 'border-border'}`}>
+                  {on && (
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                      <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
+                    </svg>
+                  )}
                 </span>
-                <span className="text-[11px] text-muted-foreground/80 leading-relaxed mt-0.5">
-                  {t(`kinds.${k}.desc`)}
-                </span>
-              </div>
+                <span className="text-xs flex-1">{t(`kinds.${k}.label`)}</span>
+                <span className="text-[11px] text-muted-foreground tabular-nums">{byKind[k]}</span>
+              </button>
             )
           })}
+        </div>
+      </div>
+      <div className="p-3">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{t('sortBy')}</p>
+        <div className="flex flex-col gap-1">
+          {sorts.map(([m, label]) => (
+            <button key={m} onClick={() => onSort(m)}
+              className={`px-2 py-1.5 rounded-md text-xs text-left border transition-colors ${sortMode === m ? 'border-primary/50 bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:bg-muted/30'}`}>
+              {label}
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -110,13 +136,13 @@ function Headline({ report, detection }: { report: ReportData; detection: Detect
   if (detection && detection.language !== 'unknown') stack.push(detection.language)
   if (detection && detection.framework !== 'unknown') stack.push(detection.framework)
 
+  const headline = fragile > 0
+    ? t('headlineFragile', { locators: t('nLocators', { count: fragile }), files: t('nFiles', { count: filesWithFragile }) })
+    : t('headlineClean', { files: t('nFiles', { count: report.summary.files }) })
+
   return (
     <div className="flex flex-col gap-1">
-      <h2 className="text-lg font-semibold text-foreground">
-        {fragile > 0
-          ? t('headlineFragile', { count: fragile, files: filesWithFragile })
-          : t('headlineClean', { files: report.summary.files })}
-      </h2>
+      <h2 className="text-lg font-semibold text-foreground">{headline}</h2>
       <p className="text-[11px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
         <span>{t('firstPass')}</span><span className="text-muted-foreground/40">·</span>
         <span>{t('testsNotRun')}</span>
@@ -127,7 +153,7 @@ function Headline({ report, detection }: { report: ReportData; detection: Detect
           </>
         )}
         <span className="text-muted-foreground/40">·</span>
-        <span>{t('callsInFiles', { calls: report.summary.locatorCalls, files: report.summary.files })}</span>
+        <span>{t('callsInFiles', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}</span>
       </p>
     </div>
   )
@@ -156,6 +182,27 @@ function RatioBar({ byKind }: { byKind: Record<Kind, number> }) {
   )
 }
 
+// Idle right-panel default — the taxonomy lives here, on-demand, not in a permanent rail.
+function KindsReference() {
+  const { t } = useTranslation('locate-me')
+  return (
+    <div className="border border-dashed border-border/60 rounded-md p-4 max-w-md">
+      <p className="text-[11px] text-muted-foreground mb-3">{t('selectHint')}</p>
+      <div className="flex flex-col gap-2.5">
+        {KIND_ORDER.map(k => (
+          <div key={k}>
+            <span className="flex items-center gap-1.5">
+              <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
+              <span className={`text-xs font-medium ${KIND_STYLE[k].text}`}>{t(`kinds.${k}.label`)}</span>
+            </span>
+            <p className="text-[11px] text-muted-foreground/80 leading-relaxed mt-0.5">{t(`kinds.${k}.desc`)}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   const s = KIND_STYLE[finding.kind]
@@ -169,7 +216,7 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
   }
 
   return (
-    <div className="border border-border/60 rounded-md p-3 flex flex-col gap-3">
+    <div className="border border-border/60 rounded-md p-3 flex flex-col gap-3 max-w-2xl">
       <div className="flex items-center justify-between">
         <span className={`text-xs font-medium ${s.text} flex items-center gap-1.5`}>
           <span className={`w-2 h-2 rounded-full ${s.dot}`} />
@@ -187,9 +234,7 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
             </button>
           )}
         </div>
-        <code className="block text-xs font-mono text-foreground bg-muted/40 rounded p-2 break-all">
-          {finding.method}({finding.selector === null ? '…' : JSON.stringify(finding.selector)})
-        </code>
+        <code className="block text-xs font-mono text-foreground bg-muted/40 rounded p-2 break-all">{selectorText(finding)}</code>
         <div className="text-[11px] text-muted-foreground font-mono mt-1.5">{finding.file}:{finding.line}</div>
       </div>
 
@@ -214,8 +259,12 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
   )
 }
 
-function AuditTab() {
+export default function LocateMePage() {
   const { t } = useTranslation('locate-me')
+  const [activeTab, setActiveTab] = useState('audit')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  // Audit state (lifted here so the left rail can host the controls)
   const [code, setCode] = useState('')
   const [report, setReport] = useState<ReportData | null>(null)
   const [detection, setDetection] = useState<Detection | null>(null)
@@ -242,11 +291,8 @@ function AuditTab() {
     w.onmessage = (e: MessageEvent<WorkerResult>) => {
       setLoading(false)
       const d = e.data
-      if (d.ok && d.report) {
-        setReport(d.report); setDetection(d.detection ?? null); setSource(label)
-      } else {
-        setError(d.error ?? t('analysisFailed'))
-      }
+      if (d.ok && d.report) { setReport(d.report); setDetection(d.detection ?? null); setSource(label) }
+      else setError(d.error ?? t('analysisFailed'))
     }
     w.postMessage({ files, target })
   }
@@ -262,7 +308,7 @@ function AuditTab() {
     try {
       const { files, rootName } = await pickAndReadFolder()
       if (files.length === 0) { setLoading(false); setError(t('noTsFiles', { name: rootName })); return }
-      runOnWorker(files, rootName, t('folderLabel', { name: rootName, count: files.length }))
+      runOnWorker(files, rootName, t('folderLabel', { name: rootName, files: t('nTsFiles', { count: files.length }) }))
     } catch (e) {
       setLoading(false)
       if ((e as DOMException)?.name !== 'AbortError') setError((e as Error).message)
@@ -272,213 +318,49 @@ function AuditTab() {
   const toggleFilter = (k: Kind) => {
     setFilterKinds(prev => {
       const next = new Set(prev)
-      next.has(k) ? next.delete(k) : next.add(k)
+      if (next.has(k)) next.delete(k); else next.add(k)
       return next
     })
   }
 
-  // ---- Empty / initial state ----
-  if (!report) {
-    return (
-      <div className="flex flex-col items-center text-center gap-4 py-16 max-w-md mx-auto">
-        <div>
-          <p className="text-base font-medium text-foreground mb-1">{t('emptyTitle')}</p>
-          <p className="text-xs text-muted-foreground">{t('emptyDesc')}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={selectFolder}
-            disabled={loading}
-            className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
-          >
-            {t('selectFolder')}
-          </button>
-          <button
-            onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }}
-            disabled={loading}
-            className="px-3 py-2 rounded-md text-xs text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors"
-          >
-            {t('trySample')}
-          </button>
-        </div>
-        {loading && <span className="text-xs text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-        <details className="w-full text-left border border-border/60 rounded-md">
-          <summary className="px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none">
-            {t('pasteToggle')}
-          </summary>
-          <div className="p-3 pt-0 flex flex-col gap-2">
-            <textarea
-              value={code}
-              onChange={e => setCode(e.target.value)}
-              placeholder={t('pastePlaceholder')}
-              spellCheck={false}
-              className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 font-mono text-xs text-foreground resize-y focus:outline-none focus:border-foreground/40"
-            />
-            <button
-              onClick={() => analyzePaste(code)}
-              disabled={loading}
-              className="self-start px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
-            >
-              {t('analyze')}
-            </button>
-          </div>
-        </details>
-        {error && (
-          <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 w-full">{error}</p>
-        )}
-      </div>
-    )
-  }
+  const hasLocators = !!report && report.summary.locatorCalls > 0
+  const showControls = activeTab === 'audit' && hasLocators
+  const railOpen = showControls && sidebarOpen
 
-  // ---- Results state ----
-  const findings = report.findings
+  // derived for results
+  const findings = report?.findings ?? []
   const dup = buildDupCount(findings)
   const hot = buildHotRank(findings)
-  const rows = sortFindings(findings.filter(f => filterKinds.has(f.kind)), sortMode, dup, hot)
-  const hasLocators = report.summary.locatorCalls > 0
-
-  return (
-    <div className="flex flex-col gap-4">
-
-      {/* compact action bar */}
-      <div className="flex items-center gap-2 flex-wrap text-[11px]">
-        <button onClick={selectFolder} disabled={loading}
-          className="px-2.5 py-1 rounded-md font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
-          {t('selectFolder')}
-        </button>
-        <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
-          className="px-2.5 py-1 rounded-md text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
-          {t('trySample')}
-        </button>
-        {source && <span className="text-muted-foreground">{t('analyzedLabel')} <span className="text-foreground">{source}</span></span>}
-        {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-      </div>
-
-      {error && (
-        <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl">{error}</p>
-      )}
-
-      {!hasLocators ? (
-        <div className="rounded-md border border-border/60 p-4 max-w-3xl">
-          <p className="text-sm text-foreground mb-1">{t('noLocators')}</p>
-          <p className="text-xs text-muted-foreground">{t('noLocatorsDesc')}</p>
-        </div>
-      ) : (
-        <>
-          <Headline report={report} detection={detection} />
-          <RatioBar byKind={report.summary.byKind} />
-
-          <div className="flex gap-4 items-start">
-            {/* left: filterable / sortable list */}
-            <div className="w-[400px] flex-shrink-0">
-              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-                {FILTER_KINDS.map(k => {
-                  const on = filterKinds.has(k)
-                  return (
-                    <button key={k} onClick={() => toggleFilter(k)}
-                      className={`px-2 py-0.5 rounded-full text-[11px] border transition-colors ${
-                        on ? `${KIND_STYLE[k].text} border-current` : 'text-muted-foreground border-border hover:text-foreground'
-                      }`}>
-                      {t(`kinds.${k}.label`)} <span className="tabular-nums">{report.summary.byKind[k]}</span>
-                    </button>
-                  )
-                })}
-              </div>
-
-              <div className="flex items-center gap-1.5 mb-2 text-[10px] text-muted-foreground">
-                <span className="uppercase tracking-widest text-muted-foreground/70">{t('sortBy')}</span>
-                {([['file', t('sortFile')], ['repeated', t('sortRepeated')], ['hot', t('sortHot')]] as [SortMode, string][]).map(([m, label]) => (
-                  <button key={m} onClick={() => setSortMode(m)}
-                    className={`px-1.5 py-0.5 rounded transition-colors ${sortMode === m ? 'text-foreground bg-muted/60' : 'hover:text-foreground'}`}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              {rows.length === 0 ? (
-                <p className="text-xs text-muted-foreground">{t('noneForFilter')}</p>
-              ) : (
-                <div className="flex flex-col gap-1">
-                  {rows.map((f, i) => {
-                    const isSel = selected === f
-                    const n = dup.get(dupKey(f)) ?? 0
-                    const s = KIND_STYLE[f.kind]
-                    return (
-                      <button key={i} onClick={() => setSelected(f)}
-                        className={`flex flex-col gap-0.5 text-left px-2.5 py-2 rounded-md border transition-colors ${
-                          isSel ? 'border-foreground/30 bg-muted/40' : 'border-border/60 hover:bg-muted/30'
-                        }`}>
-                        <div className="flex items-center gap-2">
-                          <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0`} />
-                          <span className="text-[11px] text-muted-foreground tabular-nums">{f.file}:{f.line}</span>
-                          {n > 1 && <span className="text-[10px] text-amber-400 ml-auto flex-shrink-0">×{n}</span>}
-                        </div>
-                        <code className="text-xs font-mono text-foreground truncate">
-                          {f.method}({f.selector === null ? '…' : JSON.stringify(f.selector)})
-                        </code>
-                        <span className="text-[10px] text-muted-foreground/80 truncate">{f.reason}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* right: detail */}
-            <div className="flex-1 min-w-0">
-              {selected ? (
-                <DetailPanel finding={selected} onClose={() => setSelected(null)} />
-              ) : (
-                <div className="border border-dashed border-border/60 rounded-md p-4 text-[11px] text-muted-foreground">
-                  {t('selectHint')}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <p className="text-[10px] text-muted-foreground/70 border-t border-border/40 pt-2 max-w-3xl">
-            {t('honesty')}
-          </p>
-        </>
-      )}
-    </div>
-  )
-}
-
-function AboutTab() {
-  const { t } = useTranslation('locate-me')
-  return (
-    <div className="max-w-2xl flex flex-col gap-3 text-sm text-muted-foreground">
-      <p>{t('about.p1')}</p>
-      <p>{t('about.p2')}</p>
-      <p className="text-xs text-muted-foreground/80">{t('about.p3')}</p>
-    </div>
-  )
-}
-
-export default function LocateMePage() {
-  const { t } = useTranslation('locate-me')
-  const [activeTab, setActiveTab] = useState('audit')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const rows = report ? sortFindings(findings.filter(f => filterKinds.has(f.kind)), sortMode, dup, hot) : []
 
   return (
     <div className="flex h-full relative overflow-hidden">
 
       <aside
         className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
-        style={{ width: sidebarOpen ? '208px' : '0px' }}
+        style={{ width: railOpen ? '208px' : '0px' }}
       >
-        <Sidebar />
+        {showControls && report && (
+          <AuditControls
+            byKind={report.summary.byKind}
+            filterKinds={filterKinds}
+            onToggle={toggleFilter}
+            sortMode={sortMode}
+            onSort={setSortMode}
+          />
+        )}
       </aside>
 
-      <button
-        onClick={() => setSidebarOpen(o => !o)}
-        className="absolute top-2.5 z-20 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-border text-sm font-bold text-cyan-400 hover:bg-muted transition-all"
-        style={{ left: sidebarOpen ? '208px' : '22px' }}
-        title="Toggle panel"
-      >
-        S
-      </button>
+      {showControls && (
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          className="absolute top-2.5 z-20 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-border text-sm font-bold text-cyan-400 hover:bg-muted transition-all"
+          style={{ left: sidebarOpen ? '208px' : '22px' }}
+          title="Toggle panel"
+        >
+          S
+        </button>
+      )}
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto px-6 pt-5">
@@ -492,14 +374,122 @@ export default function LocateMePage() {
             onChange={setActiveTab}
           />
 
+          {/* ---- AUDIT ---- */}
           <div style={{ display: activeTab === 'audit' ? 'block' : 'none' }}>
-            <AuditTab />
+            {!report ? (
+              // empty / initial state — centered hero
+              <div className="flex flex-col items-center justify-center text-center gap-4 min-h-[60vh] max-w-md mx-auto">
+                <div>
+                  <p className="text-base font-medium text-foreground mb-1">{t('emptyTitle')}</p>
+                  <p className="text-xs text-muted-foreground">{t('emptyDesc')}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={selectFolder} disabled={loading}
+                    className="px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                    {t('selectFolder')}
+                  </button>
+                  <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
+                    className="px-3 py-2 rounded-md text-xs text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
+                    {t('trySample')}
+                  </button>
+                </div>
+                {loading && <span className="text-xs text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+                <details className="w-full text-left border border-border/60 rounded-md">
+                  <summary className="px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none">
+                    {t('pasteToggle')}
+                  </summary>
+                  <div className="p-3 pt-0 flex flex-col gap-2">
+                    <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
+                      className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 font-mono text-xs text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+                    <button onClick={() => analyzePaste(code)} disabled={loading}
+                      className="self-start px-4 py-2 rounded-md text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                      {t('analyze')}
+                    </button>
+                  </div>
+                </details>
+                {error && <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 w-full">{error}</p>}
+              </div>
+            ) : (
+              // results
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                  <button onClick={selectFolder} disabled={loading}
+                    className="px-2.5 py-1 rounded-md font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
+                    {t('selectFolder')}
+                  </button>
+                  <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
+                    className="px-2.5 py-1 rounded-md text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
+                    {t('trySample')}
+                  </button>
+                  {source && <span className="text-muted-foreground">{t('analyzedLabel')} <span className="text-foreground">{source}</span></span>}
+                  {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+                </div>
+
+                {error && <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl">{error}</p>}
+
+                {!hasLocators ? (
+                  <div className="rounded-md border border-border/60 p-4 max-w-3xl">
+                    <p className="text-sm text-foreground mb-1">{t('noLocators')}</p>
+                    <p className="text-xs text-muted-foreground">{t('noLocatorsDesc')}</p>
+                  </div>
+                ) : (
+                  <>
+                    <Headline report={report} detection={detection} />
+                    <RatioBar byKind={report.summary.byKind} />
+
+                    <div className="flex gap-4 items-start">
+                      <div className="w-[380px] flex-shrink-0">
+                        {rows.length === 0 ? (
+                          <p className="text-xs text-muted-foreground">{t('noneForFilter')}</p>
+                        ) : (
+                          <div className="flex flex-col gap-1">
+                            {rows.map((f, i) => {
+                              const isSel = selected === f
+                              const n = dup.get(dupKey(f)) ?? 0
+                              const s = KIND_STYLE[f.kind]
+                              return (
+                                <button key={i} onClick={() => setSelected(f)}
+                                  className={`flex flex-col gap-0.5 text-left px-2.5 py-2 rounded-md border transition-colors ${isSel ? 'border-foreground/30 bg-muted/40' : 'border-border/60 hover:bg-muted/30'}`}>
+                                  <div className="flex items-center gap-2">
+                                    <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0`} />
+                                    <span className="text-[11px] text-muted-foreground tabular-nums">{f.file}:{f.line}</span>
+                                    {n > 1 && <span className="text-[10px] text-amber-400 ml-auto flex-shrink-0">×{n}</span>}
+                                  </div>
+                                  <code className="text-xs font-mono text-foreground/90 truncate">{selectorText(f)}</code>
+                                  <span className="text-[10px] text-muted-foreground/80 truncate">{f.reason}</span>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        {selected
+                          ? <DetailPanel finding={selected} onClose={() => setSelected(null)} />
+                          : <KindsReference />}
+                      </div>
+                    </div>
+
+                    <p className="text-[10px] text-muted-foreground/70 border-t border-border/40 pt-2 max-w-3xl">{t('honesty')}</p>
+                  </>
+                )}
+              </div>
+            )}
           </div>
+
+          {/* ---- ROADMAP ---- */}
           <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }}>
             <RoadmapTab namespace="locate-me" />
           </div>
+
+          {/* ---- ABOUT ---- */}
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <AboutTab />
+            <div className="max-w-2xl flex flex-col gap-3 text-sm text-muted-foreground">
+              <p>{t('about.p1')}</p>
+              <p>{t('about.p2')}</p>
+              <p className="text-xs text-muted-foreground/80">{t('about.p3')}</p>
+            </div>
           </div>
         </div>
 
