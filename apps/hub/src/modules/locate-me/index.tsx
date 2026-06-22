@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { ModuleTabs } from '../../shared/ModuleTabs'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
+import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 
-// B1: paste a single file. B2: pick a folder → engine runs in a Web Worker.
-// B3: report parity (duplicates / hot files) + i18n (en/es/uk).
+// B1: paste. B2: folder + worker. B3: report parity + i18n.
+// B4: right detail panel, stack detection, bigger S-toggle.
 
 const SAMPLE = `import { test } from '@playwright/test'
 
@@ -21,7 +22,7 @@ test('checkout', async ({ page }) => {
 })
 `
 
-// Colors only — labels and descriptions come from i18n.
+// Colors only — labels/descriptions come from i18n.
 const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
   fragile: { text: 'text-red-400',          dot: 'bg-red-400' },
   stable:  { text: 'text-emerald-400',      dot: 'bg-emerald-400' },
@@ -34,6 +35,7 @@ const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
 interface WorkerResult {
   ok: boolean
   report?: ReportData
+  detection?: Detection
   error?: string
 }
 
@@ -60,45 +62,32 @@ function Sidebar() {
   )
 }
 
-function FindingRow({ f }: { f: Finding }) {
-  const s = KIND_STYLE[f.kind]
+function DetectionLine({ detection }: { detection: Detection }) {
+  const { t } = useTranslation('locate-me')
+  const known = detection.language !== 'unknown' || detection.framework !== 'unknown'
   return (
-    <details className="border border-border/60 rounded-md overflow-hidden">
-      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-muted/40 transition-colors list-none">
-        <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0`} />
-        <span className="text-[11px] text-muted-foreground tabular-nums flex-shrink-0">
-          {f.file}:{f.line}
+    <div className="flex items-center gap-2 text-[11px]">
+      <span className="text-muted-foreground">{t('detectedLabel')}</span>
+      {known ? (
+        <span className="flex items-center gap-1.5">
+          {detection.language !== 'unknown' && (
+            <span className="px-1.5 py-0.5 rounded border border-border text-foreground">{detection.language}</span>
+          )}
+          {detection.framework !== 'unknown' && (
+            <span className="px-1.5 py-0.5 rounded border border-cyan-400/30 text-cyan-400">{detection.framework}</span>
+          )}
         </span>
-        <code className="text-xs font-mono text-foreground truncate">
-          {f.method}({f.selector === null ? '…' : JSON.stringify(f.selector)})
-        </code>
-      </summary>
-      <div className="px-3 pb-3 pt-1 border-t border-border/40">
-        <p className="text-[11px] text-muted-foreground mb-2">{f.reason}</p>
-        {f.snippet && (
-          <pre className="text-[11px] font-mono bg-muted/40 rounded p-2 overflow-x-auto whitespace-pre text-muted-foreground">
-            {f.snippet}
-          </pre>
-        )}
-      </div>
-    </details>
+      ) : (
+        <span className="text-muted-foreground/80">{t('unknownStack')}</span>
+      )}
+    </div>
   )
 }
 
-function Results({ report }: { report: ReportData }) {
+function Summary({ report }: { report: ReportData }) {
   const { t } = useTranslation('locate-me')
   const k = report.summary.byKind
   const findings = report.findings
-  const fragile = findings.filter(f => f.kind === 'fragile')
-
-  if (report.summary.locatorCalls === 0) {
-    return (
-      <div className="rounded-md border border-border/60 p-4">
-        <p className="text-sm text-foreground mb-1">{t('noLocators')}</p>
-        <p className="text-xs text-muted-foreground">{t('noLocatorsDesc')}</p>
-      </div>
-    )
-  }
 
   // hot files (by fragile count)
   const perFile = new Map<string, { fragile: number; total: number }>()
@@ -113,7 +102,7 @@ function Results({ report }: { report: ReportData }) {
     .sort((a, b) => b[1].fragile - a[1].fragile)
     .slice(0, 10)
 
-  // duplicated selectors (fragile/context in >=2 places; skip stable & dynamic)
+  // duplicated selectors
   const byKey = new Map<string, Finding[]>()
   for (const f of findings) {
     if (f.selector === null || f.kind === 'stable') continue
@@ -197,23 +186,105 @@ function Results({ report }: { report: ReportData }) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
 
-      <div>
-        <div className="text-xs font-medium text-foreground mb-2">
-          {t('fragileLocators', { count: fragile.length })}
+function FindingsList({ findings, selected, onSelect }: {
+  findings: Finding[]
+  selected: Finding | null
+  onSelect: (f: Finding) => void
+}) {
+  const { t } = useTranslation('locate-me')
+  const fragile = findings.filter(f => f.kind === 'fragile')
+
+  return (
+    <div className="flex-1 min-w-0">
+      <div className="text-xs font-medium text-foreground mb-2">
+        {t('fragileLocators', { count: fragile.length })}
+      </div>
+      {fragile.length === 0 ? (
+        <p className="text-xs text-muted-foreground">{t('noFragile')}</p>
+      ) : (
+        <div className="flex flex-col gap-1">
+          {fragile.map((f, i) => {
+            const isSel = selected === f
+            return (
+              <button
+                key={i}
+                onClick={() => onSelect(f)}
+                className={`flex items-center gap-2 text-left px-2.5 py-2 rounded-md border transition-colors ${
+                  isSel ? 'border-red-400/40 bg-red-400/5' : 'border-border/60 hover:bg-muted/40'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
+                <span className="text-[11px] text-muted-foreground tabular-nums flex-shrink-0">{f.file}:{f.line}</span>
+                <code className="text-xs font-mono text-foreground truncate">
+                  {f.method}({f.selector === null ? '…' : JSON.stringify(f.selector)})
+                </code>
+              </button>
+            )
+          })}
         </div>
-        {fragile.length === 0 ? (
-          <p className="text-xs text-muted-foreground">{t('noFragile')}</p>
-        ) : (
-          <div className="flex flex-col gap-1.5">
-            {fragile.map((f, i) => <FindingRow key={i} f={f} />)}
-          </div>
-        )}
+      )}
+    </div>
+  )
+}
+
+function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => void }) {
+  const { t } = useTranslation('locate-me')
+  const s = KIND_STYLE[finding.kind]
+  const [copied, setCopied] = useState(false)
+
+  const copy = () => {
+    if (finding.selector === null) return
+    navigator.clipboard?.writeText(finding.selector)
+      .then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
+      .catch(() => {})
+  }
+
+  return (
+    <div className="border border-border/60 rounded-md p-3 flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <span className={`text-xs font-medium ${s.text} flex items-center gap-1.5`}>
+          <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+          {t(`kinds.${finding.kind}.label`)}
+        </span>
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
       </div>
 
-      <p className="text-[10px] text-muted-foreground/70 border-t border-border/40 pt-2">
-        {t('honesty')}
-      </p>
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">selector</span>
+          {finding.selector !== null && (
+            <button onClick={copy} className="text-[10px] text-muted-foreground hover:text-foreground">
+              {copied ? t('copied') : t('copy')}
+            </button>
+          )}
+        </div>
+        <code className="block text-xs font-mono text-foreground bg-muted/40 rounded p-2 break-all">
+          {finding.method}({finding.selector === null ? '…' : JSON.stringify(finding.selector)})
+        </code>
+        <div className="text-[11px] text-muted-foreground font-mono mt-1.5">{finding.file}:{finding.line}</div>
+      </div>
+
+      <div>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground/70 mb-1">why</div>
+        <p className="text-[11px] text-foreground/90">{finding.reason}</p>
+      </div>
+
+      {finding.snippet && (
+        <pre className="text-[11px] font-mono bg-muted/40 rounded p-2 overflow-x-auto whitespace-pre text-muted-foreground">
+          {finding.snippet}
+        </pre>
+      )}
+
+      <details className="border-t border-border/40 pt-2">
+        <summary className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">
+          {t('whyShape')}
+        </summary>
+        <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">{t(`explain.${finding.kind}`)}</p>
+      </details>
     </div>
   )
 }
@@ -222,6 +293,8 @@ function AuditTab() {
   const { t } = useTranslation('locate-me')
   const [code, setCode] = useState('')
   const [report, setReport] = useState<ReportData | null>(null)
+  const [detection, setDetection] = useState<Detection | null>(null)
+  const [selected, setSelected] = useState<Finding | null>(null)
   const [ran, setRan] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -242,12 +315,15 @@ function AuditTab() {
     setError(null)
     setRan(true)
     setReport(null)
+    setDetection(null)
+    setSelected(null)
     const w = getWorker()
     w.onmessage = (e: MessageEvent<WorkerResult>) => {
       setLoading(false)
       const d = e.data
       if (d.ok && d.report) {
         setReport(d.report)
+        setDetection(d.detection ?? null)
         setSource(label)
       } else {
         setError(d.error ?? t('analysisFailed'))
@@ -257,7 +333,7 @@ function AuditTab() {
   }
 
   const analyzePaste = (text: string) => {
-    if (!text.trim()) { setRan(true); setReport(null); setError(null); setSource(null); return }
+    if (!text.trim()) { setRan(true); setReport(null); setError(null); setSource(null); setSelected(null); return }
     runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', t('pastedSnippet'))
   }
 
@@ -281,7 +357,6 @@ function AuditTab() {
       runOnWorker(files, rootName, t('folderLabel', { name: rootName, count: files.length }))
     } catch (e) {
       setLoading(false)
-      // user dismissed the picker → AbortError, ignore quietly
       if ((e as DOMException)?.name !== 'AbortError') {
         setRan(true)
         setError((e as Error).message)
@@ -290,12 +365,14 @@ function AuditTab() {
   }
 
   const clearAll = () => {
-    setCode(''); setReport(null); setRan(false); setError(null); setSource(null)
+    setCode(''); setReport(null); setDetection(null); setSelected(null); setRan(false); setError(null); setSource(null)
   }
 
+  const hasResults = report && report.summary.locatorCalls > 0
+
   return (
-    <div className="flex flex-col gap-4 max-w-3xl">
-      <p className="text-xs text-muted-foreground">{t('intro')}</p>
+    <div className="flex flex-col gap-4">
+      <p className="text-xs text-muted-foreground max-w-3xl">{t('intro')}</p>
 
       <div className="flex items-center gap-2 flex-wrap">
         <button
@@ -316,7 +393,7 @@ function AuditTab() {
         <span className="ml-auto text-[10px] text-muted-foreground/70">{t('runsLocally')}</span>
       </div>
 
-      <details className="border border-border/60 rounded-md">
+      <details className="border border-border/60 rounded-md max-w-3xl">
         <summary className="px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none">
           {t('pasteToggle')}
         </summary>
@@ -347,16 +424,50 @@ function AuditTab() {
       </details>
 
       {error && (
-        <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2">{error}</p>
+        <p className="text-xs text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl">{error}</p>
       )}
 
-      {source && report && (
-        <p className="text-[11px] text-muted-foreground">
-          {t('analyzedLabel')} <span className="text-foreground">{source}</span>
-        </p>
+      {report && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {detection && <DetectionLine detection={detection} />}
+          {source && (
+            <p className="text-[11px] text-muted-foreground">
+              {t('analyzedLabel')} <span className="text-foreground">{source}</span>
+            </p>
+          )}
+        </div>
       )}
 
-      {report && <Results report={report} />}
+      {report && report.summary.locatorCalls === 0 && (
+        <div className="rounded-md border border-border/60 p-4 max-w-3xl">
+          <p className="text-sm text-foreground mb-1">{t('noLocators')}</p>
+          <p className="text-xs text-muted-foreground">{t('noLocatorsDesc')}</p>
+        </div>
+      )}
+
+      {hasResults && (
+        <>
+          <Summary report={report} />
+
+          <div className="flex gap-4 items-start">
+            <FindingsList findings={report.findings} selected={selected} onSelect={setSelected} />
+            <div className="w-[340px] flex-shrink-0">
+              {selected ? (
+                <DetailPanel finding={selected} onClose={() => setSelected(null)} />
+              ) : (
+                <div className="border border-dashed border-border/60 rounded-md p-4 text-[11px] text-muted-foreground">
+                  {t('selectHint')}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <p className="text-[10px] text-muted-foreground/70 border-t border-border/40 pt-2 max-w-3xl">
+            {t('honesty')}
+          </p>
+        </>
+      )}
+
       {ran && !report && !error && !loading && (
         <p className="text-xs text-muted-foreground">{t('nothingToAnalyze')}</p>
       )}
@@ -392,10 +503,12 @@ export default function LocateMePage() {
 
       <button
         onClick={() => setSidebarOpen(o => !o)}
-        className="absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+        className="absolute top-1/2 -translate-y-1/2 z-10 flex flex-col items-center justify-center gap-0.5 w-6 h-16 bg-background border border-border rounded-r-md hover:bg-muted transition-all"
         style={{ left: sidebarOpen ? '208px' : '0px' }}
+        title="Toggle panel"
       >
-        <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
+        <span className="text-xs font-bold text-cyan-400">S</span>
+        <span className="text-[10px] text-muted-foreground">{sidebarOpen ? '‹' : '›'}</span>
       </button>
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">

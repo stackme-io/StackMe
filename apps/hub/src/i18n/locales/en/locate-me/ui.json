@@ -33,6 +33,19 @@
   "fragileLocators": "Fragile locators ({{count}})",
   "noFragile": "No fragile locators in this pass. Good sign — but a first pass, not a full verdict (tests not run).",
   "honesty": "LocateMe reads test code statically and groups locators by shape. It explains why, never auto-fixes, and gives no single score. First pass, not a full verdict — tests are not executed.",
+  "detectedLabel": "Detected:",
+  "unknownStack": "couldn't detect a known stack",
+  "copy": "Copy",
+  "copied": "Copied",
+  "close": "Close",
+  "selectHint": "Select a fragile locator on the left to inspect it here.",
+  "whyShape": "Why this shape is fragile",
+  "explain": {
+    "fragile": "It points at a position or structure in the page — an index, :nth-child, an auto-generated class, or a bare path. When the markup or order changes (even with no real bug) the locator stops matching and the test fails. Prefer role, test-id, or label.",
+    "stable": "It uses role, test-id, or label — tied to intent, not layout. It survives markup changes and is the recommended default.",
+    "context": "It matches by visible text, class, or a project attribute. Fine while those are stable, but it can break on localization, copy edits, or styling refactors.",
+    "dynamic": "Its selector is built at runtime (a variable or template), so the final value isn't visible in the code. We can't classify it — a blind spot worth a manual look."
+  },
   "about": {
     "p1": "LocateMe is a static locator-fragility audit for Playwright / TypeScript test suites. It reads your test code only — no runtime, no test execution — and groups locators by shape: fragile, stable, context, or dynamic.",
     "p2": "It surfaces why a locator may be brittle and where the same selector repeats, so you can fix one place and close many. It never auto-rewrites your tests and gives no single quality score — just facts you can act on.",
