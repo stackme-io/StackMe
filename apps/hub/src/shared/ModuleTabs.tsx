@@ -26,7 +26,7 @@ export function ModuleTabs({ tabs, activeTab, onChange, onShowHint }: ModuleTabs
         <button
           key={tab.id}
           onClick={() => handleChange(tab.id)}
-          className={`text-xs pb-1.5 transition-colors ${
+          className={`text-sub pb-1.5 transition-colors ${
             activeTab === tab.id
               ? 'text-foreground border-b border-foreground'
               : 'text-muted-foreground hover:text-foreground'
@@ -38,7 +38,7 @@ export function ModuleTabs({ tabs, activeTab, onChange, onShowHint }: ModuleTabs
       {onShowHint && (
         <button
           onClick={onShowHint}
-          className="ml-auto text-xs font-medium text-muted-foreground border border-border/60 rounded-md px-2 py-0.5 hover:text-foreground hover:border-border hover:bg-muted/40 transition-colors"
+          className="ml-auto text-meta font-medium text-muted-foreground border border-border/60 rounded-md px-2 py-0.5 hover:text-foreground hover:border-border hover:bg-muted/40 transition-colors"
           aria-label="Show hints"
         >
           ?
