@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
@@ -37,6 +38,7 @@ const KIND_SEG: Record<Kind, string> = {
 
 const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
 const FILTER_KINDS: Kind[] = ['fragile', 'context', 'dynamic']
+const TAB_IDS: string[] = ['audit', 'roadmap', 'about']
 type SortMode = 'file' | 'repeated' | 'hot'
 
 interface WorkerResult {
@@ -291,7 +293,9 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filte
 
 export default function LocateMePage() {
   const { t } = useTranslation('locate-me')
-  const [activeTab, setActiveTab] = useState('audit')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const paramTab = searchParams.get('tab')
+  const [activeTab, setActiveTab] = useState(paramTab && TAB_IDS.includes(paramTab) ? paramTab : 'audit')
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const [code, setCode] = useState('')
@@ -306,6 +310,12 @@ export default function LocateMePage() {
   const workerRef = useRef<Worker | null>(null)
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
+
+  // Keep the active tab in the URL (?tab=) so Roadmap/About are linkable + survive refresh.
+  useEffect(() => {
+    const tp = searchParams.get('tab')
+    if (tp && TAB_IDS.includes(tp) && tp !== activeTab) setActiveTab(tp)
+  }, [searchParams])
 
   const getWorker = (): Worker => {
     if (!workerRef.current) {
@@ -352,6 +362,11 @@ export default function LocateMePage() {
     })
   }
 
+  const navTo = (id: string) => {
+    setActiveTab(id)
+    setSearchParams({ tab: id }, { replace: true })
+  }
+
   const hasLocators = !!report && report.summary.locatorCalls > 0
   const isAudit = activeTab === 'audit'
   const railOpen = isAudit ? sidebarOpen : true
@@ -373,7 +388,7 @@ export default function LocateMePage() {
       >
         <Rail
           activeTab={activeTab}
-          onNav={setActiveTab}
+          onNav={navTo}
           controlsVisible={hasLocators}
           controlsActive={isAudit}
           byKind={report?.summary.byKind ?? { fragile: 0, stable: 0, context: 0, dynamic: 0 }}
