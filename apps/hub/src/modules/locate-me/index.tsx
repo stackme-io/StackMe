@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ModuleTabs } from '../../shared/ModuleTabs'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
@@ -87,7 +86,7 @@ function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
   const { t } = useTranslation('locate-me')
   const sorts: [SortMode, string][] = [['file', t('sortFile')], ['repeated', t('sortRepeated')], ['hot', t('sortHot')]]
   return (
-    <div className="w-[208px] h-full flex flex-col overflow-hidden">
+    <div className="flex flex-col">
       <div className="p-3 border-b border-border">
         <p className="text-label text-muted-foreground mb-2">{t('filterTitle')}</p>
         <div className="flex flex-col gap-0.5">
@@ -255,6 +254,38 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
   )
 }
 
+// Left rail: audit controls on top (Audit + results only), nav pinned to the bottom.
+function Rail({ activeTab, onNav, showControls, byKind, filterKinds, onToggle, sortMode, onSort }: {
+  activeTab: string
+  onNav: (id: string) => void
+  showControls: boolean
+  byKind: Record<Kind, number>
+  filterKinds: Set<Kind>
+  onToggle: (k: Kind) => void
+  sortMode: SortMode
+  onSort: (m: SortMode) => void
+}) {
+  const { t } = useTranslation('locate-me')
+  const nav: [string, string][] = [['audit', t('tabs.audit')], ['roadmap', t('tabs.roadmap')], ['about', t('tabs.about')]]
+  return (
+    <div className="w-[208px] h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        {showControls && (
+          <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+        )}
+      </div>
+      <nav className="border-t border-border p-2 flex flex-col gap-0.5 flex-shrink-0">
+        {nav.map(([id, label]) => (
+          <button key={id} onClick={() => onNav(id)}
+            className={`text-left px-2.5 py-1.5 rounded-md text-sub transition-colors ${activeTab === id ? 'bg-muted/50 text-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'}`}>
+            {label}
+          </button>
+        ))}
+      </nav>
+    </div>
+  )
+}
+
 export default function LocateMePage() {
   const { t } = useTranslation('locate-me')
   const [activeTab, setActiveTab] = useState('audit')
@@ -319,8 +350,9 @@ export default function LocateMePage() {
   }
 
   const hasLocators = !!report && report.summary.locatorCalls > 0
-  const showControls = activeTab === 'audit' && hasLocators
-  const railOpen = showControls && sidebarOpen
+  const isAudit = activeTab === 'audit'
+  const showControls = isAudit && hasLocators
+  const railOpen = isAudit ? sidebarOpen : true
 
   const findings = report?.findings ?? []
   const dup = buildDupCount(findings)
@@ -337,22 +369,23 @@ export default function LocateMePage() {
         className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
         style={{ width: railOpen ? '208px' : '0px' }}
       >
-        {showControls && report && (
-          <AuditControls
-            byKind={report.summary.byKind}
-            filterKinds={filterKinds}
-            onToggle={toggleFilter}
-            sortMode={sortMode}
-            onSort={setSortMode}
-          />
-        )}
+        <Rail
+          activeTab={activeTab}
+          onNav={setActiveTab}
+          showControls={showControls}
+          byKind={report?.summary.byKind ?? { fragile: 0, stable: 0, context: 0, dynamic: 0 }}
+          filterKinds={filterKinds}
+          onToggle={toggleFilter}
+          sortMode={sortMode}
+          onSort={setSortMode}
+        />
       </aside>
 
-      {showControls && (
+      {isAudit && (
         <button
           onClick={() => setSidebarOpen(o => !o)}
           className="absolute top-2.5 z-20 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-border text-sub font-bold text-cyan-400 hover:bg-muted transition-all"
-          style={{ left: sidebarOpen ? '208px' : '22px' }}
+          style={{ left: railOpen ? '208px' : '22px' }}
           title="Toggle panel"
         >
           S
@@ -361,15 +394,6 @@ export default function LocateMePage() {
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <div className="flex-1 overflow-y-auto px-6 pt-5">
-          <ModuleTabs
-            tabs={[
-              { id: 'audit',   label: t('tabs.audit') },
-              { id: 'roadmap', label: t('tabs.roadmap') },
-              { id: 'about',   label: t('tabs.about') },
-            ]}
-            activeTab={activeTab}
-            onChange={setActiveTab}
-          />
 
           {/* ---- AUDIT ---- */}
           <div style={{ display: activeTab === 'audit' ? 'block' : 'none' }}>
