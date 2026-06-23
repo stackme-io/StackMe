@@ -255,10 +255,11 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
 }
 
 // Left rail: audit controls on top (Audit + results only), nav pinned to the bottom.
-function Rail({ activeTab, onNav, showControls, byKind, filterKinds, onToggle, sortMode, onSort }: {
+function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filterKinds, onToggle, sortMode, onSort }: {
   activeTab: string
   onNav: (id: string) => void
-  showControls: boolean
+  controlsVisible: boolean
+  controlsActive: boolean
   byKind: Record<Kind, number>
   filterKinds: Set<Kind>
   onToggle: (k: Kind) => void
@@ -270,8 +271,10 @@ function Rail({ activeTab, onNav, showControls, byKind, filterKinds, onToggle, s
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        {showControls && (
-          <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+        {controlsVisible && (
+          <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
+            <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+          </div>
         )}
       </div>
       <nav className="border-t border-border p-2 flex flex-col gap-0.5 flex-shrink-0">
@@ -351,7 +354,6 @@ export default function LocateMePage() {
 
   const hasLocators = !!report && report.summary.locatorCalls > 0
   const isAudit = activeTab === 'audit'
-  const showControls = isAudit && hasLocators
   const railOpen = isAudit ? sidebarOpen : true
 
   const findings = report?.findings ?? []
@@ -372,7 +374,8 @@ export default function LocateMePage() {
         <Rail
           activeTab={activeTab}
           onNav={setActiveTab}
-          showControls={showControls}
+          controlsVisible={hasLocators}
+          controlsActive={isAudit}
           byKind={report?.summary.byKind ?? { fragile: 0, stable: 0, context: 0, dynamic: 0 }}
           filterKinds={filterKinds}
           onToggle={toggleFilter}
