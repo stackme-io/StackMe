@@ -75,6 +75,10 @@
   --k-stable:  #73B29C;
   --k-dynamic: #9A9DA3;
 
+  /* Text tiers for the charcoal base */
+  --content: #C2C7CE;
+  --faint:   #6B727B;
+
   --chart-1: oklch(0.87 0 0);
 
   --chart-2: oklch(0.556 0 0);
@@ -106,7 +110,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #969da6;
+    --text: #a6adb5;
     --text-h: #e8eaed;
     --bg: #131417;
     --border: #2E333B;
@@ -222,6 +226,8 @@ code {
   --color-k-context: var(--k-context);
   --color-k-stable: var(--k-stable);
   --color-k-dynamic: var(--k-dynamic);
+  --color-content: var(--content);
+  --color-faint: var(--faint);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -244,7 +250,7 @@ code {
   --secondary: #191B1F;
   --secondary-foreground: #E8EAED;
   --muted: #262A30;
-  --muted-foreground: #969DA6;
+  --muted-foreground: #A6ADB5;
   --accent: #262A30;
   --accent-foreground: #E8EAED;
   --destructive: oklch(0.704 0.191 22.216);

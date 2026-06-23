@@ -141,15 +141,15 @@ function Headline({ report, detection }: { report: ReportData; detection: Detect
     <div className="flex flex-col gap-1.5">
       <h2 className="text-title text-foreground">{headline}</h2>
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
-        <span>{t('firstPass')}</span><span className="text-muted-foreground/40">·</span>
+        <span>{t('firstPass')}</span><span className="text-faint">·</span>
         <span>{t('testsNotRun')}</span>
         {stack.length > 0 && (
           <>
-            <span className="text-muted-foreground/40">·</span>
-            <span className="text-foreground/80">{stack.join(' · ')}</span>
+            <span className="text-faint">·</span>
+            <span className="text-content">{stack.join(' · ')}</span>
           </>
         )}
-        <span className="text-muted-foreground/40">·</span>
+        <span className="text-faint">·</span>
         <span>{t('callsInFiles', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}</span>
       </p>
     </div>
@@ -183,7 +183,7 @@ function KindsReference() {
   const { t } = useTranslation('locate-me')
   return (
     <div className="border border-dashed border-border/60 rounded-md p-4 max-w-md">
-      <p className="text-meta text-muted-foreground mb-3">{t('selectHint')}</p>
+      <p className="text-meta text-content mb-3">{t('selectHint')}</p>
       <div className="flex flex-col gap-3">
         {KIND_ORDER.map(k => (
           <div key={k}>
@@ -191,7 +191,7 @@ function KindsReference() {
               <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
               <span className={`text-sub font-medium ${KIND_STYLE[k].text}`}>{t(`kinds.${k}.label`)}</span>
             </span>
-            <p className="text-meta text-muted-foreground/80 mt-0.5">{t(`kinds.${k}.desc`)}</p>
+            <p className="text-meta text-content mt-0.5">{t(`kinds.${k}.desc`)}</p>
           </div>
         ))}
       </div>
@@ -223,7 +223,7 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
 
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-label text-muted-foreground/70">selector</span>
+          <span className="text-label text-muted-foreground">selector</span>
           {finding.selector !== null && (
             <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">
               {copied ? t('copied') : t('copy')}
@@ -235,8 +235,8 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
       </div>
 
       <div>
-        <div className="text-label text-muted-foreground/70 mb-1">why</div>
-        <p className="text-sub text-foreground/90">{finding.reason}</p>
+        <div className="text-label text-muted-foreground mb-1">why</div>
+        <p className="text-sub text-content">{finding.reason}</p>
       </div>
 
       {finding.snippet && (
@@ -246,10 +246,10 @@ function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => vo
       )}
 
       <details className="border-t border-border/40 pt-2.5">
-        <summary className="text-sub text-muted-foreground hover:text-foreground cursor-pointer">
+        <summary className="text-sub text-content hover:text-foreground cursor-pointer">
           {t('whyShape')}
         </summary>
-        <p className="text-sub text-muted-foreground mt-2">{t(`explain.${finding.kind}`)}</p>
+        <p className="text-sub text-content mt-2">{t(`explain.${finding.kind}`)}</p>
       </details>
     </div>
   )
@@ -377,7 +377,7 @@ export default function LocateMePage() {
               <div className="flex flex-col items-center justify-center text-center gap-4 min-h-[60vh] max-w-md mx-auto">
                 <div>
                   <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
-                  <p className="text-sub text-muted-foreground">{t('emptyDesc')}</p>
+                  <p className="text-sub text-content">{t('emptyDesc')}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
@@ -416,7 +416,7 @@ export default function LocateMePage() {
                 {!hasLocators ? (
                   <div className="rounded-md border border-border/60 p-4 max-w-3xl">
                     <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
-                    <p className="text-sub text-muted-foreground">{t('noLocatorsDesc')}</p>
+                    <p className="text-sub text-content">{t('noLocatorsDesc')}</p>
                   </div>
                 ) : (
                   <>
@@ -426,7 +426,7 @@ export default function LocateMePage() {
                     <div className="flex gap-4 items-start">
                       <div className="w-[380px] flex-shrink-0">
                         {rows.length === 0 ? (
-                          <p className="text-sub text-muted-foreground">{t('noneForFilter')}</p>
+                          <p className="text-sub text-content">{t('noneForFilter')}</p>
                         ) : (
                           <div className="flex flex-col gap-1">
                             {rows.map((f, i) => {
@@ -441,8 +441,8 @@ export default function LocateMePage() {
                                     <span className="text-meta text-muted-foreground tabular-nums">{f.file}:{f.line}</span>
                                     {n > 1 && <span className="text-meta text-k-context ml-auto flex-shrink-0">×{n}</span>}
                                   </div>
-                                  <code className="text-code text-foreground/90 truncate">{selectorText(f)}</code>
-                                  <span className="text-meta text-muted-foreground/80 truncate">{f.reason}</span>
+                                  <code className="text-code text-content truncate">{selectorText(f)}</code>
+                                  <span className="text-meta text-content truncate">{f.reason}</span>
                                 </button>
                               )
                             })}
@@ -457,7 +457,7 @@ export default function LocateMePage() {
                       </div>
                     </div>
 
-                    <p className="text-meta text-muted-foreground/70 border-t border-border/40 pt-2.5 max-w-3xl">{t('honesty')}</p>
+                    <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 max-w-3xl">{t('honesty')}</p>
                   </>
                 )}
               </div>
@@ -471,18 +471,18 @@ export default function LocateMePage() {
 
           {/* ---- ABOUT ---- */}
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <div className="max-w-2xl flex flex-col gap-3 text-body text-muted-foreground">
+            <div className="max-w-2xl flex flex-col gap-3 text-body text-content">
               <p>{t('about.p1')}</p>
               <p>{t('about.p2')}</p>
-              <p className="text-sub text-muted-foreground/80">{t('about.p3')}</p>
+              <p className="text-sub text-content">{t('about.p3')}</p>
             </div>
           </div>
         </div>
 
         <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-meta text-muted-foreground/95">
-              <span className="mr-1 text-muted-foreground/40">//</span>{item}
+            <span key={item} className="text-meta text-muted-foreground">
+              <span className="mr-1 text-faint">//</span>{item}
             </span>
           ))}
         </div>
