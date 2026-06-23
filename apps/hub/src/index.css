@@ -69,6 +69,12 @@
 
   --ring: oklch(0.708 0 0);
 
+  /* Locator-kind accents — muted, calm (not signal colors) */
+  --k-fragile: #D9776B;
+  --k-context: #CB9A55;
+  --k-stable:  #73B29C;
+  --k-dynamic: #9A9DA3;
+
   --chart-1: oklch(0.87 0 0);
 
   --chart-2: oklch(0.556 0 0);
@@ -212,6 +218,10 @@ code {
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-k-fragile: var(--k-fragile);
+  --color-k-context: var(--k-context);
+  --color-k-stable: var(--k-stable);
+  --color-k-dynamic: var(--k-dynamic);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

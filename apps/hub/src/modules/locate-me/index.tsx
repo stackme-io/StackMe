@@ -24,18 +24,18 @@ test('checkout', async ({ page }) => {
 `
 
 const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
-  fragile: { text: 'text-red-400',          dot: 'bg-red-400' },
-  stable:  { text: 'text-emerald-400',      dot: 'bg-emerald-400' },
-  context: { text: 'text-amber-400',        dot: 'bg-amber-400' },
-  dynamic: { text: 'text-muted-foreground', dot: 'bg-muted-foreground' },
+  fragile: { text: 'text-k-fragile', dot: 'bg-k-fragile' },
+  stable:  { text: 'text-k-stable',  dot: 'bg-k-stable' },
+  context: { text: 'text-k-context', dot: 'bg-k-context' },
+  dynamic: { text: 'text-k-dynamic', dot: 'bg-k-dynamic' },
 }
 
-// Ratio-bar fills — fragile saturated, the rest recede.
+// Ratio-bar fills — fragile carries the most weight, the rest recede.
 const KIND_SEG: Record<Kind, string> = {
-  fragile: 'bg-red-400',
-  context: 'bg-amber-400/70',
-  stable:  'bg-emerald-400/40',
-  dynamic: 'bg-muted-foreground/30',
+  fragile: 'bg-k-fragile',
+  context: 'bg-k-context/80',
+  stable:  'bg-k-stable/55',
+  dynamic: 'bg-k-dynamic/40',
 }
 
 const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
@@ -174,7 +174,7 @@ function RatioBar({ byKind }: { byKind: Record<Kind, number> }) {
           <span key={k} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
             {t(`kinds.${k}.label`)}
-            <span className={`tabular-nums ${k === 'fragile' ? 'text-red-400 font-medium' : 'text-foreground'}`}>{byKind[k]}</span>
+            <span className={`tabular-nums ${k === 'fragile' ? 'text-k-fragile font-medium' : 'text-foreground'}`}>{byKind[k]}</span>
           </span>
         ))}
       </div>
@@ -453,7 +453,7 @@ export default function LocateMePage() {
                                   <div className="flex items-center gap-2">
                                     <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0`} />
                                     <span className="text-[11px] text-muted-foreground tabular-nums">{f.file}:{f.line}</span>
-                                    {n > 1 && <span className="text-[10px] text-amber-400 ml-auto flex-shrink-0">×{n}</span>}
+                                    {n > 1 && <span className="text-[10px] text-k-context ml-auto flex-shrink-0">×{n}</span>}
                                   </div>
                                   <code className="text-xs font-mono text-foreground/90 truncate">{selectorText(f)}</code>
                                   <span className="text-[10px] text-muted-foreground/80 truncate">{f.reason}</span>
