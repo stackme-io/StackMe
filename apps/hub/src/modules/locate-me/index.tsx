@@ -475,88 +475,88 @@ export default function LocateMePage() {
       )}
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <div className="flex-1 overflow-y-auto px-6 pt-5 max-w-[1180px]">
-
-          {/* ---- AUDIT ---- */}
-          <div style={{ display: activeTab === 'audit' ? 'block' : 'none' }}>
-            {!report ? (
-              <div className="flex flex-col items-center justify-center text-center gap-4 min-h-[60vh] max-w-md mx-auto">
-                <div>
-                  <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
-                  <p className="text-sub text-content">{t('emptyDesc')}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
-                  <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
-                </div>
-                {loading && <span className="text-sub text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                <details className="w-full text-left border border-border/60 rounded-md">
-                  <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none">
-                    {t('pasteToggle')}
-                  </summary>
-                  <div className="p-3 pt-0 flex flex-col gap-2">
-                    <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
-                      className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
-                    <button onClick={() => analyzePaste(code)} disabled={loading} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
-                  </div>
-                </details>
-                {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 w-full">{error}</p>}
+        {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
+        <div
+          style={{ display: activeTab === 'audit' ? 'flex' : 'none' }}
+          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1180px] gap-4"
+        >
+          {!report ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 max-w-md mx-auto">
+              <div>
+                <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
+                <p className="text-sub text-content">{t('emptyDesc')}</p>
               </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 flex-wrap text-meta">
-                  <button onClick={selectFolder} disabled={loading}
-                    className="px-2.5 py-1 rounded-md text-sub font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
-                    {t('selectFolder')}
-                  </button>
-                  <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
-                    className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
-                    {t('trySample')}
-                  </button>
-                  {source && <span className="text-muted-foreground">{t('analyzedLabel')} <span className="text-foreground">{source}</span></span>}
-                  {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                </div>
-
-                {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl">{error}</p>}
-
-                {!hasLocators ? (
-                  <div className="rounded-md border border-border/60 p-4 max-w-3xl">
-                    <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
-                    <p className="text-sub text-content">{t('noLocatorsDesc')}</p>
-                  </div>
-                ) : (
-                  <>
-                    <Headline report={report} detection={detection} />
-                    <RatioBar byKind={report.summary.byKind} />
-
-                    {rows.length === 0 ? (
-                      <p className="text-sub text-content">{t('noneForFilter')}</p>
-                    ) : (
-                      <div className="flex rounded-lg border border-border overflow-hidden h-[62vh]">
-                        <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
-                        <FindingInspect finding={selected} onClose={() => setSelected(null)} />
-                      </div>
-                    )}
-
-                    <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 max-w-3xl">{t('honesty')}</p>
-                  </>
-                )}
+              <div className="flex items-center gap-2">
+                <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
+                <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
               </div>
-            )}
-          </div>
-
-          {/* ---- ROADMAP ---- */}
-          <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }}>
-            <RoadmapTab namespace="locate-me" />
-          </div>
-
-          {/* ---- ABOUT ---- */}
-          <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
-            <div className="max-w-2xl flex flex-col gap-3 text-body text-content">
-              <p>{t('about.p1')}</p>
-              <p>{t('about.p2')}</p>
-              <p className="text-sub text-content">{t('about.p3')}</p>
+              {loading && <span className="text-sub text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+              <details className="w-full text-left border border-border/60 rounded-md">
+                <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none">
+                  {t('pasteToggle')}
+                </summary>
+                <div className="p-3 pt-0 flex flex-col gap-2">
+                  <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
+                    className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+                  <button onClick={() => analyzePaste(code)} disabled={loading} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
+                </div>
+              </details>
+              {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 w-full">{error}</p>}
             </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 flex-wrap text-meta flex-shrink-0">
+                <button onClick={selectFolder} disabled={loading}
+                  className="px-2.5 py-1 rounded-md text-sub font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
+                  {t('selectFolder')}
+                </button>
+                <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
+                  className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
+                  {t('trySample')}
+                </button>
+                {source && <span className="text-muted-foreground">{t('analyzedLabel')} <span className="text-foreground">{source}</span></span>}
+                {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+              </div>
+
+              {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}
+
+              {!hasLocators ? (
+                <div className="rounded-md border border-border/60 p-4 max-w-3xl">
+                  <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
+                  <p className="text-sub text-content">{t('noLocatorsDesc')}</p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex-shrink-0"><Headline report={report} detection={detection} /></div>
+                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} /></div>
+
+                  {rows.length === 0 ? (
+                    <p className="text-sub text-content">{t('noneForFilter')}</p>
+                  ) : (
+                    <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
+                      <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
+                      <FindingInspect finding={selected} onClose={() => setSelected(null)} />
+                    </div>
+                  )}
+
+                  <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 flex-shrink-0">{t('honesty')}</p>
+                </>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* ---- ROADMAP ---- */}
+        <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+          <RoadmapTab namespace="locate-me" />
+        </div>
+
+        {/* ---- ABOUT ---- */}
+        <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+          <div className="max-w-2xl flex flex-col gap-3 text-body text-content">
+            <p>{t('about.p1')}</p>
+            <p>{t('about.p2')}</p>
+            <p className="text-sub text-content">{t('about.p3')}</p>
           </div>
         </div>
 
