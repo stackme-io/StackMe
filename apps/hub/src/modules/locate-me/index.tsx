@@ -9,16 +9,49 @@ import { pickAndReadFolder, supportsFolderPicker } from './folder'
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
 
-const SAMPLE = `import { test } from '@playwright/test'
+const SAMPLE = `import { test, expect } from '@playwright/test'
+
+test('login', async ({ page }) => {
+  await page.goto('/login')
+  await page.getByRole('textbox', { name: 'Email' }).fill('a@b.com')
+  await page.getByLabel('Password').fill('secret')
+  await page.locator('#login-btn').click()
+  await page.locator('//div[3]/span[2]/button').click()
+  await page.getByText('Welcome back').isVisible()
+  await page.locator('.navbar > ul > li:nth-child(2) a').click()
+})
+
+test('catalog', async ({ page }) => {
+  await page.getByTestId('search-input').fill('phone')
+  await page.locator('button[type=submit]').click()
+  await page.locator('.product-card:nth-child(1)').click()
+  await page.locator('div.sc-1a2b3c').click()
+  await page.getByRole('button', { name: 'Add to cart' }).click()
+  await page.locator('//ul/li[4]/div/button').click()
+  await page.getByPlaceholder('Promo code').fill('SALE')
+  await page.locator('[data-test=apply]').click()
+})
 
 test('checkout', async ({ page }) => {
-  await page.getByRole('button', { name: 'Add to cart' }).click()
   await page.locator('//div[3]/span[2]/button').click()
+  await page.getByLabel('Card number').fill('4242')
   await page.locator('.list > li:nth-child(2)').click()
   await page.locator('div.css-1a2b3c').click()
   await page.getByText('Order total').isVisible()
   await page.locator('[data-testid="checkout"]').click()
+  await page.locator('xpath=//table/tbody/tr[3]/td[2]').click()
   await page.locator(dynamicSelector).click()
+  await page.getByRole('link', { name: 'Continue' }).click()
+})
+
+test('account', async ({ page }) => {
+  await page.locator('#profile').click()
+  await page.locator('.menu .item.active').click()
+  await page.locator('//nav/a[5]').click()
+  await page.getByTitle('Settings').click()
+  await page.locator(userSelector).click()
+  await page.getByTestId('save').click()
+  await page.locator('button.sc-9z8y7x').click()
 })
 `
 
@@ -272,7 +305,7 @@ function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose
               <p className="text-sub text-content">{finding.reason}</p>
             </div>
             {finding.snippet && (
-              <pre className="text-code-block bg-muted/40 rounded p-2.5 overflow-x-auto whitespace-pre text-muted-foreground">{finding.snippet}</pre>
+              <pre className="text-code-block bg-muted/40 rounded p-2.5 whitespace-pre-wrap break-all text-muted-foreground">{finding.snippet}</pre>
             )}
             <details className="border-t border-border/40 pt-3">
               <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape')}</summary>
@@ -300,15 +333,13 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filte
   const { t } = useTranslation('locate-me')
   const nav: [string, string][] = [['audit', t('tabs.audit')], ['roadmap', t('tabs.roadmap')], ['about', t('tabs.about')]]
   return (
-    <div className="w-[208px] h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto">
-        {controlsVisible && (
-          <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
-            <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
-          </div>
-        )}
-      </div>
-      <nav className="border-t border-border p-2 flex flex-col gap-0.5 flex-shrink-0">
+    <div className="w-[208px] h-full flex flex-col overflow-y-auto">
+      {controlsVisible && (
+        <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
+          <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+        </div>
+      )}
+      <nav className="p-2 mt-2 border-t border-border flex flex-col gap-0.5">
         {nav.map(([id, label]) => (
           <button key={id} onClick={() => onNav(id)}
             className={`text-left px-2.5 py-1.5 rounded-md text-sub transition-colors ${activeTab === id ? 'bg-muted/50 text-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'}`}>
@@ -501,7 +532,7 @@ export default function LocateMePage() {
                     {rows.length === 0 ? (
                       <p className="text-sub text-content">{t('noneForFilter')}</p>
                     ) : (
-                      <div className="flex rounded-lg border border-border overflow-hidden max-h-[62vh]">
+                      <div className="flex rounded-lg border border-border overflow-hidden h-[62vh]">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} onClose={() => setSelected(null)} />
                       </div>
