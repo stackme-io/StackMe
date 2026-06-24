@@ -180,78 +180,107 @@ function RatioBar({ byKind }: { byKind: Record<Kind, number> }) {
   )
 }
 
-function KindsReference() {
+function FindingsTable({ rows, dup, selected, onSelect }: {
+  rows: Finding[]
+  dup: Map<string, number>
+  selected: Finding | null
+  onSelect: (f: Finding) => void
+}) {
   const { t } = useTranslation('locate-me')
   return (
-    <div className="border border-dashed border-border/60 rounded-md p-4 max-w-md">
-      <p className="text-meta text-content mb-3">{t('selectHint')}</p>
-      <div className="flex flex-col gap-3">
-        {KIND_ORDER.map(k => (
-          <div key={k}>
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
-              <span className={`text-sub font-medium ${KIND_STYLE[k].text}`}>{t(`kinds.${k}.label`)}</span>
-            </span>
-            <p className="text-meta text-content mt-0.5">{t(`kinds.${k}.desc`)}</p>
-          </div>
-        ))}
-      </div>
+    <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
+      <table className="w-full border-collapse table-fixed">
+        <thead className="sticky top-0 z-10">
+          <tr className="bg-card">
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[128px]">{t('colKind')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[124px]">{t('colLocation')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((f, i) => {
+            const isSel = selected === f
+            const n = dup.get(dupKey(f)) ?? 0
+            const s = KIND_STYLE[f.kind]
+            return (
+              <tr key={i} onClick={() => onSelect(f)}
+                className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/40' : 'hover:bg-muted/20'}`}>
+                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${f.kind === 'fragile' ? 'border-l-k-fragile' : 'border-l-transparent'}`}>
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
+                    <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
+                  </span>
+                </td>
+                <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate">{f.file}:{f.line}</td>
+                <td className="px-4 py-3 border-b border-border/40">
+                  <span className="flex items-center gap-2 min-w-0">
+                    <code className="text-code text-foreground truncate">{selectorText(f)}</code>
+                    {n > 1 && <span className="text-meta text-k-context flex-shrink-0">×{n}</span>}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
 
-function DetailPanel({ finding, onClose }: { finding: Finding; onClose: () => void }) {
+function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
-  const s = KIND_STYLE[finding.kind]
   const [copied, setCopied] = useState(false)
 
   const copy = () => {
-    if (finding.selector === null) return
+    if (!finding || finding.selector === null) return
     navigator.clipboard?.writeText(finding.selector)
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
       .catch(() => {})
   }
 
   return (
-    <div className="border border-border/60 rounded-md p-4 flex flex-col gap-3.5 max-w-2xl">
-      <div className="flex items-center justify-between">
-        <span className={`text-sub font-medium ${s.text} flex items-center gap-1.5`}>
-          <span className={`w-2 h-2 rounded-full ${s.dot}`} />
-          {t(`kinds.${finding.kind}.label`)}
-        </span>
-        <button onClick={onClose} className="text-sub text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-label text-muted-foreground">selector</span>
-          {finding.selector !== null && (
-            <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">
-              {copied ? t('copied') : t('copy')}
-            </button>
-          )}
-        </div>
-        <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
-        <div className="text-meta text-muted-foreground font-mono mt-2">{finding.file}:{finding.line}</div>
-      </div>
-
-      <div>
-        <div className="text-label text-muted-foreground mb-1">why</div>
-        <p className="text-sub text-content">{finding.reason}</p>
-      </div>
-
-      {finding.snippet && (
-        <pre className="text-code-block bg-muted/40 rounded p-2.5 overflow-x-auto whitespace-pre text-muted-foreground">
-          {finding.snippet}
-        </pre>
+    <div className="w-80 flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
+      {!finding ? (
+        <>
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-label text-muted-foreground">{t('inspector')}</p>
+          </div>
+          <p className="text-sub text-content px-4 py-4">{t('selectHint')}</p>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <span className={`text-sub font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-1.5`}>
+              <span className={`w-2 h-2 rounded-full ${KIND_STYLE[finding.kind].dot}`} />
+              {t(`kinds.${finding.kind}.label`)}
+            </span>
+            <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
+          </div>
+          <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-label text-muted-foreground">selector</span>
+                {finding.selector !== null && (
+                  <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
+                )}
+              </div>
+              <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
+              <div className="text-meta text-muted-foreground font-mono mt-2">{finding.file}:{finding.line}</div>
+            </div>
+            <div>
+              <div className="text-label text-muted-foreground mb-1">why</div>
+              <p className="text-sub text-content">{finding.reason}</p>
+            </div>
+            {finding.snippet && (
+              <pre className="text-code-block bg-muted/40 rounded p-2.5 overflow-x-auto whitespace-pre text-muted-foreground">{finding.snippet}</pre>
+            )}
+            <details className="border-t border-border/40 pt-3">
+              <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape')}</summary>
+              <p className="text-sub text-content mt-2">{t(`explain.${finding.kind}`)}</p>
+            </details>
+          </div>
+        </>
       )}
-
-      <details className="border-t border-border/40 pt-2.5">
-        <summary className="text-sub text-content hover:text-foreground cursor-pointer">
-          {t('whyShape')}
-        </summary>
-        <p className="text-sub text-content mt-2">{t(`explain.${finding.kind}`)}</p>
-      </details>
     </div>
   )
 }
@@ -330,8 +359,12 @@ export default function LocateMePage() {
     w.onmessage = (e: MessageEvent<WorkerResult>) => {
       setLoading(false)
       const d = e.data
-      if (d.ok && d.report) { setReport(d.report); setDetection(d.detection ?? null); setSource(label) }
-      else setError(d.error ?? t('analysisFailed'))
+      if (d.ok && d.report) {
+        setReport(d.report); setDetection(d.detection ?? null); setSource(label)
+        setSelected(d.report.findings.find(f => f.kind === 'fragile') ?? d.report.findings[0] ?? null)
+      } else {
+        setError(d.error ?? t('analysisFailed'))
+      }
     }
     w.postMessage({ files, target })
   }
@@ -465,39 +498,14 @@ export default function LocateMePage() {
                     <Headline report={report} detection={detection} />
                     <RatioBar byKind={report.summary.byKind} />
 
-                    <div className="flex gap-4 items-start">
-                      <div className="w-[380px] flex-shrink-0">
-                        {rows.length === 0 ? (
-                          <p className="text-sub text-content">{t('noneForFilter')}</p>
-                        ) : (
-                          <div className="flex flex-col gap-1">
-                            {rows.map((f, i) => {
-                              const isSel = selected === f
-                              const n = dup.get(dupKey(f)) ?? 0
-                              const st = KIND_STYLE[f.kind]
-                              return (
-                                <button key={i} onClick={() => setSelected(f)}
-                                  className={`flex flex-col gap-1 text-left px-3 py-2.5 rounded-md border transition-colors ${isSel ? 'border-foreground/30 bg-muted/40' : 'border-border/60 hover:bg-muted/30'}`}>
-                                  <div className="flex items-center gap-2">
-                                    <span className={`w-1.5 h-1.5 rounded-full ${st.dot} flex-shrink-0`} />
-                                    <span className="text-meta text-muted-foreground tabular-nums">{f.file}:{f.line}</span>
-                                    {n > 1 && <span className="text-meta text-k-context ml-auto flex-shrink-0">×{n}</span>}
-                                  </div>
-                                  <code className="text-code text-content truncate">{selectorText(f)}</code>
-                                  <span className="text-meta text-content truncate">{f.reason}</span>
-                                </button>
-                              )
-                            })}
-                          </div>
-                        )}
+                    {rows.length === 0 ? (
+                      <p className="text-sub text-content">{t('noneForFilter')}</p>
+                    ) : (
+                      <div className="flex rounded-lg border border-border overflow-hidden max-h-[62vh]">
+                        <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
+                        <FindingInspect finding={selected} onClose={() => setSelected(null)} />
                       </div>
-
-                      <div className="flex-1 min-w-0">
-                        {selected
-                          ? <DetailPanel finding={selected} onClose={() => setSelected(null)} />
-                          : <KindsReference />}
-                      </div>
-                    </div>
+                    )}
 
                     <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 max-w-3xl">{t('honesty')}</p>
                   </>
