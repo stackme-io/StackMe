@@ -444,7 +444,7 @@ export default function LocateMePage() {
       )}
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <div className="flex-1 overflow-y-auto px-6 pt-5">
+        <div className="flex-1 overflow-y-auto px-6 pt-5 max-w-[1180px]">
 
           {/* ---- AUDIT ---- */}
           <div style={{ display: activeTab === 'audit' ? 'block' : 'none' }}>
