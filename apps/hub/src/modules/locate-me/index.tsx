@@ -5,6 +5,7 @@ import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
+import { Crosshair, Route, Info } from 'lucide-react'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
@@ -331,18 +332,29 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filte
   onSort: (m: SortMode) => void
 }) {
   const { t } = useTranslation('locate-me')
-  const nav: [string, string][] = [['audit', t('tabs.audit')], ['roadmap', t('tabs.roadmap')], ['about', t('tabs.about')]]
+  const nav = [
+    { id: 'audit',   label: t('tabs.audit'),   Icon: Crosshair },
+    { id: 'roadmap', label: t('tabs.roadmap'), Icon: Route },
+    { id: 'about',   label: t('tabs.about'),   Icon: Info },
+  ]
   return (
-    <div className="w-[208px] h-full flex flex-col overflow-y-auto">
-      {controlsVisible && (
-        <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
-          <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
-        </div>
-      )}
-      <nav className="p-2 mt-2 border-t border-border flex flex-col gap-0.5">
-        {nav.map(([id, label]) => (
+    <div className="w-[208px] h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        {controlsVisible && (
+          <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
+            <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+          </div>
+        )}
+      </div>
+      <nav className="border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
+        {nav.map(({ id, label, Icon }) => (
           <button key={id} onClick={() => onNav(id)}
-            className={`text-left px-2.5 py-1.5 rounded-md text-sub transition-colors ${activeTab === id ? 'bg-muted/50 text-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'}`}>
+            className={`flex items-center gap-2 px-2.5 py-2 rounded-md border text-sub text-left transition-colors ${
+              activeTab === id
+                ? 'border-border bg-muted/50 text-foreground font-medium'
+                : 'border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30'
+            }`}>
+            <Icon className="w-3.5 h-3.5 flex-shrink-0" />
             {label}
           </button>
         ))}
