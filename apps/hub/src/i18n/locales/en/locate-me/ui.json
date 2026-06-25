@@ -19,7 +19,7 @@
   "noTsFiles": "No .ts files found in \"{{name}}\".",
   "analysisFailed": "Analysis failed.",
   "nothingToAnalyze": "Nothing to analyze — pick a folder or paste some test code.",
-  "analyzedLabel": "Analyzed:",
+  "analyzedLabel": "Your file:",
   "pastedSnippet": "pasted snippet",
   "folderLabel": "{{name}} — {{files}}",
   "noLocators": "No Playwright locators found.",

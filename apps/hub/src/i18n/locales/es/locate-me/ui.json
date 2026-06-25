@@ -19,7 +19,7 @@
   "noTsFiles": "No se encontraron archivos .ts en \"{{name}}\".",
   "analysisFailed": "El análisis falló.",
   "nothingToAnalyze": "Nada que analizar — elige una carpeta o pega código de tests.",
-  "analyzedLabel": "Analizado:",
+  "analyzedLabel": "Tu archivo:",
   "pastedSnippet": "fragmento pegado",
   "folderLabel": "{{name}} — {{files}}",
   "noLocators": "No se encontraron locators de Playwright.",

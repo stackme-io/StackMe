@@ -70,10 +70,10 @@
   --ring: oklch(0.708 0 0);
 
   /* Locator-kind accents — muted, calm (not signal colors) */
-  --k-fragile: #D85A30;
-  --k-context: #BA7517;
-  --k-stable:  #1D9E75;
-  --k-dynamic: #888780;
+  --k-fragile: #D2603E;
+  --k-context: #C8861F;
+  --k-stable:  #27A982;
+  --k-dynamic: #9A9892;
 
   /* Text tiers for the charcoal base */
   --content: #C2C7CE;

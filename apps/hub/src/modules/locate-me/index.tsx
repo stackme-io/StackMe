@@ -123,7 +123,7 @@ function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
   const sorts: [SortMode, string][] = [['file', t('sortFile')], ['repeated', t('sortRepeated')], ['hot', t('sortHot')]]
   return (
     <div className="flex flex-col">
-      <div className="p-3 border-b border-border">
+      <div className="px-3 pt-5 pb-3 border-b border-border">
         <p className="text-label text-muted-foreground mb-2">{t('filterTitle')}</p>
         <div className="flex flex-col gap-0.5">
           {FILTER_KINDS.map(k => {
@@ -160,7 +160,7 @@ function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
   )
 }
 
-function Headline({ report, detection }: { report: ReportData; detection: Detection | null }) {
+function Headline({ report, detection, source }: { report: ReportData; detection: Detection | null; source: string | null }) {
   const { t } = useTranslation('locate-me')
   const fragile = report.summary.byKind.fragile
   const filesWithFragile = new Set(report.findings.filter(f => f.kind === 'fragile').map(f => f.file)).size
@@ -176,15 +176,18 @@ function Headline({ report, detection }: { report: ReportData; detection: Detect
     <div className="flex flex-col gap-1.5">
       <h2 className="text-title text-foreground">{headline}</h2>
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
-        <span>{t('firstPass')}</span><span className="text-faint">·</span>
-        <span>{t('testsNotRun')}</span>
-        {stack.length > 0 && (
+        {source && (
           <>
+            <span className="text-content">{t('analyzedLabel')} {source}</span>
             <span className="text-faint">·</span>
-            <span className="text-content">{stack.join(' · ')}</span>
           </>
         )}
-        <span className="text-faint">·</span>
+        {stack.length > 0 && (
+          <>
+            <span>{stack.join(' · ')}</span>
+            <span className="text-faint">·</span>
+          </>
+        )}
         <span>{t('callsInFiles', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}</span>
       </p>
     </div>
@@ -239,7 +242,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             return (
               <tr key={i} onClick={() => onSelect(f)}
                 className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/40' : 'hover:bg-muted/20'}`}>
-                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${f.kind === 'fragile' ? 'border-l-k-fragile' : 'border-l-transparent'}`}>
+                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
                   <span className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                     <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -306,7 +309,11 @@ function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose
               <p className="text-sub text-content">{finding.reason}</p>
             </div>
             {finding.snippet && (
-              <pre className="text-code-block bg-muted/40 rounded p-2.5 whitespace-pre-wrap break-all text-muted-foreground">{finding.snippet}</pre>
+              <div className="text-code-block bg-muted/40 rounded p-2.5 text-muted-foreground overflow-hidden">
+                {finding.snippet.split('\n').map((ln, i) => (
+                  <div key={i} className="whitespace-pre overflow-hidden text-ellipsis">{ln}</div>
+                ))}
+              </div>
             )}
             <details className="border-t border-border/40 pt-3">
               <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape')}</summary>
@@ -490,7 +497,7 @@ export default function LocateMePage() {
         {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
         <div
           style={{ display: activeTab === 'audit' ? 'flex' : 'none' }}
-          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1180px] gap-4"
+          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1520px] gap-4"
         >
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 max-w-md mx-auto">
@@ -526,7 +533,6 @@ export default function LocateMePage() {
                   className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                   {t('trySample')}
                 </button>
-                {source && <span className="text-muted-foreground">{t('analyzedLabel')} <span className="text-foreground">{source}</span></span>}
                 {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
               </div>
 
@@ -539,7 +545,7 @@ export default function LocateMePage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex-shrink-0"><Headline report={report} detection={detection} /></div>
+                  <div className="flex-shrink-0"><Headline report={report} detection={detection} source={source} /></div>
                   <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} /></div>
 
                   {rows.length === 0 ? (

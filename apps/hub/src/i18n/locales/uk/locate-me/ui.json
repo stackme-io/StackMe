@@ -19,7 +19,7 @@
   "noTsFiles": "Файлів .ts не знайдено в \"{{name}}\".",
   "analysisFailed": "Аналіз не вдався.",
   "nothingToAnalyze": "Нема чого аналізувати — обери папку або встав код тестів.",
-  "analyzedLabel": "Проаналізовано:",
+  "analyzedLabel": "Твій файл:",
   "pastedSnippet": "вставлений фрагмент",
   "folderLabel": "{{name}} — {{files}}",
   "noLocators": "Локаторів Playwright не знайдено.",
