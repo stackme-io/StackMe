@@ -506,11 +506,11 @@ export default function LocateMePage() {
 
               <div className="flex items-center justify-center gap-3">
 
-                <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Caveat', cursive" }}>
-                  <span className="text-[15px] text-muted-foreground ml-1">{t('giveLead')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine1')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
+                <div className="hidden lg:flex flex-col gap-2.5 items-start" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>
+                  <span className="text-[18px] text-muted-foreground ml-1">{t('giveLead')}</span>
+                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine1')}</span>
+                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
+                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
                 </div>
 
                 <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
@@ -519,8 +519,7 @@ export default function LocateMePage() {
                 </svg>
 
                 <div className="text-center flex-shrink-0">
-                  <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
-                  <p className="text-sub text-content mb-4 max-w-[260px] mx-auto">{t('emptyDesc')}</p>
+                  <p className="text-heading text-foreground mb-3">{t('emptyTitle')}</p>
                   <div className="flex items-center justify-center gap-2">
                     <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
                     <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
@@ -533,12 +532,12 @@ export default function LocateMePage() {
                   <path d="M2 50 C 20 50, 10 28, 29 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
                 </svg>
 
-                <div className="hidden lg:flex flex-col gap-1.5 items-start" style={{ fontFamily: "'Caveat', cursive" }}>
-                  <span className="text-[15px] text-muted-foreground ml-0.5">{t('getLead')}</span>
-                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
-                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
-                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
-                  <span className="text-[15px] text-muted-foreground mt-0.5">{t('getWhy')}</span>
+                <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>
+                  <span className="text-[18px] text-muted-foreground ml-0.5">{t('getLead')}</span>
+                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
+                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
+                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
+                  <span className="text-[17px] text-muted-foreground mt-1">{t('getWhy')}</span>
                 </div>
               </div>
 

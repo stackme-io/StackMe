@@ -52,7 +52,7 @@
   "sortRepeated": "Most repeated",
   "sortHot": "Hottest files",
   "noneForFilter": "Nothing matches this filter.",
-  "emptyTitle": "Point LocateMe at your Playwright tests.",
+  "emptyTitle": "Audit your locators",
   "emptyDesc": "Reads locator shapes statically. No code runs, nothing leaves your browser.",
   "detectedLabel": "Detected:",
   "unknownStack": "couldn't detect a known stack",
