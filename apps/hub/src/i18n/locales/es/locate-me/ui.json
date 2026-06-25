@@ -52,7 +52,7 @@
   "sortRepeated": "Más repetidos",
   "sortHot": "Archivos calientes",
   "noneForFilter": "Nada coincide con este filtro.",
-  "emptyTitle": "Audita tus locators",
+  "emptyTitle": "Apunta LocateMe a tus tests de Playwright.",
   "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código, nada sale de tu navegador.",
   "detectedLabel": "Detectado:",
   "unknownStack": "no se pudo detectar un stack conocido",

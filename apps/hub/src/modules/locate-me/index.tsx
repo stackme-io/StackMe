@@ -519,7 +519,10 @@ export default function LocateMePage() {
                 </svg>
 
                 <div className="text-center flex-shrink-0">
-                  <p className="text-heading text-foreground mb-3">{t('emptyTitle')}</p>
+                  <div className="mb-4">
+                    <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
+                    <p className="text-sub text-content max-w-[280px] mx-auto">{t('emptyDesc')}</p>
+                  </div>
                   <div className="flex items-center justify-center gap-2">
                     <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
                     <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
