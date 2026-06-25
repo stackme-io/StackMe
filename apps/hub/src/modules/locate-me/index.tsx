@@ -1,3 +1,5 @@
+import '@fontsource/caveat/500.css'
+import '@fontsource/caveat/600.css'
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
@@ -500,27 +502,57 @@ export default function LocateMePage() {
           className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1520px] gap-4"
         >
           {!report ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 max-w-md mx-auto">
-              <div>
-                <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
-                <p className="text-sub text-content">{t('emptyDesc')}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
-                <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
-              </div>
-              {loading && <span className="text-sub text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-              <details className="w-full text-left border border-border/60 rounded-md">
-                <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none">
-                  {t('pasteToggle')}
-                </summary>
-                <div className="p-3 pt-0 flex flex-col gap-2">
-                  <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
-                    className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
-                  <button onClick={() => analyzePaste(code)} disabled={loading} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
+            <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4">
+
+              <div className="flex items-stretch justify-center gap-2 w-full max-w-4xl">
+
+                <div className="hidden lg:flex flex-col justify-center gap-2 flex-1 max-w-[230px]" style={{ fontFamily: "'Caveat', cursive" }}>
+                  <span className="text-[15px] text-muted-foreground">{t('giveLead')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '13px 10px 12px 11px / 10px 12px 11px 13px' }}>{t('giveLine1')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '11px 13px 10px 12px / 12px 10px 13px 11px' }}>{t('giveLine2')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '12px 11px 13px 10px / 11px 13px 10px 12px' }}>{t('giveLine3')}</span>
                 </div>
-              </details>
-              {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 w-full">{error}</p>}
+
+                <svg className="hidden lg:block w-9 flex-shrink-0 self-center text-muted-foreground" viewBox="0 0 36 120" fill="none" aria-hidden="true">
+                  <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                  <path d="M2 30 C 24 36, 14 62, 33 60" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
+                </svg>
+
+                <div className="text-center flex-shrink-0 px-2">
+                  <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
+                  <p className="text-sub text-content mb-4 max-w-[260px] mx-auto">{t('emptyDesc')}</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
+                    <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
+                  </div>
+                  {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
+                </div>
+
+                <svg className="hidden lg:block w-9 flex-shrink-0 self-center text-muted-foreground" viewBox="0 0 36 120" fill="none" aria-hidden="true">
+                  <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                  <path d="M2 60 C 22 58, 12 36, 33 34" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
+                </svg>
+
+                <div className="hidden lg:flex flex-col justify-center gap-1.5 flex-1 max-w-[230px]" style={{ fontFamily: "'Caveat', cursive" }}>
+                  <span className="text-[15px] text-muted-foreground">{t('getLead')}</span>
+                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
+                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
+                  <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
+                  <span className="text-[15px] text-muted-foreground mt-0.5">{t('getWhy')}</span>
+                </div>
+              </div>
+
+              <div className="w-full max-w-md flex flex-col gap-3">
+                <details className="border border-border/60 rounded-md">
+                  <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none">{t('pasteToggle')}</summary>
+                  <div className="p-3 pt-0 flex flex-col gap-2">
+                    <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
+                      className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+                    <button onClick={() => analyzePaste(code)} disabled={loading} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
+                  </div>
+                </details>
+                {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2">{error}</p>}
+              </div>
             </div>
           ) : (
             <>

@@ -1,4 +1,4 @@
-// Lightweight stack detection — language by extension, framework by signals.
+// Lightweight stack detection - language by extension, framework by signals.
 // Browser-safe, pure. Honest: returns "unknown" when it can't tell.
 import type { SourceFileInput } from './types.js'
 

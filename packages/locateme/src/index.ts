@@ -1,4 +1,4 @@
-// LocateMe CLI — thin wrapper around the browser-safe core.
+// LocateMe CLI - thin wrapper around the browser-safe core.
 // Reads .ts files from disk, feeds their text to core.analyze, prints + writes JSON/HTML.
 //
 // Run:    npm start                       (scans the bundled fixture)
@@ -26,7 +26,7 @@ function collectTsFiles(dir: string): SourceFileInput[] {
       if (!fs.statSync(abs).isFile()) continue;
       files.push({ path: rel, text: fs.readFileSync(abs, "utf8") });
     } catch {
-      /* unreadable entry — skip */
+      /* unreadable entry - skip */
     }
   }
   return files;
@@ -46,7 +46,7 @@ function main(): void {
   const files = collectTsFiles(targetDir);
   if (files.length === 0) {
     console.log(`scanned ${targetDir}`);
-    console.log("no .ts files found — point me at a folder with TypeScript tests.");
+    console.log("no .ts files found - point me at a folder with TypeScript tests.");
     return;
   }
 
@@ -54,8 +54,8 @@ function main(): void {
 
   if (report.findings.length === 0) {
     console.log(`scanned ${report.summary.files} .ts file(s) in ${targetDir}`);
-    console.log("found 0 Playwright locators — this doesn't look like a Playwright/TS test suite (or wrong folder).");
-    console.log("(not a verdict — there is simply nothing to analyze here)");
+    console.log("found 0 Playwright locators - this doesn't look like a Playwright/TS test suite (or wrong folder).");
+    console.log("(not a verdict - there is simply nothing to analyze here)");
     return;
   }
 
@@ -79,7 +79,7 @@ function main(): void {
   }
   const hot = [...perFile.entries()].filter(([, e]) => e.fragile > 0).sort((a, b) => b[1].fragile - a[1].fragile).slice(0, 10);
   console.log(`\nhot files (by fragile):`);
-  if (!hot.length) console.log("  none — no fragile locators");
+  if (!hot.length) console.log("  none - no fragile locators");
   for (const [file, e] of hot) console.log(`  ${file}  ${e.fragile} fragile / ${e.total} locators`);
 
   // duplicates (skip stable)

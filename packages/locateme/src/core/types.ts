@@ -1,4 +1,4 @@
-// Shared types for LocateMe core (browser-safe — no Node deps).
+// Shared types for LocateMe core (browser-safe - no Node deps).
 // ReportData is the contract that JSON, the CLI HTML, and the hub UI all read.
 
 export type Kind = "fragile" | "stable" | "context" | "dynamic";
@@ -28,7 +28,7 @@ export interface ReportData {
 }
 
 // Input to the analyzer: a file's path + its full text. Same shape for CLI (disk)
-// and browser (File System Access API) — only the source of the text differs.
+// and browser (File System Access API) - only the source of the text differs.
 export interface SourceFileInput {
   path: string;
   text: string;

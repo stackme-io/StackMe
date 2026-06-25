@@ -1,4 +1,4 @@
-// Core analyzer — browser-safe (ts-morph with an in-memory file system, no disk).
+// Core analyzer - browser-safe (ts-morph with an in-memory file system, no disk).
 // Takes file texts in, returns ReportData. Used by both the CLI and the hub UI.
 
 import { Project, SyntaxKind, Node } from "ts-morph";

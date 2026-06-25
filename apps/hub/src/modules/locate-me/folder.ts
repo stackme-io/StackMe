@@ -1,5 +1,5 @@
 // Folder input via the File System Access API (Chromium browsers).
-// Recursively reads .ts files, skipping vendored / build dirs — mirrors the CLI walk.
+// Recursively reads .ts files, skipping vendored / build dirs - mirrors the CLI walk.
 import type { SourceFileInput } from '@locateme/core/types'
 
 const SKIP_DIRS = new Set([

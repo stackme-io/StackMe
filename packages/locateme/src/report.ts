@@ -14,14 +14,14 @@ function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-// One-line verdict — PER FINDING, never a project grade/score.
+// One-line verdict - PER FINDING, never a project grade/score.
 function verdict(d: ReportData): string {
   const fragile = d.summary.byKind.fragile;
   if (fragile === 0) return "No fragile locators found (by form). Nothing to harden right now.";
   const hotFiles = new Set(d.findings.filter((f) => f.kind === "fragile").map((f) => f.file)).size;
   let line = `${fragile} fragile locator${fragile === 1 ? "" : "s"} across ${hotFiles} of ${d.summary.files} files.`;
   const top = topDuplicate(d.findings);
-  if (top) line += ` Pattern <code>${esc(top.selector)}</code> copied in ${top.count} places — fix one, close ${top.count}.`;
+  if (top) line += ` Pattern <code>${esc(top.selector)}</code> copied in ${top.count} places - fix one, close ${top.count}.`;
   return line;
 }
 
@@ -80,7 +80,7 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
 
   const hot = hotFiles(d.findings)
     .map(([file, e]) => `<div class="row"><code>${esc(showPath(file))}</code><span class="loc">${e.fragile} fragile / ${e.total}</span></div>`)
-    .join("") || `<div class="muted">none — no fragile locators</div>`;
+    .join("") || `<div class="muted">none - no fragile locators</div>`;
 
   const dupes = duplicates(d.findings)
     .map((list) => {
@@ -100,7 +100,7 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
     .join("") || `<div class="muted">none</div>`;
   const moreFragile = fragile.length > 50 ? `<div class="muted small">…and ${fragile.length - 50} more</div>` : "";
 
-  const plaque = `Static audit of <b>locator shape</b> — tests were not run. ${d.summary.coverage.total} locator calls analyzed, ${d.summary.coverage.dynamic} dynamic (not classified). This is a <b>first pass, not a full-suite verdict</b>.`;
+  const plaque = `Static audit of <b>locator shape</b> - tests were not run. ${d.summary.coverage.total} locator calls analyzed, ${d.summary.coverage.dynamic} dynamic (not classified). This is a <b>first pass, not a full-suite verdict</b>.`;
 
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -139,7 +139,7 @@ footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid va
 a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
 </style></head>
 <body><div class="wrap">
-  <h1>LocateMe — locator audit</h1>
+  <h1>LocateMe - locator audit</h1>
   <div class="muted small">${esc(showPath(d.target))} · ${d.summary.files} files · ${new Date(d.scannedAt).toLocaleString()}</div>
 
   <div class="verdict">${verdict(d)}</div>
@@ -150,7 +150,7 @@ a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
   <div class="card"><h2>Duplicates (fragile / context, ≥2)</h2>${dupes}</div>
   <div class="card"><h2>Fragile locators (${fragile.length})</h2>${fragileRows}${moreFragile}</div>
 
-  <div class="plaque" style="margin-top:22px">Before you act or send this — it's <b>locator shape only</b>, not a full verdict. Open the top findings and confirm them in context first.</div>
-  <footer>Made with <b>LocateMe</b>${HOMEPAGE ? ` · <a href="${HOMEPAGE}">run your own audit</a>` : ""} — static, local, open-source. Shape only; verify before acting.</footer>
+  <div class="plaque" style="margin-top:22px">Before you act or send this - it's <b>locator shape only</b>, not a full verdict. Open the top findings and confirm them in context first.</div>
+  <footer>Made with <b>LocateMe</b>${HOMEPAGE ? ` · <a href="${HOMEPAGE}">run your own audit</a>` : ""} - static, local, open-source. Shape only; verify before acting.</footer>
 </div></body></html>`;
 }
