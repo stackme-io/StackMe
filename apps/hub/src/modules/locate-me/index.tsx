@@ -504,21 +504,21 @@ export default function LocateMePage() {
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4">
 
-              <div className="flex items-stretch justify-center gap-2 w-full max-w-4xl">
+              <div className="flex items-center justify-center gap-3">
 
-                <div className="hidden lg:flex flex-col justify-center gap-2 flex-1 max-w-[230px]" style={{ fontFamily: "'Caveat', cursive" }}>
-                  <span className="text-[15px] text-muted-foreground">{t('giveLead')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '13px 10px 12px 11px / 10px 12px 11px 13px' }}>{t('giveLine1')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '11px 13px 10px 12px / 12px 10px 13px 11px' }}>{t('giveLine2')}</span>
-                  <span className="text-[16px] text-foreground border border-muted-foreground/45 px-2.5 py-1 self-start" style={{ borderRadius: '12px 11px 13px 10px / 11px 13px 10px 12px' }}>{t('giveLine3')}</span>
+                <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Caveat', cursive" }}>
+                  <span className="text-[15px] text-muted-foreground ml-1">{t('giveLead')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine1')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
+                  <span className="text-[16px] text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
                 </div>
 
-                <svg className="hidden lg:block w-9 flex-shrink-0 self-center text-muted-foreground" viewBox="0 0 36 120" fill="none" aria-hidden="true">
+                <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
                   <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                  <path d="M2 30 C 24 36, 14 62, 33 60" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
+                  <path d="M2 22 C 22 28, 12 50, 29 50" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
                 </svg>
 
-                <div className="text-center flex-shrink-0 px-2">
+                <div className="text-center flex-shrink-0">
                   <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
                   <p className="text-sub text-content mb-4 max-w-[260px] mx-auto">{t('emptyDesc')}</p>
                   <div className="flex items-center justify-center gap-2">
@@ -528,13 +528,13 @@ export default function LocateMePage() {
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
                 </div>
 
-                <svg className="hidden lg:block w-9 flex-shrink-0 self-center text-muted-foreground" viewBox="0 0 36 120" fill="none" aria-hidden="true">
+                <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
                   <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                  <path d="M2 60 C 22 58, 12 36, 33 34" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
+                  <path d="M2 50 C 20 50, 10 28, 29 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
                 </svg>
 
-                <div className="hidden lg:flex flex-col justify-center gap-1.5 flex-1 max-w-[230px]" style={{ fontFamily: "'Caveat', cursive" }}>
-                  <span className="text-[15px] text-muted-foreground">{t('getLead')}</span>
+                <div className="hidden lg:flex flex-col gap-1.5 items-start" style={{ fontFamily: "'Caveat', cursive" }}>
+                  <span className="text-[15px] text-muted-foreground ml-0.5">{t('getLead')}</span>
                   <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
                   <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
                   <span className="flex items-center gap-2 text-[16px] text-foreground"><span className="w-2.5 h-2.5 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
