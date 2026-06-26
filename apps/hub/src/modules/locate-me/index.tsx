@@ -308,12 +308,12 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
             </div>
             <div>
-              <div className="text-label text-muted-foreground mb-1">why</div>
+              <div className="text-label text-muted-foreground mb-1.5">why</div>
               <p className="text-sub text-content">{finding.reason}</p>
             </div>
             {dupLocations.length > 1 && (
               <div>
-                <div className="text-label text-muted-foreground mb-1">{t('dupTitle')}</div>
+                <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
                 <p className="text-sub text-content mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
                 <div className="flex flex-col gap-0.5">
                   {dupLocations.map((loc, i) => (
@@ -324,7 +324,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
             )}
             {finding.snippet && (
               <div>
-                <div className="text-label text-muted-foreground mb-1">code</div>
+                <div className="text-label text-muted-foreground mb-1.5">code</div>
                 <div className="text-code-block bg-muted/40 rounded py-2 overflow-hidden">
                   {finding.snippet.split('\n').map((raw, i) => {
                     const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
@@ -341,7 +341,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
             )}
             <details className="border-t border-border/40 pt-3">
               <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape', { label: t(`kinds.${finding.kind}.label`) })}</summary>
-              <p className="text-sub text-content mt-2">{t(`explain.${finding.kind}`)}</p>
+              <p className="text-sub text-content mt-1.5">{t(`explain.${finding.kind}`)}</p>
             </details>
           </div>
         </>
@@ -439,7 +439,6 @@ export default function LocateMePage() {
       const d = e.data
       if (d.ok && d.report) {
         setReport(d.report); setDetection(d.detection ?? null); setSource(label)
-        setSelected(d.report.findings.find(f => f.kind === 'fragile') ?? d.report.findings[0] ?? null)
       } else {
         setError(d.error ?? t('analysisFailed'))
       }
@@ -498,6 +497,15 @@ export default function LocateMePage() {
   const selDupLocations = selected && selected.selector !== null && selected.kind !== 'stable'
     ? findings.filter(f => dupKey(f) === dupKey(selected)).map(f => `${f.file}:${f.line}`)
     : []
+
+  // Keep the selected finding in sync with the visible rows: if nothing is selected,
+  // or the current selection is filtered out, fall back to the first visible row.
+  useEffect(() => {
+    if (!report) return
+    if (selected && filterKinds.has(selected.kind)) return
+    setSelected(rows[0] ?? null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [report, filterKinds, sortMode])
 
   const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors'
   const btnGhost = 'px-3 py-2 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors'
