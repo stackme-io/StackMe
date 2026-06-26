@@ -505,32 +505,29 @@ export default function LocateMePage() {
           className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1520px] gap-4"
         >
           {!report ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4">
+            <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
 
-              <div className="flex items-center justify-center gap-10 relative lg:min-w-[680px]">
+              <div className="flex justify-center relative">
+                <div className="text-center flex-shrink-0 relative">
 
-                {hintsOpen && (
-                  <div className="hidden lg:flex items-center gap-3">
-                    <svg className="w-4 h-32 flex-shrink-0 text-muted-foreground/70" viewBox="0 0 16 96" fill="none" aria-hidden="true">
-                      <path d="M13 3 q-6 0 -6 21 q0 24 -6 24 q6 0 6 24 q0 21 6 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <div className="flex flex-col gap-3.5 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
-                      <span className="text-[18px] text-muted-foreground ml-1 -mb-2">{t('giveLead')}</span>
-                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine1')}</span>
-                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine2')}</span>
-                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine3')}</span>
+                  {hintsOpen && (
+                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left">
+                      <div className="flex flex-col gap-3.5 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                        <span className="text-[18px] text-muted-foreground ml-1 -mb-2">{t('giveLead')}</span>
+                        <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine1')}</span>
+                        <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine2')}</span>
+                        <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine3')}</span>
+                      </div>
+                      <svg className="w-4 h-36 flex-shrink-0 text-muted-foreground/70" viewBox="0 0 16 96" fill="none" aria-hidden="true">
+                        <path d="M3 3 q6 0 6 21 q0 24 6 24 q-6 0 -6 24 q0 21 -6 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <svg className="w-7 h-6 flex-shrink-0 text-muted-foreground" viewBox="0 0 28 24" fill="none" aria-hidden="true">
+                        <defs><marker id="lm-in" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                        <path d="M2 12 H22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-in)" />
+                      </svg>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {hintsOpen && (
-                  <svg className="hidden lg:block w-7 h-6 flex-shrink-0 text-muted-foreground self-center" viewBox="0 0 28 24" fill="none" aria-hidden="true">
-                    <defs><marker id="lm-in" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                    <path d="M2 12 H22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-in)" />
-                  </svg>
-                )}
-
-                <div className="text-center flex-shrink-0">
                   <div className="mb-4">
                     <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
                     <p className="text-sub text-content max-w-[280px] mx-auto">{t('emptyDesc')}</p>
@@ -540,36 +537,34 @@ export default function LocateMePage() {
                     <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
                   </div>
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
-                </div>
 
-                {hintsOpen && (
-                  <svg className="hidden lg:block w-7 h-6 flex-shrink-0 text-muted-foreground self-center" viewBox="0 0 28 24" fill="none" aria-hidden="true">
-                    <defs><marker id="lm-out" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                    <path d="M2 12 H22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-out)" />
-                  </svg>
-                )}
-
-                {hintsOpen && (
-                  <div className="hidden lg:flex items-center gap-3">
-                    <div className="flex flex-col gap-3 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
-                      <span className="text-[18px] text-muted-foreground ml-0.5 -mb-2">{t('getLead')}</span>
-                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
-                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
-                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
-                      <span className="text-[17px] text-muted-foreground mt-1">{t('getWhy')}</span>
+                  {hintsOpen && (
+                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 left-full ml-6 text-left">
+                      <svg className="w-7 h-6 flex-shrink-0 text-muted-foreground" viewBox="0 0 28 24" fill="none" aria-hidden="true">
+                        <defs><marker id="lm-out" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                        <path d="M2 12 H22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-out)" />
+                      </svg>
+                      <svg className="w-4 h-36 flex-shrink-0 text-muted-foreground/70" viewBox="0 0 16 96" fill="none" aria-hidden="true">
+                        <path d="M13 3 q-6 0 -6 21 q0 24 -6 24 q6 0 6 24 q0 21 6 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <div className="flex flex-col gap-3 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                        <span className="text-[18px] text-muted-foreground ml-0.5 -mb-2">{t('getLead')}</span>
+                        <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
+                        <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
+                        <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
+                        <span className="text-[17px] text-muted-foreground mt-1">{t('getWhy')}</span>
+                      </div>
                     </div>
-                    <svg className="w-4 h-32 flex-shrink-0 text-muted-foreground/70" viewBox="0 0 16 96" fill="none" aria-hidden="true">
-                      <path d="M3 3 q6 0 6 21 q0 24 6 24 q-6 0 -6 24 q0 21 -6 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                )}
+                  )}
 
-                {hintsOpen ? (
-                  <button onClick={hideHints} title={t('hideTips')} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground">✕</button>
-                ) : (
-                  <button onClick={showHints} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
-                )}
+                </div>
               </div>
+
+              {hintsOpen ? (
+                <button onClick={hideHints} title={t('hideTips')} className="hidden lg:block absolute top-3 right-4 text-meta text-muted-foreground hover:text-foreground">✕</button>
+              ) : (
+                <button onClick={showHints} className="hidden lg:block absolute top-3 right-4 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
+              )}
 
               <div className="w-full max-w-md flex flex-col gap-3">
                 <details className="border border-border/60 rounded-md">
