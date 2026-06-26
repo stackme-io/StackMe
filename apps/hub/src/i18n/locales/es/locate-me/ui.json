@@ -73,7 +73,7 @@
   "copied": "Copiado",
   "close": "Cerrar",
   "selectHint": "Selecciona un locator frágil a la izquierda para inspeccionarlo aquí.",
-  "whyShape": "Por qué esta forma es frágil",
+  "whyShape": "Qué significa '{{label}}'",
   "explain": {
     "fragile": "Apunta a una posición o estructura de la página - un índice, :nth-child, una clase autogenerada o una ruta directa. Cuando el markup o el orden cambian (incluso sin un bug real) el locator deja de coincidir y el test falla. Prefiere role, test-id o label.",
     "stable": "Usa role, test-id o label - ligado a la intención, no al layout. Sobrevive a cambios de markup y es la opción recomendada.",

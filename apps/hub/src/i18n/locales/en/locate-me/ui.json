@@ -73,7 +73,7 @@
   "copied": "Copied",
   "close": "Close",
   "selectHint": "Select a fragile locator on the left to inspect it here.",
-  "whyShape": "Why this shape is fragile",
+  "whyShape": "What '{{label}}' means",
   "explain": {
     "fragile": "It points at a position or structure in the page - an index, :nth-child, an auto-generated class, or a bare path. When the markup or order changes (even with no real bug) the locator stops matching and the test fails. Prefer role, test-id, or label.",
     "stable": "It uses role, test-id, or label - tied to intent, not layout. It survives markup changes and is the recommended default.",

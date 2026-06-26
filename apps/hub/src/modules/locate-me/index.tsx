@@ -228,7 +228,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
       <table className="w-full border-collapse table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[116px]">{t('colKind')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[150px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
@@ -240,14 +240,14 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             const s = KIND_STYLE[f.kind]
             return (
               <tr key={i} onClick={() => onSelect(f)}
-                className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/40' : 'hover:bg-muted/20'}`}>
-                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
+                className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/70' : 'hover:bg-muted/20'}`}>
+                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-primary' : f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
                   <span className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                     <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
                   </span>
                 </td>
-                <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate">{f.file}:{f.line}</td>
+                <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate" title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
                 <td className="px-4 py-3 border-b border-border/40">
                   <span className="flex items-start gap-2 min-w-0">
                     <code className="text-code text-foreground break-all">{selectorText(f)}</code>
@@ -330,7 +330,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
                     const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
                     const active = raw.startsWith('›')
                     return (
-                      <div key={i} className={`flex items-start border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
+                      <div key={i} className={`flex items-center border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
                         <span className="select-none text-faint text-right pl-2 pr-2.5 tabular-nums flex-shrink-0" style={{ minWidth: '2.75rem' }}>{m ? m[2] : ''}</span>
                         <code className="whitespace-pre overflow-hidden text-ellipsis pr-2.5 text-muted-foreground">{m ? m[3] : raw}</code>
                       </div>
@@ -340,7 +340,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               </div>
             )}
             <details className="border-t border-border/40 pt-3">
-              <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape')}</summary>
+              <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape', { label: t(`kinds.${finding.kind}.label`) })}</summary>
               <p className="text-sub text-content mt-2">{t(`explain.${finding.kind}`)}</p>
             </details>
           </div>
