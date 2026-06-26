@@ -511,8 +511,8 @@ export default function LocateMePage() {
                 <div className="text-center flex-shrink-0 relative">
 
                   {hintsOpen && (
-                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left">
-                      <div className="flex flex-col gap-3.5 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left w-max">
+                      <div className="flex flex-col gap-3.5 items-start whitespace-nowrap" style={{ fontFamily: "'Neucha', cursive" }}>
                         <span className="text-[18px] text-muted-foreground ml-1 -mb-2">{t('giveLead')}</span>
                         <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine1')}</span>
                         <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine2')}</span>
@@ -539,7 +539,7 @@ export default function LocateMePage() {
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
 
                   {hintsOpen && (
-                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 left-full ml-6 text-left">
+                    <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 left-full ml-6 text-left w-max">
                       <svg className="w-7 h-6 flex-shrink-0 text-muted-foreground" viewBox="0 0 28 24" fill="none" aria-hidden="true">
                         <defs><marker id="lm-out" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
                         <path d="M2 12 H22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-out)" />
@@ -547,7 +547,8 @@ export default function LocateMePage() {
                       <svg className="w-4 h-36 flex-shrink-0 text-muted-foreground/70" viewBox="0 0 16 96" fill="none" aria-hidden="true">
                         <path d="M13 3 q-6 0 -6 21 q0 24 -6 24 q6 0 6 24 q0 21 6 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                      <div className="flex flex-col gap-3 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                      <div className="relative flex flex-col gap-3 items-start whitespace-nowrap" style={{ fontFamily: "'Neucha', cursive" }}>
+                        <button onClick={hideHints} title={t('hideTips')} className="absolute -top-7 right-0 text-meta text-muted-foreground hover:text-foreground" style={{ fontFamily: 'inherit' }}>✕</button>
                         <span className="text-[18px] text-muted-foreground ml-0.5 -mb-2">{t('getLead')}</span>
                         <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
                         <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
@@ -557,14 +558,12 @@ export default function LocateMePage() {
                     </div>
                   )}
 
+                  {!hintsOpen && (
+                    <button onClick={showHints} className="hidden lg:block absolute top-1/2 -translate-y-1/2 left-full ml-6 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2 whitespace-nowrap">{t('showTips')}</button>
+                  )}
+
                 </div>
               </div>
-
-              {hintsOpen ? (
-                <button onClick={hideHints} title={t('hideTips')} className="hidden lg:block absolute top-3 right-4 text-meta text-muted-foreground hover:text-foreground">✕</button>
-              ) : (
-                <button onClick={showHints} className="hidden lg:block absolute top-3 right-4 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
-              )}
 
               <div className="w-full max-w-md flex flex-col gap-3">
                 <details className="border border-border/60 rounded-md">
