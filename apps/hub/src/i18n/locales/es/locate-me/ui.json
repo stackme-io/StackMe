@@ -76,6 +76,8 @@
   "getStable": "estable, seguro de mantener",
   "getContext": "contexto, depende de tu app",
   "getWhy": "+ por qué, en palabras simples",
+  "hideTips": "Ocultar pistas",
+  "showTips": "Mostrar pistas",
   "colKind": "Tipo",
   "colLocation": "Ubicación",
   "colSelector": "Selector",

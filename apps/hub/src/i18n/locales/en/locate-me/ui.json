@@ -76,6 +76,8 @@
   "getStable": "stable, safe to keep",
   "getContext": "context, depends on your app",
   "getWhy": "+ why, in plain words",
+  "hideTips": "Hide tips",
+  "showTips": "Show tips",
   "colKind": "Kind",
   "colLocation": "Location",
   "colSelector": "Selector",

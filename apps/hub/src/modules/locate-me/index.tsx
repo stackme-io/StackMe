@@ -1,5 +1,3 @@
-import '@fontsource/caveat/500.css'
-import '@fontsource/caveat/600.css'
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
@@ -378,6 +376,11 @@ export default function LocateMePage() {
   const paramTab = searchParams.get('tab')
   const [activeTab, setActiveTab] = useState(paramTab && TAB_IDS.includes(paramTab) ? paramTab : 'audit')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [hintsOpen, setHintsOpen] = useState(() => {
+    try { return localStorage.getItem('locateme-hints') !== '0' } catch { return true }
+  })
+  const hideHints = () => { setHintsOpen(false); try { localStorage.setItem('locateme-hints', '0') } catch { /* ignore */ } }
+  const showHints = () => { setHintsOpen(true); try { localStorage.setItem('locateme-hints', '1') } catch { /* ignore */ } }
 
   const [code, setCode] = useState('')
   const [report, setReport] = useState<ReportData | null>(null)
@@ -504,19 +507,23 @@ export default function LocateMePage() {
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4">
 
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-3 relative">
 
-                <div className="hidden lg:flex flex-col gap-2.5 items-start" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>
-                  <span className="text-[18px] text-muted-foreground ml-1">{t('giveLead')}</span>
-                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine1')}</span>
-                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
-                  <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
-                </div>
-
-                <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
-                  <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                  <path d="M2 22 C 22 28, 12 50, 29 50" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
-                </svg>
+                {hintsOpen && (
+                  <>
+                    <div className="hidden lg:flex flex-col gap-2.5 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                      <span className="text-[18px] text-muted-foreground ml-1 -mb-1.5">{t('giveLead')}</span>
+                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine1')}</span>
+                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
+                      <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
+                    </div>
+                    <svg className="hidden lg:block w-9 h-28 flex-shrink-0 self-start mt-6 text-muted-foreground" viewBox="0 0 36 112" fill="none" aria-hidden="true">
+                      <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                      <path d="M9 11 L3 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                      <path d="M3 16 C 27 26, 17 80, 33 90" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
+                    </svg>
+                  </>
+                )}
 
                 <div className="text-center flex-shrink-0">
                   <div className="mb-4">
@@ -530,18 +537,27 @@ export default function LocateMePage() {
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
                 </div>
 
-                <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
-                  <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                  <path d="M2 50 C 20 50, 10 28, 29 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
-                </svg>
+                {hintsOpen && (
+                  <>
+                    <svg className="hidden lg:block w-9 h-28 flex-shrink-0 self-end mb-6 text-muted-foreground" viewBox="0 0 36 112" fill="none" aria-hidden="true">
+                      <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
+                      <path d="M3 96 C 24 90, 14 32, 33 22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
+                    </svg>
+                    <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
+                      <span className="text-[18px] text-muted-foreground ml-0.5 -mb-1.5">{t('getLead')}</span>
+                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
+                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
+                      <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
+                      <span className="text-[17px] text-muted-foreground mt-1">{t('getWhy')}</span>
+                    </div>
+                  </>
+                )}
 
-                <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Caveat', cursive", fontWeight: 500 }}>
-                  <span className="text-[18px] text-muted-foreground ml-0.5">{t('getLead')}</span>
-                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
-                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-stable flex-shrink-0" />{t('getStable')}</span>
-                  <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-context flex-shrink-0" />{t('getContext')}</span>
-                  <span className="text-[17px] text-muted-foreground mt-1">{t('getWhy')}</span>
-                </div>
+                {hintsOpen ? (
+                  <button onClick={hideHints} title={t('hideTips')} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground">✕</button>
+                ) : (
+                  <button onClick={showHints} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
+                )}
               </div>
 
               <div className="w-full max-w-md flex flex-col gap-3">
