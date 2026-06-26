@@ -508,7 +508,7 @@ export default function LocateMePage() {
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
 
               <div className="flex justify-center relative">
-                <div className="text-center flex-shrink-0 relative">
+                <div className="text-center flex-shrink-0 relative -mt-3">
 
                   {hintsOpen && (
                     <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left w-max">
