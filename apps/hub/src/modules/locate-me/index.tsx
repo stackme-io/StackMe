@@ -10,51 +10,61 @@ import { Crosshair, Route, Info } from 'lucide-react'
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
 
-const SAMPLE = `import { test, expect } from '@playwright/test'
+// Two correlated sample files: login (stable-heavy) + checkout (fragile-heavy, the hot file).
+// They share an identical selector so cross-file duplicate counting is visible.
+const SAMPLE_LOGIN = `import { test, expect } from '@playwright/test'
 
-test('login', async ({ page }) => {
+test('sign in', async ({ page }) => {
   await page.goto('/login')
   await page.getByRole('textbox', { name: 'Email' }).fill('a@b.com')
   await page.getByLabel('Password').fill('secret')
-  await page.locator('#login-btn').click()
-  await page.locator('//div[3]/span[2]/button').click()
+  await page.getByTestId('login-submit').click()
   await page.getByText('Welcome back').isVisible()
-  await page.locator('.navbar > ul > li:nth-child(2) a').click()
-})
-
-test('catalog', async ({ page }) => {
-  await page.getByTestId('search-input').fill('phone')
-  await page.locator('button[type=submit]').click()
-  await page.locator('.product-card:nth-child(1)').click()
-  await page.locator('div.sc-1a2b3c').click()
-  await page.getByRole('button', { name: 'Add to cart' }).click()
-  await page.locator('//ul/li[4]/div/button').click()
-  await page.getByPlaceholder('Promo code').fill('SALE')
-  await page.locator('[data-test=apply]').click()
-})
-
-test('checkout', async ({ page }) => {
   await page.locator('//div[3]/span[2]/button').click()
-  await page.getByLabel('Card number').fill('4242')
-  await page.locator('.list > li:nth-child(2)').click()
-  await page.locator('div.css-1a2b3c').click()
-  await page.getByText('Order total').isVisible()
-  await page.locator('[data-testid="checkout"]').click()
-  await page.locator('xpath=//table/tbody/tr[3]/td[2]').click()
-  await page.locator(dynamicSelector).click()
-  await page.getByRole('link', { name: 'Continue' }).click()
 })
 
-test('account', async ({ page }) => {
-  await page.locator('#profile').click()
-  await page.locator('.menu .item.active').click()
-  await page.locator('//nav/a[5]').click()
-  await page.getByTitle('Settings').click()
-  await page.locator(userSelector).click()
-  await page.getByTestId('save').click()
-  await page.locator('button.sc-9z8y7x').click()
+test('profile', async ({ page }) => {
+  await page.getByRole('link', { name: 'Account' }).click()
+  await page.getByLabel('Display name').fill('Sam')
+  await page.getByTestId('save-profile').click()
+  await page.getByPlaceholder('Search settings').fill('theme')
+  await page.locator('.sidebar .item.active').click()
+  await page.getByTitle('Sign out').click()
 })
 `
+
+const SAMPLE_CHECKOUT = `import { test, expect } from '@playwright/test'
+
+test('cart', async ({ page }) => {
+  await page.locator('//div[3]/span[2]/button').click()
+  await page.locator('.product-card:nth-child(1)').click()
+  await page.locator('div.sc-1a2b3c').click()
+  await page.locator('//ul/li[4]/div/button').click()
+  await page.getByRole('button', { name: 'Checkout' }).click()
+})
+
+test('payment', async ({ page }) => {
+  await page.locator('.list > li:nth-child(2)').click()
+  await page.locator('xpath=//table/tbody/tr[3]/td[2]').click()
+  await page.locator('div.css-1a2b3c').click()
+  await page.getByLabel('Card number').fill('4242')
+  await page.locator('//nav/a[5]').click()
+  await page.locator(rowSelector).click()
+  await page.getByText('Order total').isVisible()
+})
+
+test('confirm', async ({ page }) => {
+  await page.locator('.navbar > ul > li:nth-child(2) a').click()
+  await page.locator('button.sc-9z8y7x').click()
+  await page.locator(dynamicSelector).click()
+  await page.getByTestId('place-order').click()
+})
+`
+
+const SAMPLE_FILES: SourceFileInput[] = [
+  { path: 'login.spec.ts', text: SAMPLE_LOGIN },
+  { path: 'checkout.spec.ts', text: SAMPLE_CHECKOUT },
+]
 
 const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
   fragile: { text: 'text-k-fragile', dot: 'bg-k-fragile' },
@@ -71,7 +81,15 @@ const KIND_SEG: Record<Kind, string> = {
 }
 
 const KIND_ORDER: Kind[] = ['fragile', 'stable', 'context', 'dynamic']
-const FILTER_KINDS: Kind[] = ['fragile', 'context', 'dynamic']
+
+// Selected-state classes for the filter chips. Full literal strings so Tailwind keeps them.
+const KIND_CHIP: Record<Kind, string> = {
+  fragile: 'bg-k-fragile/15 border-k-fragile/40',
+  stable:  'bg-k-stable/15 border-k-stable/40',
+  context: 'bg-k-context/15 border-k-context/40',
+  dynamic: 'bg-k-dynamic/15 border-k-dynamic/40',
+}
+
 const TAB_IDS: string[] = ['audit', 'roadmap', 'about']
 type SortMode = 'file' | 'repeated' | 'hot'
 
@@ -112,49 +130,28 @@ function selectorText(f: Finding): string {
   return `${f.method}(${f.selector === null ? '…' : JSON.stringify(f.selector)})`
 }
 
-function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
-  byKind: Record<Kind, number>
-  filterKinds: Set<Kind>
-  onToggle: (k: Kind) => void
+function AuditControls({ sortMode, onSort, filesCount }: {
   sortMode: SortMode
   onSort: (m: SortMode) => void
+  filesCount: number
 }) {
   const { t } = useTranslation('locate-me')
-  const sorts: [SortMode, string][] = [['file', t('sortFile')], ['repeated', t('sortRepeated')], ['hot', t('sortHot')]]
+  const sorts: [SortMode, string, string][] = [
+    ['file', t('sortFile'), t('sortFileHint')],
+    ['repeated', t('sortRepeated'), t('sortRepeatedHint')],
+    ...(filesCount > 1 ? [['hot', t('sortHot'), t('sortHotHint')] as [SortMode, string, string]] : []),
+  ]
   return (
-    <div className="flex flex-col">
-      <div className="px-3 pt-5 pb-3 border-b border-border">
-        <p className="text-label text-muted-foreground mb-2">{t('filterTitle')}</p>
-        <div className="flex flex-col gap-0.5">
-          {FILTER_KINDS.map(k => {
-            const on = filterKinds.has(k)
-            return (
-              <button key={k} onClick={() => onToggle(k)}
-                className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
-                <span className={`w-3.5 h-3.5 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? `${KIND_STYLE[k].dot} border-transparent` : 'border-border'}`}>
-                  {on && (
-                    <svg width="9" height="9" viewBox="0 0 8 8" fill="none">
-                      <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
-                    </svg>
-                  )}
-                </span>
-                <span className="text-sub flex-1">{t(`kinds.${k}.label`)}</span>
-                <span className="text-meta text-muted-foreground tabular-nums">{byKind[k]}</span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-      <div className="p-3">
-        <p className="text-label text-muted-foreground mb-2">{t('sortBy')}</p>
-        <div className="flex flex-col gap-1">
-          {sorts.map(([m, label]) => (
-            <button key={m} onClick={() => onSort(m)}
-              className={`px-2 py-1.5 rounded-md text-sub text-left border transition-colors ${sortMode === m ? 'border-primary/50 bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:bg-muted/30'}`}>
-              {label}
-            </button>
-          ))}
-        </div>
+    <div className="px-3 pt-5 pb-3">
+      <p className="text-label text-muted-foreground mb-3">{t('sortBy')}</p>
+      <div className="flex flex-col gap-1.5">
+        {sorts.map(([m, label, hint]) => (
+          <button key={m} onClick={() => onSort(m)}
+            className={`flex flex-col items-start gap-0.5 px-2.5 py-1.5 rounded-md text-left border transition-colors ${sortMode === m ? 'border-primary/50 bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:bg-muted/30'}`}>
+            <span className="text-sub">{label}</span>
+            <span className="text-meta text-muted-foreground/80 leading-snug">{hint}</span>
+          </button>
+        ))}
       </div>
     </div>
   )
@@ -162,56 +159,58 @@ function AuditControls({ byKind, filterKinds, onToggle, sortMode, onSort }: {
 
 function Headline({ report, detection, source }: { report: ReportData; detection: Detection | null; source: string | null }) {
   const { t } = useTranslation('locate-me')
-  const fragile = report.summary.byKind.fragile
-  const filesWithFragile = new Set(report.findings.filter(f => f.kind === 'fragile').map(f => f.file)).size
   const stack: string[] = []
   if (detection && detection.language !== 'unknown') stack.push(detection.language)
   if (detection && detection.framework !== 'unknown') stack.push(detection.framework)
 
-  const headline = fragile > 0
-    ? t('headlineFragile', { locators: t('nLocators', { count: fragile }), files: t('nFiles', { count: filesWithFragile }) })
-    : t('headlineClean', { files: t('nFiles', { count: report.summary.files }) })
-
   return (
     <div className="flex flex-col gap-1.5">
-      <h2 className="text-title text-foreground">{headline}</h2>
+      <h2 className="text-title text-foreground">
+        {t('headlineCount', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}
+      </h2>
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
-        {source && (
-          <>
-            <span className="text-content">{t('analyzedLabel')} {source}</span>
-            <span className="text-faint">·</span>
-          </>
-        )}
-        {stack.length > 0 && (
-          <>
-            <span>{stack.join(' · ')}</span>
-            <span className="text-faint">·</span>
-          </>
-        )}
-        <span>{t('callsInFiles', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}</span>
+        {source && <span className="text-content">{t('analyzedLabel')} {source}</span>}
+        {source && stack.length > 0 && <span className="text-faint">·</span>}
+        {stack.length > 0 && <span>{stack.join(' · ')}</span>}
       </p>
     </div>
   )
 }
 
-function RatioBar({ byKind }: { byKind: Record<Kind, number> }) {
+// Ratio bar + the legend doubles as the filter: click a chip (or a bar segment) to toggle a kind.
+function RatioBar({ byKind, filterKinds, onToggle }: {
+  byKind: Record<Kind, number>
+  filterKinds: Set<Kind>
+  onToggle: (k: Kind) => void
+}) {
   const { t } = useTranslation('locate-me')
   const total = KIND_ORDER.reduce((s, k) => s + byKind[k], 0) || 1
   return (
     <div className="max-w-3xl">
       <div className="flex h-2 w-full rounded-full overflow-hidden bg-muted/30">
         {KIND_ORDER.map(k => byKind[k] > 0 && (
-          <div key={k} className={KIND_SEG[k]} style={{ width: `${(byKind[k] / total) * 100}%` }} />
+          <button key={k} type="button" onClick={() => onToggle(k)}
+            title={`${t(`kinds.${k}.label`)}: ${byKind[k]}`}
+            className={`${KIND_SEG[k]} transition-opacity ${filterKinds.has(k) ? '' : 'opacity-35'}`}
+            style={{ width: `${(byKind[k] / total) * 100}%` }} />
         ))}
       </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2.5">
-        {KIND_ORDER.map(k => (
-          <span key={k} className="flex items-center gap-1.5 text-meta text-muted-foreground">
-            <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
-            {t(`kinds.${k}.label`)}
-            <span className={`tabular-nums ${k === 'fragile' ? 'text-k-fragile font-medium' : 'text-foreground'}`}>{byKind[k]}</span>
-          </span>
-        ))}
+      <div className="flex flex-wrap gap-2 mt-3">
+        {KIND_ORDER.map(k => {
+          const on = filterKinds.has(k)
+          const empty = byKind[k] === 0
+          return (
+            <button key={k} type="button" disabled={empty} onClick={() => onToggle(k)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-meta transition-colors ${
+                empty ? 'opacity-40 pointer-events-none border-transparent text-muted-foreground'
+                : on ? `${KIND_CHIP[k]} text-foreground`
+                : 'border-transparent text-muted-foreground hover:bg-muted/40'}`}>
+              <span className={`w-2 h-2 rounded-full ${KIND_STYLE[k].dot}`} />
+              {t(`kinds.${k}.label`)}
+              <span className="tabular-nums text-foreground/90">{byKind[k]}</span>
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -250,9 +249,14 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
                 </td>
                 <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate">{f.file}:{f.line}</td>
                 <td className="px-4 py-3 border-b border-border/40">
-                  <span className="flex items-center gap-2 min-w-0">
-                    <code className="text-code text-foreground truncate">{selectorText(f)}</code>
-                    {n > 1 && <span className="text-meta text-k-context flex-shrink-0">×{n}</span>}
+                  <span className="flex items-start gap-2 min-w-0">
+                    <code className="text-code text-foreground break-all">{selectorText(f)}</code>
+                    {n > 1 && (
+                      <span title={t('copiesTip', { count: n })}
+                        className="flex-shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-k-context/15 text-k-context text-meta leading-none whitespace-nowrap">
+                        {t('copies', { count: n })}
+                      </span>
+                    )}
                   </span>
                 </td>
               </tr>
@@ -264,7 +268,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
   )
 }
 
-function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose: () => void }) {
+function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   const [copied, setCopied] = useState(false)
 
@@ -276,7 +280,7 @@ function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose
   }
 
   return (
-    <div className="w-80 flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
+    <div className="w-96 flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
@@ -308,6 +312,17 @@ function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose
               <div className="text-label text-muted-foreground mb-1">why</div>
               <p className="text-sub text-content">{finding.reason}</p>
             </div>
+            {dupLocations.length > 1 && (
+              <div>
+                <div className="text-label text-muted-foreground mb-1">{t('dupTitle')}</div>
+                <p className="text-sub text-content mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
+                <div className="flex flex-col gap-0.5">
+                  {dupLocations.map((loc, i) => (
+                    <span key={i} className="text-meta text-muted-foreground font-mono">{loc}</span>
+                  ))}
+                </div>
+              </div>
+            )}
             {finding.snippet && (
               <div className="text-code-block bg-muted/40 rounded p-2.5 text-muted-foreground overflow-hidden">
                 {finding.snippet.split('\n').map((ln, i) => (
@@ -327,16 +342,14 @@ function FindingInspect({ finding, onClose }: { finding: Finding | null; onClose
 }
 
 // Left rail: audit controls on top (Audit + results only), nav pinned to the bottom.
-function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filterKinds, onToggle, sortMode, onSort }: {
+function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onSort, filesCount }: {
   activeTab: string
   onNav: (id: string) => void
   controlsVisible: boolean
   controlsActive: boolean
-  byKind: Record<Kind, number>
-  filterKinds: Set<Kind>
-  onToggle: (k: Kind) => void
   sortMode: SortMode
   onSort: (m: SortMode) => void
+  filesCount: number
 }) {
   const { t } = useTranslation('locate-me')
   const nav = [
@@ -349,7 +362,7 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, byKind, filte
       <div className="flex-1 overflow-y-auto">
         {controlsVisible && (
           <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
-            <AuditControls byKind={byKind} filterKinds={filterKinds} onToggle={onToggle} sortMode={sortMode} onSort={onSort} />
+            <AuditControls sortMode={sortMode} onSort={onSort} filesCount={filesCount} />
           </div>
         )}
       </div>
@@ -429,6 +442,11 @@ export default function LocateMePage() {
     runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', t('pastedSnippet'))
   }
 
+  const runSample = () => {
+    setCode('')
+    runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel', { files: t('nTsFiles', { count: SAMPLE_FILES.length }) }))
+  }
+
   const selectFolder = async () => {
     if (!supportsFolderPicker()) { setError(t('needChromium')); return }
     setError(null); setLoading(true)
@@ -463,6 +481,11 @@ export default function LocateMePage() {
   const dup = buildDupCount(findings)
   const hot = buildHotRank(findings)
   const rows = report ? sortFindings(findings.filter(f => filterKinds.has(f.kind)), sortMode, dup, hot) : []
+  const filesCount = report?.summary.files ?? 1
+  const totalCalls = findings.length
+  const selDupLocations = selected && selected.selector !== null && selected.kind !== 'stable'
+    ? findings.filter(f => dupKey(f) === dupKey(selected)).map(f => `${f.file}:${f.line}`)
+    : []
 
   const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors'
   const btnGhost = 'px-3 py-2 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors'
@@ -479,11 +502,9 @@ export default function LocateMePage() {
           onNav={navTo}
           controlsVisible={hasLocators}
           controlsActive={isAudit}
-          byKind={report?.summary.byKind ?? { fragile: 0, stable: 0, context: 0, dynamic: 0 }}
-          filterKinds={filterKinds}
-          onToggle={toggleFilter}
           sortMode={sortMode}
           onSort={setSortMode}
+          filesCount={filesCount}
         />
       </aside>
 
@@ -502,7 +523,7 @@ export default function LocateMePage() {
         {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
         <div
           style={{ display: activeTab === 'audit' ? 'flex' : 'none' }}
-          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1520px] gap-4"
+          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1320px] gap-4"
         >
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
@@ -534,7 +555,7 @@ export default function LocateMePage() {
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
-                    <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading} className={btnGhost}>{t('trySample')}</button>
+                    <button onClick={runSample} disabled={loading} className={btnGhost}>{t('trySample')}</button>
                   </div>
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
 
@@ -582,7 +603,7 @@ export default function LocateMePage() {
                   className="px-2.5 py-1 rounded-md text-sub font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
                   {t('selectFolder')}
                 </button>
-                <button onClick={() => { setCode(SAMPLE); analyzePaste(SAMPLE) }} disabled={loading}
+                <button onClick={runSample} disabled={loading}
                   className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                   {t('trySample')}
                 </button>
@@ -599,15 +620,20 @@ export default function LocateMePage() {
               ) : (
                 <>
                   <div className="flex-shrink-0"><Headline report={report} detection={detection} source={source} /></div>
-                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} /></div>
+                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
-                    <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
-                      <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
-                      <FindingInspect finding={selected} onClose={() => setSelected(null)} />
-                    </div>
+                    <>
+                      {rows.length !== totalCalls && (
+                        <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
+                      )}
+                      <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
+                        <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
+                        <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
+                      </div>
+                    </>
                   )}
 
                   <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 flex-shrink-0">{t('honesty')}</p>
