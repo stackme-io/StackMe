@@ -402,6 +402,7 @@ export default function LocateMePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [source, setSource] = useState<string | null>(null)
+  const [skipped, setSkipped] = useState(0)
   const [filterKinds, setFilterKinds] = useState<Set<Kind>>(new Set<Kind>(['fragile']))
   const [sortMode, setSortMode] = useState<SortMode>('file')
   const workerRef = useRef<Worker | null>(null)
@@ -439,11 +440,12 @@ export default function LocateMePage() {
 
   const analyzePaste = (text: string) => {
     if (!text.trim()) { setError(t('nothingToAnalyze')); return }
+    setSkipped(0)
     runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', t('pastedSnippet'))
   }
 
   const runSample = () => {
-    setCode('')
+    setCode(''); setSkipped(0)
     runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel', { files: t('nTsFiles', { count: SAMPLE_FILES.length }) }))
   }
 
@@ -451,8 +453,9 @@ export default function LocateMePage() {
     if (!supportsFolderPicker()) { setError(t('needChromium')); return }
     setError(null); setLoading(true)
     try {
-      const { files, rootName } = await pickAndReadFolder()
+      const { files, rootName, skipped: skippedCount } = await pickAndReadFolder()
       if (files.length === 0) { setLoading(false); setError(t('noTsFiles', { name: rootName })); return }
+      setSkipped(skippedCount)
       runOnWorker(files, rootName, t('folderLabel', { name: rootName, files: t('nTsFiles', { count: files.length }) }))
     } catch (e) {
       setLoading(false)
@@ -620,6 +623,9 @@ export default function LocateMePage() {
               ) : (
                 <>
                   <div className="flex-shrink-0"><Headline report={report} detection={detection} source={source} /></div>
+                  {skipped > 0 && (
+                    <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
+                  )}
                   <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (
