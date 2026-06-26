@@ -306,7 +306,6 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
                 )}
               </div>
               <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
-              <div className="text-meta text-muted-foreground font-mono mt-2">{finding.file}:{finding.line}</div>
             </div>
             <div>
               <div className="text-label text-muted-foreground mb-1">why</div>
@@ -324,10 +323,20 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               </div>
             )}
             {finding.snippet && (
-              <div className="text-code-block bg-muted/40 rounded p-2.5 text-muted-foreground overflow-hidden">
-                {finding.snippet.split('\n').map((ln, i) => (
-                  <div key={i} className="whitespace-pre overflow-hidden text-ellipsis">{ln}</div>
-                ))}
+              <div>
+                <div className="text-label text-muted-foreground mb-1">code</div>
+                <div className="text-code-block bg-muted/40 rounded py-2 overflow-hidden">
+                  {finding.snippet.split('\n').map((raw, i) => {
+                    const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
+                    const active = raw.startsWith('›')
+                    return (
+                      <div key={i} className={`flex items-start border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
+                        <span className="select-none text-faint text-right pl-2 pr-2.5 tabular-nums flex-shrink-0" style={{ minWidth: '2.75rem' }}>{m ? m[2] : ''}</span>
+                        <code className="whitespace-pre overflow-hidden text-ellipsis pr-2.5 text-muted-foreground">{m ? m[3] : raw}</code>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )}
             <details className="border-t border-border/40 pt-3">
