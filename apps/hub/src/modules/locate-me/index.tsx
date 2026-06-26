@@ -507,7 +507,7 @@ export default function LocateMePage() {
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4">
 
-              <div className="flex items-center justify-center gap-3 relative">
+              <div className="flex items-center justify-center gap-12 relative">
 
                 {hintsOpen && (
                   <>
@@ -517,10 +517,6 @@ export default function LocateMePage() {
                       <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
                       <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
                     </div>
-                    <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
-                      <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                      <path d="M2 22 C 22 28, 12 50, 29 50" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
-                    </svg>
                   </>
                 )}
 
@@ -538,10 +534,6 @@ export default function LocateMePage() {
 
                 {hintsOpen && (
                   <>
-                    <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
-                      <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                      <path d="M2 50 C 20 50, 10 28, 29 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
-                    </svg>
                     <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
                       <span className="text-[18px] text-muted-foreground ml-0.5 -mb-1.5">{t('getLead')}</span>
                       <span className="flex items-center gap-2 text-[20px] leading-tight text-foreground"><span className="w-3 h-3 rounded-full bg-k-fragile flex-shrink-0" />{t('getFragile')}</span>
@@ -552,16 +544,18 @@ export default function LocateMePage() {
                   </>
                 )}
 
-                {hintsOpen ? (
+                {hintsOpen && (
                   <button onClick={hideHints} title={t('hideTips')} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground">✕</button>
-                ) : (
-                  <button onClick={showHints} className="hidden lg:block absolute top-0 right-1 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
                 )}
               </div>
 
+              {!hintsOpen && (
+                <button onClick={showHints} className="hidden lg:block -mt-3 text-meta text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2">{t('showTips')}</button>
+              )}
+
               <div className="w-full max-w-md flex flex-col gap-3">
                 <details className="border border-border/60 rounded-md">
-                  <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none">{t('pasteToggle')}</summary>
+                  <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none text-center">{t('pasteToggle')}</summary>
                   <div className="p-3 pt-0 flex flex-col gap-2">
                     <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
                       className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
