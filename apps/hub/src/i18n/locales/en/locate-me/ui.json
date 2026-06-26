@@ -88,8 +88,8 @@
   "getWhy": "+ why, in plain words",
   "hideTips": "Hide tips",
   "showTips": "Show tips",
-  "colKind": "Kind",
-  "colLocation": "Location",
+  "colKind": "Type",
+  "colLocation": "File",
   "colSelector": "Selector",
   "inspector": "Inspector",
   "about": {

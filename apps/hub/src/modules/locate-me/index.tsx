@@ -191,7 +191,7 @@ function RatioBar({ byKind, filterKinds, onToggle }: {
         {KIND_ORDER.map(k => byKind[k] > 0 && (
           <button key={k} type="button" onClick={() => onToggle(k)}
             title={`${t(`kinds.${k}.label`)}: ${byKind[k]}`}
-            className={`${KIND_SEG[k]} transition-opacity ${filterKinds.has(k) ? '' : 'opacity-35'}`}
+            className={KIND_SEG[k]}
             style={{ width: `${(byKind[k] / total) * 100}%` }} />
         ))}
       </div>
@@ -228,8 +228,8 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
       <table className="w-full border-collapse table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[128px]">{t('colKind')}</th>
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[124px]">{t('colLocation')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[116px]">{t('colKind')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[150px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
         </thead>
@@ -280,7 +280,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
   }
 
   return (
-    <div className="w-96 flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
+    <div className="w-[440px] flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
@@ -626,9 +626,7 @@ export default function LocateMePage() {
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
-                      {rows.length !== totalCalls && (
-                        <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
-                      )}
+                      <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
