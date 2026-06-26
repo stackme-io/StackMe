@@ -517,10 +517,9 @@ export default function LocateMePage() {
                       <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine2')}</span>
                       <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1">{t('giveLine3')}</span>
                     </div>
-                    <svg className="hidden lg:block w-9 h-28 flex-shrink-0 self-start mt-6 text-muted-foreground" viewBox="0 0 36 112" fill="none" aria-hidden="true">
+                    <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
                       <defs><marker id="lm-ahl" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                      <path d="M9 11 L3 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                      <path d="M3 16 C 27 26, 17 80, 33 90" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
+                      <path d="M2 22 C 22 28, 12 50, 29 50" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahl)" />
                     </svg>
                   </>
                 )}
@@ -539,9 +538,9 @@ export default function LocateMePage() {
 
                 {hintsOpen && (
                   <>
-                    <svg className="hidden lg:block w-9 h-28 flex-shrink-0 self-end mb-6 text-muted-foreground" viewBox="0 0 36 112" fill="none" aria-hidden="true">
+                    <svg className="hidden lg:block w-8 h-24 flex-shrink-0 text-muted-foreground" viewBox="0 0 32 96" fill="none" aria-hidden="true">
                       <defs><marker id="lm-ahr" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></marker></defs>
-                      <path d="M3 96 C 24 90, 14 32, 33 22" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
+                      <path d="M2 50 C 20 50, 10 28, 29 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#lm-ahr)" />
                     </svg>
                     <div className="hidden lg:flex flex-col gap-2 items-start" style={{ fontFamily: "'Neucha', cursive" }}>
                       <span className="text-[18px] text-muted-foreground ml-0.5 -mb-1.5">{t('getLead')}</span>
