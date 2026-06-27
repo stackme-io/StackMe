@@ -49,6 +49,7 @@
   "skippedFiles_other": "{{count}} other code files skipped (Playwright / TS only)",
   "skippedTip": "LocateMe reads Playwright / TypeScript only. Other files were not analyzed.",
   "filterTitle": "Filter",
+  "filesTitle": "Files",
   "nFiles_one": "{{count}} file",
   "nFiles_other": "{{count}} files",
   "nTsFiles_one": "{{count}} .ts file",

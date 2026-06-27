@@ -53,6 +53,7 @@
   "skippedFiles_other": "{{count}} інших code-файлів пропущено (лише Playwright / TS)",
   "skippedTip": "LocateMe читає лише Playwright / TypeScript. Інші файли не аналізувались.",
   "filterTitle": "Фільтр",
+  "filesTitle": "Файли",
   "nFiles_one": "{{count}} файл",
   "nFiles_few": "{{count}} файли",
   "nFiles_many": "{{count}} файлів",
