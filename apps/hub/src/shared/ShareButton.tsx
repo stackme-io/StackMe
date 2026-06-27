@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Share2, Link as LinkIcon } from 'lucide-react'
 
 // Share affordance for the hub header. Shares the clean canonical URL only - never any
-// tool data. Uses the native share sheet where available, with a small desktop fallback.
+// tool data. A small branded popover (Copy link + a few dev channels), no OS share sheet.
 const CANONICAL_ORIGIN = 'https://stackme-app.vercel.app'
 
 function canonicalUrl(): string {
@@ -26,14 +26,7 @@ export default function ShareButton({ note }: { note: string }) {
     return () => document.removeEventListener('mousedown', onDoc)
   }, [open])
 
-  const onTrigger = async () => {
-    const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> }
-    if (typeof nav.share === 'function') {
-      try { await nav.share({ title: document.title, url: canonicalUrl() }) } catch { /* cancelled */ }
-      return
-    }
-    setOpen(o => !o)
-  }
+  const onTrigger = () => setOpen(o => !o)
 
   const copy = () => {
     navigator.clipboard?.writeText(canonicalUrl())
