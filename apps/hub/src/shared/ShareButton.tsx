@@ -62,7 +62,7 @@ export default function ShareButton({ note }: { note: string }) {
               {it.label}
             </a>
           ))}
-          <p className="text-[11px] text-muted-foreground leading-snug px-2 pt-2 pb-1 mt-1 border-t border-border">{note}</p>
+          <p className="text-xs text-muted-foreground leading-snug px-2 pt-2 pb-1 mt-1 border-t border-border">{note}</p>
         </div>
       )}
     </div>

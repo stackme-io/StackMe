@@ -372,7 +372,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
             )}
             <details className="border-t border-border/40 pt-3">
               <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape', { label: t(`kinds.${finding.kind}.label`) })}</summary>
-              <p className="text-sub text-content mt-1.5">{t(`explain.${finding.kind}`)}</p>
+              <p className="text-sub text-content mt-2.5">{t(`explain.${finding.kind}`)}</p>
             </details>
           </div>
         </>
