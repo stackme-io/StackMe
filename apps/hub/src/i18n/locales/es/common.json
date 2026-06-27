@@ -8,6 +8,13 @@
     "unlock": "Desfijar",
     "close": "Cerrar"
   },
+  "share": {
+    "button": "Compartir",
+    "copyLink": "Copiar enlace",
+    "copied": "Copiado",
+    "note": "Comparte un enlace limpio a esta herramienta. Sin rastreo.",
+    "noteLocal": "Comparte solo el enlace. Nada de tu auditoría sale de tu dispositivo."
+  },
   "sidebar": {
     "darkMode": "Modo oscuro",
     "lightMode": "Modo claro",

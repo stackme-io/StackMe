@@ -8,6 +8,13 @@
     "unlock": "Unlock",
     "close": "Close"
   },
+  "share": {
+    "button": "Share",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "note": "Shares a clean link to this tool. No tracking.",
+    "noteLocal": "Shares the link only. Nothing from your audit leaves your device."
+  },
   "sidebar": {
     "darkMode": "Dark mode",
     "lightMode": "Light mode",

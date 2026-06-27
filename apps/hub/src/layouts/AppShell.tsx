@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MODULE_REGISTRY } from '../registry'
 import LogoMark from '../components/LogoMark'
+import ShareButton from '../shared/ShareButton'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
@@ -240,6 +241,10 @@ export default function AppShell() {
         </div>
 
         <div className="flex items-center gap-1">
+
+          {!isSystemPage && (
+            <ShareButton note={activeId === 'locate-me' ? t('share.noteLocal') : t('share.note')} />
+          )}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
