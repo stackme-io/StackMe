@@ -1,14 +1,21 @@
 // Folder input via the File System Access API (Chromium browsers).
-// Recursively reads .ts files, skipping vendored / build dirs - mirrors the CLI walk.
+// Recursively reads JS/TS test files, skipping vendored / build dirs - mirrors the CLI walk.
 import type { SourceFileInput } from '@locateme/core/types'
 
 const SKIP_DIRS = new Set([
   'node_modules', 'dist', 'build', 'coverage', '.git', '.next', '.turbo', '.cache',
 ])
 
-// Code files we cannot read yet (other languages / flavors). Counted so we can be
-// honest that they were left out of the scan - LocateMe parses Playwright / TS only.
-const SKIPPED_CODE_EXT = ['.tsx', '.js', '.jsx', '.mjs', '.cjs', '.java', '.py', '.cs', '.rb']
+// JS/TS family the ts-morph engine can parse (Playwright/Cypress/etc. live here).
+const PARSE_EXT = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts']
+// Code files in other languages we cannot parse yet. Counted so we can be honest
+// that they were left out of the scan.
+const SKIPPED_CODE_EXT = ['.java', '.py', '.cs', '.rb', '.go', '.php', '.kt', '.swift']
+
+function isParseable(name: string): boolean {
+  if (name.endsWith('.d.ts')) return false
+  return PARSE_EXT.some(ext => name.endsWith(ext))
+}
 
 export interface FolderScan {
   files: SourceFileInput[]
@@ -35,7 +42,7 @@ async function walk(dir: unknown, prefix: string, out: SourceFileInput[], stats:
     if (entry.kind === 'directory') {
       if (SKIP_DIRS.has(entry.name)) continue
       await walk(entry, path, out, stats)
-    } else if (entry.name.endsWith('.ts')) {
+    } else if (isParseable(entry.name)) {
       const file = await entry.getFile()
       out.push({ path, text: await file.text() })
     } else if (SKIPPED_CODE_EXT.some(ext => entry.name.endsWith(ext))) {
