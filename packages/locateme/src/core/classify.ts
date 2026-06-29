@@ -7,7 +7,7 @@ export interface Classification {
 }
 
 const STABLE_METHODS = new Set(["getByRole", "getByTestId", "getByLabel"]);
-const CONTEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText"]);
+const CONTEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText", "cy.contains"]);
 
 export function isXpath(s: string): boolean {
   return s.startsWith("//") || s.startsWith("(//") || s.startsWith(".//") ||
@@ -43,5 +43,6 @@ export function classify(method: string, selector: string | null): Classificatio
   if (CONTEXT_METHODS.has(method)) return { kind: "context", reason: `Text/label-based locator (${method}) - can break on localization.` };
 
   const s = selector.trim();
+  if (s.startsWith("@")) return { kind: "stable", reason: "Cypress alias - intent-based reference." };
   return isXpath(s) ? classifyXpath(s) : classifyCss(s);
 }

@@ -12,6 +12,23 @@ const LOCATOR_METHODS = new Set([
   "getByLabel", "getByPlaceholder", "getByTitle", "getByAltText",
 ]);
 
+// Cypress locator commands. Matched only when the call chain roots at `cy`, so a
+// generic .get()/.find()/.contains() on some other object is not taken for a locator.
+const CYPRESS_METHODS = new Set(["get", "find", "contains"]);
+
+// Walk the leftmost side of a chain to its base identifier
+// (e.g. cy.get('a').find('b') -> "cy").
+function chainRootName(node: Node): string | null {
+  let cur: Node = node;
+  for (;;) {
+    if (Node.isIdentifier(cur)) return cur.getText();
+    if (Node.isPropertyAccessExpression(cur)) { cur = cur.getExpression(); continue; }
+    if (Node.isCallExpression(cur)) { cur = cur.getExpression(); continue; }
+    if (Node.isElementAccessExpression(cur)) { cur = cur.getExpression(); continue; }
+    return null;
+  }
+}
+
 function getLiteralSelector(arg: Node | undefined): string | null {
   if (!arg) return null;
   if (Node.isStringLiteral(arg) || Node.isNoSubstitutionTemplateLiteral(arg)) {
@@ -43,10 +60,20 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
       const call = node.asKindOrThrow(SyntaxKind.CallExpression);
       const expr = call.getExpression();
       if (expr.getKind() !== SyntaxKind.PropertyAccessExpression) return;
-      const method = expr.asKindOrThrow(SyntaxKind.PropertyAccessExpression).getName();
-      if (!LOCATOR_METHODS.has(method)) return;
+      const pae = expr.asKindOrThrow(SyntaxKind.PropertyAccessExpression);
+      const rawMethod = pae.getName();
+      let method: string;
+      if (LOCATOR_METHODS.has(rawMethod)) method = rawMethod;
+      else if (CYPRESS_METHODS.has(rawMethod) && chainRootName(pae) === "cy") method = "cy." + rawMethod;
+      else return;
 
-      const selector = getLiteralSelector(call.getArguments()[0]);
+      // cy.contains(selector, text): the text (2nd arg) is the real matcher; cy.contains(text): 1st.
+      let selArg = call.getArguments()[0];
+      if (rawMethod === "contains") {
+        const second = call.getArguments()[1];
+        if (second && (Node.isStringLiteral(second) || Node.isNoSubstitutionTemplateLiteral(second))) selArg = second;
+      }
+      const selector = getLiteralSelector(selArg);
       const line = call.getStartLineNumber();
       const { kind, reason } = classify(method, selector);
       const snippet = kind === "fragile" ? buildSnippet(lines, line) : undefined;
