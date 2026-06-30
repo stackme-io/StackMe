@@ -326,15 +326,18 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
         </>
       ) : (
         <>
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
-              <span className={`w-2 h-2 rounded-full ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
-              {t(`kinds.${finding.kind}.label`)}
-              {finding.confidence === 'context' && (
-                <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
-              )}
-            </span>
-            <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
+          <div className="px-4 py-3 border-b border-border">
+            <div className="flex items-center justify-between">
+              <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
+                <span className={`w-2 h-2 rounded-full ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
+                {t(`kinds.${finding.kind}.label`)}
+                {finding.confidence === 'context' && (
+                  <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
+                )}
+              </span>
+              <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
+            </div>
+            <p className="text-sub text-muted-foreground mt-1.5">{finding.reason}</p>
           </div>
           <div className="flex-1 overflow-y-auto">
 
@@ -347,11 +350,6 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
                   )}
                 </div>
                 <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
-              </div>
-
-              <div>
-                <div className="text-label text-muted-foreground mb-1.5">why</div>
-                <p className="text-sub text-content">{finding.reason}</p>
               </div>
 
               {finding.prefer && (
