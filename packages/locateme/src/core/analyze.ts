@@ -75,9 +75,9 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
       }
       const selector = getLiteralSelector(selArg);
       const line = call.getStartLineNumber();
-      const { kind, reason } = classify(method, selector);
+      const { kind, reason, subcause, confidence, prefer } = classify(method, selector);
       const snippet = kind === "fragile" ? buildSnippet(lines, line) : undefined;
-      findings.push({ file: f.path, line, method, selector, kind, reason, snippet });
+      findings.push({ file: f.path, line, method, selector, kind, reason, subcause, confidence, prefer, snippet });
     });
   }
 

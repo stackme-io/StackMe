@@ -3,6 +3,10 @@
 
 export type Kind = "fragile" | "stable" | "context" | "dynamic";
 
+// How firmly we stand behind the verdict. "verdict" = confident (fragile/stable),
+// "context" = conditional first-pass note. Drives the inspector's tone.
+export type Confidence = "verdict" | "context";
+
 export interface Finding {
   file: string; // relative path
   line: number;
@@ -10,6 +14,9 @@ export interface Finding {
   selector: string | null; // null === dynamic
   kind: Kind;
   reason: string;
+  subcause?: string; // stable id of the matched sub-cause (e.g. "css-autoclass")
+  confidence?: Confidence;
+  prefer?: string; // concrete upgrade suggestion along the prefer-ladder
   snippet?: string; // source lines around a fragile locator
 }
 

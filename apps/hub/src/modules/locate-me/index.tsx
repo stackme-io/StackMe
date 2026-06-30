@@ -343,6 +343,12 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               <div className="text-label text-muted-foreground mb-1.5">why</div>
               <p className="text-sub text-content">{finding.reason}</p>
             </div>
+            {finding.prefer && (
+              <div>
+                <div className="text-label text-muted-foreground mb-1.5">prefer</div>
+                <p className="text-sub text-content">{finding.prefer}</p>
+              </div>
+            )}
             {dupLocations.length > 1 && (
               <div>
                 <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
