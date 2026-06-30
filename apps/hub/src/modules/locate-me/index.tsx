@@ -5,7 +5,7 @@ import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
-import { Crosshair, Route, Info } from 'lucide-react'
+import { Crosshair, Route, Info, ArrowRight, ChevronRight } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
@@ -303,6 +303,10 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
 function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   const [copied, setCopied] = useState(false)
+  const [showCode, setShowCode] = useState(false)
+
+  // Reset transient panel state whenever a different finding is selected.
+  useEffect(() => { setShowCode(false); setCopied(false) }, [finding])
 
   const copy = () => {
     if (!finding || finding.selector === null) return
@@ -323,64 +327,79 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
       ) : (
         <>
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <span className={`text-sub font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-1.5`}>
-              <span className={`w-2 h-2 rounded-full ${KIND_STYLE[finding.kind].dot}`} />
+            <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
+              <span className={`w-2 h-2 rounded-full ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
               {t(`kinds.${finding.kind}.label`)}
+              {finding.confidence === 'context' && (
+                <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
+              )}
             </span>
             <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground" title={t('close')}>✕</button>
           </div>
-          <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4">
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-label text-muted-foreground">selector</span>
-                {finding.selector !== null && (
-                  <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
+          <div className="flex-1 overflow-y-auto">
+
+            <div className="px-4 py-4 flex flex-col gap-3.5">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-label text-muted-foreground">selector</span>
+                  {finding.selector !== null && (
+                    <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
+                  )}
+                </div>
+                <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
+              </div>
+
+              <p className="text-sub text-muted-foreground">{finding.reason}</p>
+
+              {finding.prefer && (
+                <div className="rounded-r-md border-l-2 border-l-k-stable bg-muted/30 pl-3 pr-3 py-2.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
+                    <span className="text-label text-k-stable">prefer</span>
+                  </div>
+                  <p className="text-sub text-content">{finding.prefer}</p>
+                </div>
+              )}
+            </div>
+
+            {(dupLocations.length > 1 || finding.snippet) && (
+              <div className="border-t border-border px-4 py-4 flex flex-col gap-3.5">
+                {dupLocations.length > 1 && (
+                  <div>
+                    <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
+                    <p className="text-sub text-content mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
+                    <div className="flex flex-col gap-0.5">
+                      {dupLocations.map((loc, i) => (
+                        <span key={i} className="text-meta text-muted-foreground font-mono">{loc}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {finding.snippet && (
+                  <div>
+                    <button onClick={() => setShowCode(s => !s)} className="flex items-center gap-1.5 text-label text-muted-foreground hover:text-foreground">
+                      <ChevronRight className={`w-3 h-3 transition-transform ${showCode ? 'rotate-90' : ''}`} />
+                      code
+                      <span className="text-meta text-faint font-mono normal-case ml-1">{finding.file}:{finding.line}</span>
+                    </button>
+                    {showCode && (
+                      <div className="text-code-block bg-muted/40 rounded py-2 overflow-hidden mt-2">
+                        {finding.snippet.split('\n').map((raw, i) => {
+                          const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
+                          const active = raw.startsWith('›')
+                          return (
+                            <div key={i} className={`flex items-center border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
+                              <span className="select-none text-faint text-right pl-2 pr-2.5 tabular-nums flex-shrink-0" style={{ minWidth: '2.75rem' }}>{m ? m[2] : ''}</span>
+                              <code className="whitespace-pre overflow-hidden text-ellipsis pr-2.5 text-muted-foreground">{m ? m[3] : raw}</code>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-              <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
-            </div>
-            <div>
-              <div className="text-label text-muted-foreground mb-1.5">why</div>
-              <p className="text-sub text-content">{finding.reason}</p>
-            </div>
-            {finding.prefer && (
-              <div>
-                <div className="text-label text-muted-foreground mb-1.5">prefer</div>
-                <p className="text-sub text-content">{finding.prefer}</p>
-              </div>
             )}
-            {dupLocations.length > 1 && (
-              <div>
-                <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
-                <p className="text-sub text-content mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
-                <div className="flex flex-col gap-0.5">
-                  {dupLocations.map((loc, i) => (
-                    <span key={i} className="text-meta text-muted-foreground font-mono">{loc}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {finding.snippet && (
-              <div>
-                <div className="text-label text-muted-foreground mb-1.5">code</div>
-                <div className="text-code-block bg-muted/40 rounded py-2 overflow-hidden">
-                  {finding.snippet.split('\n').map((raw, i) => {
-                    const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
-                    const active = raw.startsWith('›')
-                    return (
-                      <div key={i} className={`flex items-center border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
-                        <span className="select-none text-faint text-right pl-2 pr-2.5 tabular-nums flex-shrink-0" style={{ minWidth: '2.75rem' }}>{m ? m[2] : ''}</span>
-                        <code className="whitespace-pre overflow-hidden text-ellipsis pr-2.5 text-muted-foreground">{m ? m[3] : raw}</code>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-            <details className="border-t border-border/40 pt-3">
-              <summary className="text-sub text-content hover:text-foreground cursor-pointer">{t('whyShape', { label: t(`kinds.${finding.kind}.label`) })}</summary>
-              <p className="text-sub text-content mt-3.5">{t(`explain.${finding.kind}`)}</p>
-            </details>
           </div>
         </>
       )}
