@@ -349,7 +349,10 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
                 <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
               </div>
 
-              <p className="text-sub text-muted-foreground">{finding.reason}</p>
+              <div>
+                <div className="text-label text-muted-foreground mb-1.5">why</div>
+                <p className="text-sub text-content">{finding.reason}</p>
+              </div>
 
               {finding.prefer && (
                 <div className="rounded-r-md border-l-2 border-l-k-stable bg-muted/30 pl-3 pr-3 py-2.5">
