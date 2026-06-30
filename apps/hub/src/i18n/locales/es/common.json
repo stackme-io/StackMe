@@ -6,7 +6,9 @@
     "services": "Servicios",
     "lock": "Fijar",
     "unlock": "Desfijar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "collapseSidebar": "Contraer panel",
+    "expandSidebar": "Expandir panel"
   },
   "share": {
     "button": "Compartir",

@@ -6,7 +6,9 @@
     "services": "Services",
     "lock": "Lock",
     "unlock": "Unlock",
-    "close": "Close"
+    "close": "Close",
+    "collapseSidebar": "Collapse panel",
+    "expandSidebar": "Expand panel"
   },
   "share": {
     "button": "Share",

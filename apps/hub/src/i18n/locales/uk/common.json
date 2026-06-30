@@ -6,7 +6,9 @@
     "services": "Сервіси",
     "lock": "Закріпити",
     "unlock": "Відкріпити",
-    "close": "Закрити"
+    "close": "Закрити",
+    "collapseSidebar": "Згорнути панель",
+    "expandSidebar": "Розгорнути панель"
   },
   "share": {
     "button": "Поділитися",

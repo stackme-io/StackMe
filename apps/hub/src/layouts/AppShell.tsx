@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, lazy } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Lock, LockOpen, X, Sun, Moon, Globe, Bell } from 'lucide-react'
+import { Lock, LockOpen, X, Sun, Moon, Globe, Bell, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser, useAuth } from '@clerk/clerk-react'
 import apiClient from '../api/client'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +11,7 @@ import ShareButton from '../shared/ShareButton'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
+import { useLocateRail } from '../store/locateRail'
 
 const MarketMePage = lazy(() => import('../pages/MarketMe'))
 
@@ -62,6 +63,7 @@ export default function AppShell() {
   const { activeModuleIds } = useModules()
   const navigate = useNavigate()
   const { openPanel, panels, activeId, closePanel, togglePin, setActive } = useWorkspace()
+  const { open: railOpen, available: railAvailable, toggle: toggleRail } = useLocateRail()
 
   useEffect(() => {
     if (panels.length === 0) {
@@ -174,6 +176,16 @@ export default function AppShell() {
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
         <div className="flex items-center gap-3">
+          {railAvailable && (
+            <button
+              onClick={toggleRail}
+              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
+              aria-label={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
+            >
+              {railOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
+            </button>
+          )}
           <Link to="/market-me" className="flex items-center gap-3" onClick={() => openPanel(MARKET_ME_MANIFEST)}>
             <LogoMark color={logoColor} height={22} />
             <span className="text-sm font-medium text-muted-foreground">StackMe</span>

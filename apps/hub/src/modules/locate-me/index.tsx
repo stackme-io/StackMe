@@ -6,6 +6,7 @@ import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { Crosshair, Route, Info } from 'lucide-react'
+import { useLocateRail } from '../../store/locateRail'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
@@ -431,7 +432,7 @@ export default function LocateMePage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const paramTab = searchParams.get('tab')
   const [activeTab, setActiveTab] = useState(paramTab && TAB_IDS.includes(paramTab) ? paramTab : 'audit')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const { open: sidebarOpen, setAvailable: setRailAvailable } = useLocateRail()
   const [hintsOpen, setHintsOpen] = useState(() => {
     try { return localStorage.getItem('locateme-hints') !== '0' } catch { return true }
   })
@@ -531,6 +532,14 @@ export default function LocateMePage() {
   const isAudit = activeTab === 'audit'
   const railOpen = isAudit ? sidebarOpen : true
 
+  // Expose the rail toggle to the app header (variant B). The toggle is only
+  // meaningful on the Audit view, so advertise availability there and retract it
+  // when leaving Audit or unmounting LocateMe.
+  useEffect(() => {
+    setRailAvailable(isAudit)
+    return () => setRailAvailable(false)
+  }, [isAudit, setRailAvailable])
+
   const findings = report?.findings ?? []
   const dup = buildDupCount(findings)
   const hot = buildHotRank(findings)
@@ -576,17 +585,6 @@ export default function LocateMePage() {
           fileFragile={hot}
         />
       </aside>
-
-      {isAudit && (
-        <button
-          onClick={() => setSidebarOpen(o => !o)}
-          className="absolute top-2.5 z-20 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-border text-sub font-bold text-cyan-400 hover:bg-muted transition-all"
-          style={{ left: railOpen ? '208px' : '22px' }}
-          title="Toggle panel"
-        >
-          S
-        </button>
-      )}
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
