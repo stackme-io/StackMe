@@ -337,11 +337,11 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               </span>
               <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
             </div>
-            <p className="text-sub text-muted-foreground leading-relaxed mt-2.5">{finding.reason}</p>
+            <p className="text-sub text-muted-foreground leading-relaxed mt-3">{finding.reason}</p>
           </div>
           <div className="flex-1 overflow-y-auto">
 
-            <div className="px-4 py-4 flex flex-col gap-3.5">
+            <div className="px-4 py-5 flex flex-col gap-5">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-label text-muted-foreground">selector</span>
@@ -364,7 +364,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
             </div>
 
             {(dupLocations.length > 1 || finding.snippet) && (
-              <div className="border-t border-border px-4 py-4 flex flex-col gap-3.5">
+              <div className="border-t border-border px-4 py-5 flex flex-col gap-5">
                 {dupLocations.length > 1 && (
                   <div>
                     <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
