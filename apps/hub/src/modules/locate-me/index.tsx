@@ -330,7 +330,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
             <div className="flex items-start justify-between gap-3">
               <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
                 <span className={`w-2 h-2 rounded-full ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
-                {t(`kinds.${finding.kind}.label`)} +
+                {t(`kinds.${finding.kind}.label`)} ++
                 {finding.confidence === 'context' && (
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
                 )}
