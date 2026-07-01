@@ -326,39 +326,39 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
         </>
       ) : (
         <>
-          <div className="px-4 py-3 border-b border-border">
-            <div className="flex items-start justify-between gap-3">
+          <div className="px-4 py-3.5 border-b border-border flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-2.5 min-w-0">
               <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
-                <span className={`w-2 h-2 rounded-full ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
                 {t(`kinds.${finding.kind}.label`)}
                 {finding.confidence === 'context' && (
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
                 )}
               </span>
-              <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
+              <p className="text-sub text-muted-foreground leading-relaxed">{finding.reason}</p>
             </div>
-            <p className="text-sub text-muted-foreground leading-relaxed mt-6">{finding.reason}</p>
+            <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
           </div>
           <div className="flex-1 overflow-y-auto">
 
-            <div className="px-4 py-5 flex flex-col gap-5">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
+            <div className="px-4 py-4 flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
                   <span className="text-label text-muted-foreground">selector</span>
                   {finding.selector !== null && (
                     <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
                   )}
                 </div>
-                <code className="block text-code text-foreground bg-muted/40 rounded p-2.5 break-all">{selectorText(finding)}</code>
+                <code className="block text-code text-foreground bg-muted/40 rounded border-l-2 border-l-transparent px-3 py-2.5 break-all">{selectorText(finding)}</code>
               </div>
 
               {finding.prefer && (
-                <div className="rounded-r-md border-l-2 border-l-k-stable bg-muted/30 pl-3 pr-3 py-2.5">
-                  <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  <p className="text-sub text-content">{finding.prefer}</p>
+                  <p className="text-sub text-content bg-k-stable/5 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>
                 </div>
               )}
             </div>
