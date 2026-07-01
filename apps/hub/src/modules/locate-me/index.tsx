@@ -358,7 +358,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  <p className="text-sub text-content bg-k-stable/5 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>
+                  <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>
                 </div>
               )}
             </div>
