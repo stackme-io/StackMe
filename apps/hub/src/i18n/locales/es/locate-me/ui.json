@@ -106,8 +106,6 @@
     "button": "Informe",
     "open": "Abrir informe",
     "download": "Descargar HTML",
-    "clientSafe": "Modo seguro",
-    "clientSafeHint": "Oculta rutas y código - para auditar código ajeno.",
-    "note": "Un informe imprimible - ábrelo o descarga el HTML, y luego guárdalo como PDF desde tu navegador."
+    "clientSafe": "Modo seguro"
   }
 }

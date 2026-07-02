@@ -106,8 +106,6 @@
     "button": "Report",
     "open": "Open report",
     "download": "Download HTML",
-    "clientSafe": "Client-safe",
-    "clientSafeHint": "Mask file paths, hide code - for auditing someone else's code.",
-    "note": "A printable report - open it or download the HTML, then save as PDF from your browser."
+    "clientSafe": "Client-safe"
   }
 }

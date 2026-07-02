@@ -286,7 +286,6 @@ function scopedReport(report: ReportData, fileExcluded: Set<string>): ReportData
 function ReportButton({ report, fileExcluded }: { report: ReportData; fileExcluded: Set<string> }) {
   const { t } = useTranslation('locate-me')
   const [open, setOpen] = useState(false)
-  const [clientSafe, setClientSafe] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -296,10 +295,11 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
     return () => document.removeEventListener('mousedown', onDoc)
   }, [open])
 
-  const buildHtml = () => renderHtml(scopedReport(report, fileExcluded), clientSafe ? { share: true } : {})
-
+  // Open = full report (view your own audit). Download = client-safe (masked paths, no
+  // code) - the artifact you forward to someone auditing their own code.
   const openReport = () => {
-    const url = URL.createObjectURL(new Blob([buildHtml()], { type: 'text/html' }))
+    const html = renderHtml(scopedReport(report, fileExcluded))
+    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
     const a = document.createElement('a')
     a.href = url; a.target = '_blank'; a.rel = 'noopener'
     document.body.appendChild(a); a.click(); a.remove()
@@ -307,7 +307,8 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
     setOpen(false)
   }
   const downloadReport = () => {
-    const url = URL.createObjectURL(new Blob([buildHtml()], { type: 'text/html' }))
+    const html = renderHtml(scopedReport(report, fileExcluded), { share: true })
+    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
     const a = document.createElement('a')
     a.href = url; a.download = 'locateme-report.html'; a.click()
     setTimeout(() => URL.revokeObjectURL(url), 1_000)
@@ -322,14 +323,7 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
         {t('report.button')}
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-64 rounded-md border border-border bg-card shadow-lg z-50 p-1.5">
-          <label className="flex items-start gap-2 px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted cursor-pointer">
-            <input type="checkbox" checked={clientSafe} onChange={e => setClientSafe(e.target.checked)} className="mt-0.5 flex-shrink-0" />
-            <span>
-              {t('report.clientSafe')}
-              <span className="block text-muted-foreground leading-snug">{t('report.clientSafeHint')}</span>
-            </span>
-          </label>
+        <div className="absolute right-0 top-full mt-1 w-56 rounded-md border border-border bg-card shadow-lg z-50 p-1.5">
           <button onClick={openReport}
             className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
             <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↗</span>
@@ -339,8 +333,8 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
             className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
             <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↓</span>
             {t('report.download')}
+            <span className="ml-auto text-[10px] text-muted-foreground">{t('report.clientSafe')}</span>
           </button>
-          <p className="text-xs text-muted-foreground leading-snug px-2 pt-2 pb-1 mt-1 border-t border-border">{t('report.note')}</p>
         </div>
       )}
     </div>

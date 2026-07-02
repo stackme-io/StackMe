@@ -90,10 +90,8 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
     })
     .join("") || `<div class="muted">none</div>`;
   const moreFragile = fragile.length > 50 ? `<div class="muted small">…and ${fragile.length - 50} more</div>` : "";
-  const showTools = !hideSnippets && fragile.some((f) => !!f.snippet);
-  const tools = showTools
-    ? `<div class="tools"><button type="button" onclick="toggleAll(true)">Expand all</button><button type="button" onclick="toggleAll(false)">Collapse all</button></div>`
-    : "";
+  const canToggle = !hideSnippets && fragile.some((f) => !!f.snippet);
+  const tools = `<div class="tools"><button type="button" onclick="window.print()">Print / Save as PDF</button>${canToggle ? `<button type="button" onclick="toggleAll(true)">Expand all</button><button type="button" onclick="toggleAll(false)">Collapse all</button>` : ""}</div>`;
 
   const plaque = `Static audit of <b>locator shape</b> - tests were not run. ${d.summary.coverage.total} locator calls analyzed, ${d.summary.coverage.dynamic} dynamic (not classified). This is a <b>first pass, not a full-suite verdict</b>, and <b>not a project score or grade</b> - every verdict is per-locator.`;
 
@@ -133,7 +131,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;wo
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
 a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
 .tools{display:flex;gap:8px;margin:0 0 12px}.tools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}.tools button:hover{color:var(--ink)}
-@media print{body{background:#fff;color:#111;padding:0}.card{background:#fff;border-color:#ddd}.plaque,.card h2,.muted,.loc,.why{color:#555}.verdict code,code{color:#111;background:#f0f0f0}.snip{background:#f6f6f6;color:#333;border-color:#ddd}:root{--line:#ddd}}
+@media print{.tools{display:none}body{background:#fff;color:#111;padding:0}.card{background:#fff;border-color:#ddd}.plaque,.card h2,.muted,.loc,.why{color:#555}.verdict code,code{color:#111;background:#f0f0f0}.snip{background:#f6f6f6;color:#333;border-color:#ddd}:root{--line:#ddd}}
 </style></head>
 <body><div class="wrap">
   <h1>LocateMe - locator audit</h1>
@@ -142,10 +140,11 @@ a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
   <div class="verdict">${verdict(d)}</div>
   <div class="plaque">ⓘ ${plaque}</div>
 
+  ${tools}
   <div class="card"><h2>By kind</h2><div class="chips">${chips}</div></div>
   <div class="card"><h2>Hot files (by fragile)</h2>${hot}</div>
   <div class="card"><h2>Duplicates (fragile / context, ≥2)</h2>${dupes}</div>
-  <div class="card"><h2>Fragile locators (${fragile.length})</h2>${tools}${fragileRows}${moreFragile}</div>
+  <div class="card"><h2>Fragile locators (${fragile.length})</h2>${fragileRows}${moreFragile}</div>
 
   <div class="plaque" style="margin-top:22px">Before you act or send this - it's <b>locator shape only</b>, not a full verdict and not a score. Open the top findings and confirm them in context first.</div>
   <footer>Made with <b>LocateMe</b> · <a href="${APP_URL}">run your own audit</a> · <a href="${REPO_URL}">source</a> - static, local, open-source. Shape only; verify before acting.</footer>
