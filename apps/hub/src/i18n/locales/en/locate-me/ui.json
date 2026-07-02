@@ -108,6 +108,6 @@
     "download": "Download HTML",
     "clientSafe": "Client-safe",
     "clientSafeHint": "Mask file paths, hide code - for auditing someone else's code.",
-    "note": "Explicit export of your findings - the opposite of Share. A printable HTML page; use your browser to save as PDF."
+    "note": "A printable report - open it or download the HTML, then save as PDF from your browser."
   }
 }

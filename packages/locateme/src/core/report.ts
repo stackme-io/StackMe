@@ -16,30 +16,13 @@ function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-// One-line verdict - PER FINDING, never a project grade/score.
+// One-line verdict - PER FINDING, never a project grade/score. Duplicate detail lives
+// in the Duplicates card, not in the headline.
 function verdict(d: ReportData): string {
   const fragile = d.summary.byKind.fragile;
   if (fragile === 0) return "No fragile locators found (by form). Nothing to harden right now.";
   const hotFiles = new Set(d.findings.filter((f) => f.kind === "fragile").map((f) => f.file)).size;
-  let line = `${fragile} fragile locator${fragile === 1 ? "" : "s"} across ${hotFiles} of ${d.summary.files} files.`;
-  const top = topDuplicate(d.findings);
-  if (top) line += ` Pattern <code>${esc(top.selector)}</code> copied in ${top.count} places - fix one, close ${top.count}.`;
-  return line;
-}
-
-function topDuplicate(findings: Finding[]): { selector: string; count: number } | null {
-  const map = new Map<string, number>();
-  for (const f of findings) {
-    if (f.selector === null || f.kind === "stable") continue;
-    const key = `${f.method} ${f.selector}`;
-    map.set(key, (map.get(key) ?? 0) + 1);
-  }
-  let best: { selector: string; count: number } | null = null;
-  for (const [key, count] of map) {
-    if (count < 2) continue;
-    if (!best || count > best.count) best = { selector: key.slice(key.indexOf(" ") + 1), count };
-  }
-  return best;
+  return `${fragile} fragile locator${fragile === 1 ? "" : "s"} across ${hotFiles} of ${d.summary.files} files.`;
 }
 
 function hotFiles(findings: Finding[]) {
@@ -73,7 +56,8 @@ export interface RenderOptions {
   hideSnippets?: boolean; // omit the expandable source snippets
 }
 
-const HOMEPAGE = "https://github.com/stackme-io/StackMe";
+const APP_URL = "https://stackme-app.vercel.app/locate-me"; // where you run your own audit
+const REPO_URL = "https://github.com/stackme-io/StackMe";   // source
 
 export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
   const maskPaths = opts.maskPaths ?? opts.share ?? false;
@@ -102,10 +86,14 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
     .map((f) => {
       const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(showPath(f.file))}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
       if (hideSnippets || !f.snippet) return `<div class="finding">${head}</div>`;
-      return `<details class="finding"><summary>${head}</summary><pre class="snip">${esc(f.snippet)}</pre></details>`;
+      return `<details class="finding" open><summary>${head}</summary><pre class="snip">${esc(f.snippet)}</pre></details>`;
     })
     .join("") || `<div class="muted">none</div>`;
   const moreFragile = fragile.length > 50 ? `<div class="muted small">…and ${fragile.length - 50} more</div>` : "";
+  const showTools = !hideSnippets && fragile.some((f) => !!f.snippet);
+  const tools = showTools
+    ? `<div class="tools"><button type="button" onclick="toggleAll(true)">Expand all</button><button type="button" onclick="toggleAll(false)">Collapse all</button></div>`
+    : "";
 
   const plaque = `Static audit of <b>locator shape</b> - tests were not run. ${d.summary.coverage.total} locator calls analyzed, ${d.summary.coverage.dynamic} dynamic (not classified). This is a <b>first pass, not a full-suite verdict</b>, and <b>not a project score or grade</b> - every verdict is per-locator.`;
 
@@ -144,6 +132,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;wo
 .loc{color:var(--muted);font-size:12px;white-space:nowrap}
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
 a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
+.tools{display:flex;gap:8px;margin:0 0 12px}.tools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}.tools button:hover{color:var(--ink)}
 @media print{body{background:#fff;color:#111;padding:0}.card{background:#fff;border-color:#ddd}.plaque,.card h2,.muted,.loc,.why{color:#555}.verdict code,code{color:#111;background:#f0f0f0}.snip{background:#f6f6f6;color:#333;border-color:#ddd}:root{--line:#ddd}}
 </style></head>
 <body><div class="wrap">
@@ -156,9 +145,9 @@ a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
   <div class="card"><h2>By kind</h2><div class="chips">${chips}</div></div>
   <div class="card"><h2>Hot files (by fragile)</h2>${hot}</div>
   <div class="card"><h2>Duplicates (fragile / context, ≥2)</h2>${dupes}</div>
-  <div class="card"><h2>Fragile locators (${fragile.length})</h2>${fragileRows}${moreFragile}</div>
+  <div class="card"><h2>Fragile locators (${fragile.length})</h2>${tools}${fragileRows}${moreFragile}</div>
 
   <div class="plaque" style="margin-top:22px">Before you act or send this - it's <b>locator shape only</b>, not a full verdict and not a score. Open the top findings and confirm them in context first.</div>
-  <footer>Made with <b>LocateMe</b>${HOMEPAGE ? ` · <a href="${HOMEPAGE}">run your own audit</a>` : ""} - static, local, open-source. Shape only; verify before acting.</footer>
-</div></body></html>`;
+  <footer>Made with <b>LocateMe</b> · <a href="${APP_URL}">run your own audit</a> · <a href="${REPO_URL}">source</a> - static, local, open-source. Shape only; verify before acting.</footer>
+</div><script>function toggleAll(o){document.querySelectorAll('details.finding').forEach(function(d){d.open=o})}</script></body></html>`;
 }

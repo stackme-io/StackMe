@@ -108,6 +108,6 @@
     "download": "Descargar HTML",
     "clientSafe": "Modo seguro",
     "clientSafeHint": "Oculta rutas y código - para auditar código ajeno.",
-    "note": "Exportación explícita de tus hallazgos - lo contrario de Compartir. Una página HTML imprimible; usa tu navegador para guardar como PDF."
+    "note": "Un informe imprimible - ábrelo o descarga el HTML, y luego guárdalo como PDF desde tu navegador."
   }
 }
