@@ -32,7 +32,9 @@
   "duplicated": "Duplicated selectors ({{count}})",
   "fragileLocators": "Fragile locators ({{count}})",
   "noFragile": "No fragile locators in this pass. Good sign - but a first pass, not a full verdict (tests not run).",
-  "honesty": "LocateMe reads test code statically and groups locators by shape. It explains why, never auto-fixes, and gives no single score. First pass, not a full verdict - tests are not executed.",
+  "honesty": "LocateMe reads test code statically and groups locators by shape. It explains why, never auto-fixes, and gives no single score. First pass, not a full verdict - when unsure it stays quiet rather than flag good code.",
+  "provenNote": "Only what the code can prove - a clean row isn't a guarantee.",
+  "precisionTip": "Static and precision-first: fragile only when the code proves it, quiet when unsure.",
   "headlineFragile": "{{locators}} across {{files}}",
   "headlineClean": "No fragile locators in {{files}}",
   "firstPass": "first pass",
@@ -99,6 +101,7 @@
   "about": {
     "p1": "LocateMe is a static locator-fragility audit for Playwright / TypeScript test suites. It reads your test code only - no runtime, no test execution - and groups locators by shape: fragile, stable, context, or dynamic.",
     "p2": "It surfaces why a locator may be brittle and where the same selector repeats, so you can fix one place and close many. It never auto-rewrites your tests and gives no single quality score - just facts you can act on.",
-    "p3": "Everything runs in your browser. Your code never leaves the page. Open source, MIT."
+    "p3": "Everything runs in your browser. Your code never leaves the page. Open source, MIT.",
+    "p4": "How it judges: LocateMe sees how a locator is written, not your live app. It calls a locator fragile only when the code alone proves it - a positional path, an auto-generated class or id. When a signal is ambiguous it stays quiet instead of raising a false alarm you cannot dismiss. So a clean report means \"nothing we can prove is wrong,\" not \"nothing is wrong.\" Precision over noise."
   }
 }

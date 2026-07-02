@@ -30,6 +30,7 @@ test('profile', async ({ page }) => {
   await page.getByTestId('save-profile').click()
   await page.getByPlaceholder('Search settings').fill('theme')
   await page.locator('.sidebar .item.active').click()
+  await page.locator('#account-settings').click()
   await page.getByTitle('Sign out').click()
 })
 `
@@ -50,6 +51,7 @@ test('payment', async ({ page }) => {
   await page.locator('div.css-1a2b3c').click()
   await page.getByLabel('Card number').fill('4242')
   await page.locator('//nav/a[5]').click()
+  await page.locator('#mui-42').click()
   await page.locator(rowSelector).click()
   await page.getByText('Order total').isVisible()
 })
@@ -716,13 +718,17 @@ export default function LocateMePage() {
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
-                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex-1"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
+                    <span title={t('precisionTip')} className="flex-shrink-0 flex items-center justify-center w-4 h-4 rounded-full border border-border text-faint text-[10px] cursor-help">?</span>
+                  </div>
 
                   {rows.length === 0 ? (
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
                       <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
+                      <p className="text-meta text-faint flex-shrink-0 -mb-1">{t('provenNote')}</p>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
@@ -747,6 +753,7 @@ export default function LocateMePage() {
           <div className="max-w-2xl flex flex-col gap-3 text-body text-content">
             <p>{t('about.p1')}</p>
             <p>{t('about.p2')}</p>
+            <p>{t('about.p4')}</p>
             <p className="text-sub text-content">{t('about.p3')}</p>
           </div>
         </div>

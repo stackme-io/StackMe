@@ -32,7 +32,9 @@
   "duplicated": "Selectores duplicados ({{count}})",
   "fragileLocators": "Locators frágiles ({{count}})",
   "noFragile": "Ningún locator frágil en esta pasada. Buena señal - pero es una primera pasada, no un veredicto (tests no ejecutados).",
-  "honesty": "LocateMe lee el código de tests de forma estática y agrupa locators por forma. Explica el porqué, nunca corrige solo, y no da una puntuación única. Primera pasada, no un veredicto completo - los tests no se ejecutan.",
+  "honesty": "LocateMe lee el código de tests de forma estática y agrupa locators por forma. Explica el porqué, nunca corrige solo, y no da una puntuación única. Primera pasada, no un veredicto completo - ante la duda calla en vez de marcar código correcto.",
+  "provenNote": "Solo lo que el código puede probar - una fila limpia no es garantía.",
+  "precisionTip": "Estático y de precisión primero: frágil solo cuando el código lo prueba, en silencio ante la duda.",
   "headlineFragile": "{{locators}} en {{files}}",
   "headlineClean": "Ningún locator frágil en {{files}}",
   "firstPass": "primera pasada",
@@ -99,6 +101,7 @@
   "about": {
     "p1": "LocateMe es una auditoría estática de fragilidad de locators para suites de tests Playwright / TypeScript. Lee solo tu código de tests - sin runtime, sin ejecución - y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
     "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que arregles un sitio y cierres muchos. Nunca reescribe tus tests y no da una puntuación única - solo hechos sobre los que actuar.",
-    "p3": "Todo se ejecuta en tu navegador. Tu código nunca sale de la página. Código abierto, MIT."
+    "p3": "Todo se ejecuta en tu navegador. Tu código nunca sale de la página. Código abierto, MIT.",
+    "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil solo cuando el código por sí solo lo demuestra - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\". Precisión sobre ruido."
   }
 }
