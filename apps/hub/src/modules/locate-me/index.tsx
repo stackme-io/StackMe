@@ -168,7 +168,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
                     )}
                   </span>
                   <span className="text-sub flex-1 truncate font-mono">{file}</span>
-                  {frag > 0 && <span className="text-meta text-k-fragile tabular-nums flex-shrink-0">{frag}</span>}
+                  {frag > 0 && <span title={t('nLocators', { count: frag })} className="text-meta text-k-fragile tabular-nums flex-shrink-0">{frag}</span>}
                 </button>
               )
             })}
@@ -191,7 +191,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
   )
 }
 
-function Headline({ report, detection, source }: { report: ReportData; detection: Detection | null; source: string | null }) {
+function Headline({ detection, source, calls, files }: { detection: Detection | null; source: string | null; calls: number; files: number }) {
   const { t } = useTranslation('locate-me')
   const stack: string[] = []
   if (detection && detection.language !== 'unknown') stack.push(detection.language)
@@ -200,7 +200,7 @@ function Headline({ report, detection, source }: { report: ReportData; detection
   return (
     <div className="flex flex-col gap-1.5">
       <h2 className="text-title text-foreground">
-        {t('headlineCount', { calls: t('nCalls', { count: report.summary.locatorCalls }), files: t('nFiles', { count: report.summary.files }) })}
+        {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
       </h2>
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
         {source && <span className="text-content">{t('analyzedLabel')} {source}</span>}
@@ -573,7 +573,13 @@ export default function LocateMePage() {
   const hot = buildHotRank(findings)
   const fileList = Array.from(new Set(findings.map(f => f.file)))
   const rows = report ? sortFindings(findings.filter(f => filterKinds.has(f.kind) && !fileExcluded.has(f.file)), sortMode, dup, hot) : []
-  const totalCalls = findings.length
+  // Variant B: the headline count, ratio bar and "Showing X of Y" reflect the included
+  // (checked) files; the "Your file" source line stays fixed. Kind chips are a view filter.
+  const visibleFindings = findings.filter(f => !fileExcluded.has(f.file))
+  const visByKind: Record<Kind, number> = { fragile: 0, stable: 0, context: 0, dynamic: 0 }
+  for (const f of visibleFindings) visByKind[f.kind]++
+  const visCalls = visibleFindings.length
+  const visFiles = fileList.filter(f => !fileExcluded.has(f)).length
   const selDupLocations = selected && selected.selector !== null && selected.kind !== 'stable'
     ? findings.filter(f => dupKey(f) === dupKey(selected)).map(f => `${f.file}:${f.line}`)
     : []
@@ -714,17 +720,17 @@ export default function LocateMePage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex-shrink-0"><Headline report={report} detection={detection} source={source} /></div>
+                  <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles} /></div>
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
-                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
+                  <div className="flex-shrink-0"><RatioBar byKind={visByKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
-                      <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
+                      <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
