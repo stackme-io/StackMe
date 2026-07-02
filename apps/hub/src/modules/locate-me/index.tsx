@@ -152,7 +152,10 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
     <div className="flex flex-col">
       {multi && (
         <div className="px-3 pt-5 pb-3 border-b border-border">
-          <p className="text-label text-muted-foreground mb-4">{t('filesTitle')}</p>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-label text-muted-foreground">{t('filesTitle')}</p>
+            <span className="text-meta text-faint pr-2">{t('fragileWord')}</span>
+          </div>
           <div className="flex flex-col gap-0.5">
             {fileList.map(file => {
               const on = !fileExcluded.has(file)
@@ -168,7 +171,12 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
                     )}
                   </span>
                   <span className="text-sub flex-1 truncate font-mono">{file}</span>
-                  {frag > 0 && <span title={t('nLocators', { count: frag })} className="text-meta text-k-fragile tabular-nums flex-shrink-0">{frag}</span>}
+                  {frag > 0 && (
+                    <span title={t('nLocators', { count: frag })} className="flex items-center gap-1 flex-shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-k-fragile flex-shrink-0" />
+                      <span className="text-meta text-muted-foreground tabular-nums">{frag}</span>
+                    </span>
+                  )}
                 </button>
               )
             })}
