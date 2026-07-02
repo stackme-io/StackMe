@@ -152,7 +152,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
     <div className="flex flex-col">
       {multi && (
         <div className="px-3 pt-5 pb-3 border-b border-border">
-          <p className="text-label text-muted-foreground mb-3.5">{t('filesTitle')}</p>
+          <p className="text-label text-muted-foreground mb-4">{t('filesTitle')}</p>
           <div className="flex flex-col gap-0.5">
             {fileList.map(file => {
               const on = !fileExcluded.has(file)
@@ -176,7 +176,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
         </div>
       )}
       <div className="px-3 pt-5 pb-3">
-        <p className="text-label text-muted-foreground mb-3.5">{t('sortBy')}</p>
+        <p className="text-label text-muted-foreground mb-5">{t('sortBy')}</p>
         <div className="flex flex-col gap-1.5">
           {sorts.map(([m, label, hint]) => (
             <button key={m} onClick={() => onSort(m)}
