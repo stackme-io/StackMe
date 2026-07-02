@@ -300,7 +300,9 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
 
   const openReport = () => {
     const url = URL.createObjectURL(new Blob([buildHtml()], { type: 'text/html' }))
-    window.open(url, '_blank', 'noopener')
+    const a = document.createElement('a')
+    a.href = url; a.target = '_blank'; a.rel = 'noopener'
+    document.body.appendChild(a); a.click(); a.remove()
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
     setOpen(false)
   }
