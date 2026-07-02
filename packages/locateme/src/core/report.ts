@@ -131,7 +131,22 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;wo
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
 a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
 .tools{display:flex;gap:8px;margin:0 0 12px}.tools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}.tools button:hover{color:var(--ink)}
-@media print{.tools{display:none}body{background:#fff;color:#111;padding:0}.card{background:#fff;border-color:#ddd}.plaque,.card h2,.muted,.loc,.why{color:#555}.verdict code,code{color:#111;background:#f0f0f0}.snip{background:#f6f6f6;color:#333;border-color:#ddd}:root{--line:#ddd}}
+@page{margin:1.4cm}
+@media print{
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tools{display:none}
+body{background:#fff;color:#111;padding:0;font-size:12px}
+.wrap{max-width:none}
+h1{font-size:16px}
+.verdict{font-size:17px;margin:14px 0 6px}
+.plaque{color:#555;border-color:#ccc}
+.card{background:#fff;border-color:#ddd;break-inside:avoid;page-break-inside:avoid;margin:10px 0}
+.card h2,.muted,.loc,.why{color:#555}
+.finding,.row,.chip{break-inside:avoid;page-break-inside:avoid}
+.verdict code,code{color:#111;background:#f0f0f0}
+.snip{background:#f6f6f6;color:#333;border-color:#ddd}
+:root{--line:#ddd}
+}
 </style></head>
 <body><div class="wrap">
   <h1>LocateMe - locator audit</h1>
