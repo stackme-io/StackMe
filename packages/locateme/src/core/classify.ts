@@ -1,11 +1,16 @@
 // Fragility classification - browser-safe, pure functions. The 80%-risk core.
 import type { Kind, Confidence } from "./types.js";
 
-// First teaching slice: high-confidence string-based sub-causes carry a concrete
-// "prefer" upgrade along the prefer-ladder (Role -> Label -> Text for assertions ->
-// TestId -> raw CSS/XPath). Verdict buckets speak firmly; context buckets stay
-// conditional ("first pass"). Good locators get no prefer note - a quiet linter is
-// a trusted one. getByRole-without-name and richer args are a later slice.
+// Teaching sub-causes carry a concrete "prefer" upgrade along the prefer-ladder
+// (Role -> Label -> Text for assertions -> TestId -> raw CSS/XPath). Verdict buckets
+// speak firmly; context buckets stay conditional ("first pass"). Good locators get no
+// prefer note - a quiet linter is a trusted one.
+//
+// Precision-first: where a signal depends on things we cannot see (DOM, author intent)
+// we only give a firm "fragile" verdict on signatures that are unmistakable from the
+// string alone. When unsure we stay stable/silent rather than risk a false "fragile"
+// that a read-only audit gives no way to dismiss. (getByRole-without-name was dropped
+// as noise on the recommended locator; framework-generated id detection added instead.)
 export interface Classification {
   kind: Kind;
   reason: string;
@@ -20,6 +25,28 @@ const CONTEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", 
 export function isXpath(s: string): boolean {
   return s.startsWith("//") || s.startsWith("(//") || s.startsWith(".//") ||
     s.startsWith("(.//") || s.startsWith("xpath=");
+}
+
+// Known framework-generated id signatures. These are confident from the string alone
+// - they do not occur in hand-written ids. Precision-first: we downgrade only on these
+// unmistakable patterns and otherwise leave the id stable, because a false "fragile" on
+// a hand-written id cannot be dismissed from an audit. A hand-written id is fine to miss;
+// a hand-written id wrongly flagged is not.
+const GENERATED_ID_SIGNATURES: { re: RegExp; lib: string }[] = [
+  { re: /:r[0-9a-z]+:/i,           lib: "React useId" },       // :r0:, :r3:, :rf:
+  { re: /^radix-/i,                lib: "Radix UI" },
+  { re: /^headlessui-/i,           lib: "Headless UI" },
+  { re: /^react-aria-?\d/i,        lib: "React Aria" },
+  { re: /^ember\d/i,               lib: "Ember" },             // ember1043
+  { re: /^mui-\d/i,                lib: "MUI" },               // mui-42
+  { re: /^(mat|cdk)-[a-z-]*\d/i,   lib: "Angular Material" },  // mat-input-0, cdk-overlay-3
+  { re: /^(chakra|mantine)-/i,     lib: "Chakra / Mantine" },
+];
+
+// Returns the library name if the id looks framework-generated, else null.
+function detectGeneratedId(id: string): string | null {
+  for (const { re, lib } of GENERATED_ID_SIGNATURES) if (re.test(id)) return lib;
+  return null;
 }
 
 // Not every xpath is fragile: positional/structural = fragile, but xpath anchored
@@ -46,6 +73,15 @@ function classifyXpath(raw: string): Classification {
     reason: "Anchored on a test attribute.",
     prefer: "Solid. getByTestId('...') reads more idiomatically than raw XPath.",
   };
+  const xpIdMatch = s.match(/@id\s*=\s*['"]([^'"]+)['"]/i);
+  if (xpIdMatch) {
+    const lib = detectGeneratedId(xpIdMatch[1]);
+    if (lib) return {
+      kind: "fragile", confidence: "verdict", subcause: "xpath-id-generated",
+      reason: `Framework-generated id (${lib}) - auto-generated ids change between builds or re-renders, so the locator breaks when the id regenerates.`,
+      prefer: "Anchor on a data-testid, or getByRole/getByLabel, instead of a generated id.",
+    };
+  }
   if (/@(id|name)\s*=/i.test(s)) return {
     kind: "stable", confidence: "verdict", subcause: "xpath-id",
     reason: "Anchored on a stable id/name attribute.",
@@ -79,10 +115,18 @@ function classifyCss(s: string): Classification {
     kind: "stable", confidence: "verdict", subcause: "css-testattr",
     reason: "Test attribute selector.",
   };
-  if (/^#[\w-]+$/.test(s)) return {
-    kind: "stable", confidence: "verdict", subcause: "css-id",
-    reason: "Single id selector.",
-  };
+  if (/^#[\w-]+$/.test(s)) {
+    const lib = detectGeneratedId(s.slice(1));
+    if (lib) return {
+      kind: "fragile", confidence: "verdict", subcause: "css-id-generated",
+      reason: `Framework-generated id (${lib}) - auto-generated ids change between builds or re-renders, so the locator breaks when the id regenerates.`,
+      prefer: "Prefer a data-testid, or getByRole/getByLabel - a stable, intentional hook rather than a generated id.",
+    };
+    return {
+      kind: "stable", confidence: "verdict", subcause: "css-id",
+      reason: "Single id selector.",
+    };
+  }
   return {
     kind: "context", confidence: "context", subcause: "css-class",
     reason: "Class/attribute selector - stability depends on your project.",
