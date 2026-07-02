@@ -33,8 +33,6 @@
   "fragileLocators": "Locators frágiles ({{count}})",
   "noFragile": "Ningún locator frágil en esta pasada. Buena señal - pero es una primera pasada, no un veredicto (tests no ejecutados).",
   "honesty": "LocateMe lee el código de tests de forma estática y agrupa locators por forma. Explica el porqué, nunca corrige solo, y no da una puntuación única. Primera pasada, no un veredicto completo - ante la duda calla en vez de marcar código correcto.",
-  "provenNote": "Solo lo que el código puede probar - una fila limpia no es garantía.",
-  "precisionTip": "Estático y de precisión primero: frágil solo cuando el código lo prueba, en silencio ante la duda.",
   "headlineFragile": "{{locators}} en {{files}}",
   "headlineClean": "Ningún locator frágil en {{files}}",
   "firstPass": "primera pasada",

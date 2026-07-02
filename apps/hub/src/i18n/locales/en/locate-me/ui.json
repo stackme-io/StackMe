@@ -33,8 +33,6 @@
   "fragileLocators": "Fragile locators ({{count}})",
   "noFragile": "No fragile locators in this pass. Good sign - but a first pass, not a full verdict (tests not run).",
   "honesty": "LocateMe reads test code statically and groups locators by shape. It explains why, never auto-fixes, and gives no single score. First pass, not a full verdict - when unsure it stays quiet rather than flag good code.",
-  "provenNote": "Only what the code can prove - a clean row isn't a guarantee.",
-  "precisionTip": "Static and precision-first: fragile only when the code proves it, quiet when unsure.",
   "headlineFragile": "{{locators}} across {{files}}",
   "headlineClean": "No fragile locators in {{files}}",
   "firstPass": "first pass",

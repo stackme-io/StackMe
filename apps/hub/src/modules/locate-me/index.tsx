@@ -184,7 +184,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
         </div>
       )}
       <div className="px-3 pt-5 pb-3">
-        <p className="text-label text-muted-foreground mb-5">{t('sortBy')}</p>
+        <div className="mb-5"><p className="text-label text-muted-foreground">{t('sortBy')}</p></div>
         <div className="flex flex-col gap-1.5">
           {sorts.map(([m, label, hint]) => (
             <button key={m} onClick={() => onSort(m)}
