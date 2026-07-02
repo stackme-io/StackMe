@@ -5,7 +5,8 @@ import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
-import { Crosshair, Route, Info, ArrowRight, ChevronRight } from 'lucide-react'
+import { renderHtml } from '@locateme/core/report'
+import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
@@ -254,6 +255,92 @@ function RatioBar({ byKind, filterKinds, onToggle }: {
           )
         })}
       </div>
+    </div>
+  )
+}
+
+// Report reflects the file scope (checked files), not the kind filter. Rebuild a
+// scoped ReportData so the report's own sections/counts match what the user kept.
+function scopedReport(report: ReportData, fileExcluded: Set<string>): ReportData {
+  if (fileExcluded.size === 0) return report
+  const findings = report.findings.filter(f => !fileExcluded.has(f.file))
+  const byKind: Record<Kind, number> = { fragile: 0, stable: 0, context: 0, dynamic: 0 }
+  for (const f of findings) byKind[f.kind]++
+  const dynamic = byKind.dynamic
+  const files = new Set(findings.map(f => f.file)).size
+  return {
+    ...report,
+    summary: {
+      ...report.summary,
+      files,
+      locatorCalls: findings.length,
+      byKind,
+      coverage: { total: findings.length, classified: findings.length - dynamic, dynamic },
+    },
+    findings,
+  }
+}
+
+// Explicit data export - the deliberate opposite of Share. Opens a self-contained,
+// printable HTML report (save as PDF via the browser). Client-safe masks paths + code.
+function ReportButton({ report, fileExcluded }: { report: ReportData; fileExcluded: Set<string> }) {
+  const { t } = useTranslation('locate-me')
+  const [open, setOpen] = useState(false)
+  const [clientSafe, setClientSafe] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDoc = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [open])
+
+  const buildHtml = () => renderHtml(scopedReport(report, fileExcluded), clientSafe ? { share: true } : {})
+
+  const openReport = () => {
+    const url = URL.createObjectURL(new Blob([buildHtml()], { type: 'text/html' }))
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    setOpen(false)
+  }
+  const downloadReport = () => {
+    const url = URL.createObjectURL(new Blob([buildHtml()], { type: 'text/html' }))
+    const a = document.createElement('a')
+    a.href = url; a.download = 'locateme-report.html'; a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1_000)
+    setOpen(false)
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button onClick={() => setOpen(o => !o)} title={t('report.button')}
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors">
+        <FileText className="w-3.5 h-3.5" />
+        {t('report.button')}
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-64 rounded-md border border-border bg-card shadow-lg z-50 p-1.5">
+          <label className="flex items-start gap-2 px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted cursor-pointer">
+            <input type="checkbox" checked={clientSafe} onChange={e => setClientSafe(e.target.checked)} className="mt-0.5 flex-shrink-0" />
+            <span>
+              {t('report.clientSafe')}
+              <span className="block text-muted-foreground leading-snug">{t('report.clientSafeHint')}</span>
+            </span>
+          </label>
+          <button onClick={openReport}
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+            <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↗</span>
+            {t('report.open')}
+          </button>
+          <button onClick={downloadReport}
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+            <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↓</span>
+            {t('report.download')}
+          </button>
+          <p className="text-xs text-muted-foreground leading-snug px-2 pt-2 pb-1 mt-1 border-t border-border">{t('report.note')}</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -717,6 +804,7 @@ export default function LocateMePage() {
                   {t('trySample')}
                 </button>
                 {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+                {hasLocators && <div className="ml-auto"><ReportButton report={report} fileExcluded={fileExcluded} /></div>}
               </div>
 
               {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}

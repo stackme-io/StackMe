@@ -101,5 +101,13 @@
     "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que arregles un sitio y cierres muchos. Nunca reescribe tus tests y no da una puntuación única - solo hechos sobre los que actuar.",
     "p3": "Todo se ejecuta en tu navegador. Tu código nunca sale de la página. Código abierto, MIT.",
     "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil solo cuando el código por sí solo lo demuestra - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\". Precisión sobre ruido."
+  },
+  "report": {
+    "button": "Informe",
+    "open": "Abrir informe",
+    "download": "Descargar HTML",
+    "clientSafe": "Modo seguro",
+    "clientSafeHint": "Oculta rutas y código - para auditar código ajeno.",
+    "note": "Exportación explícita de tus hallazgos - lo contrario de Compartir. Una página HTML imprimible; usa tu navegador para guardar como PDF."
   }
 }
