@@ -152,7 +152,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
     <div className="flex flex-col">
       {multi && (
         <div className="px-3 pt-5 pb-3 border-b border-border">
-          <p className="text-label text-muted-foreground mb-2">{t('filesTitle')}</p>
+          <p className="text-label text-muted-foreground mb-3.5">{t('filesTitle')}</p>
           <div className="flex flex-col gap-0.5">
             {fileList.map(file => {
               const on = !fileExcluded.has(file)
@@ -160,10 +160,10 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
               return (
                 <button key={file} onClick={() => onToggleFile(file)} title={file}
                   className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
-                  <span className={`w-3.5 h-3.5 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? 'bg-primary border-transparent' : 'border-border'}`}>
+                  <span className={`w-3.5 h-3.5 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? 'border-muted-foreground/50 bg-muted-foreground/15 text-foreground' : 'border-border text-transparent'}`}>
                     {on && (
                       <svg width="9" height="9" viewBox="0 0 8 8" fill="none">
-                        <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
+                        <path d="M1.5 4L3 5.5L6.5 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </span>
@@ -176,7 +176,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
         </div>
       )}
       <div className="px-3 pt-5 pb-3">
-        <p className="text-label text-muted-foreground mb-3">{t('sortBy')}</p>
+        <p className="text-label text-muted-foreground mb-3.5">{t('sortBy')}</p>
         <div className="flex flex-col gap-1.5">
           {sorts.map(([m, label, hint]) => (
             <button key={m} onClick={() => onSort(m)}
@@ -718,17 +718,13 @@ export default function LocateMePage() {
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="flex-1"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
-                    <span title={t('precisionTip')} className="flex-shrink-0 flex items-center justify-center w-4 h-4 rounded-full border border-border text-faint text-[10px] cursor-help">?</span>
-                  </div>
+                  <div className="flex-shrink-0"><RatioBar byKind={report.summary.byKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
                       <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: totalCalls })}</p>
-                      <p className="text-meta text-faint flex-shrink-0 -mb-1">{t('provenNote')}</p>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
