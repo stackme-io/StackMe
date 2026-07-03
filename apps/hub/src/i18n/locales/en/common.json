@@ -90,7 +90,7 @@
     "sending": "Sending...",
     "sendToAll": "Send to all",
     "emailLabel": "Email",
-    "emailNote": "We do not store or share your email address.",
+    "emailNote": "We do not store or share your email address. It comes straight from your sign-in and only you can see it here.",
     "nicknameLabel": "Nickname",
     "nicknamePlaceholder": "e.g. data_wizard",
     "nicknameNote": "Displayed under your actions on the site. You can change it anytime.",

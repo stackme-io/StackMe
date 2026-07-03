@@ -170,8 +170,11 @@ h2 {
     font-size: 20px;
   }
 }
-p {
-  margin: 0;
+/* In @layer base so Tailwind margin utilities (mb-*, mt-*) win over this reset on <p>. */
+@layer base {
+  p {
+    margin: 0;
+  }
 }
 
 code,

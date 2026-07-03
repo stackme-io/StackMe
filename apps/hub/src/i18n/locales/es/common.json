@@ -90,7 +90,7 @@
     "sending": "Enviando...",
     "sendToAll": "Enviar a todos",
     "emailLabel": "Email",
-    "emailNote": "No almacenamos ni compartimos tu dirección de correo.",
+    "emailNote": "No almacenamos ni compartimos tu dirección de correo. Viene directamente de tu inicio de sesión y solo tú puedes verla aquí.",
     "nicknameLabel": "Apodo",
     "nicknamePlaceholder": "ej. data_wizard",
     "nicknameNote": "Se muestra bajo tus acciones en el sitio. Puedes cambiarlo en cualquier momento.",

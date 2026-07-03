@@ -3,7 +3,7 @@
 import type { SourceFileInput } from './types.js'
 
 export interface Detection {
-  language: 'TypeScript' | 'JavaScript' | 'unknown'
+  language: 'TypeScript' | 'JavaScript' | 'TypeScript + JavaScript' | 'unknown'
   framework: 'Playwright' | 'Cypress' | 'Selenium' | 'unknown'
 }
 
@@ -14,7 +14,8 @@ export function detectStack(files: SourceFileInput[]): Detection {
     if (/\.tsx?$/.test(f.path)) ts = true
     else if (/\.jsx?$/.test(f.path)) js = true
   }
-  const language: Detection['language'] = ts ? 'TypeScript' : js ? 'JavaScript' : 'unknown'
+  const language: Detection['language'] =
+    ts && js ? 'TypeScript + JavaScript' : ts ? 'TypeScript' : js ? 'JavaScript' : 'unknown'
 
   let pw = 0
   let cy = 0
