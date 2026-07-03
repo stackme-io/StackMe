@@ -148,12 +148,25 @@ export default function MarketMePage() {
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
                         <h3 className="text-lg font-semibold text-foreground">{flagship.name}</h3>
                       </div>
-                      <button
-                        onClick={() => handleOpen(flagship.id)}
-                        className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
-                      >
-                        {tc('marketplace.open')}
-                      </button>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => handleOpen(flagship.id)}
+                          className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
+                        >
+                          {tc('marketplace.open')}
+                        </button>
+                        <button
+                          onClick={() => isActive ? handleDeactivate(flagship.id) : handleActivate(flagship.id)}
+                          disabled={isLoading || loadingModules}
+                          className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
+                            isActive
+                              ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
+                              : addButtonColors[flagship.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          }`}
+                        >
+                          {isLoading ? '...' : isActive ? tc('marketplace.remove') : isSignedIn ? tc('marketplace.add') : tc('marketplace.signInToAdd')}
+                        </button>
+                      </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1 mb-5">{t('cards.locateSubtitle')}</p>
 
@@ -169,24 +182,6 @@ export default function MarketMePage() {
                           <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(bk)}</p>
                         </div>
                       ))}
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-6">
-                      <button
-                        onClick={() => isActive ? handleDeactivate(flagship.id) : handleActivate(flagship.id)}
-                        disabled={isLoading || loadingModules}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
-                          isActive
-                            ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                            : addButtonColors[flagship.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                        }`}
-                      >
-                        {isLoading ? '...' : isActive
-                          ? tc('marketplace.remove')
-                          : isSignedIn
-                            ? tc('marketplace.add')
-                            : tc('marketplace.signInToAdd')}
-                      </button>
                     </div>
                   </div>
                 )
