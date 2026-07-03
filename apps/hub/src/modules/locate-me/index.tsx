@@ -67,7 +67,7 @@ test('confirm', async ({ page }) => {
 
 const SAMPLE_FILES: SourceFileInput[] = [
   { path: 'login.spec.ts', text: SAMPLE_LOGIN },
-  { path: 'checkout.spec.ts', text: SAMPLE_CHECKOUT },
+  { path: 'checkout.spec.js', text: SAMPLE_CHECKOUT },
 ]
 
 const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
