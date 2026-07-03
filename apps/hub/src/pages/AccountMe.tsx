@@ -140,7 +140,7 @@ export default function AccountMePage() {
   const isAdmin  = ADMIN_USER_ID && userId === ADMIN_USER_ID
 
   return (
-    <div className="max-w-lg mx-auto px-6 py-8 flex flex-col gap-8">
+    <div className="max-w-xl mx-auto px-6 py-8 flex flex-col gap-8">
 
       <div className="flex items-center gap-4">
         {avatarUrl ? (
