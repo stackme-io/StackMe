@@ -46,5 +46,24 @@
   "block6accent": "There should be more good in the world - and we believe that.",
 
   "linkGithub": "GitHub",
-  "linkSite": "stackme-app.vercel.app"
+  "linkSite": "stackme-app.vercel.app",
+
+  "cards": {
+    "freeLine": "Free - no sign-up, no paywall, nothing to upgrade.",
+    "tagQA": "QA",
+    "tagBeta": "Beta",
+    "locateSubtitle": "Static locator audit for Playwright & Cypress",
+    "locateNeedLabel": "You need this if",
+    "locateNeed": "you have to judge a test suite you didn't write - a client or legacy repo, a project you're joining blind, or work you're scoping before you commit. You get a fast read on how solid or fragile the locators are, without running a thing. (Works on your own suite too, when UI changes keep breaking tests.)",
+    "locateGetLabel": "You get",
+    "locateGet": "every locator graded by shape (fragile / stable / context / dynamic), the reason why, and duplicate selectors grouped so you fix one and close many. Read statically - by default, nothing leaves your browser.",
+    "locateNotLabel": "Not for you if",
+    "locateNot": "you want a pass/fail score or an auto-fix. LocateMe flags and explains, you decide - a first pass, not a verdict.",
+    "locateHonestLabel": "Honest about it",
+    "locateHonest": "we never run your tests and never rewrite your code.",
+    "forgeSubtitle": "Synthetic dataset generator",
+    "forgeDesc": "Schema-defined data with injected nulls, dupes, and outliers. Export or pipe into AnalyzeMe.",
+    "analyzeSubtitle": "CSV & JSON anomaly detector",
+    "analyzeDesc": "Missing values, dupes, and outliers, entirely in your browser. No server, no uploads, no logs."
+  }
 }

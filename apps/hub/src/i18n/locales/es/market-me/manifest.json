@@ -46,5 +46,24 @@
   "block6accent": "Debe haber más cosas buenas en el mundo - y nosotros lo creemos.",
 
   "linkGithub": "GitHub",
-  "linkSite": "stackme-app.vercel.app"
+  "linkSite": "stackme-app.vercel.app",
+
+  "cards": {
+    "freeLine": "Gratis - sin registro, sin muro de pago, nada que mejorar.",
+    "tagQA": "QA",
+    "tagBeta": "Beta",
+    "locateSubtitle": "Auditoría estática de localizadores para Playwright & Cypress",
+    "locateNeedLabel": "Lo necesitas si",
+    "locateNeed": "tienes que evaluar una suite de tests que no escribiste - un repo de cliente o heredado, un proyecto al que te unes a ciegas, o trabajo que estás midiendo antes de comprometerte. Obtienes una lectura rápida de qué tan sólidos o frágiles son los localizadores, sin ejecutar nada. (También sirve para tu propia suite, cuando los cambios de UI rompen los tests.)",
+    "locateGetLabel": "Obtienes",
+    "locateGet": "cada localizador clasificado por forma (frágil / estable / contexto / dinámico), el porqué, y los selectores duplicados agrupados para que arregles uno y cierres muchos. Leído estáticamente - por defecto, nada sale de tu navegador.",
+    "locateNotLabel": "No es para ti si",
+    "locateNot": "quieres una nota de aprobado/suspenso o un auto-arreglo. LocateMe señala y explica, tú decides - una primera pasada, no un veredicto.",
+    "locateHonestLabel": "Con honestidad",
+    "locateHonest": "nunca ejecutamos tus tests y nunca reescribimos tu código.",
+    "forgeSubtitle": "Generador de datasets sintéticos",
+    "forgeDesc": "Datos definidos por esquema con nulos, duplicados y outliers inyectados. Exporta o pásalos a AnalyzeMe.",
+    "analyzeSubtitle": "Detector de anomalías en CSV & JSON",
+    "analyzeDesc": "Valores faltantes, duplicados y outliers, enteramente en tu navegador. Sin servidor, sin subidas, sin logs."
+  }
 }

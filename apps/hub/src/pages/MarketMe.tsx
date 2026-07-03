@@ -11,12 +11,6 @@ interface ModuleState {
   [moduleId: string]: 'active' | 'loading' | 'inactive'
 }
 
-const categoryColors: Record<string, string> = {
-  generation: 'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300',
-  analytics: 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300',
-  testing: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
-}
-
 const addButtonColors: Record<string, string> = {
   generation: 'border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-500/40 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-900/40 dark:hover:text-violet-200',
   analytics:  'border border-teal-300 bg-teal-50 text-teal-700 hover:bg-teal-100 dark:border-teal-500/40 dark:bg-teal-950/30 dark:text-teal-300 dark:hover:bg-teal-900/40 dark:hover:text-teal-200',
@@ -104,8 +98,12 @@ export default function MarketMePage() {
     if (manifest) openPanel(manifest)
   }
 
+  // QA flagship (LocateMe) gets the rich card; the rest render as compact Beta cards.
+  const flagship = MODULE_REGISTRY.find(m => m.id === 'locate-me')
+  const betaModules = MODULE_REGISTRY.filter(m => m.id !== 'locate-me')
+
   return (
-    <div className="max-w-3xl px-6 pt-5">
+    <div className="max-w-4xl px-6 pt-5">
 
       <ModuleTabs
         tabs={[
@@ -132,50 +130,50 @@ export default function MarketMePage() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            {MODULE_REGISTRY.map((module) => {
-              const state = moduleStates[module.id] ?? 'inactive'
+          <p className="text-xs text-muted-foreground mb-6">{t('cards.freeLine')}</p>
+
+          <div className="grid md:grid-cols-[1.55fr_1fr] gap-4 items-start">
+
+            {flagship && (() => {
+              const state = moduleStates[flagship.id] ?? 'inactive'
               const isActive = state === 'active'
               const isLoading = state === 'loading'
-
               return (
-                <div
-                  key={module.id}
-                  className={`relative flex flex-col rounded-xl border transition-colors p-5 ${
-                    isActive
-                      ? 'border-primary/30 bg-primary/5'
-                      : 'border-border bg-background hover:bg-muted/30'
-                  }`}
-                >
-                  {module.beta && (
-                    <span className="absolute top-3 right-3 text-[10px] font-medium px-2 py-0.5 rounded-full border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">
-                      Beta
-                    </span>
-                  )}
-                  {/* Top */}
-                  <div className="flex flex-col gap-2 flex-1">
-                    <span className={`self-start text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${categoryColors[module.category] ?? 'bg-muted text-muted-foreground'}`}>
-                      {tc(`categories.${module.category}`, module.category)}
-                    </span>
-                    <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{tc(`modules.${module.id}.description`, module.description)}</p>
+                <div className="flex flex-col rounded-xl border border-border bg-background p-5">
+                  <div className="flex items-baseline gap-2.5 flex-wrap">
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
+                    <h3 className="text-base font-semibold text-foreground">{flagship.name}</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1 mb-4">{t('cards.locateSubtitle')}</p>
+
+                  <div className="flex flex-col gap-3">
+                    {([
+                      ['cards.locateNeedLabel', 'cards.locateNeed'],
+                      ['cards.locateGetLabel', 'cards.locateGet'],
+                      ['cards.locateNotLabel', 'cards.locateNot'],
+                      ['cards.locateHonestLabel', 'cards.locateHonest'],
+                    ] as const).map(([lk, bk]) => (
+                      <div key={lk}>
+                        <div className="text-[11px] font-medium text-foreground/70 mb-0.5">{t(lk)}</div>
+                        <p className="text-xs leading-relaxed text-muted-foreground">{t(bk)}</p>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Bottom */}
                   <div className="flex items-center gap-2 mt-5">
                     <button
-                      onClick={() => handleOpen(module.id)}
+                      onClick={() => handleOpen(flagship.id)}
                       className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
                     >
                       {tc('marketplace.open')}
                     </button>
                     <button
-                      onClick={() => isActive ? handleDeactivate(module.id) : handleActivate(module.id)}
+                      onClick={() => isActive ? handleDeactivate(flagship.id) : handleActivate(flagship.id)}
                       disabled={isLoading || loadingModules}
                       className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
                         isActive
                           ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                          : addButtonColors[module.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : addButtonColors[flagship.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
                       }`}
                     >
                       {isLoading ? '...' : isActive
@@ -187,7 +185,33 @@ export default function MarketMePage() {
                   </div>
                 </div>
               )
-            })}
+            })()}
+
+            <div className="flex flex-col gap-4">
+              {betaModules.map((module) => {
+                const sub = module.id === 'forge-me' ? t('cards.forgeSubtitle') : t('cards.analyzeSubtitle')
+                const desc = module.id === 'forge-me' ? t('cards.forgeDesc') : t('cards.analyzeDesc')
+                return (
+                  <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">{t('cards.tagBeta')}</span>
+                      <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-1.5">{sub}</p>
+                    <p className="text-xs leading-relaxed text-muted-foreground/90">{desc}</p>
+                    <div className="mt-4">
+                      <button
+                        onClick={() => handleOpen(module.id)}
+                        className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
+                      >
+                        {tc('marketplace.open')}
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
           </div>
         </>
       )}
