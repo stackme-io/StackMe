@@ -130,7 +130,7 @@ export default function MarketMePage() {
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground mb-6">{t('cards.freeLine')}</p>
+          <p className="text-sm text-muted-foreground mb-6">{t('cards.freeLine')}</p>
 
           <div className="grid md:grid-cols-[1.55fr_1fr] gap-4 items-start">
 
@@ -142,11 +142,11 @@ export default function MarketMePage() {
                 <div className="flex flex-col rounded-xl border border-border bg-background p-5">
                   <div className="flex items-baseline gap-2.5 flex-wrap">
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
-                    <h3 className="text-base font-semibold text-foreground">{flagship.name}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{flagship.name}</h3>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 mb-4">{t('cards.locateSubtitle')}</p>
+                  <p className="text-sm text-muted-foreground mt-1 mb-5">{t('cards.locateSubtitle')}</p>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-4">
                     {([
                       ['cards.locateNeedLabel', 'cards.locateNeed'],
                       ['cards.locateGetLabel', 'cards.locateGet'],
@@ -154,8 +154,8 @@ export default function MarketMePage() {
                       ['cards.locateHonestLabel', 'cards.locateHonest'],
                     ] as const).map(([lk, bk]) => (
                       <div key={lk}>
-                        <div className="text-[11px] font-medium text-foreground/70 mb-0.5">{t(lk)}</div>
-                        <p className="text-xs leading-relaxed text-muted-foreground">{t(bk)}</p>
+                        <div className="text-sm font-medium text-foreground mb-1">{t(lk)}</div>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{t(bk)}</p>
                       </div>
                     ))}
                   </div>
@@ -195,10 +195,10 @@ export default function MarketMePage() {
                   <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">{t('cards.tagBeta')}</span>
-                      <h3 className="text-sm font-semibold text-foreground">{module.name}</h3>
+                      <h3 className="text-base font-semibold text-foreground">{module.name}</h3>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-1.5">{sub}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground/90">{desc}</p>
+                    <p className="text-sm text-muted-foreground mb-1.5">{sub}</p>
+                    <p className="text-[13px] leading-relaxed text-muted-foreground/90">{desc}</p>
                     <div className="mt-4">
                       <button
                         onClick={() => handleOpen(module.id)}
