@@ -52,6 +52,8 @@
     "freeLine": "Gratis - sin registro, sin muro de pago, nada que mejorar.",
     "tagQA": "QA",
     "tagBeta": "Beta",
+    "groupQA": "Listo para QA",
+    "groupBeta": "En beta",
     "locateSubtitle": "Auditoría estática de localizadores para Playwright & Cypress",
     "locateNeedLabel": "Lo necesitas si",
     "locateNeed": "tienes que evaluar una suite de tests que no escribiste - un repo de cliente o heredado, un proyecto al que te unes a ciegas, o trabajo que estás midiendo antes de comprometerte. Obtienes una lectura rápida de qué tan sólidos o frágiles son los localizadores, sin ejecutar nada. (También sirve para tu propia suite, cuando los cambios de UI rompen los tests.)",

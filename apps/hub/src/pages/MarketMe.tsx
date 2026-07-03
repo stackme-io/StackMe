@@ -103,7 +103,7 @@ export default function MarketMePage() {
   const betaModules = MODULE_REGISTRY.filter(m => m.id !== 'locate-me')
 
   return (
-    <div className="max-w-4xl px-6 pt-5">
+    <div className="max-w-5xl px-6 pt-5">
 
       <ModuleTabs
         tabs={[
@@ -132,84 +132,94 @@ export default function MarketMePage() {
 
           <p className="text-sm text-muted-foreground mb-6">{t('cards.freeLine')}</p>
 
-          <div className="grid md:grid-cols-[1.55fr_1fr] gap-4 items-start">
+          <div className="flex flex-col gap-8">
 
-            {flagship && (() => {
-              const state = moduleStates[flagship.id] ?? 'inactive'
-              const isActive = state === 'active'
-              const isLoading = state === 'loading'
-              return (
-                <div className="flex flex-col rounded-xl border border-border bg-background p-5">
-                  <div className="flex items-baseline gap-2.5 flex-wrap">
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
-                    <h3 className="text-lg font-semibold text-foreground">{flagship.name}</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1 mb-5">{t('cards.locateSubtitle')}</p>
-
-                  <div className="flex flex-col gap-4">
-                    {([
-                      ['cards.locateNeedLabel', 'cards.locateNeed'],
-                      ['cards.locateGetLabel', 'cards.locateGet'],
-                      ['cards.locateNotLabel', 'cards.locateNot'],
-                      ['cards.locateHonestLabel', 'cards.locateHonest'],
-                    ] as const).map(([lk, bk]) => (
-                      <div key={lk}>
-                        <div className="text-sm font-medium text-foreground mb-1">{t(lk)}</div>
-                        <p className="text-sm leading-relaxed text-muted-foreground">{t(bk)}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-2 mt-5">
-                    <button
-                      onClick={() => handleOpen(flagship.id)}
-                      className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
-                    >
-                      {tc('marketplace.open')}
-                    </button>
-                    <button
-                      onClick={() => isActive ? handleDeactivate(flagship.id) : handleActivate(flagship.id)}
-                      disabled={isLoading || loadingModules}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
-                        isActive
-                          ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
-                          : addButtonColors[flagship.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                      }`}
-                    >
-                      {isLoading ? '...' : isActive
-                        ? tc('marketplace.remove')
-                        : isSignedIn
-                          ? tc('marketplace.add')
-                          : tc('marketplace.signInToAdd')}
-                    </button>
-                  </div>
-                </div>
-              )
-            })()}
-
-            <div className="flex flex-col gap-4">
-              {betaModules.map((module) => {
-                const sub = module.id === 'forge-me' ? t('cards.forgeSubtitle') : t('cards.analyzeSubtitle')
-                const desc = module.id === 'forge-me' ? t('cards.forgeDesc') : t('cards.analyzeDesc')
+            {/* QA-ready */}
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60 mb-3">{t('cards.groupQA')}</p>
+              {flagship && (() => {
+                const state = moduleStates[flagship.id] ?? 'inactive'
+                const isActive = state === 'active'
+                const isLoading = state === 'loading'
                 return (
-                  <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">{t('cards.tagBeta')}</span>
-                      <h3 className="text-base font-semibold text-foreground">{module.name}</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-1.5">{sub}</p>
-                    <p className="text-[13px] leading-relaxed text-muted-foreground/90">{desc}</p>
-                    <div className="mt-4">
+                  <div className="flex flex-col rounded-xl border border-border bg-background p-5">
+                    <div className="flex items-start justify-between gap-3 flex-wrap">
+                      <div className="flex items-baseline gap-2.5 flex-wrap">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
+                        <h3 className="text-lg font-semibold text-foreground">{flagship.name}</h3>
+                      </div>
                       <button
-                        onClick={() => handleOpen(module.id)}
+                        onClick={() => handleOpen(flagship.id)}
                         className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
                       >
                         {tc('marketplace.open')}
                       </button>
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1 mb-5">{t('cards.locateSubtitle')}</p>
+
+                    <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+                      {([
+                        ['cards.locateNeedLabel', 'cards.locateNeed'],
+                        ['cards.locateGetLabel', 'cards.locateGet'],
+                        ['cards.locateNotLabel', 'cards.locateNot'],
+                        ['cards.locateHonestLabel', 'cards.locateHonest'],
+                      ] as const).map(([lk, bk]) => (
+                        <div key={lk}>
+                          <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/60 mb-1.5">{t(lk)}</div>
+                          <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(bk)}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-6">
+                      <button
+                        onClick={() => isActive ? handleDeactivate(flagship.id) : handleActivate(flagship.id)}
+                        disabled={isLoading || loadingModules}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
+                          isActive
+                            ? 'border border-border bg-background text-muted-foreground hover:text-foreground'
+                            : addButtonColors[flagship.category] ?? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        }`}
+                      >
+                        {isLoading ? '...' : isActive
+                          ? tc('marketplace.remove')
+                          : isSignedIn
+                            ? tc('marketplace.add')
+                            : tc('marketplace.signInToAdd')}
+                      </button>
+                    </div>
                   </div>
                 )
-              })}
+              })()}
+            </div>
+
+            {/* In beta */}
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60 mb-3">{t('cards.groupBeta')}</p>
+              <div className="grid sm:grid-cols-2 gap-4 items-start">
+                {betaModules.map((module) => {
+                  const sub = module.id === 'forge-me' ? t('cards.forgeSubtitle') : t('cards.analyzeSubtitle')
+                  const desc = module.id === 'forge-me' ? t('cards.forgeDesc') : t('cards.analyzeDesc')
+                  return (
+                    <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">{t('cards.tagBeta')}</span>
+                        <h3 className="text-base font-semibold text-foreground">{module.name}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1.5">{sub}</p>
+                      <p className="text-[13px] leading-relaxed text-muted-foreground/90">{desc}</p>
+                      <div className="mt-4">
+                        <button
+                          onClick={() => handleOpen(module.id)}
+                          className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
+                        >
+                          {tc('marketplace.open')}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
 
           </div>

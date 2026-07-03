@@ -52,6 +52,8 @@
     "freeLine": "Free - no sign-up, no paywall, nothing to upgrade.",
     "tagQA": "QA",
     "tagBeta": "Beta",
+    "groupQA": "QA-ready",
+    "groupBeta": "In beta",
     "locateSubtitle": "Static locator audit for Playwright & Cypress",
     "locateNeedLabel": "You need this if",
     "locateNeed": "you have to judge a test suite you didn't write - a client or legacy repo, a project you're joining blind, or work you're scoping before you commit. You get a fast read on how solid or fragile the locators are, without running a thing. (Works on your own suite too, when UI changes keep breaking tests.)",
