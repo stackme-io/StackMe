@@ -2,6 +2,7 @@
   "badges": ["no setup", "runs locally", "no data collected", "open source"],
   "tabs": {
     "audit": "Audit",
+    "reports": "Reports",
     "roadmap": "Roadmap",
     "about": "About"
   }

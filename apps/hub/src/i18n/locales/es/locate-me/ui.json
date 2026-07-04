@@ -6,7 +6,7 @@
     "context": { "label": "Contexto", "desc": "Texto / clase / atributo - depende de tu proyecto." },
     "dynamic": { "label": "Dinámico", "desc": "Construido en runtime - no clasificado (punto ciego)." }
   },
-  "intro": "Audita los locators de tus tests Playwright/TypeScript - todo en tu navegador, nada sale de la página. Apúntalo a una carpeta o pega un archivo.",
+  "intro": "Audita los locators de tus tests Playwright/Cypress, todo en tu navegador. Apúntalo a una carpeta o pega un archivo.",
   "selectFolder": "Elegir carpeta",
   "trySample": "Probar ejemplo",
   "analyze": "Analizar",
@@ -14,7 +14,7 @@
   "pasteToggle": "…o pega un archivo",
   "pastePlaceholder": "// pega tu *.spec.ts aquí",
   "analyzing": "Analizando…",
-  "runsLocally": "se ejecuta localmente · nada se sube",
+  "runsLocally": "Se ejecuta localmente",
   "needChromium": "Elegir carpeta requiere un navegador Chromium (Chrome / Edge). Aún puedes pegar un archivo abajo.",
   "noTsFiles": "No se encontraron archivos .ts/.js en \"{{name}}\".",
   "analysisFailed": "El análisis falló.",
@@ -67,7 +67,7 @@
   "sortHotHint": "Archivos con más locators frágiles",
   "noneForFilter": "Nada coincide con este filtro.",
   "emptyTitle": "Apunta LocateMe a tus tests de Playwright.",
-  "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código, nada sale de tu navegador.",
+  "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código.",
   "detectedLabel": "Detectado:",
   "unknownStack": "no se pudo detectar un stack conocido",
   "copy": "Copiar",
@@ -99,13 +99,29 @@
   "about": {
     "p1": "LocateMe es una auditoría estática de fragilidad de locators para suites de tests Playwright / TypeScript. Lee solo tu código de tests - sin runtime, sin ejecución - y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
     "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que arregles un sitio y cierres muchos. Nunca reescribe tus tests y no da una puntuación única - solo hechos sobre los que actuar.",
-    "p3": "Todo se ejecuta en tu navegador. Tu código nunca sale de la página. Código abierto, MIT.",
+    "p3": "Por defecto, todo permanece en tu dispositivo - lee tus locators localmente y no se envía nada a ningún sitio. Si eliges guardar un informe en tu cuenta, ese informe (incluidos los selectores y breves fragmentos de tu código de tests) se sube a nuestros servidores para que puedas acceder a él más tarde. Descargar un informe a tu propio ordenador es totalmente local. Código abierto, MIT.",
     "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil solo cuando el código por sí solo lo demuestra - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\". Precisión sobre ruido."
   },
   "report": {
     "button": "Informe",
     "open": "Abrir informe",
     "download": "Descargar HTML",
-    "clientSafe": "Modo seguro"
+    "clientSafe": "Modo seguro",
+    "save": "Guardar en tu cuenta",
+    "saveSignIn": "Inicia sesión para guardar",
+    "saved": "Guardado",
+    "saveConfirm": "Guardar",
+    "saveTitlePlaceholder": "Nombre del informe",
+    "saveError": "Error"
+  },
+  "reports": {
+    "title": "Informes guardados",
+    "note": "Los informes guardados viven en tu cuenta, en nuestros servidores - lo único que sale de tu dispositivo, y solo cuando eliges guardar.",
+    "count": "{{count}} guardados",
+    "empty": "Aún no hay informes guardados. Guarda uno desde el menú Informe tras una auditoría.",
+    "meta": "{{total}} localizadores · {{files}} archivos",
+    "delete": "Eliminar",
+    "signIn": "Iniciar sesión",
+    "signInDesc": "Inicia sesión para guardar auditorías en tu cuenta y volver a verlas aquí."
   }
 }

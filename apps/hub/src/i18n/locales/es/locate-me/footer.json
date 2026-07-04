@@ -2,6 +2,7 @@
   "badges": ["sin configuración", "se ejecuta localmente", "sin recopilación de datos", "código abierto"],
   "tabs": {
     "audit": "Auditoría",
+    "reports": "Informes",
     "roadmap": "Roadmap",
     "about": "Acerca de"
   }

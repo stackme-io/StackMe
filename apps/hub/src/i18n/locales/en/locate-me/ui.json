@@ -6,7 +6,7 @@
     "context": { "label": "Context", "desc": "Text / class / attribute - depends on your project." },
     "dynamic": { "label": "Dynamic", "desc": "Built at runtime - not classified (blind spot)." }
   },
-  "intro": "Audit the locators in your Playwright/TypeScript tests - fully in your browser, nothing leaves the page. Point it at a folder, or paste a single file.",
+  "intro": "Audit the locators in your Playwright/Cypress tests, fully in your browser. Point it at a folder, or paste a single file.",
   "selectFolder": "Select folder",
   "trySample": "Try sample",
   "analyze": "Analyze",
@@ -14,7 +14,7 @@
   "pasteToggle": "…or paste a single file",
   "pastePlaceholder": "// paste your *.spec.ts here",
   "analyzing": "Analyzing…",
-  "runsLocally": "runs locally · nothing uploaded",
+  "runsLocally": "Runs locally",
   "needChromium": "Folder picking needs a Chromium browser (Chrome / Edge). You can still paste a file below.",
   "noTsFiles": "No .ts/.js files found in \"{{name}}\".",
   "analysisFailed": "Analysis failed.",
@@ -67,7 +67,7 @@
   "sortHotHint": "Files with the most fragile locators",
   "noneForFilter": "Nothing matches this filter.",
   "emptyTitle": "Point LocateMe at your Playwright tests.",
-  "emptyDesc": "Reads locator shapes statically. No code runs, nothing leaves your browser.",
+  "emptyDesc": "Reads locator shapes statically. No code runs.",
   "detectedLabel": "Detected:",
   "unknownStack": "couldn't detect a known stack",
   "copy": "Copy",
@@ -99,13 +99,29 @@
   "about": {
     "p1": "LocateMe is a static locator-fragility audit for Playwright / TypeScript test suites. It reads your test code only - no runtime, no test execution - and groups locators by shape: fragile, stable, context, or dynamic.",
     "p2": "It surfaces why a locator may be brittle and where the same selector repeats, so you can fix one place and close many. It never auto-rewrites your tests and gives no single quality score - just facts you can act on.",
-    "p3": "Everything runs in your browser. Your code never leaves the page. Open source, MIT.",
+    "p3": "By default, everything stays on your device - it reads your locators locally and nothing is sent anywhere. If you choose to save a report to your account, that report (including selector strings and short code snippets) is uploaded to our servers so you can access it later. Downloading a report to your own computer stays fully local. Open source, MIT.",
     "p4": "How it judges: LocateMe sees how a locator is written, not your live app. It calls a locator fragile only when the code alone proves it - a positional path, an auto-generated class or id. When a signal is ambiguous it stays quiet instead of raising a false alarm you cannot dismiss. So a clean report means \"nothing we can prove is wrong,\" not \"nothing is wrong.\" Precision over noise."
   },
   "report": {
     "button": "Report",
     "open": "Open report",
     "download": "Download HTML",
-    "clientSafe": "Client-safe"
+    "clientSafe": "Client-safe",
+    "save": "Save to account",
+    "saveSignIn": "Sign in to save",
+    "saved": "Saved",
+    "saveConfirm": "Save",
+    "saveTitlePlaceholder": "Report name",
+    "saveError": "Failed"
+  },
+  "reports": {
+    "title": "Saved reports",
+    "note": "Saved reports live in your account, on our servers - the one thing that leaves your device, and only when you choose to save.",
+    "count": "{{count}} saved",
+    "empty": "No saved reports yet. Save one from the Report menu after an audit.",
+    "meta": "{{total}} locators · {{files}} files",
+    "delete": "Delete",
+    "signIn": "Sign in",
+    "signInDesc": "Sign in to save audits to your account and revisit them here."
   }
 }

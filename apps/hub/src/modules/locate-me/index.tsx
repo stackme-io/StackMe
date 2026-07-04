@@ -6,8 +6,10 @@ import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { renderHtml } from '@locateme/core/report'
-import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText } from 'lucide-react'
+import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
+import { useAuth, useClerk } from '@clerk/clerk-react'
+import apiClient from '../../api/client'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
@@ -94,7 +96,7 @@ const KIND_CHIP: Record<Kind, string> = {
   dynamic: 'bg-k-dynamic/15 border-k-dynamic/40',
 }
 
-const TAB_IDS: string[] = ['audit', 'roadmap', 'about']
+const TAB_IDS: string[] = ['audit', 'roadmap', 'about', 'reports']
 type SortMode = 'file' | 'repeated' | 'hot'
 
 interface WorkerResult {
@@ -283,13 +285,20 @@ function scopedReport(report: ReportData, fileExcluded: Set<string>): ReportData
 
 // Explicit data export - the deliberate opposite of Share. Opens a self-contained,
 // printable HTML report (save as PDF via the browser). Client-safe masks paths + code.
-function ReportButton({ report, fileExcluded }: { report: ReportData; fileExcluded: Set<string> }) {
+function ReportButton({ report, fileExcluded, source }: { report: ReportData; fileExcluded: Set<string>; source: string | null }) {
   const { t } = useTranslation('locate-me')
+  const { isSignedIn, getToken } = useAuth()
+  const { openSignIn } = useClerk()
   const [open, setOpen] = useState(false)
+  const [saveMode, setSaveMode] = useState(false)
+  const [title, setTitle] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!open) return
+    if (!open) { setSaveMode(false); setSaved(false); setError(false); return }
     const onDoc = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
     document.addEventListener('mousedown', onDoc)
     return () => document.removeEventListener('mousedown', onDoc)
@@ -315,6 +324,33 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
     setOpen(false)
   }
 
+  // Save = explicit opt-in that sends the report data to your account (leaves the browser).
+  const startSave = () => {
+    if (!isSignedIn) { openSignIn(); return }
+    setTitle((source ?? 'Locator audit').slice(0, 120))
+    setSaved(false); setError(false); setSaveMode(true)
+  }
+  const doSave = async () => {
+    setSaving(true); setError(false)
+    try {
+      const d = scopedReport(report, fileExcluded)
+      const token = await getToken()
+      await apiClient.post('/api/locate/reports', {
+        title: title.trim() || 'Untitled audit',
+        data: d,
+        fragile: d.summary.byKind.fragile,
+        total: d.summary.locatorCalls,
+        files: d.summary.files,
+      }, { headers: { Authorization: `Bearer ${token}` } })
+      setSaved(true); setSaveMode(false)
+      setTimeout(() => setOpen(false), 1100)
+    } catch {
+      setError(true)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(o => !o)} title={t('report.button')}
@@ -323,18 +359,127 @@ function ReportButton({ report, fileExcluded }: { report: ReportData; fileExclud
         {t('report.button')}
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-56 rounded-md border border-border bg-card shadow-lg z-50 p-1.5">
-          <button onClick={openReport}
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
-            <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↗</span>
-            {t('report.open')}
-          </button>
-          <button onClick={downloadReport}
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
-            <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↓</span>
-            {t('report.download')}
-            <span className="ml-auto text-[10px] text-muted-foreground">{t('report.clientSafe')}</span>
-          </button>
+        <div className="absolute right-0 top-full mt-1 w-64 rounded-md border border-border bg-card shadow-lg z-50 p-1.5">
+          {saveMode ? (
+            <div className="flex flex-col gap-2 p-1">
+              <input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} autoFocus
+                onKeyDown={e => { if (e.key === 'Enter') doSave() }}
+                placeholder={t('report.saveTitlePlaceholder')}
+                className="w-full px-2 py-1.5 rounded border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:border-foreground/40" />
+              <div className="flex items-center gap-2">
+                <button onClick={doSave} disabled={saving}
+                  className="px-3 py-1.5 rounded text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                  {saving ? '...' : t('report.saveConfirm')}
+                </button>
+                <button onClick={() => setSaveMode(false)}
+                  className="px-3 py-1.5 rounded text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  {t('close')}
+                </button>
+                {error && <span className="text-meta text-k-fragile ml-auto">{t('report.saveError')}</span>}
+              </div>
+            </div>
+          ) : (
+            <>
+              <button onClick={openReport}
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+                <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↗</span>
+                {t('report.open')}
+              </button>
+              <button onClick={downloadReport}
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+                <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↓</span>
+                {t('report.download')}
+                <span className="ml-auto text-[10px] text-muted-foreground">{t('report.clientSafe')}</span>
+              </button>
+              <button onClick={startSave}
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors border-t border-border/60 mt-1 pt-2">
+                <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">{saved ? '✓' : '☆'}</span>
+                {saved ? t('report.saved') : isSignedIn ? t('report.save') : t('report.saveSignIn')}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Saved reports tab (rail). Reports live where they're created; account-scoped, sign-in gated.
+function SavedReports() {
+  const { t } = useTranslation('locate-me')
+  const { isSignedIn, getToken } = useAuth()
+  const { openSignIn } = useClerk()
+  const [items, setItems] = useState<{ id: number; title: string; fragile: number; total: number; files: number; created_at: string }[] | null>(null)
+
+  const load = async () => {
+    if (!isSignedIn) { setItems([]); return }
+    try {
+      const token = await getToken()
+      const res = await apiClient.get('/api/locate/reports', { headers: { Authorization: `Bearer ${token}` } })
+      setItems(res.data)
+    } catch { setItems([]) }
+  }
+  useEffect(() => { load() /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [isSignedIn])
+
+  const openSaved = async (id: number) => {
+    try {
+      const token = await getToken()
+      const res = await apiClient.get(`/api/locate/reports/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+      const html = renderHtml(res.data.data as ReportData)
+      const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
+      const a = document.createElement('a')
+      a.href = url; a.target = '_blank'; a.rel = 'noopener'
+      document.body.appendChild(a); a.click(); a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    } catch { /* ignore */ }
+  }
+  const remove = async (id: number) => {
+    try {
+      const token = await getToken()
+      await apiClient.delete(`/api/locate/reports/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+      setItems(prev => (prev ?? []).filter(r => r.id !== id))
+    } catch { /* ignore */ }
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="max-w-md">
+        <p className="text-sub text-content mb-3">{t('reports.signInDesc')}</p>
+        <button onClick={() => openSignIn()} className="px-4 py-2 rounded-md text-sub font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">{t('reports.signIn')}</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-2xl flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-title text-foreground">{t('reports.title')}</h2>
+        {items && items.length > 0 && <span className="text-meta text-muted-foreground">{t('reports.count', { count: items.length })}</span>}
+      </div>
+      <p className="text-meta text-muted-foreground -mt-1">{t('reports.note')}</p>
+
+      {items === null ? (
+        <p className="text-sub text-muted-foreground">{t('analyzing')}</p>
+      ) : items.length === 0 ? (
+        <p className="text-sub text-content">{t('reports.empty')}</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {items.map(r => (
+            <div key={r.id} className="flex items-center gap-3 rounded-lg border border-border px-4 py-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sub text-foreground truncate">{r.title}</p>
+                <p className="text-meta text-muted-foreground">
+                  <span className="text-k-fragile">{t('nLocators', { count: r.fragile })}</span>
+                  <span className="text-faint"> · </span>
+                  {t('reports.meta', { total: r.total, files: r.files })}
+                  <span className="text-faint"> · </span>
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <button onClick={() => openSaved(r.id)} className="text-meta text-muted-foreground hover:text-foreground whitespace-nowrap">{t('report.open')}</button>
+              <button onClick={() => remove(r.id)} title={t('reports.delete')} className="text-muted-foreground hover:text-k-fragile flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -517,6 +662,7 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
   const { t } = useTranslation('locate-me')
   const nav = [
     { id: 'audit',   label: t('tabs.audit'),   Icon: Crosshair },
+    { id: 'reports', label: t('tabs.reports'), Icon: Archive },
     { id: 'roadmap', label: t('tabs.roadmap'), Icon: Route },
     { id: 'about',   label: t('tabs.about'),   Icon: Info },
   ]
@@ -800,7 +946,7 @@ export default function LocateMePage() {
                   {t('trySample')}
                 </button>
                 {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                {hasLocators && <div className="ml-auto"><ReportButton report={report} fileExcluded={fileExcluded} /></div>}
+                {hasLocators && <div className="ml-auto"><ReportButton report={report} fileExcluded={fileExcluded} source={source} /></div>}
               </div>
 
               {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}
@@ -835,6 +981,11 @@ export default function LocateMePage() {
               )}
             </>
           )}
+        </div>
+
+        {/* ---- REPORTS (saved) ---- */}
+        <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+          {activeTab === 'reports' && <SavedReports />}
         </div>
 
         {/* ---- ROADMAP ---- */}
