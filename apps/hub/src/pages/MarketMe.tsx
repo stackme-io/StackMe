@@ -286,7 +286,7 @@ export default function MarketMePage() {
                 <p className="text-sm font-semibold text-foreground">
                   {t(`block${n}Title`)}
                   {(n === 2 || n === 3) && (
-                    <span className="ml-2 align-middle text-[10px] font-normal px-1.5 py-0.5 rounded border border-border text-muted-foreground/95">
+                    <span className="ml-2 align-middle text-[11px] font-normal px-1.5 py-0.5 rounded border border-border text-muted-foreground/95">
                       {t(`block${n}Tag`)}
                     </span>
                   )}
