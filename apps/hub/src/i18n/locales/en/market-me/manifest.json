@@ -52,7 +52,6 @@
     "freeLine": "Free - no sign-up, no paywall, nothing to upgrade.",
     "tagQA": "QA",
     "tagBeta": "Beta",
-    "groupQA": "QA-ready",
     "groupBeta": "In beta",
     "locateSubtitle": "Static locator audit for Playwright & Cypress",
     "locateNeedLabel": "You need this if",

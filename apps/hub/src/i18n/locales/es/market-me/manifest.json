@@ -52,7 +52,6 @@
     "freeLine": "Gratis - sin registro, sin muro de pago, nada que mejorar.",
     "tagQA": "QA",
     "tagBeta": "Beta",
-    "groupQA": "Listo para QA",
     "groupBeta": "En beta",
     "locateSubtitle": "Auditoría estática de localizadores para Playwright & Cypress",
     "locateNeedLabel": "Lo necesitas si",

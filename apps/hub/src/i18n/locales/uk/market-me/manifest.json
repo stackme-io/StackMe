@@ -52,7 +52,6 @@
     "freeLine": "Безкоштовно - без реєстрації, без пейволу, нічого докуповувати.",
     "tagQA": "QA",
     "tagBeta": "Beta",
-    "groupQA": "Готово до QA",
     "groupBeta": "У беті",
     "locateSubtitle": "Статичний аудит локаторів для Playwright & Cypress",
     "locateNeedLabel": "Це тобі треба, якщо",

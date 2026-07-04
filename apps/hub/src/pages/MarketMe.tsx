@@ -141,17 +141,15 @@ export default function MarketMePage() {
 
           <div className="flex flex-col gap-8">
 
-            {/* QA-ready */}
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">{t('cards.groupQA')}</p>
               {flagship && (() => {
                 const state = moduleStates[flagship.id] ?? 'inactive'
                 const isActive = state === 'active'
                 const isLoading = state === 'loading'
                 return (
                   <div className="flex flex-col rounded-xl border border-border bg-background p-5">
-                    <div className="flex items-start justify-between gap-3 flex-wrap">
-                      <div className="flex items-baseline gap-2.5 flex-wrap">
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">{t('cards.tagQA')}</span>
                         <h3 className="text-lg font-semibold text-foreground">{flagship.name}</h3>
                       </div>
