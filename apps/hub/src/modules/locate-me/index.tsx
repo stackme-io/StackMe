@@ -209,8 +209,8 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
   if (detection && detection.framework !== 'unknown') stack.push(detection.framework)
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap">
+    <div className="flex flex-col gap-1.5 w-fit max-w-full">
+      <div className="flex items-center justify-between gap-x-4 gap-y-1 flex-wrap">
         <h2 className="text-title text-foreground">
           {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
         </h2>
