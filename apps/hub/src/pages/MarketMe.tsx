@@ -22,12 +22,19 @@ export default function MarketMePage() {
   const { openSignIn } = useClerk()
   const { getToken } = useAuth()
   const { t: tc } = useTranslation()
-  const { t } = useTranslation('market-me')
+  const { t, i18n } = useTranslation('market-me')
   const { refresh } = useModules()
   const { openPanel, closePanel } = useWorkspace()
   const [moduleStates, setModuleStates] = useState<ModuleState>({})
   const [loadingModules, setLoadingModules] = useState(true)
   const [activeTab, setActiveTab] = useState('modules')
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const toggleExpand = (id: string) =>
+    setExpanded(prev => {
+      const n = new Set(prev)
+      if (n.has(id)) n.delete(id); else n.add(id)
+      return n
+    })
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -193,8 +200,12 @@ export default function MarketMePage() {
               <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">{t('cards.groupBeta')}</p>
               <div className="grid sm:grid-cols-2 gap-4 items-start">
                 {betaModules.map((module) => {
-                  const sub = module.id === 'forge-me' ? t('cards.forgeSubtitle') : t('cards.analyzeSubtitle')
-                  const desc = module.id === 'forge-me' ? t('cards.forgeDesc') : t('cards.analyzeDesc')
+                  const ck = module.id === 'forge-me' ? 'forge' : 'analyze'
+                  const sub = t(`cards.${ck}Subtitle`)
+                  const desc = t(`cards.${ck}Desc`)
+                  const isExpanded = expanded.has(module.id)
+                  const has = (k: string) => i18n.exists(`market-me:cards.${ck}${k}`)
+                  const canExpand = has('Need') || has('Get') || has('Features')
                   return (
                     <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
                       <div className="flex items-center gap-2 mb-1.5">
@@ -203,13 +214,48 @@ export default function MarketMePage() {
                       </div>
                       <p className="text-sm text-muted-foreground mb-1.5">{sub}</p>
                       <p className="text-[13px] leading-relaxed text-muted-foreground/90">{desc}</p>
-                      <div className="mt-4">
+
+                      {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-border/60 flex flex-col gap-3">
+                          {has('Need') && (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{t('cards.locateNeedLabel')}</div>
+                              <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(`cards.${ck}Need`)}</p>
+                            </div>
+                          )}
+                          {has('Get') && (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{t('cards.locateGetLabel')}</div>
+                              <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(`cards.${ck}Get`)}</p>
+                            </div>
+                          )}
+                          {has('Features') && (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{t('cards.featuresLabel')}</div>
+                              <ul className="list-disc pl-5 text-sm leading-relaxed text-muted-foreground flex flex-col gap-1">
+                                {(t(`cards.${ck}Features`, { returnObjects: true }) as string[]).map((f, i) => <li key={i}>{f}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2 mt-4">
                         <button
                           onClick={() => handleOpen(module.id)}
                           className="px-4 py-1.5 rounded-lg text-xs font-medium border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
                         >
                           {tc('marketplace.open')}
                         </button>
+                        {canExpand && (
+                          <button
+                            onClick={() => toggleExpand(module.id)}
+                            className="inline-flex items-center gap-1 px-4 py-1.5 rounded-lg text-xs font-medium border border-border bg-background text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                          >
+                            {isExpanded ? t('cards.less') : t('cards.more')}
+                            <i className={`ti ti-chevron-${isExpanded ? 'up' : 'down'} text-sm`} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   )

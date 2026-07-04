@@ -66,6 +66,9 @@
     "forgeSubtitle": "Synthetic dataset generator",
     "forgeDesc": "Schema-defined data with injected nulls, dupes, and outliers. Export or pipe into AnalyzeMe.",
     "analyzeSubtitle": "CSV & JSON anomaly detector",
-    "analyzeDesc": "Missing values, dupes, and outliers, entirely in your browser. No server, no uploads, no logs."
+    "analyzeDesc": "Missing values, dupes, and outliers, entirely in your browser. No server, no uploads, no logs.",
+    "more": "More",
+    "less": "Less",
+    "featuresLabel": "Features"
   }
 }

@@ -66,6 +66,9 @@
     "forgeSubtitle": "Generador de datasets sintéticos",
     "forgeDesc": "Datos definidos por esquema con nulos, duplicados y outliers inyectados. Exporta o pásalos a AnalyzeMe.",
     "analyzeSubtitle": "Detector de anomalías en CSV & JSON",
-    "analyzeDesc": "Valores faltantes, duplicados y outliers, enteramente en tu navegador. Sin servidor, sin subidas, sin logs."
+    "analyzeDesc": "Valores faltantes, duplicados y outliers, enteramente en tu navegador. Sin servidor, sin subidas, sin logs.",
+    "more": "Más",
+    "less": "Menos",
+    "featuresLabel": "Funciones"
   }
 }
