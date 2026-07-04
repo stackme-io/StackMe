@@ -184,7 +184,7 @@ export default function MarketMePage() {
                       ] as const).map(([lk, bk]) => (
                         <div key={lk}>
                           <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1.5">{t(lk)}</div>
-                          <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(bk)}</p>
+                          <p className={`${lk === 'cards.locateNeedLabel' ? 'text-[13px]' : 'text-sm'} leading-relaxed text-muted-foreground max-w-[62ch]`}>{t(bk)}</p>
                         </div>
                       ))}
                     </div>
