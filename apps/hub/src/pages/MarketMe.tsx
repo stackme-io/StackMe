@@ -136,7 +136,7 @@ export default function MarketMePage() {
 
             {/* QA-ready */}
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60 mb-3">{t('cards.groupQA')}</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">{t('cards.groupQA')}</p>
               {flagship && (() => {
                 const state = moduleStates[flagship.id] ?? 'inactive'
                 const isActive = state === 'active'
@@ -178,7 +178,7 @@ export default function MarketMePage() {
                         ['cards.locateHonestLabel', 'cards.locateHonest'],
                       ] as const).map(([lk, bk]) => (
                         <div key={lk}>
-                          <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/60 mb-1.5">{t(lk)}</div>
+                          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1.5">{t(lk)}</div>
                           <p className="text-sm leading-relaxed text-muted-foreground max-w-[62ch]">{t(bk)}</p>
                         </div>
                       ))}
@@ -190,7 +190,7 @@ export default function MarketMePage() {
 
             {/* In beta */}
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60 mb-3">{t('cards.groupBeta')}</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">{t('cards.groupBeta')}</p>
               <div className="grid sm:grid-cols-2 gap-4 items-start">
                 {betaModules.map((module) => {
                   const sub = module.id === 'forge-me' ? t('cards.forgeSubtitle') : t('cards.analyzeSubtitle')
