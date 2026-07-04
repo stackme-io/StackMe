@@ -26,12 +26,20 @@ async def save_report(
     db: Session = Depends(get_db),
 ):
     user_id = user.get("sub")
+    title = body.title.strip()[:200] or "Untitled audit"
     count = db.query(LocateReport).filter(LocateReport.user_id == user_id).count()
     if count >= MAX_REPORTS:
         raise HTTPException(status_code=409, detail=f"Saved report limit reached ({MAX_REPORTS}). Delete some first.")
+    duplicate = (
+        db.query(LocateReport)
+        .filter(LocateReport.user_id == user_id, LocateReport.title == title)
+        .first()
+    )
+    if duplicate:
+        raise HTTPException(status_code=409, detail="name_taken")
     report = LocateReport(
         user_id=user_id,
-        title=body.title.strip()[:200] or "Untitled audit",
+        title=title,
         data=json.dumps(body.data),
         fragile=body.fragile,
         total=body.total,

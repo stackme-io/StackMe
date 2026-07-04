@@ -107,12 +107,13 @@
     "open": "Abrir informe",
     "download": "Descargar HTML",
     "clientSafe": "Modo seguro",
-    "save": "Guardar en tu cuenta",
+    "save": "Guardar en Informes",
     "saveSignIn": "Inicia sesión para guardar",
     "saved": "Guardado",
     "saveConfirm": "Guardar",
     "saveTitlePlaceholder": "Nombre del informe",
-    "saveError": "Error"
+    "saveError": "Error",
+    "saveNameTaken": "Nombre ya usado"
   },
   "reports": {
     "title": "Informes guardados",
@@ -122,6 +123,8 @@
     "meta": "{{total}} localizadores · {{files}} archivos",
     "delete": "Eliminar",
     "signIn": "Iniciar sesión",
-    "signInDesc": "Inicia sesión para guardar auditorías en tu cuenta y volver a verlas aquí."
+    "signInDesc": "Inicia sesión para guardar auditorías en tu cuenta y volver a verlas aquí.",
+    "deleteConfirmTitle": "¿Eliminar este informe?",
+    "deleteConfirmDesc": "Esto no se puede deshacer."
   }
 }

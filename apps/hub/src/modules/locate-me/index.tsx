@@ -294,11 +294,11 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
   const [title, setTitle] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [error, setError] = useState(false)
+  const [error, setError] = useState('')
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!open) { setSaveMode(false); setSaved(false); setError(false); return }
+    if (!open) { setSaveMode(false); setSaved(false); setError(''); return }
     const onDoc = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
     document.addEventListener('mousedown', onDoc)
     return () => document.removeEventListener('mousedown', onDoc)
@@ -328,10 +328,10 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
   const startSave = () => {
     if (!isSignedIn) { openSignIn(); return }
     setTitle((source ?? 'Locator audit').slice(0, 120))
-    setSaved(false); setError(false); setSaveMode(true)
+    setSaved(false); setError(''); setSaveMode(true)
   }
   const doSave = async () => {
-    setSaving(true); setError(false)
+    setSaving(true); setError('')
     try {
       const d = scopedReport(report, fileExcluded)
       const token = await getToken()
@@ -344,8 +344,9 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
       }, { headers: { Authorization: `Bearer ${token}` } })
       setSaved(true); setSaveMode(false)
       setTimeout(() => setOpen(false), 1100)
-    } catch {
-      setError(true)
+    } catch (e) {
+      const status = (e as { response?: { status?: number } })?.response?.status
+      setError(status === 409 ? t('report.saveNameTaken') : t('report.saveError'))
     } finally {
       setSaving(false)
     }
@@ -375,7 +376,7 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
                   className="px-3 py-1.5 rounded text-xs text-muted-foreground hover:text-foreground transition-colors">
                   {t('close')}
                 </button>
-                {error && <span className="text-meta text-k-fragile ml-auto">{t('report.saveError')}</span>}
+                {error && <span className="text-meta text-k-fragile ml-auto">{error}</span>}
               </div>
             </div>
           ) : (
@@ -393,7 +394,7 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
               </button>
               <button onClick={startSave}
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors border-t border-border/60 mt-1 pt-2">
-                <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">{saved ? '✓' : '☆'}</span>
+                <Archive className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                 {saved ? t('report.saved') : isSignedIn ? t('report.save') : t('report.saveSignIn')}
               </button>
             </>
@@ -410,6 +411,7 @@ function SavedReports() {
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
   const [items, setItems] = useState<{ id: number; title: string; fragile: number; total: number; files: number; created_at: string }[] | null>(null)
+  const [confirmId, setConfirmId] = useState<number | null>(null)
 
   const load = async () => {
     if (!isSignedIn) { setItems([]); return }
@@ -477,9 +479,24 @@ function SavedReports() {
                 </p>
               </div>
               <button onClick={() => openSaved(r.id)} className="text-meta text-muted-foreground hover:text-foreground whitespace-nowrap">{t('report.open')}</button>
-              <button onClick={() => remove(r.id)} title={t('reports.delete')} className="text-muted-foreground hover:text-k-fragile flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+              <button onClick={() => setConfirmId(r.id)} title={t('reports.delete')} className="text-muted-foreground hover:text-k-fragile flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
             </div>
           ))}
+        </div>
+      )}
+
+      {confirmId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setConfirmId(null)}>
+          <div onClick={e => e.stopPropagation()} className="w-80 max-w-full rounded-lg border border-border bg-card p-5 shadow-lg">
+            <p className="text-sub font-medium text-foreground mb-1">{t('reports.deleteConfirmTitle')}</p>
+            <p className="text-meta text-muted-foreground mb-4">{t('reports.deleteConfirmDesc')}</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setConfirmId(null)}
+                className="px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors">{t('close')}</button>
+              <button onClick={() => { const id = confirmId; setConfirmId(null); remove(id) }}
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-k-fragile text-white hover:bg-k-fragile/90 transition-colors">{t('reports.delete')}</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

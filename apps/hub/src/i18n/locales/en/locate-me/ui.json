@@ -107,12 +107,13 @@
     "open": "Open report",
     "download": "Download HTML",
     "clientSafe": "Client-safe",
-    "save": "Save to account",
+    "save": "Save to Reports",
     "saveSignIn": "Sign in to save",
     "saved": "Saved",
     "saveConfirm": "Save",
     "saveTitlePlaceholder": "Report name",
-    "saveError": "Failed"
+    "saveError": "Failed",
+    "saveNameTaken": "Name already used"
   },
   "reports": {
     "title": "Saved reports",
@@ -122,6 +123,8 @@
     "meta": "{{total}} locators · {{files}} files",
     "delete": "Delete",
     "signIn": "Sign in",
-    "signInDesc": "Sign in to save audits to your account and revisit them here."
+    "signInDesc": "Sign in to save audits to your account and revisit them here.",
+    "deleteConfirmTitle": "Delete this report?",
+    "deleteConfirmDesc": "This can't be undone."
   }
 }
