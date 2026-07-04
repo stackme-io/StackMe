@@ -297,11 +297,14 @@ export default function MarketMePage() {
                     <span className="text-foreground font-medium"> {t('block2accent1')}</span>
                   )}
                 </p>
-                {t(`block${n}p2`) && (
+                {(n === 1 || n === 2) && (
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {(n === 3 || n === 5) && (
-                      <span className="text-foreground font-medium">{t(`block${n}accent`)} </span>
-                    )}
+                    {t(`block${n}p2`)}
+                  </p>
+                )}
+                {(n === 3 || n === 5) && (
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    <span className="text-foreground font-medium">{t(`block${n}accent`)} </span>
                     {t(`block${n}p2rest`)}
                   </p>
                 )}
