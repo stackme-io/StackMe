@@ -342,8 +342,7 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
         total: d.summary.locatorCalls,
         files: d.summary.files,
       }, { headers: { Authorization: `Bearer ${token}` } })
-      setSaved(true); setSaveMode(false)
-      setTimeout(() => setOpen(false), 1100)
+      setOpen(false)
     } catch (e) {
       const status = (e as { response?: { status?: number } })?.response?.status
       setError(status === 409 ? t('report.saveNameTaken') : t('report.saveError'))
@@ -963,7 +962,6 @@ export default function LocateMePage() {
                   {t('trySample')}
                 </button>
                 {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                {hasLocators && <div className="ml-auto"><ReportButton report={report} fileExcluded={fileExcluded} source={source} /></div>}
               </div>
 
               {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}
@@ -975,7 +973,10 @@ export default function LocateMePage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles} /></div>
+                  <div className="flex items-start justify-between gap-4 flex-shrink-0">
+                    <Headline detection={detection} source={source} calls={visCalls} files={visFiles} />
+                    <ReportButton report={report} fileExcluded={fileExcluded} source={source} />
+                  </div>
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
