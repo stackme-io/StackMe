@@ -202,7 +202,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
   )
 }
 
-function Headline({ detection, source, calls, files }: { detection: Detection | null; source: string | null; calls: number; files: number }) {
+function Headline({ detection, source, calls, files, action }: { detection: Detection | null; source: string | null; calls: number; files: number; action?: React.ReactNode }) {
   const { t } = useTranslation('locate-me')
   const stack: string[] = []
   if (detection && detection.language !== 'unknown') stack.push(detection.language)
@@ -210,9 +210,12 @@ function Headline({ detection, source, calls, files }: { detection: Detection | 
 
   return (
     <div className="flex flex-col gap-1.5">
-      <h2 className="text-title text-foreground">
-        {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
-      </h2>
+      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap">
+        <h2 className="text-title text-foreground">
+          {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
+        </h2>
+        {action}
+      </div>
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
         {source && <span className="text-content">{t('analyzedLabel')} {source}</span>}
         {source && stack.length > 0 && <span className="text-faint">·</span>}
@@ -973,10 +976,8 @@ export default function LocateMePage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex items-start justify-between gap-4 flex-shrink-0">
-                    <Headline detection={detection} source={source} calls={visCalls} files={visFiles} />
-                    <ReportButton report={report} fileExcluded={fileExcluded} source={source} />
-                  </div>
+                  <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles}
+                    action={<ReportButton report={report} fileExcluded={fileExcluded} source={source} />} /></div>
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
