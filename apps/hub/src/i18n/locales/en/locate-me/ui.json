@@ -82,7 +82,7 @@
     "dynamic": "Its selector is built at runtime (a variable or template), so the final value isn't visible in the code. We can't classify it - a blind spot worth a manual look."
   },
   "giveLead": "you point it at:",
-  "giveLine1": "your Playwright / TS tests",
+  "giveLine1": "your Playwright / Cypress tests (TS/JS)",
   "giveLine2": "a folder, or one file",
   "giveLine3": "even an old legacy suite",
   "getLead": "you get:",

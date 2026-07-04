@@ -82,7 +82,7 @@
     "dynamic": "Su selector se construye en runtime (una variable o plantilla), así que el valor final no se ve en el código. No podemos clasificarlo - un punto ciego que conviene revisar a mano."
   },
   "giveLead": "lo apuntas a:",
-  "giveLine1": "tus tests Playwright / TS",
+  "giveLine1": "tus tests Playwright / Cypress (TS/JS)",
   "giveLine2": "una carpeta, o un archivo",
   "giveLine3": "incluso una suite legacy",
   "getLead": "obtienes:",
