@@ -5,6 +5,7 @@ from core.auth import get_current_user
 from core.db import get_db
 from core.models.suggestion import Suggestion
 from core.models.notification import Notification
+from core.models.contact_message import ContactMessage
 
 router = APIRouter()
 
@@ -47,3 +48,43 @@ async def publish_suggestion(
         "published": True,
         "notification_id": notification.id,
     }
+
+
+@router.get("/admin/contact-messages")
+async def list_contact_messages(
+    handled: bool | None = None,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    _require_admin(user)
+    q = db.query(ContactMessage)
+    if handled is not None:
+        q = q.filter(ContactMessage.handled == handled)
+    rows = q.order_by(ContactMessage.created_at.desc()).all()
+    return [
+        {
+            "id": m.id,
+            "message": m.message,
+            "email": m.email,
+            "category": m.category,
+            "user_id": m.user_id,
+            "handled": m.handled,
+            "created_at": m.created_at.isoformat(),
+        }
+        for m in rows
+    ]
+
+
+@router.post("/admin/contact-messages/{message_id}/resolve")
+async def resolve_contact_message(
+    message_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    _require_admin(user)
+    msg = db.query(ContactMessage).filter(ContactMessage.id == message_id).first()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+    msg.handled = True
+    db.commit()
+    return {"id": msg.id, "handled": True}

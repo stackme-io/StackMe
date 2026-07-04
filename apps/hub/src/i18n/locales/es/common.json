@@ -98,5 +98,21 @@
     "saving": "Guardando...",
     "save": "Guardar",
     "nicknameTaken": "Este apodo ya está en uso. Elige otro."
+  },
+  "contact": {
+    "menuItem": "Escribir al equipo",
+    "title": "Escribir al equipo",
+    "lead": "¿Viste un fallo o tienes una idea? Escríbenos - lo que sea.",
+    "messagePlaceholder": "¿Qué tienes en mente?",
+    "catBug": "Fallo",
+    "catIdea": "Idea",
+    "catPartnership": "Colaboración",
+    "catOther": "Otro",
+    "emailPlaceholder": "Email - solo si quieres respuesta (opcional)",
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "sent": "Gracias - leemos cada mensaje.",
+    "error": "Algo salió mal, inténtalo de nuevo.",
+    "cancel": "Cancelar"
   }
 }

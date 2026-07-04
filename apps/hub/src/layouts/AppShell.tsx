@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MODULE_REGISTRY } from '../registry'
 import LogoMark from '../components/LogoMark'
 import ShareButton from '../shared/ShareButton'
+import ContactModal from '../shared/ContactModal'
 import { useTheme } from '../hooks/useTheme'
 import { useModules } from '../context/ModulesContext'
 import { useWorkspace, type Panel } from '../store/workspace'
@@ -58,6 +59,7 @@ export default function AppShell() {
   const { getToken } = useAuth()
   const { t, i18n } = useTranslation()
   const [unread, setUnread] = useState(0)
+  const [contactOpen, setContactOpen] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { theme, toggle } = useTheme()
   const { activeModuleIds } = useModules()
@@ -370,6 +372,12 @@ export default function AppShell() {
                 >
                   + {t('nav.marketplace')}
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => setContactOpen(true)}
+                >
+                  {t('contact.menuItem')}
+                </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -380,6 +388,8 @@ export default function AppShell() {
       <main className="flex-1 overflow-hidden">
         <Outlet />
       </main>
+
+      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
 
     </div>
   )

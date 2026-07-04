@@ -98,5 +98,21 @@
     "saving": "Saving...",
     "save": "Save",
     "nicknameTaken": "This nickname is already taken. Please choose another."
+  },
+  "contact": {
+    "menuItem": "Contact the team",
+    "title": "Contact the team",
+    "lead": "Spotted a bug or have an idea? Write to us - anything at all.",
+    "messagePlaceholder": "What's on your mind?",
+    "catBug": "Bug",
+    "catIdea": "Idea",
+    "catPartnership": "Partnership",
+    "catOther": "Other",
+    "emailPlaceholder": "Email - only if you want a reply (optional)",
+    "send": "Send",
+    "sending": "Sending...",
+    "sent": "Thanks - we read every message.",
+    "error": "Something went wrong, try again.",
+    "cancel": "Cancel"
   }
 }
