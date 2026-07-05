@@ -184,21 +184,27 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
     }
   }
 
+  const doneGroups = t('done', { returnObjects: true }) as DoneGroup[]
+  const doneMid = Math.ceil(doneGroups.length / 2)
+  const renderDoneGroup = (group: DoneGroup) => (
+    <div key={group.group} className="mb-4 last:mb-0">
+      <p className="text-[11px] uppercase tracking-[0.13em] text-muted-foreground/95 mb-1">{group.group}</p>
+      {group.items.map(item => (
+        <RoadmapRow key={item.title} prefix="✓" title={item.title} desc={item.desc} />
+      ))}
+    </div>
+  )
+
   return (
     <div className="max-w-xl pb-8">
 
-      {/* Done */}
+      {/* Done - two columns to shorten the list */}
       <div className="mb-6">
         <SectionDivider label={t('doneLabel')} accent />
-        {(t('done', { returnObjects: true }) as DoneGroup[]).map((group, gi) => (
-          <div key={group.group} className="mb-2">
-            {gi > 0 && <div className="mt-4" />}
-            <p className="text-[11px] uppercase tracking-[0.13em] text-muted-foreground/95 mb-1">{group.group}</p>
-            {group.items.map(item => (
-              <RoadmapRow key={item.title} prefix="✓" title={item.title} desc={item.desc} />
-            ))}
-          </div>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+          <div>{doneGroups.slice(0, doneMid).map(renderDoneGroup)}</div>
+          <div>{doneGroups.slice(doneMid).map(renderDoneGroup)}</div>
+        </div>
       </div>
 
       {/* Coming up - with voting */}
