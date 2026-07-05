@@ -38,6 +38,9 @@ notes/
 *.iml
 FlagMe.md
 
+# --- Dev-only classifier regression harness (not shipped) ---
+Testing/
+
 .env
 .env.local
 .env.*.local
