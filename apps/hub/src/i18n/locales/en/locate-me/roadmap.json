@@ -2,27 +2,28 @@
   "doneLabel": "What's in v0",
   "done": [
     {
-      "group": "Analysis",
+      "group": "Reads",
       "items": [
-        { "title": "Static audit",      "desc": "Reads test code only - no runtime, no test execution" },
-        { "title": "Fragility classes", "desc": "Sorts locators into fragile / stable / context / dynamic by shape" },
-        { "title": "Coverage",          "desc": "Shows what was classified and what is dynamic (the blind spot)" }
+        { "title": "Static audit",           "desc": "Reads your test code only - no runtime, no execution" },
+        { "title": "Playwright & Cypress",    "desc": "locator + getBy*, cy.get / contains / find, aliases & chains" },
+        { "title": "TypeScript & JavaScript", "desc": "Reads the whole .ts / .js family" }
       ]
     },
     {
-      "group": "Stacks",
+      "group": "Verdicts",
       "items": [
-        { "title": "Cypress support",  "desc": "cy.get / cy.contains / find, alongside Playwright" },
-        { "title": "JavaScript files", "desc": "Audits .js tests too, not only .ts" }
+        { "title": "Fragility classes", "desc": "fragile / stable / context / dynamic, by shape" },
+        { "title": "Generated ids",     "desc": "Flags framework ids (React, Radix, MUI...) that change between builds" },
+        { "title": "Coverage",          "desc": "What was classified, and what is dynamic (the blind spot)" }
       ]
     },
     {
       "group": "Report",
       "items": [
-        { "title": "Why, not just what", "desc": "Explains why a locator is brittle - never auto-fixes" },
-        { "title": "Duplicates",         "desc": "Same selector in N places - fix once, close N" },
-        { "title": "Hot files",          "desc": "Files ranked by fragile count" },
-        { "title": "View filters",       "desc": "Show only fragile, or hide a kind" }
+        { "title": "Why, not just what",     "desc": "Explains the reason and suggests a sturdier locator - never auto-fixes" },
+        { "title": "Duplicates & hot files", "desc": "Same selector across N places; files ranked by fragile" },
+        { "title": "Filters & sort",         "desc": "Show only fragile or hide a kind; sort by file, duplicates or hot files" },
+        { "title": "Export & save",          "desc": "Download HTML / PDF, or save a report to your account" }
       ]
     },
     {
@@ -37,16 +38,16 @@
   "nextLabel": "Coming up",
   "nextDesc": "Candidates for the next version. Vote for what matters - it shapes the scope.",
   "next": [
-    { "title": "Mute a rule",        "desc": "Soften or silence a rule for your project" },
-    { "title": "My stable list",     "desc": "Mark attributes you treat as stable" },
-    { "title": "Delta vs last run",  "desc": "Load a previous report - see what changed" }
+    { "title": "Selenium support",  "desc": "By.xpath / By.css / By.id via selenium-webdriver" },
+    { "title": "Mute a rule",       "desc": "Soften or silence a rule for your project" },
+    { "title": "My stable list",    "desc": "Mark attributes you treat as stable" },
+    { "title": "Delta vs last run", "desc": "Load a previous report - see what changed" }
   ],
 
   "laterLabel": "Later",
   "later": [
-    { "title": "Selenium (JS)",            "desc": "By.xpath / By.css via selenium-webdriver" },
-    { "title": "Selenium (Java/Python)",   "desc": "Legacy suites - multi-language parser" },
-    { "title": "Export report",            "desc": "Save or share the audit as a file" }
+    { "title": "Selenium (Java / Python)", "desc": "Legacy suites - a multi-language parser" },
+    { "title": "WebdriverIO",              "desc": "$() / $$() selector support" }
   ],
 
   "suggestLabel": "Suggest a feature",
