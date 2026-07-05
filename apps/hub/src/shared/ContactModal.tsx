@@ -27,7 +27,7 @@ export default function ContactModal({ onClose }: { onClose: () => void }) {
         website: website || null,
       })
       setState('sent')
-      setTimeout(onClose, 1400)
+      setTimeout(onClose, 2400)
     } catch {
       setState('error')
     }
