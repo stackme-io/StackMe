@@ -21,7 +21,8 @@
       "items": [
         { "title": "El porqué, no solo el qué", "desc": "Explica por qué un locator es frágil - nunca lo corrige solo" },
         { "title": "Duplicados",                "desc": "Mismo selector en N sitios - arregla uno, cierra N" },
-        { "title": "Archivos calientes",        "desc": "Archivos ordenados por número de frágiles" }
+        { "title": "Archivos calientes",        "desc": "Archivos ordenados por número de frágiles" },
+        { "title": "Filtros de vista",           "desc": "Mostrar solo frágiles, u ocultar un tipo" }
       ]
     },
     {
@@ -38,7 +39,6 @@
   "next": [
     { "title": "Silenciar una regla",     "desc": "Suaviza o silencia una regla para tu proyecto" },
     { "title": "Mi lista de estables",    "desc": "Marca atributos que consideras estables" },
-    { "title": "Filtros de vista",        "desc": "Mostrar solo frágiles, u ocultar un tipo" },
     { "title": "Delta vs ejecución previa", "desc": "Carga un informe anterior - mira qué cambió" }
   ],
 

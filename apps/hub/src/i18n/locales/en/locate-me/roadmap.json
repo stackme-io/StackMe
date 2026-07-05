@@ -21,7 +21,8 @@
       "items": [
         { "title": "Why, not just what", "desc": "Explains why a locator is brittle - never auto-fixes" },
         { "title": "Duplicates",         "desc": "Same selector in N places - fix once, close N" },
-        { "title": "Hot files",          "desc": "Files ranked by fragile count" }
+        { "title": "Hot files",          "desc": "Files ranked by fragile count" },
+        { "title": "View filters",       "desc": "Show only fragile, or hide a kind" }
       ]
     },
     {
@@ -38,7 +39,6 @@
   "next": [
     { "title": "Mute a rule",        "desc": "Soften or silence a rule for your project" },
     { "title": "My stable list",     "desc": "Mark attributes you treat as stable" },
-    { "title": "View filters",       "desc": "Show only fragile, or hide a kind" },
     { "title": "Delta vs last run",  "desc": "Load a previous report - see what changed" }
   ],
 
