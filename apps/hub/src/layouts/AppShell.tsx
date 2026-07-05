@@ -129,6 +129,10 @@ export default function AppShell() {
     ? '#ffffff'
     : (MODULE_LOGO_COLORS[activeId] ?? '#ffffff')
 
+  // Accent hairline under the header - only the three tools have a color; market
+  // and system pages get none (line stays transparent, header border shows through).
+  const toolAccent = isSystemPage ? undefined : MODULE_LOGO_COLORS[activeId ?? '']
+
   useEffect(() => {
     // html lang attribute
     document.documentElement.lang = i18n.language
@@ -384,6 +388,8 @@ export default function AppShell() {
 
         </div>
       </header>
+
+      <div className="h-px flex-shrink-0 transition-colors duration-300" style={{ backgroundColor: toolAccent ?? 'transparent' }} />
 
       <main className="flex-1 overflow-hidden">
         <Outlet />
