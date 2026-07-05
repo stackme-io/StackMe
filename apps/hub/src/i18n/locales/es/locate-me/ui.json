@@ -96,6 +96,8 @@
   "colLocation": "Archivo",
   "colSelector": "Selector",
   "inspector": "Inspector",
+  "roadmapTitle": "Registro de versiones de LocateMe",
+  "aboutTitle": "Acerca de LocateMe",
   "about": {
     "p1": "LocateMe es una auditoría estática de fragilidad de locators para suites de tests Playwright / TypeScript. Lee solo tu código de tests - sin runtime, sin ejecución - y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
     "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que arregles un sitio y cierres muchos. Nunca reescribe tus tests y no da una puntuación única - solo hechos sobre los que actuar.",
