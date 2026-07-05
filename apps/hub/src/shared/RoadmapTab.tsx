@@ -196,7 +196,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
   )
 
   return (
-    <div className="max-w-xl pb-8">
+    <div className="max-w-2xl pb-8">
 
       {/* Done - two columns to shorten the list */}
       <div className="mb-6">
