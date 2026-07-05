@@ -12,7 +12,7 @@
   "analyze": "Analyze",
   "clear": "Clear",
   "pasteToggle": "…or paste a single file",
-  "pastePlaceholder": "// paste your *.spec.ts here",
+  "pastePlaceholder": "// paste a Playwright or Cypress test here (.ts / .js)",
   "analyzing": "Analyzing…",
   "runsLocally": "Runs locally",
   "needChromium": "Folder picking needs a Chromium browser (Chrome / Edge). You can still paste a file below.",

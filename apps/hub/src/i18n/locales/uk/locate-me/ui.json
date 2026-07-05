@@ -12,7 +12,7 @@
   "analyze": "Аналізувати",
   "clear": "Очистити",
   "pasteToggle": "…або встав один файл",
-  "pastePlaceholder": "// встав свій *.spec.ts тут",
+  "pastePlaceholder": "// встав тест Playwright або Cypress тут (.ts / .js)",
   "analyzing": "Аналізую…",
   "runsLocally": "Працює локально",
   "needChromium": "Вибір папки потребує браузера на Chromium (Chrome / Edge). Можеш вставити файл нижче.",

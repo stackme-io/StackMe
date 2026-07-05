@@ -12,7 +12,7 @@
   "analyze": "Analizar",
   "clear": "Limpiar",
   "pasteToggle": "…o pega un archivo",
-  "pastePlaceholder": "// pega tu *.spec.ts aquí",
+  "pastePlaceholder": "// pega un test de Playwright o Cypress aquí (.ts / .js)",
   "analyzing": "Analizando…",
   "runsLocally": "Se ejecuta localmente",
   "needChromium": "Elegir carpeta requiere un navegador Chromium (Chrome / Edge). Aún puedes pegar un archivo abajo.",
