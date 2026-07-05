@@ -66,7 +66,7 @@
   "sortHot": "Archivos más frágiles",
   "sortHotHint": "Archivos con más locators frágiles",
   "noneForFilter": "Nada coincide con este filtro.",
-  "emptyTitle": "Apunta LocateMe a tus tests de Playwright.",
+  "emptyTitle": "Apunta LocateMe a tus tests de Playwright o Cypress.",
   "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código.",
   "detectedLabel": "Detectado:",
   "unknownStack": "no se pudo detectar un stack conocido",

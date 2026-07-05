@@ -78,7 +78,7 @@
   "sortHot": "Найкрихкіші файли",
   "sortHotHint": "Файли з найбільшою кількістю крихких локаторів",
   "noneForFilter": "Нічого не відповідає фільтру.",
-  "emptyTitle": "Вкажи LocateMe на свої Playwright-тести.",
+  "emptyTitle": "Вкажи LocateMe на свої Playwright- або Cypress-тести.",
   "emptyDesc": "Читає форми локаторів статично. Код не виконується.",
   "detectedLabel": "Визначено:",
   "unknownStack": "не вдалося визначити відомий стек",

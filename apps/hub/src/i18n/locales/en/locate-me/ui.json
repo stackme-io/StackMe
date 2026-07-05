@@ -66,7 +66,7 @@
   "sortHot": "Most fragile files",
   "sortHotHint": "Files with the most fragile locators",
   "noneForFilter": "Nothing matches this filter.",
-  "emptyTitle": "Point LocateMe at your Playwright tests.",
+  "emptyTitle": "Point LocateMe at your Playwright or Cypress tests.",
   "emptyDesc": "Reads locator shapes statically. No code runs.",
   "detectedLabel": "Detected:",
   "unknownStack": "couldn't detect a known stack",
