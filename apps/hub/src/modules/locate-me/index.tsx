@@ -1009,7 +1009,7 @@ export default function LocateMePage() {
 
         {/* ---- ROADMAP ---- */}
         <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
-          <h2 className="text-title text-foreground mb-4">{t('roadmapTitle')}</h2>
+          <h2 className="text-title text-foreground mb-7">{t('roadmapTitle')}</h2>
           <RoadmapTab namespace="locate-me" />
         </div>
 
