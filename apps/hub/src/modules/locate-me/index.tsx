@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
@@ -1015,12 +1015,13 @@ export default function LocateMePage() {
 
         {/* ---- ABOUT ---- */}
         <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
-          <div className="max-w-2xl flex flex-col gap-3 text-sm leading-relaxed text-content">
+          <div className="max-w-2xl flex flex-col gap-4 text-sm leading-relaxed text-content">
             <h2 className="text-title text-foreground">{t('aboutTitle')}</h2>
-            <p>{t('about.p1')}</p>
-            <p>{t('about.p2')}</p>
-            <p>{t('about.p4')}</p>
-            <p className="text-sub text-content">{t('about.p3')}</p>
+            <p><Trans t={t} i18nKey="about.p1" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
+            <p><Trans t={t} i18nKey="about.p2" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
+            <p><Trans t={t} i18nKey="about.p4" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
+            <p className="text-foreground font-medium border-l-2 border-l-border bg-muted/30 rounded-r px-3.5 py-2.5">{t('about.precision')}</p>
+            <p className="border-t border-border/50 pt-4 mt-1"><Trans t={t} i18nKey="about.p3" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
           </div>
         </div>
 
