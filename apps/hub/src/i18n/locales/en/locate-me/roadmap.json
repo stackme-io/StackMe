@@ -10,6 +10,13 @@
       ]
     },
     {
+      "group": "Stacks",
+      "items": [
+        { "title": "Cypress support",  "desc": "cy.get / cy.contains / find, alongside Playwright" },
+        { "title": "JavaScript files", "desc": "Audits .js tests too, not only .ts" }
+      ]
+    },
+    {
       "group": "Report",
       "items": [
         { "title": "Why, not just what", "desc": "Explains why a locator is brittle - never auto-fixes" },
@@ -29,8 +36,6 @@
   "nextLabel": "Coming up",
   "nextDesc": "Candidates for the next version. Vote for what matters - it shapes the scope.",
   "next": [
-    { "title": "JavaScript files",   "desc": "Audit .js tests, not only .ts" },
-    { "title": "Cypress support",    "desc": "cy.get / cy.contains / find" },
     { "title": "Mute a rule",        "desc": "Soften or silence a rule for your project" },
     { "title": "My stable list",     "desc": "Mark attributes you treat as stable" },
     { "title": "View filters",       "desc": "Show only fragile, or hide a kind" },
