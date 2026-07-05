@@ -941,8 +941,8 @@ export default function LocateMePage() {
                 </div>
               </div>
 
-              <div className="w-full max-w-md flex flex-col gap-3">
-                <details className="border border-border/60 rounded-md">
+              <div className="w-full max-w-sm flex flex-col gap-3">
+                <details className="border-2 border-border rounded-md">
                   <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none text-center">{t('pasteToggle')}</summary>
                   <div className="p-3 pt-0 flex flex-col gap-2">
                     <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
