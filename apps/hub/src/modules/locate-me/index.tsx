@@ -368,14 +368,14 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
               <input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} autoFocus
                 onKeyDown={e => { if (e.key === 'Enter') doSave() }}
                 placeholder={t('report.saveTitlePlaceholder')}
-                className="w-full px-2 py-1.5 rounded border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:border-foreground/40" />
+                className="w-full px-2 py-1.5 rounded border border-border bg-muted/30 text-meta text-foreground focus:outline-none focus:border-foreground/40" />
               <div className="flex items-center gap-2">
                 <button onClick={doSave} disabled={saving}
-                  className="px-3 py-1.5 rounded text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                  className="px-3 py-1.5 rounded text-meta font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
                   {saving ? '...' : t('report.saveConfirm')}
                 </button>
                 <button onClick={() => setSaveMode(false)}
-                  className="px-3 py-1.5 rounded text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  className="px-3 py-1.5 rounded text-meta text-muted-foreground hover:text-foreground transition-colors">
                   {t('close')}
                 </button>
                 {error && <span className="text-meta text-k-fragile ml-auto">{error}</span>}
@@ -384,18 +384,18 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
           ) : (
             <>
               <button onClick={openReport}
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-meta text-foreground hover:bg-muted transition-colors">
                 <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↗</span>
                 {t('report.open')}
               </button>
               <button onClick={downloadReport}
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors">
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-meta text-foreground hover:bg-muted transition-colors">
                 <span className="w-3.5 text-center text-muted-foreground flex-shrink-0">↓</span>
                 {t('report.download')}
-                <span className="ml-auto text-[10px] text-muted-foreground">{t('report.clientSafe')}</span>
+                <span className="ml-auto text-meta text-muted-foreground">{t('report.clientSafe')}</span>
               </button>
               <button onClick={startSave}
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-xs text-foreground hover:bg-muted transition-colors border-t border-border/60 mt-1 pt-2">
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-meta text-foreground hover:bg-muted transition-colors border-t border-border/60 mt-1 pt-2">
                 <Archive className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                 {saved ? t('report.saved') : isSignedIn ? t('report.save') : t('report.saveSignIn')}
               </button>
@@ -494,9 +494,9 @@ function SavedReports() {
             <p className="text-meta text-muted-foreground mb-4">{t('reports.deleteConfirmDesc')}</p>
             <div className="flex justify-end gap-2">
               <button onClick={() => setConfirmId(null)}
-                className="px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground transition-colors">{t('close')}</button>
+                className="px-3 py-1.5 rounded-md text-meta text-muted-foreground hover:text-foreground transition-colors">{t('close')}</button>
               <button onClick={() => { const id = confirmId; setConfirmId(null); remove(id) }}
-                className="px-3 py-1.5 rounded-md text-xs font-medium bg-k-fragile text-white hover:bg-k-fragile/90 transition-colors">{t('reports.delete')}</button>
+                className="px-3 py-1.5 rounded-md text-meta font-medium bg-k-fragile text-white hover:bg-k-fragile/90 transition-colors">{t('reports.delete')}</button>
             </div>
           </div>
         </div>
@@ -1015,7 +1015,7 @@ export default function LocateMePage() {
 
         {/* ---- ABOUT ---- */}
         <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
-          <div className="max-w-2xl flex flex-col gap-4 text-sm leading-relaxed text-content">
+          <div className="max-w-2xl flex flex-col gap-4 text-body leading-relaxed text-content">
             <h2 className="text-title text-foreground">{t('aboutTitle')}</h2>
             <p><Trans t={t} i18nKey="about.p1" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p><Trans t={t} i18nKey="about.p2" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
