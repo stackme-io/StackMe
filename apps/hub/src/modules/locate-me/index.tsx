@@ -852,7 +852,7 @@ export default function LocateMePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report, filterKinds, sortMode, fileExcluded])
 
-  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors'
+  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-[var(--tool-accent,#22d3ee)] text-[#131417] hover:brightness-110 disabled:opacity-50 transition'
   const btnGhost = 'px-3 py-2 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors'
 
   return (

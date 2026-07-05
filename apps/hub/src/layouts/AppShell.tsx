@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, lazy } from 'react'
+import { useEffect, useState, useRef, lazy, type CSSProperties } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, LockOpen, X, Sun, Moon, Globe, Bell, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { SignInButton, SignOutButton, useUser, useAuth } from '@clerk/clerk-react'
@@ -177,7 +177,8 @@ export default function AppShell() {
   }, [location.pathname, activeId, isSystemPage, i18n.language])
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden"
+      style={{ ['--tool-accent' as string]: toolAccent } as CSSProperties}>
 
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
