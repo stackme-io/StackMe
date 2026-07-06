@@ -134,7 +134,52 @@ function classifyCss(s: string): Classification {
   };
 }
 
+// Selenium By.* strategies. XPath/CSS reuse the shape classifiers (form is form,
+// whatever the framework). The direct strategies map by what the strategy targets.
+// tagName is over-broad (matches many, takes the first) - a selection risk, NOT
+// fragility to layout change; we say so honestly instead of forcing it onto the axis.
+export function classifySelenium(strategy: string, value: string | null): Classification {
+  if (value === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/concatenation) - not classified." };
+  const s = value.trim();
+  switch (strategy) {
+    case "cssSelector": return classifyCss(s);
+    case "xpath": return classifyXpath(s);
+    case "id": {
+      const lib = detectGeneratedId(s);
+      if (lib) return {
+        kind: "fragile", confidence: "verdict", subcause: "selenium-id-generated",
+        reason: `Framework-generated id (${lib}) - auto-generated ids change between builds or re-renders, so By.id breaks when the id regenerates.`,
+        prefer: "Anchor on a data-testid or a stable hand-written id, not a generated one.",
+      };
+      return { kind: "stable", confidence: "verdict", subcause: "selenium-id", reason: "By.id - anchored on a stable id attribute." };
+    }
+    case "name": return { kind: "stable", confidence: "verdict", subcause: "selenium-name", reason: "By.name - anchored on the name attribute." };
+    case "className": return {
+      kind: "context", confidence: "context", subcause: "selenium-classname",
+      reason: "By.className targets a single class - fine while stable, but a styling class can move on a redesign.",
+      prefer: "First pass. If it is a styling hook, prefer By.id, a data-testid, or By.cssSelector on a stable attribute.",
+    };
+    case "tagName": return {
+      kind: "context", confidence: "context", subcause: "selenium-tagname",
+      reason: "By.tagName matches by tag alone - over-broad (matches many elements, takes the first). That is a selection risk, not fragility to layout change.",
+      prefer: "Over-broad rather than fragile. Target the specific element via By.id, a data-testid, or By.cssSelector.",
+    };
+    case "linkText": return {
+      kind: "context", confidence: "context", subcause: "selenium-linktext",
+      reason: "By.linkText matches the visible link text - can break on localization or copy edits.",
+      prefer: "First pass. For stability prefer By.id or a test attribute over the link's text.",
+    };
+    case "partialLinkText": return {
+      kind: "context", confidence: "context", subcause: "selenium-partiallinktext",
+      reason: "By.partialLinkText matches part of the link text - breaks on small copy changes or localization.",
+      prefer: "Fragile to text. Prefer By.id or a test attribute.",
+    };
+    default: return { kind: "dynamic", reason: `By.${strategy} - not classified in this pass.` };
+  }
+}
+
 export function classify(method: string, selector: string | null): Classification {
+  if (method.startsWith("By.")) return classifySelenium(method.slice(3), selector);
   if (selector === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/template) - not classified." };
   if (STABLE_METHODS.has(method)) return { kind: "stable", confidence: "verdict", subcause: "method-stable", reason: `User-facing locator (${method}) - recommended, resilient.` };
   if (CONTEXT_METHODS.has(method)) return {
