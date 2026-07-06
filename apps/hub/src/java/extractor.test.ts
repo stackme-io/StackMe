@@ -1,0 +1,70 @@
+// @vitest-environment node
+import { describe, it, expect, beforeAll } from 'vitest'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+import { existsSync } from 'node:fs'
+import { initJavaParser } from './parser'
+import { JavaTreeSitterExtractor } from './extractor'
+
+// Step 8b gate: extractor over the real tree-sitter Java grammar (wasm) in Node.
+// web-tree-sitter@0.20.8 lands in hub/node_modules; tree-sitter-wasms is root-hoisted.
+// Try both so it works regardless of where npm placed them.
+const here = dirname(fileURLToPath(import.meta.url))
+function pick(rels: string[], label: string): string {
+  const hit = rels.map(r => resolve(here, r)).find(existsSync)
+  if (!hit) throw new Error(`${label} not found in: ${rels.join(', ')}`)
+  return hit
+}
+const coreWasm = pick([
+  '../../node_modules/web-tree-sitter/tree-sitter.wasm',        // hub
+  '../../../../node_modules/web-tree-sitter/tree-sitter.wasm',  // root
+], 'tree-sitter.wasm')
+const javaWasm = pick([
+  '../../../../node_modules/tree-sitter-wasms/out/tree-sitter-java.wasm', // root
+  '../../node_modules/tree-sitter-wasms/out/tree-sitter-java.wasm',       // hub
+], 'tree-sitter-java.wasm')
+
+let ext: JavaTreeSitterExtractor
+beforeAll(async () => {
+  const parser = await initJavaParser({ locateFile: () => coreWasm, grammarPath: javaWasm })
+  ext = new JavaTreeSitterExtractor(parser)
+}, 20000)
+
+const run = (src: string) => ext.extract({ path: 'T.java', text: src })
+
+describe('JavaTreeSitterExtractor', () => {
+  it('By.id string literal (inside findElement)', () => {
+    const { locators } = run('class T { void t(){ driver.findElement(By.id("username")); } }')
+    expect(locators).toEqual([{ method: 'By.id', selector: 'username', line: 1 }])
+  })
+
+  it('By.xpath with escaped quotes is decoded before classify', () => {
+    const { locators } = run('class T { void t(){ driver.findElement(By.xpath("//*[@class=\\"card\\"]")); } }')
+    expect(locators).toEqual([{ method: 'By.xpath', selector: '//*[@class="card"]', line: 1 }])
+  })
+
+  it('non-literal argument -> dynamic (null selector)', () => {
+    const { locators } = run('class T { String id = "x"; void t(){ driver.findElement(By.id(id)); } }')
+    expect(locators.map(l => [l.method, l.selector])).toEqual([['By.id', null]])
+  })
+
+  it('string concatenation -> dynamic', () => {
+    const { locators } = run('class T { void t(){ driver.findElement(By.xpath("//div[" + i + "]")); } }')
+    expect(locators[0]?.selector).toBeNull()
+  })
+
+  it('multiple locators across lines, right line numbers', () => {
+    const src = ['class T {', '  By a = By.cssSelector(".btn");', '  By b = By.name("email");', '}'].join('\n')
+    const { locators } = run(src)
+    expect(locators).toEqual([
+      { method: 'By.cssSelector', selector: '.btn', line: 2 },
+      { method: 'By.name', selector: 'email', line: 3 },
+    ])
+  })
+
+  it('surfaces parse errors on broken code, still returns found locators', () => {
+    const { locators, errors } = run('class T { void t(){ driver.findElement(By.id("ok")); @@@ } }')
+    expect(locators).toEqual([{ method: 'By.id', selector: 'ok', line: 1 }])
+    expect(errors.length).toBeGreaterThan(0)
+  })
+})

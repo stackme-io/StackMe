@@ -1,34 +1,37 @@
-// SPIKE (step 1): prove web-tree-sitter + tree-sitter-java.wasm parse Java in the
-// browser, in dev AND on a deployed Vercel preview. Lazy: nothing loads until the
-// first call, so web-tree-sitter stays out of the main bundle.
-//
-// Pinned to web-tree-sitter@0.20.8 to match the prebuilt grammars in tree-sitter-wasms
-// (built with tree-sitter-cli 0.20.x). Newer web-tree-sitter (0.25+) uses a dylink
-// side-module loader that rejects these grammars ("need dylink section"). 0.20 API =
-// default export + Parser.Language.load.
+// web-tree-sitter Java parser. Pinned to web-tree-sitter@0.20.8 to match the prebuilt
+// grammars in tree-sitter-wasms (0.25+ uses a dylink loader that rejects them).
+// The init is injectable so the same code runs in the browser (locateFile -> /wasm)
+// and in a Node test (locateFile -> a filesystem path).
 
 import Parser from 'web-tree-sitter'
 
-const WASM_BASE = '/wasm'
-let ready: Promise<Parser> | null = null
-
-async function getParser(): Promise<Parser> {
-  if (!ready) {
-    ready = (async () => {
-      // locateFile tells the runtime where tree-sitter.wasm lives.
-      await Parser.init({ locateFile: (name: string) => `${WASM_BASE}/${name}` })
-      const Java = await Parser.Language.load(`${WASM_BASE}/tree-sitter-java.wasm`)
-      const parser = new Parser()
-      parser.setLanguage(Java)
-      return parser
-    })()
-  }
-  return ready
+export interface JavaParserInit {
+  locateFile: (name: string) => string // where the core tree-sitter.wasm lives
+  grammarPath: string                  // path/URL to tree-sitter-java.wasm
 }
 
-/** Parse Java source, return the tree as an S-expression (spike verification). */
+export async function initJavaParser(init: JavaParserInit): Promise<Parser> {
+  await Parser.init({ locateFile: init.locateFile })
+  const Java = await Parser.Language.load(init.grammarPath)
+  const parser = new Parser()
+  parser.setLanguage(Java)
+  return parser
+}
+
+// Browser singleton: wasm served from /wasm (copy-treesitter-wasm.mjs at build).
+let browserParser: Promise<Parser> | null = null
+export function getJavaParser(): Promise<Parser> {
+  if (!browserParser) {
+    browserParser = initJavaParser({
+      locateFile: (name) => `/wasm/${name}`,
+      grammarPath: '/wasm/tree-sitter-java.wasm',
+    })
+  }
+  return browserParser
+}
+
+/** Spike helper (step 1): parse Java to an S-expression. Still handy for debugging. */
 export async function parseJavaToSexp(source: string): Promise<string> {
-  const parser = await getParser()
-  const tree = parser.parse(source)
-  return tree.rootNode.toString()
+  const parser = await getJavaParser()
+  return parser.parse(source).rootNode.toString()
 }
