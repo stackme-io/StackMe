@@ -13,9 +13,11 @@
     "build": "turbo run build"
   },
   "devDependencies": {
+    "tree-sitter-wasms": "^0.1.13",
     "turbo": "^2.9.6"
   },
   "dependencies": {
-    "framer-motion": "^12.40.0"
+    "framer-motion": "^12.40.0",
+    "web-tree-sitter": "^0.26.10"
   }
 }

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/copy-duckdb-wasm.mjs && node scripts/generate-og.mjs && tsc -b && vite build",
+    "build": "node scripts/copy-duckdb-wasm.mjs && node scripts/copy-treesitter-wasm.mjs && node scripts/generate-og.mjs && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

@@ -30,4 +30,9 @@ export default defineConfig({
       allow: [path.resolve(__dirname, '../..')],
     },
   },
+  optimizeDeps: {
+    // web-tree-sitter loads its .wasm at runtime (locateFile -> /wasm); keep Vite
+    // from trying to pre-bundle/transform it.
+    exclude: ['web-tree-sitter'],
+  },
 })
