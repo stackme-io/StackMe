@@ -1,12 +1,13 @@
 // SPIKE (step 1): prove web-tree-sitter + tree-sitter-java.wasm parse Java in the
 // browser, in dev AND on a deployed Vercel preview. Lazy: nothing loads until the
-// first call, so web-tree-sitter stays out of the main bundle. Not wired into
-// analyze() yet - this only de-risks the WASM-in-prod path.
+// first call, so web-tree-sitter stays out of the main bundle.
 //
-// Targets web-tree-sitter ^0.25 (named exports Parser/Language). If your installed
-// version differs and the import/API errors, paste the error and we adjust.
+// Pinned to web-tree-sitter@0.20.8 to match the prebuilt grammars in tree-sitter-wasms
+// (built with tree-sitter-cli 0.20.x). Newer web-tree-sitter (0.25+) uses a dylink
+// side-module loader that rejects these grammars ("need dylink section"). 0.20 API =
+// default export + Parser.Language.load.
 
-import { Parser, Language } from 'web-tree-sitter'
+import Parser from 'web-tree-sitter'
 
 const WASM_BASE = '/wasm'
 let ready: Promise<Parser> | null = null
@@ -14,9 +15,9 @@ let ready: Promise<Parser> | null = null
 async function getParser(): Promise<Parser> {
   if (!ready) {
     ready = (async () => {
-      // locateFile tells the emscripten runtime where tree-sitter.wasm lives.
+      // locateFile tells the runtime where tree-sitter.wasm lives.
       await Parser.init({ locateFile: (name: string) => `${WASM_BASE}/${name}` })
-      const Java = await Language.load(`${WASM_BASE}/tree-sitter-java.wasm`)
+      const Java = await Parser.Language.load(`${WASM_BASE}/tree-sitter-java.wasm`)
       const parser = new Parser()
       parser.setLanguage(Java)
       return parser
@@ -29,6 +30,5 @@ async function getParser(): Promise<Parser> {
 export async function parseJavaToSexp(source: string): Promise<string> {
   const parser = await getParser()
   const tree = parser.parse(source)
-  if (!tree) throw new Error('tree-sitter returned no tree')
   return tree.rootNode.toString()
 }

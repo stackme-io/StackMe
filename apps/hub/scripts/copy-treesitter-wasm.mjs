@@ -20,20 +20,20 @@ function find(candidates, label) {
 }
 
 // hub/node_modules (Vercel) first, then monorepo root (hoisted/local).
-// web-tree-sitter >=0.25 names its core wasm "web-tree-sitter.wasm".
+// web-tree-sitter 0.20.x names its core wasm "tree-sitter.wasm".
 const core = find([
-  '../node_modules/web-tree-sitter/web-tree-sitter.wasm',
-  '../../../node_modules/web-tree-sitter/web-tree-sitter.wasm',
-], 'web-tree-sitter/web-tree-sitter.wasm')
+  '../node_modules/web-tree-sitter/tree-sitter.wasm',
+  '../../../node_modules/web-tree-sitter/tree-sitter.wasm',
+], 'web-tree-sitter/tree-sitter.wasm')
 
 const java = find([
   '../node_modules/tree-sitter-wasms/out/tree-sitter-java.wasm',
   '../../../node_modules/tree-sitter-wasms/out/tree-sitter-java.wasm',
 ], 'tree-sitter-wasms/out/tree-sitter-java.wasm')
 
-// Keep the runtime's expected name (locateFile requests "web-tree-sitter.wasm").
-copyFileSync(core, `${dst}/web-tree-sitter.wasm`)
-console.log('✓ web-tree-sitter.wasm')
+// Keep the runtime's expected name (locateFile requests "tree-sitter.wasm").
+copyFileSync(core, `${dst}/tree-sitter.wasm`)
+console.log('✓ tree-sitter.wasm')
 copyFileSync(java, `${dst}/tree-sitter-java.wasm`)
 console.log('✓ tree-sitter-java.wasm')
 console.log('Done — tree-sitter wasm copied to public/wasm/')
