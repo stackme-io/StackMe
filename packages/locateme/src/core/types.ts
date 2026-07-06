@@ -40,3 +40,18 @@ export interface SourceFileInput {
   path: string;
   text: string;
 }
+
+// A locator call found by an extractor, BEFORE classification. Extractors (ts-morph
+// for JS/TS, tree-sitter for Java later) produce these; analyze() runs classify()
+// over them. This is the seam that keeps analyze() parser-agnostic.
+export interface RawLocator {
+  method: string;          // "getByRole", "cy.get", "By.xpath", ...
+  selector: string | null; // literal value, or null === dynamic (built at runtime)
+  line: number;            // 1-based line of the locator call
+}
+
+// A language/framework front-end: turns one source file into raw locator calls.
+// No classification here - only "what calls are locators and what string do they use".
+export interface LocatorExtractor {
+  extract(file: SourceFileInput): RawLocator[];
+}

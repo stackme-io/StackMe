@@ -1,40 +1,20 @@
-// Core analyzer - browser-safe (ts-morph with an in-memory file system, no disk).
-// Takes file texts in, returns ReportData. Used by both the CLI and the hub UI.
+// Core analyzer - browser-safe. Parser-agnostic: it asks an extractor for the raw
+// locator calls in each file, then runs classify() over them and assembles ReportData.
+// The extractor is chosen by file extension, so a Java (tree-sitter) front-end plugs
+// in here without touching classification or the report shape. Used by CLI and hub UI.
 
-import { Project, SyntaxKind, Node } from "ts-morph";
-import type { ReportData, Finding, Kind, SourceFileInput } from "./types.js";
+import type { ReportData, Finding, Kind, SourceFileInput, LocatorExtractor } from "./types.js";
 import { classify } from "./classify.js";
+import { TsMorphExtractor } from "./extractTsMorph.js";
 
 const VERSION = "0.0.1";
 
-const LOCATOR_METHODS = new Set([
-  "locator", "getByRole", "getByText", "getByTestId",
-  "getByLabel", "getByPlaceholder", "getByTitle", "getByAltText",
-]);
+const tsMorph = new TsMorphExtractor();
 
-// Cypress locator commands. Matched only when the call chain roots at `cy`, so a
-// generic .get()/.find()/.contains() on some other object is not taken for a locator.
-const CYPRESS_METHODS = new Set(["get", "find", "contains"]);
-
-// Walk the leftmost side of a chain to its base identifier
-// (e.g. cy.get('a').find('b') -> "cy").
-function chainRootName(node: Node): string | null {
-  let cur: Node = node;
-  for (;;) {
-    if (Node.isIdentifier(cur)) return cur.getText();
-    if (Node.isPropertyAccessExpression(cur)) { cur = cur.getExpression(); continue; }
-    if (Node.isCallExpression(cur)) { cur = cur.getExpression(); continue; }
-    if (Node.isElementAccessExpression(cur)) { cur = cur.getExpression(); continue; }
-    return null;
-  }
-}
-
-function getLiteralSelector(arg: Node | undefined): string | null {
-  if (!arg) return null;
-  if (Node.isStringLiteral(arg) || Node.isNoSubstitutionTemplateLiteral(arg)) {
-    return arg.getLiteralValue();
-  }
-  return null;
+// Pick the front-end for a file. Everything is JS/TS today; `.java` will route to
+// the tree-sitter extractor here once it exists (single dispatch point).
+function extractorFor(_path: string): LocatorExtractor {
+  return tsMorph;
 }
 
 function buildSnippet(lines: string[], ln: number): string {
@@ -48,37 +28,22 @@ function buildSnippet(lines: string[], ln: number): string {
 }
 
 export function analyze(files: SourceFileInput[], target = ""): ReportData {
-  const project = new Project({ useInMemoryFileSystem: true });
   const findings: Finding[] = [];
 
   for (const f of files) {
-    const sf = project.createSourceFile(f.path, f.text, { overwrite: true });
     const lines = f.text.split(/\r?\n/);
-
-    sf.forEachDescendant((node) => {
-      if (node.getKind() !== SyntaxKind.CallExpression) return;
-      const call = node.asKindOrThrow(SyntaxKind.CallExpression);
-      const expr = call.getExpression();
-      if (expr.getKind() !== SyntaxKind.PropertyAccessExpression) return;
-      const pae = expr.asKindOrThrow(SyntaxKind.PropertyAccessExpression);
-      const rawMethod = pae.getName();
-      let method: string;
-      if (LOCATOR_METHODS.has(rawMethod)) method = rawMethod;
-      else if (CYPRESS_METHODS.has(rawMethod) && chainRootName(pae) === "cy") method = "cy." + rawMethod;
-      else return;
-
-      // cy.contains(selector, text): the text (2nd arg) is the real matcher; cy.contains(text): 1st.
-      let selArg = call.getArguments()[0];
-      if (rawMethod === "contains") {
-        const second = call.getArguments()[1];
-        if (second && (Node.isStringLiteral(second) || Node.isNoSubstitutionTemplateLiteral(second))) selArg = second;
-      }
-      const selector = getLiteralSelector(selArg);
-      const line = call.getStartLineNumber();
-      const { kind, reason, subcause, confidence, prefer } = classify(method, selector);
-      const snippet = kind === "fragile" ? buildSnippet(lines, line) : undefined;
-      findings.push({ file: f.path, line, method, selector, kind, reason, subcause, confidence, prefer, snippet });
-    });
+    const raws = extractorFor(f.path).extract(f);
+    for (const r of raws) {
+      const { kind, reason, subcause, confidence, prefer } = classify(r.method, r.selector);
+      const snippet = kind === "fragile" ? buildSnippet(lines, r.line) : undefined;
+      findings.push({
+        file: f.path,
+        line: r.line,
+        method: r.method,
+        selector: r.selector,
+        kind, reason, subcause, confidence, prefer, snippet,
+      });
+    }
   }
 
   const byKind: Record<Kind, number> = { fragile: 0, stable: 0, context: 0, dynamic: 0 };
