@@ -10,10 +10,19 @@ import { TsMorphExtractor } from "./extractTsMorph.js";
 const VERSION = "0.0.1";
 
 const tsMorph = new TsMorphExtractor();
+const emptyExtractor: LocatorExtractor = { extract: () => ({ locators: [], errors: [] }) };
 
-// Pick the front-end for a file. Everything is JS/TS today; `.java` will route to
-// the tree-sitter extractor here once it exists (single dispatch point).
-function extractorFor(_path: string): LocatorExtractor {
+// The Java (tree-sitter) extractor lives in the app (it owns the wasm init), so it
+// registers itself here. Until it does, .java files yield nothing rather than being
+// fed to ts-morph (which would misparse them).
+let javaExtractor: LocatorExtractor | null = null;
+export function registerJavaExtractor(extractor: LocatorExtractor): void {
+  javaExtractor = extractor;
+}
+
+// Single dispatch point: pick the front-end by file extension.
+function extractorFor(path: string): LocatorExtractor {
+  if (/\.java$/i.test(path)) return javaExtractor ?? emptyExtractor;
   return tsMorph;
 }
 
@@ -29,11 +38,13 @@ function buildSnippet(lines: string[], ln: number): string {
 
 export function analyze(files: SourceFileInput[], target = ""): ReportData {
   const findings: Finding[] = [];
+  let unparsed = 0;
 
   for (const f of files) {
     const lines = f.text.split(/\r?\n/);
-    const raws = extractorFor(f.path).extract(f);
-    for (const r of raws) {
+    const { locators, errors } = extractorFor(f.path).extract(f);
+    unparsed += errors.length;
+    for (const r of locators) {
       const { kind, reason, subcause, confidence, prefer } = classify(r.method, r.selector);
       const snippet = kind === "fragile" ? buildSnippet(lines, r.line) : undefined;
       findings.push({
@@ -61,6 +72,7 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
       locatorCalls: findings.length,
       byKind,
       coverage: { total: findings.length, classified, dynamic },
+      ...(unparsed > 0 ? { unparsed } : {}),
     },
     findings,
   };

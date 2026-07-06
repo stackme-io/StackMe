@@ -5,7 +5,7 @@
 // they use". Non-literal args (variable / concat / template) -> selector null -> dynamic.
 
 import { Project, SyntaxKind, Node } from "ts-morph";
-import type { LocatorExtractor, RawLocator, SourceFileInput } from "./types.js";
+import type { LocatorExtractor, RawLocator, SourceFileInput, ExtractResult } from "./types.js";
 
 const LOCATOR_METHODS = new Set([
   "locator", "getByRole", "getByText", "getByTestId",
@@ -38,7 +38,7 @@ function getLiteralSelector(arg: Node | undefined): string | null {
 }
 
 export class TsMorphExtractor implements LocatorExtractor {
-  extract(file: SourceFileInput): RawLocator[] {
+  extract(file: SourceFileInput): ExtractResult {
     const project = new Project({ useInMemoryFileSystem: true });
     const sf = project.createSourceFile(file.path, file.text, { overwrite: true });
     const out: RawLocator[] = [];
@@ -69,6 +69,7 @@ export class TsMorphExtractor implements LocatorExtractor {
       });
     });
 
-    return out;
+    // ts-morph is lenient and doesn't surface parse errors here - always [].
+    return { locators: out, errors: [] };
   }
 }

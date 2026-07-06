@@ -30,6 +30,7 @@ export interface ReportData {
     locatorCalls: number;
     byKind: Record<Kind, number>;
     coverage: { total: number; classified: number; dynamic: number };
+    unparsed?: number; // regions the parser couldn't read (present only when > 0)
   };
   findings: Finding[];
 }
@@ -50,8 +51,22 @@ export interface RawLocator {
   line: number;            // 1-based line of the locator call
 }
 
-// A language/framework front-end: turns one source file into raw locator calls.
-// No classification here - only "what calls are locators and what string do they use".
+// A region the parser could not read (tree-sitter ERROR / MISSING node). We surface
+// these rather than silently drop them - "couldn't parse this section" over silence.
+export interface ParseError {
+  line: number;            // 1-based line where the unparsable region starts
+}
+
+// Extractor output: locators found + regions that failed to parse. errors is [] for
+// parsers that don't surface them (ts-morph). Keeps the ERROR-policy contract explicit.
+export interface ExtractResult {
+  locators: RawLocator[];
+  errors: ParseError[];
+}
+
+// A language/framework front-end: turns one source file into raw locators + parse
+// errors. No classification here - only "what calls are locators, what string, and
+// what couldn't be read".
 export interface LocatorExtractor {
-  extract(file: SourceFileInput): RawLocator[];
+  extract(file: SourceFileInput): ExtractResult;
 }
