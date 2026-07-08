@@ -3,19 +3,23 @@
 import type { SourceFileInput } from './types.js'
 
 export interface Detection {
-  language: 'TypeScript' | 'JavaScript' | 'TypeScript + JavaScript' | 'unknown'
+  language: 'TypeScript' | 'JavaScript' | 'TypeScript + JavaScript' | 'Java' | 'unknown'
   framework: 'Playwright' | 'Cypress' | 'Selenium' | 'unknown'
 }
 
 export function detectStack(files: SourceFileInput[]): Detection {
   let ts = false
   let js = false
+  let java = false
   for (const f of files) {
     if (/\.tsx?$/.test(f.path)) ts = true
     else if (/\.jsx?$/.test(f.path)) js = true
+    else if (/\.java$/.test(f.path)) java = true
   }
   const language: Detection['language'] =
-    ts && js ? 'TypeScript + JavaScript' : ts ? 'TypeScript' : js ? 'JavaScript' : 'unknown'
+    java ? 'Java'
+      : ts && js ? 'TypeScript + JavaScript'
+        : ts ? 'TypeScript' : js ? 'JavaScript' : 'unknown'
 
   let pw = 0
   let cy = 0
@@ -27,7 +31,9 @@ export function detectStack(files: SourceFileInput[]): Detection {
     if (/\bcy\.(get|contains|find|visit|intercept)\s*\(/.test(t)) cy += 2
     if (/['"]cypress['"]|from\s+['"]cypress/i.test(t)) cy += 1
     if (/selenium-webdriver/.test(t)) se += 3
-    if (/\bBy\.(xpath|css|id|name|className|tagName)\s*\(/.test(t)) se += 2
+    if (/import\s+org\.openqa\.selenium/.test(t)) se += 3
+    if (/@FindBy\b/.test(t)) se += 2
+    if (/\bBy\.(xpath|cssSelector|css|id|name|className|tagName|linkText|partialLinkText)\s*\(/.test(t)) se += 2
     if (/driver\.findElement/.test(t)) se += 1
   }
 

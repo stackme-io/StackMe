@@ -6,11 +6,11 @@ const SKIP_DIRS = new Set([
   'node_modules', 'dist', 'build', 'coverage', '.git', '.next', '.turbo', '.cache',
 ])
 
-// JS/TS family the ts-morph engine can parse (Playwright/Cypress/etc. live here).
-const PARSE_EXT = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts']
+// Files the engine can parse: JS/TS family (ts-morph) + Java (tree-sitter, Selenium).
+const PARSE_EXT = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts', '.java']
 // Code files in other languages we cannot parse yet. Counted so we can be honest
 // that they were left out of the scan.
-const SKIPPED_CODE_EXT = ['.java', '.py', '.cs', '.rb', '.go', '.php', '.kt', '.swift']
+const SKIPPED_CODE_EXT = ['.py', '.cs', '.rb', '.go', '.php', '.kt', '.swift']
 
 function isParseable(name: string): boolean {
   if (name.endsWith('.d.ts')) return false
