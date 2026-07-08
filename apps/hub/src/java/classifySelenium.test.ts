@@ -32,3 +32,19 @@ describe('classifySelenium (via classify router)', () => {
     })
   }
 })
+
+describe('Selenium prefer wording (no Playwright idioms)', () => {
+  const shouldHaveSeleniumPrefer: Array<[string, string]> = [
+    ['By.xpath', '//div[3]/button'],          // xpath-positional
+    ['By.xpath', '//ul/following-sibling::a'], // xpath-axis
+    ['By.cssSelector', '.list li:nth-child(2)'], // css-positional
+    ['By.cssSelector', 'div.css-1a2b3c'],      // css-autoclass
+  ]
+  for (const [method, selector] of shouldHaveSeleniumPrefer) {
+    it(`${method}(${JSON.stringify(selector)}) prefer avoids getBy*`, () => {
+      const r = classify(method, selector)
+      expect(r.prefer).toBeTruthy()
+      expect(r.prefer).not.toMatch(/getBy/)
+    })
+  }
+})

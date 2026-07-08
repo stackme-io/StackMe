@@ -220,6 +220,9 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
         {source && <span className="text-content">{t('analyzedLabel')} {source}</span>}
         {source && stack.length > 0 && <span className="text-faint">·</span>}
         {stack.length > 0 && <span>{stack.join(' · ')}</span>}
+        {detection?.framework === 'Selenium' && (
+          <span className="text-meta px-1.5 py-0.5 rounded border border-border text-muted-foreground/80">beta</span>
+        )}
       </p>
     </div>
   )
@@ -774,7 +777,7 @@ export default function LocateMePage() {
 
   const runSample = () => {
     setCode(''); setSkipped(0)
-    runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel', { files: t('nTsFiles', { count: SAMPLE_FILES.length }) }))
+    runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel', { files: t('nFiles', { count: SAMPLE_FILES.length }) }))
   }
 
   const selectFolder = async () => {
@@ -784,7 +787,7 @@ export default function LocateMePage() {
       const { files, rootName, skipped: skippedCount } = await pickAndReadFolder()
       if (files.length === 0) { setLoading(false); setError(t('noTsFiles', { name: rootName })); return }
       setSkipped(skippedCount)
-      runOnWorker(files, rootName, t('folderLabel', { name: rootName, files: t('nTsFiles', { count: files.length }) }))
+      runOnWorker(files, rootName, t('folderLabel', { name: rootName, files: t('nFiles', { count: files.length }) }))
     } catch (e) {
       setLoading(false)
       if ((e as DOMException)?.name !== 'AbortError') setError((e as Error).message)

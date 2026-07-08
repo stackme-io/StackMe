@@ -66,7 +66,7 @@
   "sortHot": "Most fragile files",
   "sortHotHint": "Files with the most fragile locators",
   "noneForFilter": "Nothing matches this filter.",
-  "emptyTitle": "Point LocateMe at your Playwright or Cypress tests.",
+  "emptyTitle": "Point LocateMe at your Playwright, Cypress, or Selenium tests.",
   "emptyDesc": "Reads locator shapes statically. No code runs.",
   "detectedLabel": "Detected:",
   "unknownStack": "couldn't detect a known stack",
@@ -99,7 +99,7 @@
   "roadmapTitle": "LocateMe version log",
   "aboutTitle": "About LocateMe",
   "about": {
-    "p1": "LocateMe is a <b>static locator-fragility audit</b> for Playwright and Cypress test suites. It reads your test code only - no runtime, no test execution - and groups locators by shape: fragile, stable, context, or dynamic.",
+    "p1": "LocateMe is a <b>static locator-fragility audit</b> for Playwright, Cypress, and Selenium (Java, beta) test suites. It reads your test code only - no runtime, no test execution - and groups locators by shape: fragile, stable, context, or dynamic.",
     "p2": "It surfaces why a locator may be brittle and where the same selector repeats, so you can <b>fix one place and close many</b>. It never auto-rewrites your tests and gives no single quality score - just facts you can act on.",
     "p3": "By default, <b>everything stays on your device</b> - it reads your locators locally and nothing is sent anywhere. If you choose to save a report to your account, that report (including selector strings and short code snippets) is uploaded to our servers so you can access it later. Downloading a report to your own computer stays fully local. Open source, MIT.",
     "p4": "How it judges: LocateMe sees how a locator is written, not your live app. It calls a locator fragile <b>only when the code alone proves it</b> - a positional path, an auto-generated class or id. When a signal is ambiguous it stays quiet instead of raising a false alarm you cannot dismiss. So a clean report means \"nothing we can prove is wrong,\" not \"nothing is wrong.\"",

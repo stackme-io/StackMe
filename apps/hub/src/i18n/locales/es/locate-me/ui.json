@@ -66,7 +66,7 @@
   "sortHot": "Archivos más frágiles",
   "sortHotHint": "Archivos con más locators frágiles",
   "noneForFilter": "Nada coincide con este filtro.",
-  "emptyTitle": "Apunta LocateMe a tus tests de Playwright o Cypress.",
+  "emptyTitle": "Apunta LocateMe a tus tests de Playwright, Cypress o Selenium.",
   "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código.",
   "detectedLabel": "Detectado:",
   "unknownStack": "no se pudo detectar un stack conocido",
@@ -99,7 +99,7 @@
   "roadmapTitle": "Registro de versiones de LocateMe",
   "aboutTitle": "Acerca de LocateMe",
   "about": {
-    "p1": "LocateMe es una <b>auditoría estática de fragilidad de locators</b> para suites de tests Playwright y Cypress. Lee solo tu código de tests - sin runtime, sin ejecución - y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
+    "p1": "LocateMe es una <b>auditoría estática de fragilidad de locators</b> para suites de tests Playwright, Cypress y Selenium (Java, beta). Lee solo tu código de tests - sin runtime, sin ejecución - y agrupa los locators por forma: frágil, estable, contexto o dinámico.",
     "p2": "Muestra por qué un locator puede ser frágil y dónde se repite el mismo selector, para que <b>arregles un sitio y cierres muchos</b>. Nunca reescribe tus tests y no da una puntuación única - solo hechos sobre los que actuar.",
     "p3": "Por defecto, <b>todo permanece en tu dispositivo</b> - lee tus locators localmente y no se envía nada a ningún sitio. Si eliges guardar un informe en tu cuenta, ese informe (incluidos los selectores y breves fragmentos de tu código de tests) se sube a nuestros servidores para que puedas acceder a él más tarde. Descargar un informe a tu propio ordenador es totalmente local. Código abierto, MIT.",
     "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil <b>solo cuando el código por sí solo lo demuestra</b> - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\".",

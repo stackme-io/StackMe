@@ -134,16 +134,40 @@ function classifyCss(s: string): Classification {
   };
 }
 
+// The shape classifiers (classifyXpath/classifyCss) speak Playwright idioms in their
+// "prefer" advice (getByRole, getByTestId). For Selenium files that advice is wrong -
+// Selenium has no getByRole. Re-word the prefer per sub-cause in Selenium terms; the
+// verdict/reason/kind are framework-agnostic and reused as-is. Playwright/Cypress never
+// pass through here, so their advice is untouched.
+const SELENIUM_PREFER: Record<string, string> = {
+  "css-positional":    "Anchor on identity, not position - By.id(...), or By.cssSelector(\"[data-testid='...']\").",
+  "css-autoclass":     "Generated class name - prefer By.id or a data-testid over a build-time class.",
+  "css-id-generated":  "Prefer a data-testid or a stable hand-written id, not a generated one.",
+  "css-class":         "First pass. A styling class can move on a restyle - By.id or a data-testid is steadier.",
+  "xpath-axis":        "Re-anchor on the target's own id or test attribute instead of walking the tree.",
+  "xpath-positional":  "Anchor on the element's id or a test attribute instead of its position in the path.",
+  "xpath-text":        "First pass - fine for assertions. For clicks, By.id or a data-testid is steadier than text.",
+  "xpath-testattr":    "Solid. By.cssSelector(\"[data-testid='...']\") reads more idiomatically than raw XPath.",
+  "xpath-attr":        "First pass. If it's a real test contract it's fine; otherwise prefer By.id or a data-testid.",
+  "xpath-absolute":    "Replace the absolute path with By.id, a data-testid, or a By.cssSelector on the target element.",
+};
+
+function withSeleniumPrefer(c: Classification): Classification {
+  if (c.prefer && c.subcause && SELENIUM_PREFER[c.subcause]) return { ...c, prefer: SELENIUM_PREFER[c.subcause] };
+  return c;
+}
+
 // Selenium By.* strategies. XPath/CSS reuse the shape classifiers (form is form,
-// whatever the framework). The direct strategies map by what the strategy targets.
-// tagName is over-broad (matches many, takes the first) - a selection risk, NOT
-// fragility to layout change; we say so honestly instead of forcing it onto the axis.
+// whatever the framework), with prefer re-worded for Selenium. The direct strategies
+// map by what the strategy targets. tagName is over-broad (matches many, takes the
+// first) - a selection risk, NOT fragility to layout change; we say so honestly
+// instead of forcing it onto the axis.
 export function classifySelenium(strategy: string, value: string | null): Classification {
   if (value === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/concatenation) - not classified." };
   const s = value.trim();
   switch (strategy) {
-    case "cssSelector": return classifyCss(s);
-    case "xpath": return classifyXpath(s);
+    case "cssSelector": return withSeleniumPrefer(classifyCss(s));
+    case "xpath": return withSeleniumPrefer(classifyXpath(s));
     case "id": {
       const lib = detectGeneratedId(s);
       if (lib) return {
