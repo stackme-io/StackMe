@@ -6,7 +6,8 @@
       "items": [
         { "title": "Статичний аудит",         "desc": "Читає лише твій код тестів - без рантайму, без запуску" },
         { "title": "Playwright і Cypress",    "desc": "locator + getBy*, cy.get / contains / find, аліаси та ланцюжки" },
-        { "title": "TypeScript і JavaScript", "desc": "Читає всю родину .ts / .js" }
+        { "title": "TypeScript і JavaScript", "desc": "Читає всю родину .ts / .js" },
+        { "title": "Selenium (Java)",         "desc": "Локатори By.* у .java файлах, скан папки (beta)" }
       ]
     },
     {
@@ -38,7 +39,7 @@
   "nextLabel": "Незабаром",
   "nextDesc": "Кандидати на наступну версію. Голосуй за важливе - це формує обсяг.",
   "next": [
-    { "title": "Підтримка Selenium",        "desc": "By.xpath / By.css / By.id через selenium-webdriver" },
+    { "title": "Selenium @FindBy",          "desc": "Анотації Page Object, крос-файловий резолв" },
     { "title": "Приглушити правило",        "desc": "Пом'якшити або вимкнути правило для твого проєкту" },
     { "title": "Мій список стабільних",     "desc": "Познач атрибути, які вважаєш стабільними" },
     { "title": "Дельта з минулим запуском", "desc": "Завантаж попередній звіт - побач, що змінилось" }
@@ -46,7 +47,7 @@
 
   "laterLabel": "Пізніше",
   "later": [
-    { "title": "Selenium (Java / Python)", "desc": "Легасі-набори - багатомовний парсер" },
+    { "title": "Selenium (Python / C#)",   "desc": "Більше мов - багатомовний парсер" },
     { "title": "WebdriverIO",              "desc": "Підтримка селекторів $() / $$()" }
   ],
 

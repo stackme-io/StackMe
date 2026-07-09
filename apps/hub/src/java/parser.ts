@@ -29,9 +29,3 @@ export function getJavaParser(): Promise<Parser> {
   }
   return browserParser
 }
-
-/** Spike helper (step 1): parse Java to an S-expression. Still handy for debugging. */
-export async function parseJavaToSexp(source: string): Promise<string> {
-  const parser = await getJavaParser()
-  return parser.parse(source).rootNode.toString()
-}
