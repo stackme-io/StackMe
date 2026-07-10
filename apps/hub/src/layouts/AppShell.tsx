@@ -182,7 +182,7 @@ export default function AppShell() {
 
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {railAvailable && (
             <button
               onClick={toggleRail}
@@ -193,9 +193,9 @@ export default function AppShell() {
               {railOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
             </button>
           )}
-          <Link to="/market-me" className="flex items-center gap-3" onClick={() => openPanel(MARKET_ME_MANIFEST)}>
+          <Link to="/market-me" className="flex items-center gap-3 flex-shrink-0" onClick={() => openPanel(MARKET_ME_MANIFEST)}>
             <LogoMark color={logoColor} height={22} />
-            <span className="text-sm font-medium text-muted-foreground">StackMe</span>
+            <span className="hidden sm:inline text-sm font-medium text-muted-foreground">StackMe</span>
           </Link>
 
           {isAccountMe && (
@@ -212,7 +212,7 @@ export default function AppShell() {
           )}
 
           {!isSystemPage && activeId && (
-            <span className="md:hidden text-xs font-medium text-foreground truncate max-w-[42vw]">
+            <span className="md:hidden text-xs font-medium text-foreground truncate min-w-0 max-w-[42vw]">
               {panels.find((p: Panel) => p.id === activeId)?.manifest.name ?? ''}
             </span>
           )}
@@ -265,12 +265,10 @@ export default function AppShell() {
           )}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-shrink-0">
 
           {!isSystemPage && (
-            <div className="hidden md:flex">
-              <ShareButton note={activeId === 'locate-me' ? t('share.noteLocal') : t('share.note')} />
-            </div>
+            <ShareButton note={activeId === 'locate-me' ? t('share.noteLocal') : t('share.note')} />
           )}
 
           <DropdownMenu>

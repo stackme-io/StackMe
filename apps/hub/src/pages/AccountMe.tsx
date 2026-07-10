@@ -140,7 +140,7 @@ export default function AccountMePage() {
   const isAdmin  = ADMIN_USER_ID && userId === ADMIN_USER_ID
 
   return (
-    <div className="max-w-xl mx-auto px-6 py-8 flex flex-col gap-8">
+    <div className="max-w-xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
 
       <div className="flex items-center gap-4">
         {avatarUrl ? (
@@ -150,9 +150,9 @@ export default function AccountMePage() {
             {email?.[0]?.toUpperCase() ?? 'U'}
           </div>
         )}
-        <div>
-          <p className="text-base font-medium text-foreground">{displayName}</p>
-          <p className="text-xs text-muted-foreground">{userId}</p>
+        <div className="min-w-0">
+          <p className="text-base font-medium text-foreground truncate">{displayName}</p>
+          <p className="text-xs text-muted-foreground break-all">{userId}</p>
         </div>
       </div>
 
