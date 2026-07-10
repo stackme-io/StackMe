@@ -589,7 +589,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
 
 // Inner inspector content for a selected finding - shared by the desktop side
 // panel and the mobile bottom sheet.
-function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dupLocations: string[]; onClose: () => void }) {
+function InspectBody({ finding, dupLocations, onClose, onWhy }: { finding: Finding; dupLocations: string[]; onClose: () => void; onWhy: () => void }) {
   const { t } = useTranslation('locate-me')
   const [copied, setCopied] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
@@ -623,6 +623,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                 )}
               </span>
               <p className="text-sub text-muted-foreground leading-relaxed">{finding.reason}</p>
+              <button onClick={onWhy} className="self-start text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">{t('whyVerdict')}</button>
             </div>
             <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
           </div>
@@ -700,7 +701,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
 }
 
 // Desktop inspector side panel (hidden on mobile - mobile uses a bottom sheet).
-function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
+function FindingInspect({ finding, dupLocations, onClose, onWhy }: { finding: Finding | null; dupLocations: string[]; onClose: () => void; onWhy: () => void }) {
   const { t } = useTranslation('locate-me')
   return (
     <div className="hidden md:flex w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
@@ -712,7 +713,7 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
           <p className="text-sub text-content px-4 py-4">{t('selectHint')}</p>
         </>
       ) : (
-        <InspectBody finding={finding} dupLocations={dupLocations} onClose={onClose} />
+        <InspectBody finding={finding} dupLocations={dupLocations} onClose={onClose} onWhy={onWhy} />
       )}
     </div>
   )
@@ -864,6 +865,14 @@ export default function LocateMePage() {
   const navTo = (id: string) => {
     setActiveTab(id)
     setSearchParams({ tab: id }, { replace: true })
+  }
+
+  // "Why this verdict?" from the inspector: close the sheet, jump to the About tab
+  // and scroll to the Method section that explains what the verdicts are based on.
+  const showMethod = () => {
+    setSelected(null)
+    navTo('about')
+    setTimeout(() => document.getElementById('locate-method')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
   }
 
   const hasLocators = !!report && report.summary.locatorCalls > 0
@@ -1067,7 +1076,7 @@ export default function LocateMePage() {
                       <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
-                        <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
+                        <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} onWhy={showMethod} />
                       </div>
 
                       {/* Mobile inspector - bottom sheet on tap (desktop uses the side panel above) */}
@@ -1076,7 +1085,7 @@ export default function LocateMePage() {
                           <div className="absolute inset-0 bg-black/40" />
                           <div onClick={e => e.stopPropagation()} className="relative bg-card border-t border-border rounded-t-2xl max-h-[80vh] flex flex-col overflow-hidden">
                             <div className="flex justify-center pt-2 pb-1 flex-shrink-0"><span className="w-9 h-1 rounded-full bg-border" /></div>
-                            <InspectBody finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
+                            <InspectBody finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} onWhy={showMethod} />
                           </div>
                         </div>
                       )}
@@ -1110,6 +1119,19 @@ export default function LocateMePage() {
             <p><Trans t={t} i18nKey="about.p4" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p className="text-foreground font-medium border-l-2 border-l-border bg-muted/30 rounded-r px-3.5 py-2.5">{t('about.precision')}</p>
             <p className="border-t border-border/50 pt-4 mt-1"><Trans t={t} i18nKey="about.p3" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
+
+            <div id="locate-method" className="border-t border-border/50 pt-5 mt-2 flex flex-col gap-4 scroll-mt-4">
+              <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
+              <p>
+                <Trans t={t} i18nKey="method.p1" components={{
+                  pw: <a href="https://playwright.dev/docs/locators" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
+                  tl: <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
+                }} />
+              </p>
+              <p>{t('method.p2')}</p>
+              <p>{t('method.p3')}</p>
+              <p>{t('method.p4')}</p>
+            </div>
           </div>
         </div>
 

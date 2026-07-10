@@ -111,6 +111,14 @@
     "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil <b>solo cuando el código por sí solo lo demuestra</b> - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\".",
     "precision": "La regla: precisión sobre ruido."
   },
+  "aboutMethodTitle": "Método",
+  "whyVerdict": "¿Por qué este veredicto?",
+  "method": {
+    "p1": "El orden que recomendamos - Role, luego Label, luego Text, luego TestId, y por último CSS/XPath en crudo - no es nuestro. Es la guía de <pw>Playwright</pw> y <tl>Testing Library</tl>; la aplicamos a tu código.",
+    "p2": "Marcamos un locator como frágil solo cuando la cadena lo demuestra por sí sola: clases hasheadas de CSS-in-JS, ids generados por frameworks (React useId, Radix, MUI), :nth-child posicional, XPath con ejes. Esos cambian al recompilar por definición - mecánica, no opinión.",
+    "p3": "Una clase semántica, un atributo data-*, una coincidencia por texto - a esos no les damos un veredicto. Su estabilidad depende de lo que la cadena no puede mostrar: el DOM, la intención, la localización. Marcarlos frágiles sería adivinar por ti. Esa decisión te la dejamos a ti.",
+    "p4": "La auditoría es de solo lectura - un \"frágil\" falso no se puede descartar. Así que ante la duda, callamos."
+  },
   "report": {
     "button": "Informe",
     "open": "Abrir informe",
