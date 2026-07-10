@@ -48,6 +48,8 @@
   "skippedFiles_one": "{{count}} otro archivo de código omitido (solo Playwright / Cypress)",
   "skippedFiles_other": "{{count}} otros archivos de código omitidos (solo Playwright / Cypress)",
   "skippedTip": "LocateMe lee solo tests Playwright / Cypress. Otros archivos no se analizaron.",
+  "unresolvedBases": "Heredado de fuera del escaneo: {{list}}. Esos locators @FindBy no se auditaron - añade los archivos base para cobertura completa.",
+  "unresolvedBasesTip": "Una clase extiende una base que no está en la carpeta escaneada; sus locators @FindBy no se pudieron leer.",
   "filterTitle": "Filtro",
   "filesTitle": "Archivos",
   "nFiles_one": "{{count}} archivo",

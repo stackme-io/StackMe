@@ -3,7 +3,7 @@
 // The extractor is chosen by file extension, so a Java (tree-sitter) front-end plugs
 // in here without touching classification or the report shape. Used by CLI and hub UI.
 
-import type { ReportData, Finding, Kind, SourceFileInput, LocatorExtractor } from "./types.js";
+import type { ReportData, Finding, Kind, SourceFileInput, LocatorExtractor, ClassInfo } from "./types.js";
 import { classify } from "./classify.js";
 import { TsMorphExtractor } from "./extractTsMorph.js";
 
@@ -39,11 +39,13 @@ function buildSnippet(lines: string[], ln: number): string {
 export function analyze(files: SourceFileInput[], target = ""): ReportData {
   const findings: Finding[] = [];
   let unparsed = 0;
+  const allClasses: ClassInfo[] = [];
 
   for (const f of files) {
     const lines = f.text.split(/\r?\n/);
-    const { locators, errors } = extractorFor(f.path).extract(f);
+    const { locators, errors, classes } = extractorFor(f.path).extract(f);
     unparsed += errors.length;
+    if (classes) allClasses.push(...classes);
     for (const r of locators) {
       const { kind, reason, subcause, confidence, prefer } = classify(r.method, r.selector);
       const snippet = kind === "fragile" ? buildSnippet(lines, r.line) : undefined;
@@ -62,6 +64,13 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
   const dynamic = byKind.dynamic;
   const classified = findings.length - dynamic;
 
+  // Incompleteness note: a class that extends a base we never saw in the scan may have
+  // inherited @FindBy locators we couldn't audit. Flag it (no merge - just honesty).
+  const classNames = new Set(allClasses.map((c) => c.name));
+  const unresolvedBases = allClasses
+    .filter((c) => c.superclass && !classNames.has(c.superclass))
+    .map((c) => ({ className: c.name, base: c.superclass as string }));
+
   return {
     tool: "locateme",
     version: VERSION,
@@ -73,6 +82,7 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
       byKind,
       coverage: { total: findings.length, classified, dynamic },
       ...(unparsed > 0 ? { unparsed } : {}),
+      ...(unresolvedBases.length > 0 ? { unresolvedBases } : {}),
     },
     findings,
   };

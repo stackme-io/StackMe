@@ -6,7 +6,7 @@
 // per the step-7 contract (surfaced, not silently dropped). No classification here.
 
 import type Parser from 'web-tree-sitter'
-import type { LocatorExtractor, ExtractResult, RawLocator, ParseError, SourceFileInput } from '@locateme/core/types'
+import type { LocatorExtractor, ExtractResult, RawLocator, ParseError, ClassInfo, SourceFileInput } from '@locateme/core/types'
 import { decodeJavaString, decodeJavaTextBlock } from '@locateme/core/javaString'
 
 type Node = Parser.SyntaxNode
@@ -77,6 +77,7 @@ export class JavaTreeSitterExtractor implements LocatorExtractor {
     const tree = this.parser.parse(file.text)
     const locators: RawLocator[] = []
     const errors: ParseError[] = []
+    const classes: ClassInfo[] = []
 
     const stack: Node[] = [tree.rootNode]
     while (stack.length) {
@@ -105,6 +106,16 @@ export class JavaTreeSitterExtractor implements LocatorExtractor {
         if (loc) locators.push(loc)
       }
 
+      if (node.type === 'class_declaration') {
+        const name = node.childForFieldName('name')?.text
+        if (name) {
+          const sc = node.childForFieldName('superclass')
+          // `superclass` node text is "extends Base" (may carry generics) - strip both.
+          const superclass = sc ? (sc.text.replace(/^\s*extends\s+/, '').replace(/<[\s\S]*$/, '').trim() || null) : null
+          classes.push({ name, superclass, file: file.path, line: node.startPosition.row + 1 })
+        }
+      }
+
       // Full DFS (all children, not just named) so ERROR nodes are caught too.
       for (let i = node.childCount - 1; i >= 0; i--) {
         const c = node.child(i)
@@ -112,6 +123,6 @@ export class JavaTreeSitterExtractor implements LocatorExtractor {
       }
     }
 
-    return { locators, errors }
+    return { locators, errors, classes }
   }
 }

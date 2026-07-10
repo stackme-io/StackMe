@@ -984,6 +984,11 @@ export default function LocateMePage() {
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
+                  {report?.summary.unresolvedBases?.length ? (
+                    <p className="text-meta text-amber-400/90 flex-shrink-0 -mt-2" title={t('unresolvedBasesTip')}>
+                      {t('unresolvedBases', { list: report.summary.unresolvedBases.map(u => `${u.className} → ${u.base}`).join(', ') })}
+                    </p>
+                  ) : null}
                   <div className="flex-shrink-0"><RatioBar byKind={visByKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (

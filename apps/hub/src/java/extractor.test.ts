@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path'
 import { existsSync } from 'node:fs'
 import { initJavaParser } from './parser'
 import { JavaTreeSitterExtractor } from './extractor'
+import { analyze, registerJavaExtractor } from '@locateme/core/analyze'
 
 // Step 8b gate: extractor over the real tree-sitter Java grammar (wasm) in Node.
 // web-tree-sitter@0.20.8 lands in hub/node_modules; tree-sitter-wasms is root-hoisted.
@@ -28,6 +29,7 @@ let ext: JavaTreeSitterExtractor
 beforeAll(async () => {
   const parser = await initJavaParser({ locateFile: () => coreWasm, grammarPath: javaWasm })
   ext = new JavaTreeSitterExtractor(parser)
+  registerJavaExtractor(ext) // so analyze() routes .java to it
 }, 20000)
 
 const run = (src: string) => ext.extract({ path: 'T.java', text: src })
@@ -102,5 +104,32 @@ describe('JavaTreeSitterExtractor - @FindBy (R2)', () => {
       { method: 'By.id', selector: 'user', line: 2 },
       { method: 'By.name', selector: 'pass', line: 3 },
     ])
+  })
+})
+
+describe('class-index + unresolvedBases (R2 steps 2-3)', () => {
+  it('extractor emits class name + superclass', () => {
+    const { classes } = run('class LoginPage extends BasePage { }')
+    expect(classes).toEqual([{ name: 'LoginPage', superclass: 'BasePage', file: 'T.java', line: 1 }])
+  })
+
+  it('class without extends -> superclass null', () => {
+    const { classes } = run('class Plain { }')
+    expect(classes?.[0]).toMatchObject({ name: 'Plain', superclass: null })
+  })
+
+  it('analyze: base present in scan -> no unresolvedBases', () => {
+    const report = analyze([
+      { path: 'LoginPage.java', text: 'class LoginPage extends BasePage { @FindBy(id="u") Object u; }' },
+      { path: 'BasePage.java', text: 'class BasePage { @FindBy(id="b") Object b; }' },
+    ])
+    expect(report.summary.unresolvedBases).toBeUndefined()
+  })
+
+  it('analyze: base outside scan -> flagged', () => {
+    const report = analyze([
+      { path: 'LoginPage.java', text: 'class LoginPage extends BasePage { @FindBy(id="u") Object u; }' },
+    ])
+    expect(report.summary.unresolvedBases).toEqual([{ className: 'LoginPage', base: 'BasePage' }])
   })
 })

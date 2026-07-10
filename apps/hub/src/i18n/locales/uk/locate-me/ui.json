@@ -52,6 +52,8 @@
   "skippedFiles_many": "{{count}} інших code-файлів пропущено (лише Playwright / Cypress)",
   "skippedFiles_other": "{{count}} інших code-файлів пропущено (лише Playwright / Cypress)",
   "skippedTip": "LocateMe читає лише тести Playwright / Cypress. Інші файли не аналізувались.",
+  "unresolvedBases": "Успадковано з-поза скану: {{list}}. Ці @FindBy-локатори не перевірені - додай базові файли для повного покриття.",
+  "unresolvedBasesTip": "Клас наслідує базу, якої немає у відсканованій папці; її @FindBy-локатори не прочитані.",
   "filterTitle": "Фільтр",
   "filesTitle": "Файли",
   "nFiles_one": "{{count}} файл",

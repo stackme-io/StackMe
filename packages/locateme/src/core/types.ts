@@ -31,6 +31,9 @@ export interface ReportData {
     byKind: Record<Kind, number>;
     coverage: { total: number; classified: number; dynamic: number };
     unparsed?: number; // regions the parser couldn't read (present only when > 0)
+    // Classes that extend a base outside the scan - their inherited @FindBy locators
+    // weren't audited. Present only when non-empty. (Selenium/Java incompleteness note.)
+    unresolvedBases?: Array<{ className: string; base: string }>;
   };
   findings: Finding[];
 }
@@ -57,11 +60,23 @@ export interface ParseError {
   line: number;            // 1-based line where the unparsable region starts
 }
 
-// Extractor output: locators found + regions that failed to parse. errors is [] for
-// parsers that don't surface them (ts-morph). Keeps the ERROR-policy contract explicit.
+// A class the extractor saw, with its direct superclass (if any). Lightweight index -
+// NOT a full symbol table: just enough to flag "extends X where X is outside the scan"
+// (its inherited @FindBy locators couldn't be audited). No field merge (fragility is
+// judged at each locator's declaration site).
+export interface ClassInfo {
+  name: string;
+  superclass: string | null; // simple name of the direct base, or null
+  file: string;
+  line: number;
+}
+
+// Extractor output: locators found + regions that failed to parse + classes seen.
+// errors/classes are [] / undefined for parsers that don't surface them (ts-morph).
 export interface ExtractResult {
   locators: RawLocator[];
   errors: ParseError[];
+  classes?: ClassInfo[];
 }
 
 // A language/framework front-end: turns one source file into raw locators + parse
