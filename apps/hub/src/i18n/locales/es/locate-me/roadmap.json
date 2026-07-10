@@ -7,7 +7,7 @@
         { "title": "Auditoría estática",     "desc": "Lee solo tu código de tests - sin runtime, sin ejecución" },
         { "title": "Playwright y Cypress",   "desc": "locator + getBy*, cy.get / contains / find, alias y cadenas" },
         { "title": "TypeScript y JavaScript", "desc": "Lee toda la familia .ts / .js" },
-        { "title": "Selenium (Java)",          "desc": "By.* + @FindBy Page Objects en archivos .java (beta)" }
+        { "title": "Selenium (Java)",          "desc": "By.* + @FindBy Page Objects + Selenide, en archivos .java (beta)" }
       ]
     },
     {

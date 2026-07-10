@@ -7,7 +7,7 @@
         { "title": "Статичний аудит",         "desc": "Читає лише твій код тестів - без рантайму, без запуску" },
         { "title": "Playwright і Cypress",    "desc": "locator + getBy*, cy.get / contains / find, аліаси та ланцюжки" },
         { "title": "TypeScript і JavaScript", "desc": "Читає всю родину .ts / .js" },
-        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects у .java файлах (beta)" }
+        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects + Selenide, у .java файлах (beta)" }
       ]
     },
     {

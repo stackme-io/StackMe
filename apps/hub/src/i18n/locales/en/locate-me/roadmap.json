@@ -7,7 +7,7 @@
         { "title": "Static audit",           "desc": "Reads your test code only - no runtime, no execution" },
         { "title": "Playwright & Cypress",    "desc": "locator + getBy*, cy.get / contains / find, aliases & chains" },
         { "title": "TypeScript & JavaScript", "desc": "Reads the whole .ts / .js family" },
-        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects in .java files (beta)" }
+        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects + Selenide, in .java files (beta)" }
       ]
     },
     {
