@@ -226,19 +226,22 @@ export function classifySelenium(strategy: string, value: string | null): Classi
 }
 
 // Optional call-site context for classification. `usage` (from the extractor's AST)
-// lets the text-based buckets sharpen or soften their advice - and, on a proven action,
-// escalate a text locator's kind (a click by visible text is a real fragility).
+// only sharpens or softens the advice on text-based buckets - it never changes the
+// verdict. Rationale: usage=action raises the STAKES of a brittle text match, but not
+// the PROOF - whether the visible text is stable and unique is unknowable from the
+// string, so a firm "fragile" would overreach. (A firm verdict for text belongs on a
+// loose-match signature - regex / exact:false / contains(text) - not on usage.)
 export interface ClassifyContext { usage?: Usage }
 
-// Text-based buckets whose stability depends on how the locator is used: matching by
-// visible text is fine for an assertion but brittle for a click (copy edits, i18n,
-// duplicate text). Only these react to `usage`.
+// Text-based buckets whose advice depends on how the locator is used: matching by
+// visible text is squarely fine for an assertion but weaker for a click (copy edits,
+// i18n, possible non-uniqueness). Only these react to `usage` - and only in wording.
 const TEXT_SUBCAUSES = new Set(["method-text", "xpath-text"]);
 
-// Apply call-site usage to a text-based verdict. Precision-first: unknown usage never
-// changes anything; Selenium never reaches here (returns earlier); Cypress keeps its
-// own wording. On a proven action a text locator escalates context -> fragile (one-way,
-// upward only); on an assertion it stays as-is with softened wording.
+// Apply call-site usage to a text-based verdict - WORDING ONLY, never the kind.
+// Precision-first: unknown usage changes nothing; Selenium never reaches here (returns
+// earlier); Cypress keeps its own wording. Action sharpens the note (role+name is
+// steadier); assertion softens it (matching by text is the point of the check).
 function applyUsage(c: Classification, method: string, usage?: Usage): Classification {
   if (!usage || usage === "unknown") return c;
   if (method.startsWith("cy.")) return c;
@@ -246,13 +249,11 @@ function applyUsage(c: Classification, method: string, usage?: Usage): Classific
   if (usage === "assert") {
     return { ...c, prefer: "Fine here - matching by visible text is what an assertion is for. getByText also normalizes whitespace." };
   }
-  // usage === "action": clicking by visible text is a genuine fragility -> escalate.
+  // usage === "action": sharpen the advice, but stay context - we can't prove from the
+  // string that the label is unstable or non-unique, so we don't hand down a verdict.
   return {
     ...c,
-    kind: "fragile",
-    confidence: "verdict",
-    reason: "Used to drive an action, matched by visible text - breaks on copy edits or localization. Visible text isn't a stable identity for a click.",
-    prefer: "For a click, anchor on identity: getByRole(..., { name }) or getByTestId, not the visible text.",
+    prefer: "Used to drive an action. For a click/fill, getByRole(..., { name }) is usually steadier than visible text (which can drift with copy/i18n and may not be unique). Confirm the label is stable and unique.",
   };
 }
 
