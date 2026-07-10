@@ -942,11 +942,11 @@ export default function LocateMePage() {
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* ---- Mobile sub-nav (replaces the desktop rail nav) ---- */}
-        <div className="md:hidden flex items-center gap-1.5 px-4 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
+        <div className="md:hidden flex items-center gap-1 px-3 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
           {([['audit', Crosshair], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
             <button key={id} onClick={() => navTo(id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sub whitespace-nowrap transition-colors ${activeTab === id ? 'border-border bg-muted/50 text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
-              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-md border text-meta whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === id ? 'border-border bg-muted/50 text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
+              <Icon className="w-3 h-3 flex-shrink-0" />
               {t(`tabs.${id}`)}
             </button>
           ))}
@@ -961,7 +961,7 @@ export default function LocateMePage() {
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
 
               <div className="flex justify-center relative">
-                <div className="text-center flex-shrink-0 relative -mt-3">
+                <div className="text-center flex-shrink-0 max-w-full relative -mt-3">
 
                   {hintsOpen && (
                     <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left w-max">
@@ -982,7 +982,7 @@ export default function LocateMePage() {
                   )}
 
                   <div className="mb-4">
-                    <p className="text-heading text-foreground mb-1">{t('emptyTitle')}</p>
+                    <p className="text-heading text-foreground mb-1 max-w-[300px] mx-auto text-balance">{t('emptyTitle')}</p>
                     <p className="text-sub text-content max-w-[280px] mx-auto">{t('emptyDesc')}</p>
                   </div>
                   <div className="flex items-center justify-center gap-2">
@@ -1135,9 +1135,9 @@ export default function LocateMePage() {
           </div>
         </div>
 
-        <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-5 flex-shrink-0 overflow-x-auto">
+        <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-3 md:gap-5 flex-shrink-0 overflow-x-auto">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-meta text-muted-foreground">
+            <span key={item} className="text-meta text-muted-foreground whitespace-nowrap flex-shrink-0">
               <span className="mr-1 text-faint">//</span>{item}
             </span>
           ))}
