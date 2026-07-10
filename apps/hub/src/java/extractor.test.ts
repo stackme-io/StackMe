@@ -68,3 +68,39 @@ describe('JavaTreeSitterExtractor', () => {
     expect(errors.length).toBeGreaterThan(0)
   })
 })
+
+describe('JavaTreeSitterExtractor - @FindBy (R2)', () => {
+  it('shorthand @FindBy(id="x") -> By.id', () => {
+    const { locators } = run('class P { @FindBy(id = "loginButton") Object b; }')
+    expect(locators).toEqual([{ method: 'By.id', selector: 'loginButton', line: 1 }])
+  })
+
+  it('shorthand @FindBy(css=".submit") -> By.cssSelector', () => {
+    const { locators } = run('class P { @FindBy(css = ".submit") Object b; }')
+    expect(locators).toEqual([{ method: 'By.cssSelector', selector: '.submit', line: 1 }])
+  })
+
+  it('how-form @FindBy(how=How.ID, using="user") -> By.id', () => {
+    const { locators } = run('class P { @FindBy(how = How.ID, using = "user") Object b; }')
+    expect(locators).toEqual([{ method: 'By.id', selector: 'user', line: 1 }])
+  })
+
+  it('how-form @FindBy(how=How.XPATH, using="//div[3]") -> By.xpath (fragile shape)', () => {
+    const { locators } = run('class P { @FindBy(how = How.XPATH, using = "//div[3]/a") Object b; }')
+    expect(locators).toEqual([{ method: 'By.xpath', selector: '//div[3]/a', line: 1 }])
+  })
+
+  it('non-literal using -> dynamic (null selector)', () => {
+    const { locators } = run('class P { @FindBy(how = How.ID, using = CONST) Object b; }')
+    expect(locators.map(l => [l.method, l.selector])).toEqual([['By.id', null]])
+  })
+
+  it('audits @FindBy at declaration - own fields only, no inheritance merge', () => {
+    const src = ['class LoginPage extends BasePage {', '  @FindBy(id = "user") Object u;', '  @FindBy(name = "pass") Object p;', '}'].join('\n')
+    const { locators } = run(src)
+    expect(locators).toEqual([
+      { method: 'By.id', selector: 'user', line: 2 },
+      { method: 'By.name', selector: 'pass', line: 3 },
+    ])
+  })
+})
