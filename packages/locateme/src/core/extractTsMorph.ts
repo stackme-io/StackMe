@@ -5,7 +5,68 @@
 // they use". Non-literal args (variable / concat / template) -> selector null -> dynamic.
 
 import { Project, SyntaxKind, Node } from "ts-morph";
-import type { LocatorExtractor, RawLocator, SourceFileInput, ExtractResult } from "./types.js";
+import type { LocatorExtractor, RawLocator, SourceFileInput, ExtractResult, Usage } from "./types.js";
+
+// Methods that drive an action on the located element (Playwright + Cypress). If a
+// locator is the receiver of one of these in the same statement, its usage is "action".
+const ACTION_METHODS = new Set([
+  "click", "dblclick", "rightclick", "fill", "type", "pressSequentially", "press",
+  "check", "uncheck", "setChecked", "selectOption", "selectText", "select",
+  "setInputFiles", "selectFile", "hover", "focus", "blur", "dragTo", "tap", "clear",
+  "scrollIntoViewIfNeeded", "scrollIntoView", "trigger",
+]);
+
+// Methods/matchers that read or assert element state (never mutate it). A locator
+// terminating in one of these - or passed into expect(...) - has usage "assert".
+const ASSERT_METHODS = new Set([
+  "toBeVisible", "toBeHidden", "toHaveText", "toContainText", "toHaveValue",
+  "toHaveAttribute", "toBeChecked", "toBeEnabled", "toBeDisabled", "toHaveCount",
+  "toBeFocused", "toHaveClass", "toHaveId", "toHaveCSS", "toBeEditable", "toBeEmpty",
+  "textContent", "innerText", "inputValue", "getAttribute", "isVisible", "isHidden",
+  "isChecked", "isEnabled", "isDisabled", "isEditable", "count", "allTextContents",
+  "allInnerTexts", "should",
+]);
+
+// Locator-returning refinements: walk THROUGH these to the real terminator.
+const CHAIN_METHODS = new Set([
+  "filter", "nth", "first", "last", "or", "locator", "frameLocator",
+  "getByRole", "getByText", "getByTestId", "getByLabel", "getByPlaceholder", "getByTitle", "getByAltText",
+  "find", "eq", "parent", "parents", "children", "closest", "next", "nextAll", "prev", "prevAll", "siblings", "within", "its",
+]);
+
+// Determine how a locator call is used in its own statement, purely from the AST.
+// Precision-first: anything we can't resolve in the same expression (variable, helper,
+// bare await, cross-statement) returns "unknown" so classify() won't tighten on it.
+function detectUsage(callNode: Node): Usage {
+  let node: Node = callNode;
+  for (let i = 0; i < 25; i++) {
+    const parent = node.getParent();
+    if (!parent) return "unknown";
+    if (Node.isAwaitExpression(parent) || Node.isParenthesizedExpression(parent) ||
+        Node.isNonNullExpression(parent) || Node.isAsExpression(parent)) {
+      node = parent; continue;
+    }
+    if (Node.isCallExpression(parent)) {
+      const callee = parent.getExpression();
+      const name = Node.isIdentifier(callee) ? callee.getText()
+        : Node.isPropertyAccessExpression(callee) ? callee.getName() : "";
+      return name === "expect" ? "assert" : "unknown"; // passed into a call/helper
+    }
+    if (Node.isPropertyAccessExpression(parent) && parent.getExpression().compilerNode === node.compilerNode) {
+      const grand = parent.getParent();
+      if (grand && Node.isCallExpression(grand)) {
+        const m = parent.getName();
+        if (ACTION_METHODS.has(m)) return "action";
+        if (ASSERT_METHODS.has(m)) return "assert";
+        if (CHAIN_METHODS.has(m)) { node = grand; continue; }
+        return "unknown";
+      }
+      return "unknown";
+    }
+    return "unknown";
+  }
+  return "unknown";
+}
 
 const LOCATOR_METHODS = new Set([
   "locator", "getByRole", "getByText", "getByTestId",
@@ -66,6 +127,7 @@ export class TsMorphExtractor implements LocatorExtractor {
         method,
         selector: getLiteralSelector(selArg),
         line: call.getStartLineNumber(),
+        usage: detectUsage(call),
       });
     });
 

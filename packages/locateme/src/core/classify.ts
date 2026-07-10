@@ -1,5 +1,5 @@
 // Fragility classification - browser-safe, pure functions. The 80%-risk core.
-import type { Kind, Confidence } from "./types.js";
+import type { Kind, Confidence, Usage } from "./types.js";
 
 // Teaching sub-causes carry a concrete "prefer" upgrade along the prefer-ladder
 // (Role -> Label -> Text for assertions -> TestId -> raw CSS/XPath). Verdict buckets
@@ -17,10 +17,21 @@ export interface Classification {
   subcause?: string;
   confidence?: Confidence;
   prefer?: string;
+  preferCode?: string; // copy-ready swap - set only when mechanically safe (3d)
 }
 
 const STABLE_METHODS = new Set(["getByRole", "getByTestId", "getByLabel"]);
 const CONTEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText", "cy.contains"]);
+
+// Known automated-test hook attributes - an explicit contract between the app and the
+// suite, safe to anchor on. Any other data-* attribute is unknowable from the string
+// alone (a deliberate contract vs. volatile state/index/backend-id), so it is hedged as
+// context rather than trusted as stable or flagged as fragile.
+const TEST_HOOK_ATTR = "testid|test-id|test|qa-id|qa|cy|e2e|automation-id|automation|pw";
+const CSS_TEST_HOOK = new RegExp(`\\[data-(${TEST_HOOK_ATTR})\\b`, "i");
+const XPATH_TEST_HOOK = new RegExp(`@data-(${TEST_HOOK_ATTR})\\b`, "i");
+const CSS_DATA_ANY = /\[data-[\w-]+/i;
+const XPATH_DATA_ANY = /@data-[\w-]+/i;
 
 export function isXpath(s: string): boolean {
   return s.startsWith("//") || s.startsWith("(//") || s.startsWith(".//") ||
@@ -68,10 +79,15 @@ function classifyXpath(raw: string): Classification {
     reason: "Text-based xpath - can break on localization/content changes.",
     prefer: "First pass - fine for assertions. For clicks prefer getByRole(..., { name }); getByText also normalizes whitespace, raw XPath does not.",
   };
-  if (/@(data-testid|data-test|data-cy|data-qa)\b/i.test(s)) return {
+  if (XPATH_TEST_HOOK.test(s)) return {
     kind: "stable", confidence: "verdict", subcause: "xpath-testattr",
     reason: "Anchored on a test attribute.",
     prefer: "Solid. getByTestId('...') reads more idiomatically than raw XPath.",
+  };
+  if (XPATH_DATA_ANY.test(s)) return {
+    kind: "context", confidence: "context", subcause: "xpath-data-unknown",
+    reason: "A data-* attribute, but not a known test hook. Fine if the app sets it deliberately and it stays stable between builds; brittle if it's state or a derived value (data-state, data-index, a backend id).",
+    prefer: "First pass. Confirm it's a real test contract in your app; if not, prefer a data-testid, or getByRole / getByLabel.",
   };
   const xpIdMatch = s.match(/@id\s*=\s*['"]([^'"]+)['"]/i);
   if (xpIdMatch) {
@@ -111,7 +127,7 @@ function classifyCss(s: string): Classification {
       reason: "Auto-generated class name (CSS-in-JS) - changes on every build.",
       prefer: "Prefer getByRole or getByTestId - generated class names are styling hooks, not stable identity.",
     };
-  if (/\[data-(testid|test|cy|qa)\b/i.test(s)) return {
+  if (CSS_TEST_HOOK.test(s)) return {
     kind: "stable", confidence: "verdict", subcause: "css-testattr",
     reason: "Test attribute selector.",
   };
@@ -127,6 +143,11 @@ function classifyCss(s: string): Classification {
       reason: "Single id selector.",
     };
   }
+  if (CSS_DATA_ANY.test(s)) return {
+    kind: "context", confidence: "context", subcause: "css-data-unknown",
+    reason: "A data-* attribute, but not a known test hook. Fine if the app sets it deliberately and it stays stable between builds; brittle if it's state or a derived value (data-state, data-index, a backend id).",
+    prefer: "First pass. Confirm it's a real test contract in your app; if not, prefer a data-testid, or getByRole / getByLabel.",
+  };
   return {
     kind: "context", confidence: "context", subcause: "css-class",
     reason: "Class/attribute selector - stability depends on your project.",
@@ -144,6 +165,8 @@ const SELENIUM_PREFER: Record<string, string> = {
   "css-autoclass":     "Generated class name - prefer By.id or a data-testid over a build-time class.",
   "css-id-generated":  "Prefer a data-testid or a stable hand-written id, not a generated one.",
   "css-class":         "First pass. A styling class can move on a restyle - By.id or a data-testid is steadier.",
+  "css-data-unknown":  "First pass. Confirm it's a real test contract; otherwise prefer By.cssSelector(\"[data-testid='...']\") or By.id.",
+  "xpath-data-unknown": "First pass. Confirm it's a real test contract; otherwise prefer a data-testid or By.id.",
   "xpath-axis":        "Re-anchor on the target's own id or test attribute instead of walking the tree.",
   "xpath-positional":  "Anchor on the element's id or a test attribute instead of its position in the path.",
   "xpath-text":        "First pass - fine for assertions. For clicks, By.id or a data-testid is steadier than text.",
@@ -202,8 +225,64 @@ export function classifySelenium(strategy: string, value: string | null): Classi
   }
 }
 
-export function classify(method: string, selector: string | null): Classification {
+// Optional call-site context for classification. `usage` (from the extractor's AST)
+// lets the text-based buckets sharpen or soften their advice - and, on a proven action,
+// escalate a text locator's kind (a click by visible text is a real fragility).
+export interface ClassifyContext { usage?: Usage }
+
+// Text-based buckets whose stability depends on how the locator is used: matching by
+// visible text is fine for an assertion but brittle for a click (copy edits, i18n,
+// duplicate text). Only these react to `usage`.
+const TEXT_SUBCAUSES = new Set(["method-text", "xpath-text"]);
+
+// Apply call-site usage to a text-based verdict. Precision-first: unknown usage never
+// changes anything; Selenium never reaches here (returns earlier); Cypress keeps its
+// own wording. On a proven action a text locator escalates context -> fragile (one-way,
+// upward only); on an assertion it stays as-is with softened wording.
+function applyUsage(c: Classification, method: string, usage?: Usage): Classification {
+  if (!usage || usage === "unknown") return c;
+  if (method.startsWith("cy.")) return c;
+  if (!c.subcause || !TEXT_SUBCAUSES.has(c.subcause)) return c;
+  if (usage === "assert") {
+    return { ...c, prefer: "Fine here - matching by visible text is what an assertion is for. getByText also normalizes whitespace." };
+  }
+  // usage === "action": clicking by visible text is a genuine fragility -> escalate.
+  return {
+    ...c,
+    kind: "fragile",
+    confidence: "verdict",
+    reason: "Used to drive an action, matched by visible text - breaks on copy edits or localization. Visible text isn't a stable identity for a click.",
+    prefer: "For a click, anchor on identity: getByRole(..., { name }) or getByTestId, not the visible text.",
+  };
+}
+
+// A copy-paste-ready replacement, ONLY when the swap is mechanically safe - the new
+// locator matches exactly the same element set, adds no assumption we can't see. We only
+// do this for a raw Playwright `locator()` wrapping the default test-hook attribute
+// (data-testid), where getByTestId('x') is the idiomatic equivalent. A leading tag is
+// dropped (a test id is contractually unique). Anything requiring a role/name/text we do
+// not know stays prose-only (never a fake copy-ready).
+function safeSwap(method: string, selector: string | null, subcause?: string): string | undefined {
+  if (method !== "locator" || !selector) return undefined;
+  if (subcause === "css-testattr") {
+    const m = selector.match(/\[data-testid\s*=\s*["']([^"']+)["']\]/i);
+    if (m) return `getByTestId('${m[1]}')`;
+  }
+  if (subcause === "xpath-testattr") {
+    const m = selector.match(/@data-testid\s*=\s*["']([^"']+)["']/i);
+    if (m) return `getByTestId('${m[1]}')`;
+  }
+  return undefined;
+}
+
+export function classify(method: string, selector: string | null, ctx?: ClassifyContext): Classification {
   if (method.startsWith("By.")) return classifySelenium(method.slice(3), selector);
+  const c = applyUsage(classifyJs(method, selector), method, ctx?.usage);
+  const code = safeSwap(method, selector, c.subcause);
+  return code ? { ...c, preferCode: code } : c;
+}
+
+function classifyJs(method: string, selector: string | null): Classification {
   if (selector === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/template) - not classified." };
   if (STABLE_METHODS.has(method)) return { kind: "stable", confidence: "verdict", subcause: "method-stable", reason: `User-facing locator (${method}) - recommended, resilient.` };
   if (CONTEXT_METHODS.has(method)) return {

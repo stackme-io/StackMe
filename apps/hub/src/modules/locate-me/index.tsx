@@ -592,15 +592,22 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
 function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   const [copied, setCopied] = useState(false)
+  const [copiedCode, setCopiedCode] = useState(false)
   const [showCode, setShowCode] = useState(false)
 
   // Reset transient panel state whenever a different finding is selected.
-  useEffect(() => { setShowCode(false); setCopied(false) }, [finding])
+  useEffect(() => { setShowCode(false); setCopied(false); setCopiedCode(false) }, [finding])
 
   const copy = () => {
     if (finding.selector === null) return
     navigator.clipboard?.writeText(finding.selector)
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
+      .catch(() => {})
+  }
+  const copyCode = () => {
+    if (!finding.preferCode) return
+    navigator.clipboard?.writeText(finding.preferCode)
+      .then(() => { setCopiedCode(true); setTimeout(() => setCopiedCode(false), 1500) })
       .catch(() => {})
   }
 
@@ -632,13 +639,19 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                 <code className="block text-code text-foreground bg-muted/40 rounded border-l-2 border-l-transparent px-3 py-2.5 break-all">{selectorText(finding)}</code>
               </div>
 
-              {finding.prefer && (
+              {(finding.prefer || finding.preferCode) && (
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-1.5">
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>
+                  {finding.prefer && <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>}
+                  {finding.preferCode && (
+                    <div className="flex items-stretch gap-2">
+                      <code className="flex-1 text-code text-foreground bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
+                      <button onClick={copyCode} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 px-1">{copiedCode ? t('copied') : t('copy')}</button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

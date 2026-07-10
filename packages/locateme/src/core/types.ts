@@ -7,6 +7,13 @@ export type Kind = "fragile" | "stable" | "context" | "dynamic";
 // "context" = conditional first-pass note. Drives the inspector's tone.
 export type Confidence = "verdict" | "context";
 
+// How the locator is used in the same statement: driving an action (click/fill/...),
+// checked in an assertion (expect/.toBeVisible/...), or unknown (assigned to a var,
+// returned, passed to a helper - we don't resolve across statements). A text-based
+// locator is riskier in an action than in an assertion. Precision-first: "unknown"
+// behaves exactly as before (no tightening).
+export type Usage = "action" | "assert" | "unknown";
+
 export interface Finding {
   file: string; // relative path
   line: number;
@@ -16,7 +23,9 @@ export interface Finding {
   reason: string;
   subcause?: string; // stable id of the matched sub-cause (e.g. "css-autoclass")
   confidence?: Confidence;
-  prefer?: string; // concrete upgrade suggestion along the prefer-ladder
+  prefer?: string; // concrete upgrade suggestion along the prefer-ladder (prose / hedge)
+  preferCode?: string; // copy-paste-ready replacement - ONLY for meaning-preserving swaps
+  usage?: Usage; // action/assert/unknown - how the locator is used in its statement
   snippet?: string; // source lines around a fragile locator
 }
 
@@ -52,6 +61,7 @@ export interface RawLocator {
   method: string;          // "getByRole", "cy.get", "By.xpath", ...
   selector: string | null; // literal value, or null === dynamic (built at runtime)
   line: number;            // 1-based line of the locator call
+  usage?: Usage;           // how it's used in the same statement (action/assert/unknown)
 }
 
 // A region the parser could not read (tree-sitter ERROR / MISSING node). We surface
