@@ -73,6 +73,7 @@
   "noneForFilter": "Nothing matches this filter.",
   "emptyTitle": "Point LocateMe at your Playwright, Cypress, or Selenium tests.",
   "emptyDesc": "Reads locator shapes statically. No code runs.",
+  "mobileHint": "Folder scanning needs a desktop browser. Try the sample, or paste a file below.",
   "detectedLabel": "Detected:",
   "unknownStack": "couldn't detect a known stack",
   "copy": "Copy",

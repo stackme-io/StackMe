@@ -967,6 +967,7 @@ export default function LocateMePage() {
                     <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
                     <button onClick={runSample} disabled={loading} className={btnGhost}>{t('trySample')}</button>
                   </div>
+                  <p className="md:hidden text-meta text-muted-foreground/90 mt-3 max-w-[280px] mx-auto">{t('mobileHint')}</p>
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}
 
                   <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 left-full ml-6 text-left w-max">

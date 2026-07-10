@@ -21,12 +21,12 @@ export function ModuleTabs({ tabs, activeTab, onChange, onShowHint }: ModuleTabs
   }
 
   return (
-    <div className="flex items-center gap-5 mb-5">
+    <div className="flex items-center gap-5 mb-5 overflow-x-auto">
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => handleChange(tab.id)}
-          className={`text-sub pb-1.5 transition-colors ${
+          className={`text-sub pb-1.5 transition-colors flex-shrink-0 whitespace-nowrap ${
             activeTab === tab.id
               ? 'text-foreground border-b border-foreground'
               : 'text-muted-foreground hover:text-foreground'

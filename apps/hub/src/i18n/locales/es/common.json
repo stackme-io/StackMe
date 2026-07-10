@@ -57,6 +57,11 @@
   "panel": {
     "emptyState": "Abre un servicio desde el menú de arriba"
   },
+  "mobileGate": {
+    "bestOnDesktop": "Mejor en escritorio",
+    "note": "Esta herramienta usa carga de archivos, tablas anchas y paneles laterales - necesita una pantalla más grande. Ábrela en un ordenador para la experiencia completa.",
+    "roadmapHint": "Aún puedes leer el roadmap y votar lo siguiente desde las pestañas de arriba."
+  },
   "notify": {
     "title": "Notificaciones",
     "markAllRead": "Marcar todo como leído",

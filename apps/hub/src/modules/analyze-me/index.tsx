@@ -7,6 +7,7 @@ import { OnboardingFlow } from '../../shared/OnboardingFlow'
 import { AnalyzeSection } from './AnalyzeSection'
 import { AnalyzeSidebar, getMultiplier, type Sensitivity } from './AnalyzeSidebar'
 import { ModuleTabs } from '../../shared/ModuleTabs'
+import { MobileToolGate } from '../../shared/MobileToolGate'
 import { SecurityTab } from './SecurityTab'
 import { popHandoff, onHandoff, type ForgeHandoff } from '../../shared/forgeHandoff'
 
@@ -127,7 +128,7 @@ export default function AnalyzeMePage() {
 
       <aside
         data-no-print
-        className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
+        className="hidden md:block flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
         style={{ width: sidebarOpen ? '208px' : '0px' }}
       >
         <AnalyzeSidebar
@@ -142,7 +143,7 @@ export default function AnalyzeMePage() {
       {activeTab !== 'security' && (
         <button
           onClick={() => setSidebarOpen(o => !o)}
-          className="absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 flex items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground/70 hover:text-foreground hover:bg-muted transition-all"
+          className="hidden md:flex absolute top-1/2 -translate-y-1/2 z-10 w-3.5 h-9 items-center justify-center bg-background border border-border rounded-r-md text-muted-foreground/70 hover:text-foreground hover:bg-muted transition-all"
           style={{ left: sidebarOpen ? '208px' : '0px' }}
         >
           <span className="text-[10px]">{sidebarOpen ? '‹' : '›'}</span>
@@ -151,9 +152,9 @@ export default function AnalyzeMePage() {
 
       <main data-print-expand className="flex-1 flex flex-col overflow-hidden min-w-0 transition-colors duration-300">
         <div
-          className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-6 pt-5'}`}
+          className={`flex-1 overflow-y-auto ${activeTab === 'security' ? '' : 'px-4 md:px-6 pt-5'}`}
         >
-          <div data-no-print className={activeTab === 'security' ? 'px-6 pt-5' : ''}>
+          <div data-no-print className={activeTab === 'security' ? 'px-4 md:px-6 pt-5' : ''}>
             <ModuleTabs
               tabs={[
                 { id: 'work',     label: t('tabs.work')     },
@@ -168,26 +169,29 @@ export default function AnalyzeMePage() {
           </div>
 
           <div style={{ display: activeTab === 'work' ? 'block' : 'none' }}>
-            <OnboardingFlow
-              steps={hintSteps}
-              visible={!hintPermanent && hintVisible}
-              onHideSession={() => setHintVisible(false)}
-              onHidePermanent={handleHidePermanent}
-            />
-            <AnalyzeSection
-              result={result}
-              tableData={tableData}
-              loading={loading}
-              progress={progress}
-              sizeWarn={sizeWarn}
-              error={error}
-              fileName={fileName}
-              filter={filter}
-              forgeData={forgeData}
-              verdictCounts={verdictCounts}
-              onFile={handleFile}
-              onFilter={setFilter}
-            />
+            <MobileToolGate descKey="modules.analyze-me.description" />
+            <div className="hidden md:block">
+              <OnboardingFlow
+                steps={hintSteps}
+                visible={!hintPermanent && hintVisible}
+                onHideSession={() => setHintVisible(false)}
+                onHidePermanent={handleHidePermanent}
+              />
+              <AnalyzeSection
+                result={result}
+                tableData={tableData}
+                loading={loading}
+                progress={progress}
+                sizeWarn={sizeWarn}
+                error={error}
+                fileName={fileName}
+                filter={filter}
+                forgeData={forgeData}
+                verdictCounts={verdictCounts}
+                onFile={handleFile}
+                onFilter={setFilter}
+              />
+            </div>
           </div>
 
           <div style={{ display: activeTab === 'about' ? 'block' : 'none' }}>
@@ -229,7 +233,7 @@ export default function AnalyzeMePage() {
           </div>
         </div>
 
-        <div data-no-print className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
+        <div data-no-print className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-5 flex-shrink-0 overflow-x-auto">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
             <span key={item} className="text-[10px] text-muted-foreground/70">
               <span className="mr-1 text-muted-foreground/70">//</span>{item}

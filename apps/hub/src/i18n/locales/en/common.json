@@ -57,6 +57,11 @@
   "panel": {
     "emptyState": "Open a service from the menu above"
   },
+  "mobileGate": {
+    "bestOnDesktop": "Best on desktop",
+    "note": "This tool works with file drops, wide tables, and side panels - it needs a bigger screen. Open it on a computer for the full experience.",
+    "roadmapHint": "You can still read the roadmap and vote on what's next from the tabs above."
+  },
   "notify": {
     "title": "Notifications",
     "markAllRead": "Mark all as read",

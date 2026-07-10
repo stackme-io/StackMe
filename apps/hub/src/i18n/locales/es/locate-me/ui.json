@@ -73,6 +73,7 @@
   "noneForFilter": "Nada coincide con este filtro.",
   "emptyTitle": "Apunta LocateMe a tus tests de Playwright, Cypress o Selenium.",
   "emptyDesc": "Lee las formas de los locators de forma estática. No se ejecuta código.",
+  "mobileHint": "El escaneo de carpetas necesita un navegador de escritorio. Prueba el ejemplo o pega un archivo abajo.",
   "detectedLabel": "Detectado:",
   "unknownStack": "no se pudo detectar un stack conocido",
   "copy": "Copiar",
