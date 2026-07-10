@@ -133,3 +133,38 @@ describe('class-index + unresolvedBases (R2 steps 2-3)', () => {
     expect(report.summary.unresolvedBases).toEqual([{ className: 'LoginPage', base: 'BasePage' }])
   })
 })
+
+describe('Selenide + @FindBys (R3)', () => {
+  it('$("css") -> By.cssSelector', () => {
+    const { locators } = run('class T { void t(){ $(".btn").click(); } }')
+    expect(locators).toEqual([{ method: 'By.cssSelector', selector: '.btn', line: 1 }])
+  })
+
+  it('$x("xpath") -> By.xpath', () => {
+    const { locators } = run('class T { void t(){ $x("//div[3]/a").click(); } }')
+    expect(locators).toEqual([{ method: 'By.xpath', selector: '//div[3]/a', line: 1 }])
+  })
+
+  it('$$(".item") collection -> By.cssSelector', () => {
+    const { locators } = run('class T { void t(){ $$(".item").first(); } }')
+    expect(locators).toEqual([{ method: 'By.cssSelector', selector: '.item', line: 1 }])
+  })
+
+  it('$(By.id("x")) -> only the By, no Selenide duplicate', () => {
+    const { locators } = run('class T { void t(){ $(By.id("x")).click(); } }')
+    expect(locators).toEqual([{ method: 'By.id', selector: 'x', line: 1 }])
+  })
+
+  it('$(variable) -> dynamic', () => {
+    const { locators } = run('class T { void t(){ $(sel).click(); } }')
+    expect(locators.map(l => [l.method, l.selector])).toEqual([['By.cssSelector', null]])
+  })
+
+  it('@FindBys extracts its component @FindBy locators', () => {
+    const { locators } = run('class P { @FindBys({@FindBy(id = "a"), @FindBy(css = ".b")}) Object c; }')
+    expect(locators).toEqual([
+      { method: 'By.id', selector: 'a', line: 1 },
+      { method: 'By.cssSelector', selector: '.b', line: 1 },
+    ])
+  })
+})

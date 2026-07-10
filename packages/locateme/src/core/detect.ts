@@ -32,6 +32,8 @@ export function detectStack(files: SourceFileInput[]): Detection {
     if (/['"]cypress['"]|from\s+['"]cypress/i.test(t)) cy += 1
     if (/selenium-webdriver/.test(t)) se += 3
     if (/import\s+org\.openqa\.selenium/.test(t)) se += 3
+    if (/com\.codeborne\.selenide/.test(t)) se += 3        // Selenide (Selenium wrapper)
+    if (/(^|[^\w$])\$\$?x?\s*\(\s*["']/.test(t)) se += 1   // $("css") / $x("xpath")
     if (/@FindBy\b/.test(t)) se += 2
     if (/\bBy\.(xpath|cssSelector|css|id|name|className|tagName|linkText|partialLinkText)\s*\(/.test(t)) se += 2
     if (/driver\.findElement/.test(t)) se += 1

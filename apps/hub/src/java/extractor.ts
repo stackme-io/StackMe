@@ -32,6 +32,18 @@ const HOW_TO_STRATEGY: Record<string, string> = {
   XPATH: 'xpath', ID_OR_NAME: 'id', // ID_OR_NAME best-effort
 }
 
+// Selenide shorthands (a Selenium wrapper): $("css") / $x("xpath") and the collection
+// forms $$ / $$x. Same fragility, different syntax - map to the shape classifiers.
+const SELENIDE_STRATEGY: Record<string, string> = {
+  '$': 'cssSelector', '$x': 'xpath', '$$': 'cssSelector', '$$x': 'xpath',
+}
+
+// A `By.<strategy>(...)` call - so a Selenide `$(By.id(...))` isn't double-counted
+// (the inner By is already caught by the DFS).
+function isByCall(node: Node): boolean {
+  return node.type === 'method_invocation' && node.childForFieldName('object')?.text === 'By'
+}
+
 // A `@FindBy(...)` annotation on a field -> one locator, audited at its declaration
 // site (no inheritance merge - fragility is a function of the string, declared once).
 // Two forms: shorthand `@FindBy(id="x")` and `@FindBy(how=How.ID, using="x")`.
@@ -91,6 +103,7 @@ export class JavaTreeSitterExtractor implements LocatorExtractor {
         const obj = node.childForFieldName('object')
         const name = node.childForFieldName('name')
         if (obj && obj.type === 'identifier' && obj.text === 'By' && name) {
+          // By.<strategy>(...)
           const args = node.childForFieldName('arguments')
           const firstArg = args ? args.namedChild(0) : null
           locators.push({
@@ -98,6 +111,18 @@ export class JavaTreeSitterExtractor implements LocatorExtractor {
             selector: firstArg ? literalValue(firstArg) : null,
             line: node.startPosition.row + 1,
           })
+        } else if (name && SELENIDE_STRATEGY[name.text]) {
+          // Selenide $("css") / $x("xpath"). String literal -> decoded selector;
+          // non-literal -> dynamic; a By(...) arg is skipped (caught on its own).
+          const args = node.childForFieldName('arguments')
+          const firstArg = args ? args.namedChild(0) : null
+          if (firstArg && !isByCall(firstArg)) {
+            locators.push({
+              method: 'By.' + SELENIDE_STRATEGY[name.text],
+              selector: firstArg.type === 'string_literal' ? literalValue(firstArg) : null,
+              line: node.startPosition.row + 1,
+            })
+          }
         }
       }
 
