@@ -7,7 +7,7 @@
         { "title": "Static audit",           "desc": "Reads your test code only - no runtime, no execution" },
         { "title": "Playwright & Cypress",    "desc": "locator + getBy*, cy.get / contains / find, aliases & chains" },
         { "title": "TypeScript & JavaScript", "desc": "Reads the whole .ts / .js family" },
-        { "title": "Selenium (Java)",         "desc": "By.* locators in .java files, via folder scan (beta)" }
+        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects in .java files (beta)" }
       ]
     },
     {
@@ -39,7 +39,6 @@
   "nextLabel": "Coming up",
   "nextDesc": "Candidates for the next version. Vote for what matters - it shapes the scope.",
   "next": [
-    { "title": "Selenium @FindBy",  "desc": "Page Object annotations, cross-file resolution" },
     { "title": "Mute a rule",       "desc": "Soften or silence a rule for your project" },
     { "title": "My stable list",    "desc": "Mark attributes you treat as stable" },
     { "title": "Delta vs last run", "desc": "Load a previous report - see what changed" }

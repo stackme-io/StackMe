@@ -7,7 +7,7 @@
         { "title": "Auditoría estática",     "desc": "Lee solo tu código de tests - sin runtime, sin ejecución" },
         { "title": "Playwright y Cypress",   "desc": "locator + getBy*, cy.get / contains / find, alias y cadenas" },
         { "title": "TypeScript y JavaScript", "desc": "Lee toda la familia .ts / .js" },
-        { "title": "Selenium (Java)",          "desc": "Locators By.* en archivos .java, por carpeta (beta)" }
+        { "title": "Selenium (Java)",          "desc": "By.* + @FindBy Page Objects en archivos .java (beta)" }
       ]
     },
     {
@@ -39,7 +39,6 @@
   "nextLabel": "Próximamente",
   "nextDesc": "Candidatos para la próxima versión. Vota lo que te importa - define el alcance.",
   "next": [
-    { "title": "Selenium @FindBy",          "desc": "Anotaciones Page Object, resolución entre archivos" },
     { "title": "Silenciar una regla",       "desc": "Suaviza o silencia una regla para tu proyecto" },
     { "title": "Mi lista de estables",      "desc": "Marca atributos que consideras estables" },
     { "title": "Delta vs ejecución previa", "desc": "Carga un informe anterior - mira qué cambió" }

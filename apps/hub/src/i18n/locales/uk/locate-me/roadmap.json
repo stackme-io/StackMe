@@ -7,7 +7,7 @@
         { "title": "Статичний аудит",         "desc": "Читає лише твій код тестів - без рантайму, без запуску" },
         { "title": "Playwright і Cypress",    "desc": "locator + getBy*, cy.get / contains / find, аліаси та ланцюжки" },
         { "title": "TypeScript і JavaScript", "desc": "Читає всю родину .ts / .js" },
-        { "title": "Selenium (Java)",         "desc": "Локатори By.* у .java файлах, скан папки (beta)" }
+        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects у .java файлах (beta)" }
       ]
     },
     {
@@ -39,7 +39,6 @@
   "nextLabel": "Незабаром",
   "nextDesc": "Кандидати на наступну версію. Голосуй за важливе - це формує обсяг.",
   "next": [
-    { "title": "Selenium @FindBy",          "desc": "Анотації Page Object, крос-файловий резолв" },
     { "title": "Приглушити правило",        "desc": "Пом'якшити або вимкнути правило для твого проєкту" },
     { "title": "Мій список стабільних",     "desc": "Познач атрибути, які вважаєш стабільними" },
     { "title": "Дельта з минулим запуском", "desc": "Завантаж попередній звіт - побач, що змінилось" }
