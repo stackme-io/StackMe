@@ -989,6 +989,11 @@ export default function LocateMePage() {
                       {t('unresolvedBases', { list: report.summary.unresolvedBases.map(u => `${u.className} → ${u.base}`).join(', ') })}
                     </p>
                   ) : null}
+                  {report?.summary.unparsed ? (
+                    <p className="text-meta text-amber-400/90 flex-shrink-0 -mt-2" title={t('unparsedTip')}>
+                      {t('unparsed', { count: report.summary.unparsed })}
+                    </p>
+                  ) : null}
                   <div className="flex-shrink-0"><RatioBar byKind={visByKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
 
                   {rows.length === 0 ? (
