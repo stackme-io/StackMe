@@ -8,6 +8,7 @@ import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { renderHtml } from '@locateme/core/report'
 import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
+import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
 import apiClient from '../../api/client'
 
@@ -517,7 +518,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
   const { t } = useTranslation('locate-me')
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-      <table className="w-full border-collapse table-fixed">
+      <table className="hidden md:table w-full border-collapse table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
@@ -556,11 +557,39 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
           })}
         </tbody>
       </table>
+
+      <ul className="md:hidden flex flex-col divide-y divide-border/40">
+        {rows.map((f, i) => {
+          const isSel = selected === f
+          const n = dup.get(dupKey(f)) ?? 0
+          const s = KIND_STYLE[f.kind]
+          return (
+            <li key={i}>
+              <button onClick={() => onSelect(f)}
+                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-primary' : f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
+                <span className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
+                  <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
+                  <span className="text-meta text-faint font-mono ml-auto truncate max-w-[48%]">{f.file}:{f.line}</span>
+                </span>
+                <span className="flex items-start gap-2 min-w-0">
+                  <code className="text-code text-foreground break-all">{selectorText(f)}</code>
+                  {n > 1 && (
+                    <span className="flex-shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-k-context/15 text-k-context text-meta leading-none whitespace-nowrap">{t('copies', { count: n })}</span>
+                  )}
+                </span>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
 
-function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
+// Inner inspector content for a selected finding - shared by the desktop side
+// panel and the mobile bottom sheet.
+function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   const [copied, setCopied] = useState(false)
   const [showCode, setShowCode] = useState(false)
@@ -569,23 +598,14 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
   useEffect(() => { setShowCode(false); setCopied(false) }, [finding])
 
   const copy = () => {
-    if (!finding || finding.selector === null) return
+    if (finding.selector === null) return
     navigator.clipboard?.writeText(finding.selector)
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
       .catch(() => {})
   }
 
   return (
-    <div className="w-[440px] flex-shrink-0 border-l border-border flex flex-col overflow-hidden">
-      {!finding ? (
-        <>
-          <div className="px-4 py-3 border-b border-border">
-            <p className="text-label text-muted-foreground">{t('inspector')}</p>
-          </div>
-          <p className="text-sub text-content px-4 py-4">{t('selectHint')}</p>
-        </>
-      ) : (
-        <>
+    <>
           <div className="px-4 py-3.5 border-b border-border flex items-start justify-between gap-3">
             <div className="flex flex-col gap-2.5 min-w-0">
               <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
@@ -662,7 +682,24 @@ function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding |
               </div>
             )}
           </div>
+    </>
+  )
+}
+
+// Desktop inspector side panel (hidden on mobile - mobile uses a bottom sheet).
+function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
+  const { t } = useTranslation('locate-me')
+  return (
+    <div className="hidden md:flex w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
+      {!finding ? (
+        <>
+          <div className="px-4 py-3 border-b border-border">
+            <p className="text-label text-muted-foreground">{t('inspector')}</p>
+          </div>
+          <p className="text-sub text-content px-4 py-4">{t('selectHint')}</p>
         </>
+      ) : (
+        <InspectBody finding={finding} dupLocations={dupLocations} onClose={onClose} />
       )}
     </div>
   )
@@ -737,6 +774,7 @@ export default function LocateMePage() {
   const [filterKinds, setFilterKinds] = useState<Set<Kind>>(new Set<Kind>(['fragile']))
   const [fileExcluded, setFileExcluded] = useState<Set<string>>(new Set())
   const [sortMode, setSortMode] = useState<SortMode>('file')
+  const isMobile = useIsMobile()
   const workerRef = useRef<Worker | null>(null)
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
@@ -851,9 +889,10 @@ export default function LocateMePage() {
   useEffect(() => {
     if (!report) return
     if (selected && filterKinds.has(selected.kind) && !fileExcluded.has(selected.file)) return
-    setSelected(rows[0] ?? null)
+    // Desktop keeps a row selected for the side panel; mobile opens the sheet only on tap.
+    setSelected(isMobile ? null : (rows[0] ?? null))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [report, filterKinds, sortMode, fileExcluded])
+  }, [report, filterKinds, sortMode, fileExcluded, isMobile])
 
   const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-[var(--tool-accent,#22d3ee)] text-[#131417] hover:brightness-110 disabled:opacity-50 transition'
   const btnGhost = 'px-3 py-2 rounded-md text-sub font-medium text-foreground border border-border hover:bg-muted/40 disabled:opacity-50 transition-colors'
@@ -862,7 +901,7 @@ export default function LocateMePage() {
     <div className="flex h-full relative overflow-hidden">
 
       <aside
-        className="flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
+        className="hidden md:block flex-shrink-0 border-r border-border overflow-hidden transition-all duration-200"
         style={{ width: railOpen ? '208px' : '0px' }}
       >
         <Rail
@@ -880,10 +919,21 @@ export default function LocateMePage() {
       </aside>
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+        {/* ---- Mobile sub-nav (replaces the desktop rail nav) ---- */}
+        <div className="md:hidden flex items-center gap-1.5 px-4 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
+          {([['audit', Crosshair], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
+            <button key={id} onClick={() => navTo(id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sub whitespace-nowrap transition-colors ${activeTab === id ? 'border-border bg-muted/50 text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
+              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+              {t(`tabs.${id}`)}
+            </button>
+          ))}
+        </div>
+
         {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
         <div
           style={{ display: activeTab === 'audit' ? 'flex' : 'none' }}
-          className="flex-1 min-h-0 flex-col px-6 pt-5 max-w-[1320px] gap-4"
+          className="flex-1 min-h-0 flex-col px-4 md:px-6 pt-5 max-w-[1320px] gap-4"
         >
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
@@ -1005,6 +1055,17 @@ export default function LocateMePage() {
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
                       </div>
+
+                      {/* Mobile inspector - bottom sheet on tap (desktop uses the side panel above) */}
+                      {selected && (
+                        <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end" onClick={() => setSelected(null)}>
+                          <div className="absolute inset-0 bg-black/40" />
+                          <div onClick={e => e.stopPropagation()} className="relative bg-card border-t border-border rounded-t-2xl max-h-[80vh] flex flex-col overflow-hidden">
+                            <div className="flex justify-center pt-2 pb-1 flex-shrink-0"><span className="w-9 h-1 rounded-full bg-border" /></div>
+                            <InspectBody finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
 
@@ -1016,18 +1077,18 @@ export default function LocateMePage() {
         </div>
 
         {/* ---- REPORTS (saved) ---- */}
-        <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+        <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-4 md:px-6 pt-5">
           {activeTab === 'reports' && <SavedReports />}
         </div>
 
         {/* ---- ROADMAP ---- */}
-        <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+        <div style={{ display: activeTab === 'roadmap' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-4 md:px-6 pt-5">
           <h2 className="text-title text-foreground mb-4">{t('roadmapTitle')}</h2>
           <RoadmapTab namespace="locate-me" />
         </div>
 
         {/* ---- ABOUT ---- */}
-        <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-6 pt-5">
+        <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-4 md:px-6 pt-5">
           <div className="max-w-2xl flex flex-col gap-4 text-body leading-relaxed text-content">
             <h2 className="text-title text-foreground">{t('aboutTitle')}</h2>
             <p><Trans t={t} i18nKey="about.p1" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
@@ -1038,7 +1099,7 @@ export default function LocateMePage() {
           </div>
         </div>
 
-        <div className="h-8 border-t border-border/50 flex items-center px-6 gap-5 flex-shrink-0">
+        <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-5 flex-shrink-0 overflow-x-auto">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (
             <span key={item} className="text-meta text-muted-foreground">
               <span className="mr-1 text-faint">//</span>{item}

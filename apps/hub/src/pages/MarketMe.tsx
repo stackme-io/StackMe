@@ -110,7 +110,7 @@ export default function MarketMePage() {
   const betaModules = MODULE_REGISTRY.filter(m => m.id !== 'locate-me')
 
   return (
-    <div className="max-w-5xl px-6 pt-5">
+    <div className="max-w-5xl px-4 sm:px-6 pt-5">
 
       <ModuleTabs
         tabs={[

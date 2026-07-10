@@ -19,7 +19,7 @@ export default function PanelLayout() {
       {panels.map((panel: Panel) => (
         <div
           key={panel.id}
-          className="h-full w-full overflow-auto"
+          className="h-full w-full overflow-y-auto overflow-x-hidden md:overflow-auto"
           style={{ display: panel.id === activeId ? 'block' : 'none' }}
         >
           <Suspense fallback={

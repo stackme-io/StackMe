@@ -186,7 +186,7 @@ export default function AppShell() {
           {railAvailable && (
             <button
               onClick={toggleRail}
-              className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="hidden md:flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               title={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
               aria-label={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
             >
@@ -211,10 +211,16 @@ export default function AppShell() {
             </>
           )}
 
+          {!isSystemPage && activeId && (
+            <span className="md:hidden text-xs font-medium text-foreground truncate max-w-[42vw]">
+              {panels.find((p: Panel) => p.id === activeId)?.manifest.name ?? ''}
+            </span>
+          )}
+
           {panels.length > 0 && (
             <>
-              <span className="text-border">|</span>
-              <div className="flex items-center gap-1">
+              <span className="hidden md:inline text-border">|</span>
+              <div className="hidden md:flex items-center gap-1">
                 {panels.map((panel: Panel) => {
                   const isActive = panel.id === activeId && !isSystemPage
                   return (
@@ -262,7 +268,9 @@ export default function AppShell() {
         <div className="flex items-center gap-1">
 
           {!isSystemPage && (
-            <ShareButton note={activeId === 'locate-me' ? t('share.noteLocal') : t('share.note')} />
+            <div className="hidden md:flex">
+              <ShareButton note={activeId === 'locate-me' ? t('share.noteLocal') : t('share.note')} />
+            </div>
           )}
 
           <DropdownMenu>
