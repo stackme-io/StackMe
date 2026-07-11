@@ -189,14 +189,19 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
       )}
       <div className="px-3 pt-5 pb-3">
         <div className="mb-5"><p className="text-label text-muted-foreground">{t('sortBy')}</p></div>
-        <div className="flex flex-col gap-1.5">
-          {sorts.map(([m, label, hint]) => (
-            <button key={m} onClick={() => onSort(m)}
-              className={`flex flex-col items-start gap-0.5 px-2.5 py-1.5 rounded-md text-left border transition-colors ${sortMode === m ? 'border-primary/50 bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:bg-muted/30'}`}>
-              <span className="text-sub">{label}</span>
-              <span className="text-meta text-muted-foreground/80 leading-snug">{hint}</span>
-            </button>
-          ))}
+        {/* Flat list (same visual language as FILES above) and the hint shows only under
+            the selected option - three permanent hint lines become one. */}
+        <div className="flex flex-col gap-0.5">
+          {sorts.map(([m, label, hint]) => {
+            const on = sortMode === m
+            return (
+              <button key={m} onClick={() => onSort(m)}
+                className={`flex flex-col items-start gap-0.5 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
+                <span className="text-sub">{label}</span>
+                {on && <span className="text-meta text-muted-foreground/80 leading-snug">{hint}</span>}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
@@ -217,10 +222,12 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
         </h2>
         {action}
       </div>
+      {/* The caveat sits next to the number it qualifies - a scope limit must never be
+          a click away (the mechanics of HOW we judge live in the "How we judge" sheet). */}
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
-        {source && <span className="text-content">{t('analyzedLabel')} {source}</span>}
-        {source && stack.length > 0 && <span className="text-faint">·</span>}
-        {stack.length > 0 && <span>{stack.join(' · ')}</span>}
+        <span className="text-content">{t('firstPass')}, {t('testsNotRun')}</span>
+        {source && <><span className="text-faint">·</span><span>{source}</span></>}
+        {stack.length > 0 && <><span className="text-faint">·</span><span>{stack.join(' · ')}</span></>}
         {detection?.framework === 'Selenium' && (
           <span className="text-meta px-1.5 py-0.5 rounded border border-border text-muted-foreground/80">beta</span>
         )}
@@ -892,7 +899,7 @@ export default function LocateMePage() {
 
   const runSample = () => {
     setCode(''); setSkipped(0)
-    runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel', { files: t('nFiles', { count: SAMPLE_FILES.length }) }))
+    runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel'))
   }
 
   const selectFolder = async () => {
@@ -902,7 +909,7 @@ export default function LocateMePage() {
       const { files, rootName, skipped: skippedCount } = await pickAndReadFolder()
       if (files.length === 0) { setLoading(false); setError(t('noTsFiles', { name: rootName })); return }
       setSkipped(skippedCount)
-      runOnWorker(files, rootName, t('folderLabel', { name: rootName, files: t('nFiles', { count: files.length }) }))
+      runOnWorker(files, rootName, rootName)
     } catch (e) {
       setLoading(false)
       if ((e as DOMException)?.name !== 'AbortError') setError((e as Error).message)
@@ -1157,7 +1164,6 @@ export default function LocateMePage() {
                     </>
                   )}
 
-                  <p className="text-meta text-muted-foreground border-t border-border/40 pt-2.5 flex-shrink-0">{t('honesty')}</p>
                 </>
               )}
             </>
@@ -1197,13 +1203,17 @@ export default function LocateMePage() {
 
         {methodOpen && <MethodModal onClose={() => setMethodOpen(false)} />}
 
-        <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-3 md:gap-5 flex-shrink-0 overflow-x-auto">
-          {(t('badges', { returnObjects: true }) as string[]).map(item => (
-            <span key={item} className="text-meta text-muted-foreground whitespace-nowrap flex-shrink-0">
-              <span className="mr-1 text-faint">//</span>{item}
-            </span>
-          ))}
-        </div>
+        {/* Trust badges belong to the pre-audit pitch. Once results are on screen the
+            user has already lived them - persuading the convinced is just noise. */}
+        {!report && (
+          <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-3 md:gap-5 flex-shrink-0 overflow-x-auto">
+            {(t('badges', { returnObjects: true }) as string[]).map(item => (
+              <span key={item} className="text-meta text-muted-foreground whitespace-nowrap flex-shrink-0">
+                <span className="mr-1 text-faint">//</span>{item}
+              </span>
+            ))}
+          </div>
+        )}
 
       </main>
     </div>

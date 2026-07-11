@@ -40,7 +40,7 @@
   "callsInFiles": "{{calls}} у {{files}}",
   "headlineCount": "{{calls}} у {{files}}",
   "showingOf": "Показано {{shown}} з {{total}}",
-  "sampleLabel": "демо-набір, {{files}}",
+  "sampleLabel": "демо-набір",
   "copies_one": "{{count}} копія",
   "copies_few": "{{count}} копії",
   "copies_many": "{{count}} копій",

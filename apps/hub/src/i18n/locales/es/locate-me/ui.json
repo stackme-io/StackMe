@@ -40,7 +40,7 @@
   "callsInFiles": "{{calls}} en {{files}}",
   "headlineCount": "{{calls}} en {{files}}",
   "showingOf": "Mostrando {{shown}} de {{total}}",
-  "sampleLabel": "suite de ejemplo, {{files}}",
+  "sampleLabel": "suite de ejemplo",
   "copies_one": "{{count}} copia",
   "copies_other": "{{count}} copias",
   "copiesTip": "Este selector exacto aparece {{count}} veces en la suite.",
