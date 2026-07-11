@@ -114,7 +114,6 @@
   },
   "aboutMethodTitle": "Método",
   "howWeJudge": "Cómo juzgamos",
-  "whyVerdict": "¿Por qué este veredicto?",
   "method": {
     "p1": "El orden que recomendamos - Role, luego Label, luego Text, luego TestId, y por último CSS/XPath en crudo - no es nuestro. Es la guía de <pw>Playwright</pw> y <tl>Testing Library</tl>; la aplicamos a tu código.",
     "p2": "Marcamos un locator como frágil solo cuando la cadena lo demuestra por sí sola: clases hasheadas de CSS-in-JS, ids generados por frameworks (React useId, Radix, MUI), :nth-child posicional, XPath con ejes. Esos cambian al recompilar por definición - mecánica, no opinión.",
