@@ -1206,12 +1206,15 @@ export default function LocateMePage() {
         {/* Trust badges belong to the pre-audit pitch. Once results are on screen the
             user has already lived them - persuading the convinced is just noise. */}
         {!report && (
-          <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-3 md:gap-5 flex-shrink-0 overflow-x-auto">
-            {(t('badges', { returnObjects: true }) as string[]).map(item => (
-              <span key={item} className="text-meta text-muted-foreground whitespace-nowrap flex-shrink-0">
-                <span className="mr-1 text-faint">//</span>{item}
-              </span>
-            ))}
+          <div className="border-t border-border/50 flex-shrink-0 px-4 md:px-6 py-2 flex flex-col gap-1">
+            <p className="text-meta text-muted-foreground">{t('emptyPromise')}</p>
+            <div className="flex items-center gap-3 md:gap-5 overflow-x-auto">
+              {(t('badges', { returnObjects: true }) as string[]).map(item => (
+                <span key={item} className="text-meta text-muted-foreground whitespace-nowrap flex-shrink-0">
+                  <span className="mr-1 text-faint">//</span>{item}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
