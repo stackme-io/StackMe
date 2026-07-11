@@ -608,16 +608,19 @@ function MethodModal({ onClose }: { onClose: () => void }) {
     <div onClick={onClose}
       className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 sm:px-4 animate-in fade-in-0 duration-200">
       <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true"
-        className="w-full sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-t-2xl sm:rounded-xl border-t sm:border border-border bg-card px-5 pb-6 pt-3 sm:p-6 shadow-lg animate-in fade-in-0 slide-in-from-bottom-4 sm:slide-in-from-bottom-2 sm:zoom-in-95 duration-200">
+        className="w-full sm:max-w-lg max-h-[85vh] flex flex-col overflow-hidden rounded-t-2xl sm:rounded-xl border-t sm:border border-border bg-card shadow-lg animate-in fade-in-0 slide-in-from-bottom-4 sm:slide-in-from-bottom-2 sm:zoom-in-95 duration-200">
 
-        {/* grab handle - mobile sheet affordance */}
-        <div className="sm:hidden flex justify-center pb-2"><span className="w-9 h-1 rounded-full bg-border" /></div>
-
-        <div className="flex items-start justify-between gap-3 mb-5">
-          <h2 className="text-title text-foreground">{t('howWeJudge')}</h2>
-          <button onClick={onClose} title={t('close')} aria-label={t('close')}
-            className="flex items-center justify-center w-8 h-8 -mr-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted flex-shrink-0">✕</button>
+        {/* Sticky header - stays put while the body scrolls under it. */}
+        <div className="flex-shrink-0 border-b border-border px-5 sm:px-6 pt-3 sm:pt-5 pb-3">
+          <div className="sm:hidden flex justify-center pb-2"><span className="w-9 h-1 rounded-full bg-border" /></div>
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="text-title text-foreground">{t('howWeJudge')}</h2>
+            <button onClick={onClose} title={t('close')} aria-label={t('close')}
+              className="flex items-center justify-center w-8 h-8 -mr-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted flex-shrink-0">✕</button>
+          </div>
         </div>
+
+        <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5">
 
         <div className="flex flex-col gap-4">
           {KIND_ORDER.map(k => (
@@ -637,6 +640,8 @@ function MethodModal({ onClose }: { onClose: () => void }) {
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p2')}</p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p3')}</p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p4')}</p>
+        </div>
+
         </div>
 
       </div>
