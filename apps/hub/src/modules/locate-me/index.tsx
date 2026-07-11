@@ -587,6 +587,60 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
   )
 }
 
+// "How we judge" - an in-place glossary + method sheet. Opened from the results header
+// and from the inspector ("Why this verdict?"), so the explanation comes to the user
+// instead of yanking them to another tab. Same i18n copy as the About > Method section.
+const METHOD_LINKS = {
+  pw: <a href="https://playwright.dev/docs/locators" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
+  tl: <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
+}
+
+function MethodModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('locate-me')
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div onClick={onClose}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4 animate-in fade-in-0 duration-200">
+      <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true"
+        className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-card p-5 sm:p-6 shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-200">
+
+        <div className="flex items-start justify-between gap-3 mb-5">
+          <h2 className="text-title text-foreground">{t('howWeJudge')}</h2>
+          <button onClick={onClose} title={t('close')} aria-label={t('close')}
+            className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-1">✕</button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {KIND_ORDER.map(k => (
+            <div key={k} className="border-b border-border/40 pb-4 last:border-0 last:pb-0">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${KIND_STYLE[k].dot}`} />
+                <span className={`text-heading font-medium ${KIND_STYLE[k].text}`}>{t(`kinds.${k}.label`)}</span>
+              </div>
+              <p className="text-sub text-muted-foreground leading-relaxed">{t(`explain.${k}`)}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 pt-5 border-t border-border flex flex-col gap-3">
+          <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
+          <p className="text-sub text-muted-foreground leading-relaxed"><Trans t={t} i18nKey="method.p1" components={METHOD_LINKS} /></p>
+          <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p2')}</p>
+          <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p3')}</p>
+          <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p4')}</p>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
 // Inner inspector content for a selected finding - shared by the desktop side
 // panel and the mobile bottom sheet.
 function InspectBody({ finding, dupLocations, onClose, onWhy }: { finding: Finding; dupLocations: string[]; onClose: () => void; onWhy: () => void }) {
@@ -788,6 +842,7 @@ export default function LocateMePage() {
   const [filterKinds, setFilterKinds] = useState<Set<Kind>>(new Set<Kind>(['fragile']))
   const [fileExcluded, setFileExcluded] = useState<Set<string>>(new Set())
   const [sortMode, setSortMode] = useState<SortMode>('file')
+  const [methodOpen, setMethodOpen] = useState(false)
   const isMobile = useIsMobile()
   const workerRef = useRef<Worker | null>(null)
 
@@ -867,13 +922,9 @@ export default function LocateMePage() {
     setSearchParams({ tab: id }, { replace: true })
   }
 
-  // "Why this verdict?" from the inspector: close the sheet, jump to the About tab
-  // and scroll to the Method section that explains what the verdicts are based on.
-  const showMethod = () => {
-    setSelected(null)
-    navTo('about')
-    setTimeout(() => document.getElementById('locate-method')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
-  }
+  // "Why this verdict?" / "How we judge": open the glossary+method sheet in place - the
+  // explanation comes to the user, no tab switch, no lost audit context.
+  const showMethod = () => setMethodOpen(true)
 
   const hasLocators = !!report && report.summary.locatorCalls > 0
   const isAudit = activeTab === 'audit'
@@ -1073,7 +1124,13 @@ export default function LocateMePage() {
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
-                      <p className="text-meta text-muted-foreground flex-shrink-0 -mb-1">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                      <div className="flex items-center justify-between gap-3 flex-shrink-0 -mb-1">
+                        <p className="text-meta text-muted-foreground">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                        <button onClick={showMethod}
+                          className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2 flex-shrink-0">
+                          {t('howWeJudge')}
+                        </button>
+                      </div>
                       <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} onWhy={showMethod} />
@@ -1122,18 +1179,15 @@ export default function LocateMePage() {
 
             <div id="locate-method" className="border-t border-border/50 pt-5 mt-2 flex flex-col gap-4 scroll-mt-4">
               <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
-              <p>
-                <Trans t={t} i18nKey="method.p1" components={{
-                  pw: <a href="https://playwright.dev/docs/locators" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
-                  tl: <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
-                }} />
-              </p>
+              <p><Trans t={t} i18nKey="method.p1" components={METHOD_LINKS} /></p>
               <p>{t('method.p2')}</p>
               <p>{t('method.p3')}</p>
               <p>{t('method.p4')}</p>
             </div>
           </div>
         </div>
+
+        {methodOpen && <MethodModal onClose={() => setMethodOpen(false)} />}
 
         <div className="h-8 border-t border-border/50 flex items-center px-4 md:px-6 gap-3 md:gap-5 flex-shrink-0 overflow-x-auto">
           {(t('badges', { returnObjects: true }) as string[]).map(item => (

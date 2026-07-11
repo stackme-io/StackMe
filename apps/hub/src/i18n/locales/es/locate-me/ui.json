@@ -112,6 +112,7 @@
     "precision": "La regla: precisión sobre ruido."
   },
   "aboutMethodTitle": "Método",
+  "howWeJudge": "Cómo juzgamos",
   "whyVerdict": "¿Por qué este veredicto?",
   "method": {
     "p1": "El orden que recomendamos - Role, luego Label, luego Text, luego TestId, y por último CSS/XPath en crudo - no es nuestro. Es la guía de <pw>Playwright</pw> y <tl>Testing Library</tl>; la aplicamos a tu código.",

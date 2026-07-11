@@ -126,6 +126,7 @@
     "precision": "Правило: точність важливіша за шум."
   },
   "aboutMethodTitle": "Метод",
+  "howWeJudge": "Як ми судимо",
   "whyVerdict": "Чому такий вердикт?",
   "method": {
     "p1": "Порядок, який ми радимо - Role, потім Label, потім Text, потім TestId, і аж тоді сирий CSS/XPath - не наш. Це рекомендація <pw>Playwright</pw> і <tl>Testing Library</tl>; ми застосовуємо її до твого коду.",
