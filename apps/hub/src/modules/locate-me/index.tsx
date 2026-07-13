@@ -529,7 +529,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[170px] xl:w-[200px] 2xl:w-[300px]">{t('colLocation')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[180px] 2xl:w-[220px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
         </thead>
