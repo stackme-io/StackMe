@@ -245,7 +245,7 @@ function RatioBar({ byKind, filterKinds, onToggle }: {
   const { t } = useTranslation('locate-me')
   const total = KIND_ORDER.reduce((s, k) => s + byKind[k], 0) || 1
   return (
-    <div className="max-w-3xl">
+    <div>
       <div className="flex h-2 w-full rounded-full overflow-hidden bg-muted/30">
         {KIND_ORDER.map(k => byKind[k] > 0 && (
           <button key={k} type="button" onClick={() => onToggle(k)}
@@ -529,7 +529,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[150px]">{t('colLocation')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[150px] xl:w-[260px] 2xl:w-[340px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
         </thead>
