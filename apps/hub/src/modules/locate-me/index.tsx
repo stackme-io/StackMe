@@ -1096,18 +1096,6 @@ export default function LocateMePage() {
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-2 flex-wrap text-meta flex-shrink-0">
-                <button onClick={selectFolder} disabled={loading}
-                  className="px-2.5 py-1 rounded-md text-sub font-medium bg-primary/90 text-primary-foreground hover:bg-primary disabled:opacity-50 transition-colors">
-                  {t('selectFolder')}
-                </button>
-                <button onClick={runSample} disabled={loading}
-                  className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
-                  {t('trySample')}
-                </button>
-                {loading && <span className="text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-              </div>
-
               {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}
 
               {!hasLocators ? (
@@ -1118,7 +1106,16 @@ export default function LocateMePage() {
               ) : (
                 <>
                   <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles}
-                    action={<ReportButton report={report} fileExcluded={fileExcluded} source={source} />} /></div>
+                    action={
+                      <div className="flex items-center gap-2">
+                        {loading && <span className="text-meta text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+                        <button onClick={selectFolder} disabled={loading}
+                          className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
+                          {t('selectFolder')}
+                        </button>
+                        <ReportButton report={report} fileExcluded={fileExcluded} source={source} />
+                      </div>
+                    } /></div>
                   {skipped > 0 && (
                     <p className="text-meta text-muted-foreground/80 flex-shrink-0 -mt-2" title={t('skippedTip')}>{t('skippedFiles', { count: skipped })}</p>
                   )}
