@@ -529,7 +529,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[150px] xl:w-[260px] 2xl:w-[340px]">{t('colLocation')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[170px] xl:w-[200px] 2xl:w-[300px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
         </thead>
@@ -772,7 +772,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
 function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   return (
-    <div className="hidden md:flex w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
+    <div className="hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
