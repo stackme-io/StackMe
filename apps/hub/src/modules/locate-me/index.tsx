@@ -1020,7 +1020,7 @@ export default function LocateMePage() {
         {/* ---- AUDIT (height-locked: only the table scrolls) ---- */}
         <div
           style={{ display: activeTab === 'audit' ? 'flex' : 'none' }}
-          className="flex-1 min-h-0 flex-col px-4 md:px-6 pt-5 gap-4"
+          className="flex-1 min-h-0 flex-col px-4 md:px-6 xl:px-10 2xl:px-14 pt-5 gap-4"
         >
           {!report ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-7 px-4 relative">
