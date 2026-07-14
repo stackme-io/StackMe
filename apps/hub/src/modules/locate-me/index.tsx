@@ -574,6 +574,10 @@ const METHOD_LINKS = {
   tl: <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
 }
 
+// The full fragility catalogue lives in the repo (open source) - the modal only carries the
+// principle; the catalogue is for readers who want every rule.
+const RULES_URL = "https://github.com/stackme-io/StackMe/blob/main/packages/locateme/FRAGILITY.md"
+
 // "New audit" as a modal over the current audit - a stray click never destroys what the
 // user has been collecting. Only committing a source (folder / sample / paste) replaces it;
 // closing leaves the running audit untouched. Same adaptive shell as the Method sheet.
@@ -672,6 +676,7 @@ function MethodModal({ onClose }: { onClose: () => void }) {
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p2')}</p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p3')}</p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p4')}</p>
+          <a href={RULES_URL} target="_blank" rel="noopener noreferrer" className="text-sub text-[var(--tool-accent,#22d3ee)] hover:underline self-start">{t('fullRuleList')}</a>
         </div>
 
         </div>
@@ -1237,6 +1242,7 @@ export default function LocateMePage() {
               <p>{t('method.p2')}</p>
               <p>{t('method.p3')}</p>
               <p>{t('method.p4')}</p>
+              <a href={RULES_URL} target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline self-start">{t('fullRuleList')}</a>
             </div>
           </div>
         </div>

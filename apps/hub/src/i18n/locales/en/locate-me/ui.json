@@ -115,6 +115,7 @@
     "precision": "The rule: precision over noise."
   },
   "aboutMethodTitle": "Method",
+  "fullRuleList": "Full rule list →",
   "howWeJudge": "How we judge",
   "method": {
     "p1": "The order we recommend - Role, then Label, then Text, then TestId, then raw CSS/XPath - isn't ours. It's the guidance from <pw>Playwright</pw> and <tl>Testing Library</tl>; we apply it to your code.",
