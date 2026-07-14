@@ -5,6 +5,7 @@ import { RoadmapTab } from '../../shared/RoadmapTab'
 import type { ReportData, Finding, Kind, SourceFileInput } from '@locateme/core/types'
 import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
+import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
 import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
@@ -14,64 +15,8 @@ import apiClient from '../../api/client'
 
 // B6 + type scale: semantic text utilities (text-title/heading/body/secondary/meta/label/code).
 // Filters + sort in the left rail; taxonomy lives in the ratio legend + idle detail panel.
-
-// Two correlated sample files: login (stable-heavy) + checkout (fragile-heavy, the hot file).
-// They share an identical selector so cross-file duplicate counting is visible.
-const SAMPLE_LOGIN = `import { test, expect } from '@playwright/test'
-
-test('sign in', async ({ page }) => {
-  await page.goto('/login')
-  await page.getByRole('textbox', { name: 'Email' }).fill('a@b.com')
-  await page.getByLabel('Password').fill('secret')
-  await page.getByTestId('login-submit').click()
-  await page.getByText('Welcome back').isVisible()
-  await page.locator('//div[3]/span[2]/button').click()
-})
-
-test('profile', async ({ page }) => {
-  await page.getByRole('link', { name: 'Account' }).click()
-  await page.getByLabel('Display name').fill('Sam')
-  await page.getByTestId('save-profile').click()
-  await page.getByPlaceholder('Search settings').fill('theme')
-  await page.locator('.sidebar .item.active').click()
-  await page.locator('#account-settings').click()
-  await page.getByTitle('Sign out').click()
-})
-`
-
-const SAMPLE_CHECKOUT = `import { test, expect } from '@playwright/test'
-
-test('cart', async ({ page }) => {
-  await page.locator('//div[3]/span[2]/button').click()
-  await page.locator('.product-card:nth-child(1)').click()
-  await page.locator('div.sc-1a2b3c').click()
-  await page.locator('//ul/li[4]/div/button').click()
-  await page.getByRole('button', { name: 'Checkout' }).click()
-})
-
-test('payment', async ({ page }) => {
-  await page.locator('.list > li:nth-child(2)').click()
-  await page.locator('xpath=//table/tbody/tr[3]/td[2]').click()
-  await page.locator('div.css-1a2b3c').click()
-  await page.getByLabel('Card number').fill('4242')
-  await page.locator('//nav/a[5]').click()
-  await page.locator('#mui-42').click()
-  await page.locator(rowSelector).click()
-  await page.getByText('Order total').isVisible()
-})
-
-test('confirm', async ({ page }) => {
-  await page.locator('.navbar > ul > li:nth-child(2) a').click()
-  await page.locator('button.sc-9z8y7x').click()
-  await page.locator(dynamicSelector).click()
-  await page.getByTestId('place-order').click()
-})
-`
-
-const SAMPLE_FILES: SourceFileInput[] = [
-  { path: 'login.spec.ts', text: SAMPLE_LOGIN },
-  { path: 'checkout.spec.js', text: SAMPLE_CHECKOUT },
-]
+// The demo suite lives in ./sample - realistic (8 nested files, ~120 locators) so the
+// screen is exercised the way a real repo would, not a 2-file toy.
 
 const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
   fragile: { text: 'text-k-fragile', dot: 'bg-k-fragile' },
