@@ -574,6 +574,59 @@ const METHOD_LINKS = {
   tl: <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline" />,
 }
 
+// "New audit" as a modal over the current audit - a stray click never destroys what the
+// user has been collecting. Only committing a source (folder / sample / paste) replaces it;
+// closing leaves the running audit untouched. Same adaptive shell as the Method sheet.
+function NewAuditModal({ onClose, onSelectFolder, onSample, onAnalyze, code, setCode, loading }: {
+  onClose: () => void
+  onSelectFolder: () => void
+  onSample: () => void
+  onAnalyze: () => void
+  code: string
+  setCode: (v: string) => void
+  loading: boolean
+}) {
+  const { t } = useTranslation('locate-me')
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-[var(--tool-accent,#22d3ee)] text-[#131417] hover:brightness-110 disabled:opacity-50 transition'
+  const btnGhost = 'px-3 py-2 rounded-md text-sub font-medium text-foreground border border-border hover:bg-muted/40 disabled:opacity-50 transition-colors'
+
+  return (
+    <div onClick={onClose}
+      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 sm:px-4 animate-in fade-in-0 duration-200">
+      <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true"
+        className="w-full sm:max-w-lg max-h-[85vh] flex flex-col overflow-hidden rounded-t-2xl sm:rounded-xl border-t sm:border border-border bg-card shadow-lg animate-in fade-in-0 slide-in-from-bottom-4 sm:slide-in-from-bottom-2 sm:zoom-in-95 duration-200">
+        <div className="flex-shrink-0 border-b border-border px-5 sm:px-6 pt-3 sm:pt-5 pb-3">
+          <div className="sm:hidden flex justify-center pb-2"><span className="w-9 h-1 rounded-full bg-border" /></div>
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="text-title text-foreground">{t('newAudit')}</h2>
+            <button onClick={onClose} title={t('close')} aria-label={t('close')}
+              className="flex items-center justify-center w-8 h-8 -mr-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted flex-shrink-0">✕</button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <button onClick={onSelectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
+            <button onClick={onSample} disabled={loading} className={btnGhost}>{t('trySample')}</button>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-label text-muted-foreground">{t('pasteToggle')}</span>
+            <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
+              className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+            <button onClick={onAnalyze} disabled={loading || !code.trim()} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function MethodModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation('locate-me')
 
@@ -829,6 +882,7 @@ export default function LocateMePage() {
   const [fileExcluded, setFileExcluded] = useState<Set<string>>(new Set())
   const [sortMode, setSortMode] = useState<SortMode>('file')
   const [methodOpen, setMethodOpen] = useState(false)
+  const [newAuditOpen, setNewAuditOpen] = useState(false)
   const isMobile = useIsMobile()
   const workerRef = useRef<Worker | null>(null)
 
@@ -885,13 +939,6 @@ export default function LocateMePage() {
       setLoading(false)
       if ((e as DOMException)?.name !== 'AbortError') setError((e as Error).message)
     }
-  }
-
-  // Back to the input screen (folder / sample / paste all live there). Fixes the orphaned
-  // paste path: after an audit there was no way back to the textarea.
-  const resetAudit = () => {
-    setReport(null); setDetection(null); setSelected(null)
-    setError(null); setSource(null); setSkipped(0); setCode('')
   }
 
   const toggleFilter = (k: Kind) => {
@@ -1088,7 +1135,7 @@ export default function LocateMePage() {
                     action={
                       <div className="flex items-center gap-2">
                         {loading && <span className="text-meta text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                        <button onClick={resetAudit} disabled={loading}
+                        <button onClick={() => setNewAuditOpen(true)} disabled={loading}
                           className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                           {t('newAudit')}
                         </button>
@@ -1181,6 +1228,17 @@ export default function LocateMePage() {
         </div>
 
         {methodOpen && <MethodModal onClose={() => setMethodOpen(false)} />}
+        {newAuditOpen && (
+          <NewAuditModal
+            onClose={() => setNewAuditOpen(false)}
+            onSelectFolder={() => { setNewAuditOpen(false); selectFolder() }}
+            onSample={() => { setNewAuditOpen(false); runSample() }}
+            onAnalyze={() => { setNewAuditOpen(false); analyzePaste(code) }}
+            code={code}
+            setCode={setCode}
+            loading={loading}
+          />
+        )}
 
         {/* Trust badges belong to the pre-audit pitch. Once results are on screen the
             user has already lived them - persuading the convinced is just noise. */}
