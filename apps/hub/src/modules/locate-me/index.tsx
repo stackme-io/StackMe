@@ -1127,7 +1127,11 @@ export default function LocateMePage() {
               {!hasLocators ? (
                 <div className="rounded-md border border-border/60 p-4 max-w-3xl">
                   <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
-                  <p className="text-sub text-content">{t('noLocatorsDesc')}</p>
+                  <p className="text-sub text-content mb-3">{t('noLocatorsDesc')}</p>
+                  <button onClick={() => setNewAuditOpen(true)}
+                    className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors">
+                    {t('newAudit')}
+                  </button>
                 </div>
               ) : (
                 <>
