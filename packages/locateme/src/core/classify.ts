@@ -60,6 +60,25 @@ function detectGeneratedId(id: string): string | null {
   return null;
 }
 
+// A framework-generated id inside a COMPOUND css selector (e.g. ".cart-footer #mui-42").
+// Fragility is monotone under conjunction: an ancestor/compound only narrows scope, it can't
+// save a regenerating id, so the whole locator still breaks. Precision-first guards keep this
+// from firing where the id isn't a required, positive id segment:
+//   - only #id tokens (never classes `.mui-42`, attribute values `[x='radix-1']`, or strings)
+//   - not in selector lists / :is() / :where() (a non-fragile branch may still match)
+//   - not inside :not() (negation inverts the failure mode - id regen widens the match)
+function generatedIdInCompoundCss(sel: string): string | null {
+  if (/,|:is\(|:where\(|:not\(/i.test(sel)) return null;
+  const stripped = sel.replace(/\[[^\]]*\]/g, " "); // drop attribute blocks - #... inside them isn't an id segment
+  const tokens = stripped.match(/#[\w-]+/g);
+  if (!tokens) return null;
+  for (const tok of tokens) {
+    const lib = detectGeneratedId(tok.slice(1));
+    if (lib) return lib;
+  }
+  return null;
+}
+
 // Not every xpath is fragile: positional/structural = fragile, but xpath anchored
 // on a stable id/test attribute won't break from layout changes.
 function classifyXpath(raw: string): Classification {
@@ -89,9 +108,14 @@ function classifyXpath(raw: string): Classification {
     reason: "A data-* attribute, but not a known test hook. Fine if the app sets it deliberately and it stays stable between builds; brittle if it's state or a derived value (data-state, data-index, a backend id).",
     prefer: "First pass. Confirm it's a real test contract in your app; if not, prefer a data-testid, or getByRole / getByLabel.",
   };
-  const xpIdMatch = s.match(/@id\s*=\s*['"]([^'"]+)['"]/i);
-  if (xpIdMatch) {
-    const lib = detectGeneratedId(xpIdMatch[1]);
+  // Generated id in any xpath id predicate, at any step: @id='V', contains(@id,'V'),
+  // starts-with(@id,'V'). The predicate names the attribute explicitly (@id), so unlike CSS
+  // there is no class/attribute-value ambiguity to guard against.
+  const xpIdVals: string[] = [];
+  for (const m of s.matchAll(/@id\s*=\s*['"]([^'"]+)['"]/gi)) xpIdVals.push(m[1]);
+  for (const m of s.matchAll(/(?:contains|starts-with)\s*\(\s*@id\s*,\s*['"]([^'"]+)['"]/gi)) xpIdVals.push(m[1]);
+  for (const v of xpIdVals) {
+    const lib = detectGeneratedId(v);
     if (lib) return {
       kind: "fragile", confidence: "verdict", subcause: "xpath-id-generated",
       reason: `Framework-generated id (${lib}) - auto-generated ids change between builds or re-renders, so the locator breaks when the id regenerates.`,
@@ -143,6 +167,12 @@ function classifyCss(s: string): Classification {
       reason: "Single id selector.",
     };
   }
+  const compoundLib = generatedIdInCompoundCss(s);
+  if (compoundLib) return {
+    kind: "fragile", confidence: "verdict", subcause: "css-id-generated",
+    reason: `Framework-generated id (${compoundLib}) - auto-generated ids change between builds or re-renders, so the locator breaks when the id regenerates.`,
+    prefer: "Prefer a data-testid, or getByRole/getByLabel - a stable, intentional hook rather than a generated id.",
+  };
   if (CSS_DATA_ANY.test(s)) return {
     kind: "context", confidence: "context", subcause: "css-data-unknown",
     reason: "A data-* attribute, but not a known test hook. Fine if the app sets it deliberately and it stays stable between builds; brittle if it's state or a derived value (data-state, data-index, a backend id).",
