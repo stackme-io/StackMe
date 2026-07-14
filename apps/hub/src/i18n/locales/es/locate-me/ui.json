@@ -13,7 +13,7 @@
   "analyze": "Analizar",
   "clear": "Limpiar",
   "pasteToggle": "…o pega un archivo",
-  "pastePlaceholder": "// pega un test de Playwright o Cypress aquí (.ts / .js)",
+  "pastePlaceholder": "// pega aquí un test de Playwright / Cypress (.ts / .js) o Selenium (.java)",
   "analyzing": "Analizando…",
   "runsLocally": "Se ejecuta localmente",
   "needChromium": "Elegir carpeta requiere un navegador Chromium (Chrome / Edge). Aún puedes pegar un archivo abajo.",

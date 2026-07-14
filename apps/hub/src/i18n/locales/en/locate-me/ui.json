@@ -13,7 +13,7 @@
   "analyze": "Analyze",
   "clear": "Clear",
   "pasteToggle": "…or paste a single file",
-  "pastePlaceholder": "// paste a Playwright or Cypress test here (.ts / .js)",
+  "pastePlaceholder": "// paste a Playwright / Cypress (.ts / .js) or Selenium (.java) test here",
   "analyzing": "Analyzing…",
   "runsLocally": "Runs locally",
   "needChromium": "Folder picking needs a Chromium browser (Chrome / Edge). You can still paste a file below.",

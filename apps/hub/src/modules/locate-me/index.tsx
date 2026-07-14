@@ -919,7 +919,11 @@ export default function LocateMePage() {
   const analyzePaste = (text: string) => {
     if (!text.trim()) { setError(t('nothingToAnalyze')); return }
     setSkipped(0)
-    runOnWorker([{ path: 'pasted.spec.ts', text }], 'pasted', t('pastedSnippet'))
+    // Sniff Java so a pasted Selenium/Java snippet routes to the tree-sitter extractor;
+    // the ts-morph path would misparse it. Playwright/Cypress stay .ts.
+    const looksJava = /import\s+org\.openqa\.selenium|@FindBy\b|\bpublic\s+class\b|\bBy\.[A-Za-z]/.test(text)
+    const path = looksJava ? 'pasted.java' : 'pasted.spec.ts'
+    runOnWorker([{ path, text }], 'pasted', t('pastedSnippet'))
   }
 
   const runSample = () => {
