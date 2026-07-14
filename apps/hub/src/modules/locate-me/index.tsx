@@ -82,6 +82,23 @@ function selectorText(f: Finding): string {
   return `${f.method}(${f.selector === null ? '…' : JSON.stringify(f.selector)})`
 }
 
+// File-name display for the rail (basename-first). Right-truncating a full path keeps the
+// shared prefix (tests/e2e/…) and eats the basename - the one part that differentiates.
+// So we show the basename primarily and only reveal the folder when basenames collide.
+function baseName(p: string): string {
+  const i = p.lastIndexOf('/')
+  return i === -1 ? p : p.slice(i + 1)
+}
+function dirName(p: string): string {
+  const i = p.lastIndexOf('/')
+  return i === -1 ? '' : p.slice(0, i)
+}
+// Last two folder segments, prefixed with … when deeper - keeps the nearest (differentiating) dirs.
+function shortDir(dir: string): string {
+  const segs = dir.split('/').filter(Boolean)
+  return segs.length <= 2 ? segs.join('/') : '…/' + segs.slice(-2).join('/')
+}
+
 function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile, fileFragile }: {
   sortMode: SortMode
   onSort: (m: SortMode) => void
@@ -92,6 +109,9 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
 }) {
   const { t } = useTranslation('locate-me')
   const multi = fileList.length > 1
+  // Reveal the folder line only for basenames that appear more than once.
+  const baseCounts = new Map<string, number>()
+  for (const f of fileList) baseCounts.set(baseName(f), (baseCounts.get(baseName(f)) ?? 0) + 1)
   const sorts: [SortMode, string, string][] = [
     ['file', t('sortFile'), t('sortFileHint')],
     ['repeated', t('sortRepeated'), t('sortRepeatedHint')],
@@ -109,6 +129,7 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
             {fileList.map(file => {
               const on = !fileExcluded.has(file)
               const frag = fileFragile.get(file) ?? 0
+              const collides = (baseCounts.get(baseName(file)) ?? 0) > 1
               return (
                 <button key={file} onClick={() => onToggleFile(file)} title={file}
                   className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
@@ -119,7 +140,12 @@ function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile,
                       </svg>
                     )}
                   </span>
-                  <span className="text-sub flex-1 truncate font-mono">{file}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sub truncate">{baseName(file)}</span>
+                    {collides && dirName(file) && (
+                      <span className="block text-meta text-muted-foreground/70 truncate">{shortDir(dirName(file))}</span>
+                    )}
+                  </span>
                   {frag > 0 && (
                     <span title={t('nLocators', { count: frag })} className="flex items-center gap-1 flex-shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-k-fragile flex-shrink-0" />
