@@ -8,6 +8,7 @@
   },
   "intro": "Audita los locators de tus tests Playwright/Cypress, todo en tu navegador. Apúntalo a una carpeta o pega un archivo.",
   "selectFolder": "Elegir carpeta",
+  "newAudit": "Nueva auditoría",
   "trySample": "Probar ejemplo",
   "analyze": "Analizar",
   "clear": "Limpiar",

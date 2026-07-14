@@ -8,6 +8,7 @@
   },
   "intro": "Audit the locators in your Playwright/Cypress tests, fully in your browser. Point it at a folder, or paste a single file.",
   "selectFolder": "Select folder",
+  "newAudit": "New audit",
   "trySample": "Try sample",
   "analyze": "Analyze",
   "clear": "Clear",

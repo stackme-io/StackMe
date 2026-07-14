@@ -191,11 +191,12 @@ function RatioBar({ byKind, filterKinds, onToggle }: {
   const total = KIND_ORDER.reduce((s, k) => s + byKind[k], 0) || 1
   return (
     <div>
-      <div className="flex h-2 w-full rounded-full overflow-hidden bg-muted/30">
+      <div className="flex h-2.5 w-full rounded-full overflow-hidden bg-muted/30">
         {KIND_ORDER.map(k => byKind[k] > 0 && (
           <button key={k} type="button" onClick={() => onToggle(k)}
             title={`${t(`kinds.${k}.label`)}: ${byKind[k]}`}
-            className={KIND_SEG[k]}
+            aria-label={`${t(`kinds.${k}.label`)}: ${byKind[k]}`}
+            className={`${KIND_SEG[k]} cursor-pointer transition-[filter,opacity] hover:brightness-125 ${filterKinds.has(k) ? '' : 'opacity-60 hover:opacity-100'}`}
             style={{ width: `${(byKind[k] / total) * 100}%` }} />
         ))}
       </div>
@@ -486,7 +487,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             return (
               <tr key={i} onClick={() => onSelect(f)}
                 className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/70' : 'hover:bg-muted/20'}`}>
-                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-primary' : f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
+                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-primary' : 'border-l-transparent'}`}>
                   <span className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                     <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -518,7 +519,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
           return (
             <li key={i}>
               <button onClick={() => onSelect(f)}
-                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-primary' : f.kind === 'fragile' ? 'border-l-k-fragile/60' : 'border-l-transparent'}`}>
+                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-primary' : 'border-l-transparent'}`}>
                 <span className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                   <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -764,10 +765,10 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
       <nav className="border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
         {nav.map(({ id, label, Icon }) => (
           <button key={id} onClick={() => onNav(id)}
-            className={`flex items-center gap-2 px-2.5 py-2 rounded-md border text-sub text-left transition-colors ${
+            className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-sub text-left transition-colors ${
               activeTab === id
-                ? 'border-border bg-muted/50 text-foreground font-medium'
-                : 'border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                ? 'bg-muted/50 text-foreground font-medium'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
             }`}>
             <Icon className="w-3.5 h-3.5 flex-shrink-0" />
             {label}
@@ -858,6 +859,13 @@ export default function LocateMePage() {
       setLoading(false)
       if ((e as DOMException)?.name !== 'AbortError') setError((e as Error).message)
     }
+  }
+
+  // Back to the input screen (folder / sample / paste all live there). Fixes the orphaned
+  // paste path: after an audit there was no way back to the textarea.
+  const resetAudit = () => {
+    setReport(null); setDetection(null); setSelected(null)
+    setError(null); setSource(null); setSkipped(0); setCode('')
   }
 
   const toggleFilter = (k: Kind) => {
@@ -1054,6 +1062,10 @@ export default function LocateMePage() {
                     action={
                       <div className="flex items-center gap-2">
                         {loading && <span className="text-meta text-muted-foreground animate-pulse">{t('analyzing')}</span>}
+                        <button onClick={resetAudit} disabled={loading}
+                          className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
+                          {t('newAudit')}
+                        </button>
                         <button onClick={selectFolder} disabled={loading}
                           className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                           {t('selectFolder')}
