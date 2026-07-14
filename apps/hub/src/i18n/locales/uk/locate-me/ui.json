@@ -105,6 +105,7 @@
   },
   "giveLead": "ти вказуєш на:",
   "giveLine1": "твої Playwright / Cypress тести (TS/JS)",
+  "giveStacks": ["Playwright · TS/JS", "Cypress · TS/JS", "Selenium · Java (beta)"],
   "giveLine2": "папку або один файл",
   "giveLine3": "навіть старий legacy-набір",
   "getLead": "отримуєш:",

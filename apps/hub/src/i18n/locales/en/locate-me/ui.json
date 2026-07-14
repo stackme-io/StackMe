@@ -91,6 +91,7 @@
   },
   "giveLead": "you point it at:",
   "giveLine1": "your Playwright / Cypress tests (TS/JS)",
+  "giveStacks": ["Playwright · TS/JS", "Cypress · TS/JS", "Selenium · Java (beta)"],
   "giveLine2": "a folder, or one file",
   "giveLine3": "even an old legacy suite",
   "getLead": "you get:",

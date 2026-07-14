@@ -1058,7 +1058,13 @@ export default function LocateMePage() {
                     <div className="hidden lg:flex items-center gap-3 absolute top-1/2 -translate-y-1/2 right-full mr-6 text-left w-max">
                       <div className="flex flex-col gap-3.5 items-start whitespace-nowrap" style={{ fontFamily: "'Neucha', cursive" }}>
                         <span className="text-[18px] text-muted-foreground ml-1 -mb-2">{t('giveLead')}</span>
-                        <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine1')}</span>
+                        <div className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-2 flex flex-col gap-1">
+                          {(t('giveStacks', { returnObjects: true }) as string[]).map(s => (
+                            <span key={s} className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 flex-shrink-0" />{s}
+                            </span>
+                          ))}
+                        </div>
                         <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine2')}</span>
                         <span className="text-[20px] leading-tight text-foreground border border-muted-foreground/45 rounded-[14px] px-3 py-1.5">{t('giveLine3')}</span>
                       </div>
