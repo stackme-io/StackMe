@@ -98,6 +98,23 @@ function getLiteralSelector(arg: Node | undefined): string | null {
   return null;
 }
 
+// Playwright text-content methods whose match can be loosened - a regex first arg, or an
+// { exact: false } option. A loose match is provably fragile from the string alone.
+const TEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText"]);
+
+function isLooseTextMatch(method: string, args: Node[]): boolean {
+  if (!TEXT_METHODS.has(method)) return false;
+  if (args[0] && Node.isRegularExpressionLiteral(args[0])) return true;
+  const opts = args[1];
+  if (opts && Node.isObjectLiteralExpression(opts)) {
+    for (const prop of opts.getProperties()) {
+      if (Node.isPropertyAssignment(prop) && prop.getName() === "exact"
+          && prop.getInitializer()?.getKind() === SyntaxKind.FalseKeyword) return true;
+    }
+  }
+  return false;
+}
+
 export class TsMorphExtractor implements LocatorExtractor {
   extract(file: SourceFileInput): ExtractResult {
     const project = new Project({ useInMemoryFileSystem: true });
@@ -128,6 +145,7 @@ export class TsMorphExtractor implements LocatorExtractor {
         selector: getLiteralSelector(selArg),
         line: call.getStartLineNumber(),
         usage: detectUsage(call),
+        looseText: isLooseTextMatch(method, call.getArguments()),
       });
     });
 

@@ -56,7 +56,8 @@ lists and `:is()` / `:where()` with a non-fragile branch (`.stable, #mui-42`), a
 | Framework-generated id | `//*[@id='mui-42']`, `//div[@class='x' and @id='ember7']`, `contains(@id,'radix-')` | **fragile** | Same as CSS - caught in any id predicate, at any step. |
 | Test-hook attribute | `//button[@data-testid='save']` | **stable** | Anchored on a test contract. |
 | `@id` / `@name` | `//input[@id='email']` | **stable** | Anchored on a stable attribute. |
-| Text | `//*[text()='Submit']`, `contains(text(),'Sub')` | **context** | Can break on localization or copy edits. Fine for assertions. |
+| Exact text | `//*[text()='Submit']` | **context** | Can break on localization or copy edits. Fine for assertions. |
+| Substring text | `contains(text(),'Sub')` | **fragile** | A loose match - matches any element whose text contains this, so it isn't pinned to one element. |
 | Other attribute | `//*[@role='dialog']` | **context** | Depends on the attribute. |
 
 ## Playwright / Testing Library methods

@@ -93,7 +93,12 @@ function classifyXpath(raw: string): Classification {
     reason: "Positional index in the path - breaks when order or layout changes.",
     prefer: "Anchor on the element's text or role instead of its position, e.g. getByRole('button', { name: '...' }).",
   };
-  if (/text\(\)|contains\(\s*text/i.test(s)) return {
+  if (/contains\(\s*text/i.test(s)) return {
+    kind: "fragile", confidence: "verdict", subcause: "text-loose",
+    reason: "Substring text match (contains(text(),…)) - matches any element whose text contains this, so it isn't pinned to one element and drifts with copy or localization.",
+    prefer: "Anchor on role/name or a test id; for exact text use text()='…' (getByText normalizes whitespace).",
+  };
+  if (/text\(\)/i.test(s)) return {
     kind: "context", confidence: "context", subcause: "xpath-text",
     reason: "Text-based xpath - can break on localization/content changes.",
     prefer: "First pass - fine for assertions. For clicks prefer getByRole(..., { name }); getByText also normalizes whitespace, raw XPath does not.",
@@ -203,6 +208,7 @@ const SELENIUM_PREFER: Record<string, string> = {
   "xpath-testattr":    "Solid. By.cssSelector(\"[data-testid='...']\") reads more idiomatically than raw XPath.",
   "xpath-attr":        "First pass. If it's a real test contract it's fine; otherwise prefer By.id or a data-testid.",
   "xpath-absolute":    "Replace the absolute path with By.id, a data-testid, or a By.cssSelector on the target element.",
+  "text-loose":        "Substring text match is brittle - matches any element containing this text. Anchor on By.id or a data-testid; for exact text keep text()='…'.",
 };
 
 function withSeleniumPrefer(c: Classification): Classification {
@@ -261,12 +267,16 @@ export function classifySelenium(strategy: string, value: string | null): Classi
 // the PROOF - whether the visible text is stable and unique is unknowable from the
 // string, so a firm "fragile" would overreach. (A firm verdict for text belongs on a
 // loose-match signature - regex / exact:false / contains(text) - not on usage.)
-export interface ClassifyContext { usage?: Usage }
+export interface ClassifyContext { usage?: Usage; looseText?: boolean }
 
 // Text-based buckets whose advice depends on how the locator is used: matching by
 // visible text is squarely fine for an assertion but weaker for a click (copy edits,
 // i18n, possible non-uniqueness). Only these react to `usage` - and only in wording.
 const TEXT_SUBCAUSES = new Set(["method-text", "xpath-text"]);
+
+// Playwright text-content methods that can take a loose match (a regex, or { exact: false }).
+// A loose match is fragile from the string alone - see classifyJs.
+const TEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText"]);
 
 // Apply call-site usage to a text-based verdict - WORDING ONLY, never the kind.
 // Precision-first: unknown usage changes nothing; Selenium never reaches here (returns
@@ -308,12 +318,20 @@ function safeSwap(method: string, selector: string | null, subcause?: string): s
 
 export function classify(method: string, selector: string | null, ctx?: ClassifyContext): Classification {
   if (method.startsWith("By.")) return classifySelenium(method.slice(3), selector);
-  const c = applyUsage(classifyJs(method, selector), method, ctx?.usage);
+  const c = applyUsage(classifyJs(method, selector, ctx), method, ctx?.usage);
   const code = safeSwap(method, selector, c.subcause);
   return code ? { ...c, preferCode: code } : c;
 }
 
-function classifyJs(method: string, selector: string | null): Classification {
+function classifyJs(method: string, selector: string | null, ctx?: ClassifyContext): Classification {
+  // Loose text match (a regex, or { exact: false }) is fragile from the string alone,
+  // regardless of usage: the match isn't strict, so it isn't pinned to one element by
+  // construction. Fires before the null-selector check - getByText(/re/) has no string.
+  if (ctx?.looseText && TEXT_METHODS.has(method)) return {
+    kind: "fragile", confidence: "verdict", subcause: "text-loose",
+    reason: `Loose text match (${method} with a regex or exact:false) - matches by partial/substring text, so it isn't pinned to one element and drifts with copy or localization.`,
+    prefer: "For a firm target use getByRole(..., { name }) or getByTestId - or an exact text match.",
+  };
   if (selector === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/template) - not classified." };
   if (STABLE_METHODS.has(method)) return { kind: "stable", confidence: "verdict", subcause: "method-stable", reason: `User-facing locator (${method}) - recommended, resilient.` };
   if (CONTEXT_METHODS.has(method)) return {

@@ -62,6 +62,7 @@ export interface RawLocator {
   selector: string | null; // literal value, or null === dynamic (built at runtime)
   line: number;            // 1-based line of the locator call
   usage?: Usage;           // how it's used in the same statement (action/assert/unknown)
+  looseText?: boolean;     // text method with a regex or { exact: false } - a loose match
 }
 
 // A region the parser could not read (tree-sitter ERROR / MISSING node). We surface
