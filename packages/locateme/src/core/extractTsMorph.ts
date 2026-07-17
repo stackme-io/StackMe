@@ -115,6 +115,47 @@ function isLooseTextMatch(method: string, args: Node[]): boolean {
   return false;
 }
 
+// Positional chain steps (Playwright .nth/.first/.last, Cypress .eq/.first/.last) and the
+// steps we pass THROUGH while attributing them (.filter/.or scope by content, not index).
+const POSITIONAL_STEPS = new Set(["nth", "first", "last", "eq"]);
+const CHAIN_PASS = new Set(["filter", "or"]);
+
+// "index" = a specific interior position (.nth(2)/.eq(3)/variable) -> firm fragility.
+// "edge"  = .first()/.last()/.nth(0)/.eq(0) -> softer (often a safe disambiguator).
+function positionalKind(method: string, call: Node): "index" | "edge" {
+  if (method === "first" || method === "last") return "edge";
+  const arg = Node.isCallExpression(call) ? call.getArguments()[0] : undefined;
+  if (arg && Node.isNumericLiteral(arg)) return arg.getLiteralValue() >= 1 ? "index" : "edge";
+  if (arg && Node.isPrefixUnaryExpression(arg)) return "edge"; // .nth(-1) ~ last
+  return "index"; // variable index - can't prove it's 0
+}
+
+// Find a positional step that directly governs THIS locator's matched set. Walk up the
+// receiver chain (like detectUsage), pass through .filter, but STOP at the first re-scope
+// (.locator/.getByX/.find/...) so an index attaches only to the locator it refines - never
+// double-counted across a multi-locator chain.
+function detectPositionalTail(callNode: Node): "index" | "edge" | undefined {
+  let node: Node = callNode;
+  for (let i = 0; i < 25; i++) {
+    const parent = node.getParent();
+    if (!parent) return undefined;
+    if (Node.isAwaitExpression(parent) || Node.isParenthesizedExpression(parent) ||
+        Node.isNonNullExpression(parent) || Node.isAsExpression(parent)) { node = parent; continue; }
+    if (Node.isPropertyAccessExpression(parent) && parent.getExpression().compilerNode === node.compilerNode) {
+      const grand = parent.getParent();
+      if (grand && Node.isCallExpression(grand)) {
+        const m = parent.getName();
+        if (POSITIONAL_STEPS.has(m)) return positionalKind(m, grand);
+        if (CHAIN_PASS.has(m)) { node = grand; continue; }
+        return undefined; // re-scope (new base) or a terminator - not this locator's index
+      }
+      return undefined;
+    }
+    return undefined;
+  }
+  return undefined;
+}
+
 export class TsMorphExtractor implements LocatorExtractor {
   extract(file: SourceFileInput): ExtractResult {
     const project = new Project({ useInMemoryFileSystem: true });
@@ -146,6 +187,7 @@ export class TsMorphExtractor implements LocatorExtractor {
         line: call.getStartLineNumber(),
         usage: detectUsage(call),
         looseText: isLooseTextMatch(method, call.getArguments()),
+        positional: detectPositionalTail(call),
       });
     });
 

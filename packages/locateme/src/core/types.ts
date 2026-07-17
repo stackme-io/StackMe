@@ -63,6 +63,7 @@ export interface RawLocator {
   line: number;            // 1-based line of the locator call
   usage?: Usage;           // how it's used in the same statement (action/assert/unknown)
   looseText?: boolean;     // text method with a regex or { exact: false } - a loose match
+  positional?: "index" | "edge"; // positional chain step: .nth(k)/.eq(k) = index, .first/.last/.nth(0) = edge
 }
 
 // A region the parser could not read (tree-sitter ERROR / MISSING node). We surface

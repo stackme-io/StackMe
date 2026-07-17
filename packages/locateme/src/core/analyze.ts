@@ -47,7 +47,7 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
     unparsed += errors.length;
     if (classes) allClasses.push(...classes);
     for (const r of locators) {
-      const { kind, reason, subcause, confidence, prefer, preferCode } = classify(r.method, r.selector, { usage: r.usage, looseText: r.looseText });
+      const { kind, reason, subcause, confidence, prefer, preferCode } = classify(r.method, r.selector, { usage: r.usage, looseText: r.looseText, positional: r.positional });
       const snippet = kind === "fragile" ? buildSnippet(lines, r.line) : undefined;
       findings.push({
         file: f.path,

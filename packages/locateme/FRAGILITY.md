@@ -76,6 +76,12 @@ it softens. This only changes the wording - never the verdict. A firm `fragile` 
 reserved for a loose-match signature (regex / `exact:false` / `contains(text)`), which is
 provable from the string regardless of how the locator is used.
 
+Positional chain steps override the base. A step that picks by index - `.nth(2)`, Cypress
+`.eq(3)`, or a variable index - is **fragile** even on a stable base (`getByTestId('row').nth(2)`
+still selects the 3rd by order, so it breaks on reorder/insert). Edge selections - `.first()`,
+`.last()`, `.nth(0)` - are **context**: often a safe disambiguator, and the string can't prove
+the set has more than one element. Content scoping (`.filter({ hasText })`) is not positional.
+
 ## Selenium (Java) - `By.*`
 
 | Strategy | Verdict | Note |

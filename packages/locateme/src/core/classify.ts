@@ -267,7 +267,7 @@ export function classifySelenium(strategy: string, value: string | null): Classi
 // the PROOF - whether the visible text is stable and unique is unknowable from the
 // string, so a firm "fragile" would overreach. (A firm verdict for text belongs on a
 // loose-match signature - regex / exact:false / contains(text) - not on usage.)
-export interface ClassifyContext { usage?: Usage; looseText?: boolean }
+export interface ClassifyContext { usage?: Usage; looseText?: boolean; positional?: "index" | "edge" }
 
 // Text-based buckets whose advice depends on how the locator is used: matching by
 // visible text is squarely fine for an assertion but weaker for a click (copy edits,
@@ -331,6 +331,22 @@ function classifyJs(method: string, selector: string | null, ctx?: ClassifyConte
     kind: "fragile", confidence: "verdict", subcause: "text-loose",
     reason: `Loose text match (${method} with a regex or exact:false) - matches by partial/substring text, so it isn't pinned to one element and drifts with copy or localization.`,
     prefer: "For a firm target use getByRole(..., { name }) or getByTestId - or an exact text match.",
+  };
+  // A positional chain step governs the match regardless of how stable the base is - a test
+  // id that matches a set, then .nth(2), still picks the 3rd by order. Fires before the
+  // method-based verdicts (so getByTestId stops being stable) and before the null check (so a
+  // dynamic base with a positional tail is still judged). Graded: an interior index is a firm
+  // verdict; an edge (.first/.last/.nth(0)) is only a first-pass note - it's often a safe
+  // disambiguator and the string can't prove the set has more than one element.
+  if (ctx?.positional === "index") return {
+    kind: "fragile", confidence: "verdict", subcause: "chain-positional",
+    reason: "Positional chain step (.nth / .eq with an index) - picks by position out of the matched set, so it breaks when items are added or reordered.",
+    prefer: "Anchor on identity, not position - a role + name, a label, or a test id. To pick within a set, filter by unique content instead of an index.",
+  };
+  if (ctx?.positional === "edge") return {
+    kind: "context", confidence: "context", subcause: "chain-positional-edge",
+    reason: "Edge selection (.first / .last / .nth(0)) - fine if the match is already unique, brittle if the set can grow or reorder.",
+    prefer: "First pass. If a filter already narrows to one element, .first() is redundant - drop it; otherwise anchor on identity (role + name, label, or a test id).",
   };
   if (selector === null) return { kind: "dynamic", reason: "Selector built at runtime (variable/template) - not classified." };
   if (STABLE_METHODS.has(method)) return { kind: "stable", confidence: "verdict", subcause: "method-stable", reason: `User-facing locator (${method}) - recommended, resilient.` };
