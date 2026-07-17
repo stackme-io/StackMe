@@ -7,21 +7,25 @@
         { "title": "Auditoría estática",     "desc": "Lee solo tu código de tests - sin runtime, sin ejecución" },
         { "title": "Playwright y Cypress",   "desc": "locator + getBy*, cy.get / contains / find, alias y cadenas" },
         { "title": "TypeScript y JavaScript", "desc": "Lee toda la familia .ts / .js" },
-        { "title": "Selenium (Java)",          "desc": "By.* + @FindBy Page Objects + Selenide, en archivos .java (beta)" }
+        { "title": "Selenium (Java)",          "desc": "By.* + @FindBy Page Objects + Selenide, en archivos .java (beta)" },
+        { "title": "Pega o escanea",           "desc": "Pega un fragmento o apúntanos a una carpeta. Sin configuración." }
       ]
     },
     {
       "group": "Veredictos",
       "items": [
-        { "title": "Clases de fragilidad", "desc": "fragile / stable / context / dynamic, por forma" },
-        { "title": "IDs generados",        "desc": "Marca ids de frameworks (React, Radix, MUI...) que cambian entre builds" },
-        { "title": "Cobertura",            "desc": "Qué se clasificó y qué es dinámico (el punto ciego)" }
+        { "title": "Clases de fragilidad",    "desc": "Frágil, estable, contexto o dinámico - según la forma del locator, no por el historial de tests flaky." },
+        { "title": "IDs generados",           "desc": "Ids de frameworks que cambian entre builds (React, Radix, MUI) - detectados incluso dentro de selectores compuestos como .cart-footer #mui-42." },
+        { "title": "Posicional y estructural", "desc": "Selección por índice (.nth, .eq), cadenas de combinadores profundas y CSS/XPath posicional - atados a dónde está el elemento, no a qué es." },
+        { "title": "Estilos y texto flexible", "desc": "Pilas de clases utilitarias (estilo Tailwind) y coincidencias de texto flexibles (regex, subcadena, exact:false) - ni el estilo ni el texto son un contrato estable." },
+        { "title": "Cobertura",               "desc": "Qué clasificamos y qué quedó dinámico - para que nada se esconda en el hueco." }
       ]
     },
     {
       "group": "Informe",
       "items": [
-        { "title": "El porqué, no solo el qué",     "desc": "Explica el motivo y sugiere un locator más sólido - nunca lo corrige solo" },
+        { "title": "El porqué, no solo el qué",     "desc": "Explica por qué un locator es frágil y te da un arreglo listo para copiar - un consejo, no una edición automática." },
+        { "title": "Cómo juzgamos",                 "desc": "La rúbrica completa - cada clase, el método y las fuentes detrás. La misma que publicamos en FRAGILITY.md." },
         { "title": "Duplicados y archivos calientes", "desc": "Mismo selector en N sitios; archivos ordenados por frágiles" },
         { "title": "Filtros y orden",               "desc": "Mostrar solo frágiles u ocultar un tipo; ordenar por archivo, duplicados o calientes" },
         { "title": "Exportar y guardar",            "desc": "Descarga HTML / PDF, o guarda un informe en tu cuenta" }

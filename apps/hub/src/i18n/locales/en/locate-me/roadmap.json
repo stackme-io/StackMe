@@ -7,21 +7,25 @@
         { "title": "Static audit",           "desc": "Reads your test code only - no runtime, no execution" },
         { "title": "Playwright & Cypress",    "desc": "locator + getBy*, cy.get / contains / find, aliases & chains" },
         { "title": "TypeScript & JavaScript", "desc": "Reads the whole .ts / .js family" },
-        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects + Selenide, in .java files (beta)" }
+        { "title": "Selenium (Java)",         "desc": "By.* + @FindBy Page Objects + Selenide, in .java files (beta)" },
+        { "title": "Paste or scan",           "desc": "Drop in a snippet or point us at a folder. No project setup." }
       ]
     },
     {
       "group": "Verdicts",
       "items": [
-        { "title": "Fragility classes", "desc": "fragile / stable / context / dynamic, by shape" },
-        { "title": "Generated ids",     "desc": "Flags framework ids (React, Radix, MUI...) that change between builds" },
-        { "title": "Coverage",          "desc": "What was classified, and what is dynamic (the blind spot)" }
+        { "title": "Fragility classes",        "desc": "Fragile, stable, context, or dynamic - judged by the locator's shape, not by flaky-test history." },
+        { "title": "Generated ids",            "desc": "Framework ids that change between builds (React, Radix, MUI) - caught even inside compound selectors like .cart-footer #mui-42." },
+        { "title": "Positional & structural",  "desc": "Index picks (.nth, .eq), deep combinator chains, and positional CSS/XPath - tied to where an element sits, not what it is." },
+        { "title": "Styling & loose text",     "desc": "Utility class stacks (Tailwind-style) and loose text matches (regex, substring, exact:false) - neither styling nor copy is a stable contract." },
+        { "title": "Coverage",                 "desc": "What we classified and what stayed dynamic - so nothing hides in the gap." }
       ]
     },
     {
       "group": "Report",
       "items": [
-        { "title": "Why, not just what",     "desc": "Explains the reason and suggests a sturdier locator - never auto-fixes" },
+        { "title": "Why, not just what",     "desc": "Explains why a locator is fragile and hands you a copy-ready fix - advice, not an auto-edit." },
+        { "title": "How we judge",           "desc": "The full rubric - every class, the method, and the sources behind it. The same one we publish in FRAGILITY.md." },
         { "title": "Duplicates & hot files", "desc": "Same selector across N places; files ranked by fragile" },
         { "title": "Filters & sort",         "desc": "Show only fragile or hide a kind; sort by file, duplicates or hot files" },
         { "title": "Export & save",          "desc": "Download HTML / PDF, or save a report to your account" }
