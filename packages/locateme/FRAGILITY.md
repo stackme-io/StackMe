@@ -39,6 +39,8 @@ TestId → raw CSS/XPath.** `getByRole` is the default (it binds to accessibilit
 | Test-hook attribute | `[data-testid='x']`, `[data-qa='y']`, `[data-cy]`, `[data-automation-id]` | **stable** | An explicit contract between the app and the suite. |
 | Hand-written id | `#checkout-email` | **stable** | A single, intentional id. |
 | Unknown `data-*` | `[data-index='3']`, `[data-state='open']` | **context** | Could be a real contract or volatile state - the string can't tell. Confirm it's stable in your app. |
+| Utility stack | `.flex.items-center.gap-4`, `.w-[42px]`, `.md:flex` | **fragile** | Atomic / Tailwind-style styling classes - presentation, not identity. A single ambiguous class (`.flex`, `.mt-4`) stays context; a proven stack or an unmistakable form (arbitrary value, variant prefix) is flagged. |
+| Deep chain | `.a .b .c .d input` (4+ combinators) | **fragile** | Tied to nesting and order - breaks on any DOM restructure. 1-3 hops stay context (everyday nesting). |
 | Class / other attribute | `.login-form`, `[name='email']` | **context** | Fine while stable, but a styling class can move on a redesign. |
 
 Guards that stay `context` (a generated id there does **not** break the locator): selector

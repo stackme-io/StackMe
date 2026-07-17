@@ -79,6 +79,79 @@ function generatedIdInCompoundCss(sel: string): string | null {
   return null;
 }
 
+// --- Structural depth (feature B) -----------------------------------------------------
+// A deep descendant chain is tied to nesting/order and breaks on any DOM restructure. We
+// only fire at 4+ combinators (a 5+ element path): 1-3 hops are everyday, legitimate
+// nesting (.modal .btn, .page .card .body .title) and flagging them would be noise.
+function combinatorDepth(sel: string): number {
+  // Neutralize attribute blocks + pseudo-args so their contents don't add false combinators
+  // (e.g. [href="a b"], :nth-child(2n+1), :not(.a .b)).
+  const stripped = sel.replace(/\[[^\]]*\]/g, "A").replace(/\([^)]*\)/g, "");
+  const parts = stripped.trim().split(/\s*[>~+]\s*|\s+/).filter(Boolean);
+  return parts.length - 1;
+}
+
+// --- Utility / atomic styling classes (feature A) -------------------------------------
+// Ambiguous keyword utilities (collide with semantic component classes) - only count as a
+// weak add-on, never vote alone.
+const UTILITY_KEYWORDS = new Set([
+  "flex", "grid", "block", "inline", "inline-block", "inline-flex", "hidden", "container",
+  "absolute", "relative", "fixed", "sticky", "static", "truncate", "uppercase", "lowercase",
+  "capitalize", "italic", "underline", "flex-row", "flex-col", "flex-wrap", "flex-nowrap",
+  "items-center", "items-start", "items-end", "items-stretch", "items-baseline",
+  "justify-center", "justify-between", "justify-start", "justify-end", "justify-around",
+  "justify-evenly", "self-center", "self-start", "self-end", "content-center",
+  "antialiased", "rounded", "border", "shadow", "grow", "shrink",
+]);
+// S = syntactically unique (one is enough); V = value-shaped (weak, needs a stack); K = keyword.
+function utilityToken(t: string): "S" | "V" | "K" | null {
+  if (t.startsWith("!") || t.endsWith("!")) return "S"; // important shortcut: !p-0 / p-0!
+  if (/^-[a-z]/i.test(t)) return "S";                    // negative utility: -mt-4
+  if (/-\d+(\.\d+)?$/.test(t)) return "V";               // trailing number: mt-4, bg-red-500
+  if (/-(xs|sm|md|lg|xl|\dxl)$/.test(t)) return "V";     // scale suffix: text-sm, text-2xl
+  if (UTILITY_KEYWORDS.has(t)) return "K";
+  return null;
+}
+// Split a selector into compounds at top-level combinators, respecting [] and ().
+function splitCompounds(sel: string): string[] {
+  const out: string[] = [];
+  let cur = "", depth = 0;
+  for (const ch of sel) {
+    if (ch === "[" || ch === "(") depth++;
+    else if (ch === "]" || ch === ")") depth = Math.max(0, depth - 1);
+    if (depth === 0 && (ch === " " || ch === ">" || ch === "~" || ch === "+")) {
+      if (cur.trim()) out.push(cur.trim());
+      cur = "";
+    } else cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+// Class tokens of a single compound (drops the tag, ids, pseudos, and attribute selectors -
+// but keeps arbitrary-value brackets glued to a class, e.g. w-[42px]).
+function compoundClasses(comp: string): string[] {
+  const cleaned = comp
+    .replace(/:[\w-]+(\([^)]*\))?/g, "")   // pseudos
+    .replace(/(^|[^-])\[[^\]]*\]/g, "$1"); // attribute selectors (not the "-[" of arbitrary values)
+  return cleaned.split(".").filter((x, i) => i > 0 && x.length > 0 && !x.includes("#"));
+}
+// Fragile only on a proven utility stack. A single ambiguous class stays context.
+function isUtilityStack(selector: string): boolean {
+  for (const comp of splitCompounds(selector)) {
+    // Strong signals straight off the raw compound (survive class-splitting quirks).
+    if (/-\[[^\]]*\]/.test(comp) || comp.includes("\\:") || /-\d+\/\d+/.test(comp)) return true;
+    let hasS = false, v = 0, k = 0;
+    for (const c of compoundClasses(comp)) {
+      const kind = utilityToken(c);
+      if (kind === "S") hasS = true;
+      else if (kind === "V") v++;
+      else if (kind === "K") k++;
+    }
+    if (hasS || v >= 2 || (v >= 1 && v + k >= 2)) return true;
+  }
+  return false;
+}
+
 // Not every xpath is fragile: positional/structural = fragile, but xpath anchored
 // on a stable id/test attribute won't break from layout changes.
 function classifyXpath(raw: string): Classification {
@@ -183,6 +256,16 @@ function classifyCss(s: string): Classification {
     reason: "A data-* attribute, but not a known test hook. Fine if the app sets it deliberately and it stays stable between builds; brittle if it's state or a derived value (data-state, data-index, a backend id).",
     prefer: "First pass. Confirm it's a real test contract in your app; if not, prefer a data-testid, or getByRole / getByLabel.",
   };
+  if (combinatorDepth(s) >= 4) return {
+    kind: "fragile", confidence: "verdict", subcause: "css-structural-depth",
+    reason: "Deep descendant chain (4+ combinators) - tied to nesting and order, so it breaks on any DOM restructure.",
+    prefer: "Anchor on the target's own identity - a role + name, a label, or a test id - not a path through ancestors.",
+  };
+  if (isUtilityStack(s)) return {
+    kind: "fragile", confidence: "verdict", subcause: "css-utility",
+    reason: "Utility / atomic styling classes (Tailwind-style) - presentation, not identity; they change on a restyle or get purged.",
+    prefer: "Anchor on a role + name, a label, or a test id rather than styling utilities.",
+  };
   return {
     kind: "context", confidence: "context", subcause: "css-class",
     reason: "Class/attribute selector - stability depends on your project.",
@@ -200,6 +283,8 @@ const SELENIUM_PREFER: Record<string, string> = {
   "css-autoclass":     "Generated class name - prefer By.id or a data-testid over a build-time class.",
   "css-id-generated":  "Prefer a data-testid or a stable hand-written id, not a generated one.",
   "css-class":         "First pass. A styling class can move on a restyle - By.id or a data-testid is steadier.",
+  "css-structural-depth": "Deep path through ancestors - anchor on By.id or a data-testid on the target itself.",
+  "css-utility":       "Utility/styling classes aren't identity - prefer By.id or a data-testid.",
   "css-data-unknown":  "First pass. Confirm it's a real test contract; otherwise prefer By.cssSelector(\"[data-testid='...']\") or By.id.",
   "xpath-data-unknown": "First pass. Confirm it's a real test contract; otherwise prefer a data-testid or By.id.",
   "xpath-axis":        "Re-anchor on the target's own id or test attribute instead of walking the tree.",
