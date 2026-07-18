@@ -207,7 +207,7 @@ export default function MarketMePage() {
                   return (
                     <div key={module.id} className="flex flex-col rounded-xl border border-border bg-background p-4">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-700/50 dark:bg-violet-900/40 dark:text-violet-300">{t('cards.tagBeta')}</span>
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide border border-border bg-muted text-muted-foreground">{t('cards.tagBeta')}</span>
                         <h3 className="text-base font-semibold text-foreground">{module.name}</h3>
                       </div>
                       <p className="text-sm text-muted-foreground mb-1.5">{sub}</p>
