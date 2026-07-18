@@ -917,7 +917,17 @@ export default function LocateMePage() {
       setLoading(false)
       const d = e.data
       if (d.ok && d.report) {
-        setReport(d.report); setDetection(d.detection ?? null); setSource(label); setSelected(null)
+        // A new source that finds zero locators must not wipe an audit the user is
+        // already viewing. Replace only when the new run found something - otherwise
+        // keep the current audit and say so. (First run / prior empty state has
+        // nothing worth preserving, so it still shows the "no locators" card.)
+        const newHasLocators = d.report.summary.locatorCalls > 0
+        const preserving = !!report && report.summary.locatorCalls > 0
+        if (!newHasLocators && preserving) {
+          setError(t('noLocatorsKept'))
+        } else {
+          setReport(d.report); setDetection(d.detection ?? null); setSource(label); setSelected(null)
+        }
       } else {
         setError(d.error ?? t('analysisFailed'))
       }

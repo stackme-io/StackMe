@@ -20,6 +20,7 @@
   "analysisFailed": "Аналіз не вдався.",
   "nothingToAnalyze": "Нема чого аналізувати - обери папку або встав код тестів.",
   "pastedSnippet": "вставлений фрагмент",
+  "noLocatorsKept": "У цьому вводі локаторів не знайдено - поточний аудит збережено.",
   "noLocators": "Локаторів Playwright або Cypress не знайдено.",
   "noLocatorsDesc": "Це не схоже на набір тестів Playwright або Cypress - тут просто нема чого аналізувати. Це не вирок.",
   "fragileWord": "крихких",
