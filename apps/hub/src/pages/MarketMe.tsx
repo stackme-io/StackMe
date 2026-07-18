@@ -12,9 +12,9 @@ interface ModuleState {
 }
 
 const addButtonColors: Record<string, string> = {
-  generation: 'border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-500/40 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-900/40 dark:hover:text-violet-200',
-  analytics:  'border border-teal-300 bg-teal-50 text-teal-700 hover:bg-teal-100 dark:border-teal-500/40 dark:bg-teal-950/30 dark:text-teal-300 dark:hover:bg-teal-900/40 dark:hover:text-teal-200',
-  testing:    'border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/40 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 dark:hover:text-amber-200',
+  generation: 'border border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-500/40 dark:bg-orange-950/30 dark:text-orange-300 dark:hover:bg-orange-900/40 dark:hover:text-orange-200',
+  analytics:  'border border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-500/40 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-900/40 dark:hover:text-violet-200',
+  testing:    'border border-cyan-300 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:border-cyan-500/40 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200',
 }
 
 export default function MarketMePage() {

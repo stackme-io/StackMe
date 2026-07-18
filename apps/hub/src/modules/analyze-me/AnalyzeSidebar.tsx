@@ -123,12 +123,12 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
               onClick={() => onSensitivityChange(opt.id)}
               className={`flex flex-col px-2 py-2 rounded-md text-left transition-colors ${
                 sensitivity === opt.id
-                  ? 'bg-teal-950/40 border border-teal-800/50'
+                  ? 'bg-violet-950/40 border border-violet-800/50'
                   : 'hover:bg-muted/50 border border-transparent'
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <span className={`text-xs font-medium ${sensitivity === opt.id ? 'text-teal-300' : 'text-muted-foreground/95'}`}>
+                <span className={`text-xs font-medium ${sensitivity === opt.id ? 'text-violet-300' : 'text-muted-foreground/95'}`}>
                   {t(opt.labelKey)}
                 </span>
                 {opt.recommended && (
@@ -142,8 +142,8 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
           ))}
 
           {sensitivity === 'custom' ? (
-            <div className="flex flex-col px-2 py-2 rounded-md bg-teal-950/40 border border-teal-800/50">
-              <span className="text-xs font-medium text-teal-300">
+            <div className="flex flex-col px-2 py-2 rounded-md bg-violet-950/40 border border-violet-800/50">
+              <span className="text-xs font-medium text-violet-300">
                 {t('sensitivityCustomLabel')}
               </span>
               <span className="text-[11px] text-muted-foreground/95 leading-relaxed mt-0.5">
@@ -160,7 +160,7 @@ export function AnalyzeSidebar({ result, sensitivity, onSensitivityChange, custo
                   onChange={e => setCustomInput(e.target.value)}
                   onBlur={commitCustom}
                   onKeyDown={e => e.key === 'Enter' && commitCustom()}
-                  className="w-16 px-2 py-0.5 text-xs bg-background border border-teal-800/50 rounded text-teal-300 text-center focus:outline-none focus:border-teal-600"
+                  className="w-16 px-2 py-0.5 text-xs bg-background border border-violet-800/50 rounded text-violet-300 text-center focus:outline-none focus:border-violet-600"
                 />
               </div>
             </div>

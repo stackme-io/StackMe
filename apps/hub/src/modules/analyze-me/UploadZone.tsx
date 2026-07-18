@@ -103,7 +103,7 @@ export function UploadZone({ loading, progress, fileName, onFile }: UploadZonePr
           {t('privacyDevTools')}{' '}
           <Link
             to="/analyze-me?tab=security"
-            className="text-teal-400/70 hover:text-teal-400 underline underline-offset-2 transition-colors"
+            className="text-violet-400/70 hover:text-violet-400 underline underline-offset-2 transition-colors"
           >
             {t('privacyLearnMore')}
           </Link>

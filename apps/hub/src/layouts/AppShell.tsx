@@ -35,21 +35,23 @@ const MARKET_ME_MANIFEST = {
   component: MarketMePage,
 }
 
+// Accent per tool. See vault note "Выбор цветов": OKLCH shelf + Alice anchor.
+// Locate = Caterpillar (cyan), Analyze = Cheshire Cat (violet), Forge = Mad Hatter (orange).
 const MODULE_LOGO_COLORS: Record<string, string> = {
-  'forge-me':   '#a78bfa',
-  'analyze-me': '#2dd4bf',
+  'forge-me':   '#fb923c',
+  'analyze-me': '#a78bfa',
   'locate-me':  '#22d3ee',
 }
 
 const MODULE_COLORS: Record<string, string> = {
-  'forge-me': 'border-l-violet-400',
-  'analyze-me': 'border-l-teal-400',
+  'forge-me': 'border-l-orange-400',
+  'analyze-me': 'border-l-violet-400',
   'locate-me': 'border-l-cyan-400',
 }
 
 const MODULE_TEXT_COLORS: Record<string, string> = {
-  'forge-me': 'text-violet-400',
-  'analyze-me': 'text-teal-400',
+  'forge-me': 'text-orange-400',
+  'analyze-me': 'text-violet-400',
   'locate-me': 'text-cyan-400',
 }
 
