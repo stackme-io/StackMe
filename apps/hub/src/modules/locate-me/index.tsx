@@ -917,16 +917,14 @@ export default function LocateMePage() {
       setLoading(false)
       const d = e.data
       if (d.ok && d.report) {
-        // A new source that finds zero locators must not wipe an audit the user is
-        // already viewing. Replace only when the new run found something - otherwise
-        // keep the current audit and say so. (First run / prior empty state has
-        // nothing worth preserving, so it still shows the "no locators" card.)
-        const newHasLocators = d.report.summary.locatorCalls > 0
-        const preserving = !!report && report.summary.locatorCalls > 0
-        if (!newHasLocators && preserving) {
-          setError(t('noLocatorsKept'))
-        } else {
+        if (d.report.summary.locatorCalls > 0) {
           setReport(d.report); setDetection(d.detection ?? null); setSource(label); setSelected(null)
+        } else {
+          // Zero locators is not an audit. Never navigate to a dead "no locators"
+          // screen: keep the current audit if there is one, otherwise stay on the
+          // empty state, and surface the message inline (banner by the paste box).
+          const preserving = !!report && report.summary.locatorCalls > 0
+          setError(preserving ? t('noLocatorsKept') : t('noLocators'))
         }
       } else {
         setError(d.error ?? t('analysisFailed'))
@@ -1158,18 +1156,7 @@ export default function LocateMePage() {
             <>
               {error && <p className="text-meta text-amber-400/90 border border-amber-400/30 rounded-md px-3 py-2 max-w-3xl flex-shrink-0">{error}</p>}
 
-              {!hasLocators ? (
-                <div className="rounded-md border border-border/60 p-4 max-w-3xl">
-                  <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
-                  <p className="text-sub text-content mb-3">{t('noLocatorsDesc')}</p>
-                  <button onClick={openNewAudit}
-                    className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors">
-                    {t('newAudit')}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles}
+              <div className="flex-shrink-0"><Headline detection={detection} source={source} calls={visCalls} files={visFiles}
                     action={
                       <div className="flex items-center gap-2">
                         {loading && <span className="text-meta text-muted-foreground animate-pulse">{t('analyzing')}</span>}
@@ -1228,8 +1215,6 @@ export default function LocateMePage() {
                     </>
                   )}
 
-                </>
-              )}
             </>
           )}
         </div>
