@@ -351,7 +351,7 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
               <input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} autoFocus
                 onKeyDown={e => { if (e.key === 'Enter') doSave() }}
                 placeholder={t('report.saveTitlePlaceholder')}
-                className="w-full px-2 py-1.5 rounded border border-border bg-muted/30 text-meta text-foreground focus:outline-none focus:border-foreground/40" />
+                className="w-full px-2 py-1.5 rounded border border-border bg-muted/30 text-meta text-foreground focus:outline-none focus:border-[var(--tool-accent,#22d3ee)]" />
               <div className="flex items-center gap-2">
                 <button onClick={doSave} disabled={saving}
                   className="px-3 py-1.5 rounded text-meta font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
@@ -513,7 +513,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             return (
               <tr key={i} onClick={() => onSelect(f)}
                 className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/70' : 'hover:bg-muted/20'}`}>
-                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-primary' : 'border-l-transparent'}`}>
+                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-[var(--tool-accent,#22d3ee)]' : 'border-l-transparent'}`}>
                   <span className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                     <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -545,7 +545,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
           return (
             <li key={i}>
               <button onClick={() => onSelect(f)}
-                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-primary' : 'border-l-transparent'}`}>
+                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-[var(--tool-accent,#22d3ee)]' : 'border-l-transparent'}`}>
                 <span className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                   <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -622,7 +622,7 @@ function NewAuditModal({ onClose, onSelectFolder, onSample, onAnalyze, code, set
           <div className="flex flex-col gap-2">
             <span className="text-label text-muted-foreground">{t('pasteToggle')}</span>
             <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
-              className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+              className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-[var(--tool-accent,#22d3ee)]" />
             <button onClick={onAnalyze} disabled={loading || !code.trim()} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
           </div>
         </div>
@@ -849,12 +849,13 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
       <nav className="border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
         {nav.map(({ id, label, Icon }) => (
           <button key={id} onClick={() => onNav(id)}
+            style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)' } : undefined}
             className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-sub text-left transition-colors ${
               activeTab === id
-                ? 'bg-muted/50 text-foreground font-medium'
+                ? 'text-foreground font-medium'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
             }`}>
-            <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+            <Icon className="w-3.5 h-3.5 flex-shrink-0" style={activeTab === id ? { color: 'var(--tool-accent,#22d3ee)' } : undefined} />
             {label}
           </button>
         ))}
@@ -1045,8 +1046,9 @@ export default function LocateMePage() {
         <div className="md:hidden flex items-center gap-1 px-3 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
           {([['audit', Crosshair], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
             <button key={id} onClick={() => navTo(id)}
-              className={`flex items-center gap-1 px-2 py-1.5 rounded-md border text-meta whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === id ? 'border-border bg-muted/50 text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
-              <Icon className="w-3 h-3 flex-shrink-0" />
+              style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)', borderColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 45%, transparent)' } : undefined}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-md border text-meta whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === id ? 'text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
+              <Icon className="w-3 h-3 flex-shrink-0" style={activeTab === id ? { color: 'var(--tool-accent,#22d3ee)' } : undefined} />
               {t(`tabs.${id}`)}
             </button>
           ))}
@@ -1128,7 +1130,7 @@ export default function LocateMePage() {
                   <summary className="px-3 py-2 cursor-pointer text-sub text-muted-foreground hover:text-foreground list-none text-center">{t('pasteToggle')}</summary>
                   <div className="p-3 pt-0 flex flex-col gap-2">
                     <textarea value={code} onChange={e => setCode(e.target.value)} placeholder={t('pastePlaceholder')} spellCheck={false}
-                      className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-foreground/40" />
+                      className="w-full h-40 bg-muted/30 border border-border rounded-md p-3 text-code text-foreground resize-y focus:outline-none focus:border-[var(--tool-accent,#22d3ee)]" />
                     <button onClick={() => analyzePaste(code)} disabled={loading} className={`self-start ${btnPrimary}`}>{t('analyze')}</button>
                   </div>
                 </details>
