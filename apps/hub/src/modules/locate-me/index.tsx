@@ -908,13 +908,16 @@ export default function LocateMePage() {
   }
 
   const runOnWorker = (files: SourceFileInput[], target: string, label: string) => {
-    setLoading(true); setError(null); setReport(null); setDetection(null); setSelected(null)
+    // Keep the current audit on screen while the new one runs. Only swap on success -
+    // a bad input (parse error) then surfaces as an error banner and never drops the
+    // user to the empty page, losing the audit they were looking at.
+    setLoading(true); setError(null)
     const w = getWorker()
     w.onmessage = (e: MessageEvent<WorkerResult>) => {
       setLoading(false)
       const d = e.data
       if (d.ok && d.report) {
-        setReport(d.report); setDetection(d.detection ?? null); setSource(label)
+        setReport(d.report); setDetection(d.detection ?? null); setSource(label); setSelected(null)
       } else {
         setError(d.error ?? t('analysisFailed'))
       }
