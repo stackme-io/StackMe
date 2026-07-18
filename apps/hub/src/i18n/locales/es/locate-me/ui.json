@@ -129,5 +129,129 @@
     "signInDesc": "Inicia sesión para guardar auditorías en tu cuenta y volver a verlas aquí.",
     "deleteConfirmTitle": "¿Eliminar este informe?",
     "deleteConfirmDesc": "Esto no se puede deshacer."
+  },
+  "verdict": {
+    "xpath-axis": {
+      "reason": "Recorrido por ejes XPath - atado a la estructura del DOM, se rompe al cambiar el marcado.",
+      "prefer": "Vuelve a anclar en la identidad propia del objetivo (getByRole, getByLabel o un test id) en lugar de recorrer hermanos o ancestros."
+    },
+    "xpath-positional": {
+      "reason": "Índice posicional en la ruta - se rompe cuando cambia el orden o la disposición.",
+      "prefer": "Ánclate en el texto o el rol del elemento en lugar de su posición, p. ej. getByRole('button', { name: '...' })."
+    },
+    "text-loose": {
+      "reason": "Coincidencia de texto parcial/aproximada - no queda fijada a un solo elemento y cambia con el texto o la localización.",
+      "prefer": "Ánclate en rol/nombre o un test id; para texto exacto usa una coincidencia exacta."
+    },
+    "xpath-text": {
+      "reason": "XPath basado en texto - puede romperse con cambios de localización o de contenido.",
+      "prefer": "Primer paso - bien para aserciones. Para clics prefiere getByRole(..., { name }); getByText también normaliza los espacios, el XPath crudo no."
+    },
+    "xpath-testattr": {
+      "reason": "Anclado en un atributo de test.",
+      "prefer": "Sólido. getByTestId('...') se lee de forma más idiomática que un XPath crudo."
+    },
+    "xpath-data-unknown": {
+      "reason": "Un atributo data-*, pero no un hook de test conocido. Está bien si la app lo define a propósito y se mantiene estable entre builds; frágil si es estado o un valor derivado (data-state, data-index, un id de backend).",
+      "prefer": "Primer paso. Confirma que es un contrato de test real en tu app; si no, prefiere un data-testid, o getByRole / getByLabel."
+    },
+    "xpath-id-generated": {
+      "reason": "Id generado por el framework ({{lib}}) - los ids autogenerados cambian entre builds o re-renders, así que el locator se rompe cuando el id se regenera.",
+      "prefer": "Ánclate en un data-testid, o getByRole/getByLabel, en lugar de un id generado."
+    },
+    "xpath-id": {
+      "reason": "Anclado en un atributo id/name estable."
+    },
+    "xpath-attr": {
+      "reason": "Anclado en un atributo - la estabilidad depende del atributo.",
+      "prefer": "Primer paso. Si el atributo es un contrato de test real, está bien; si no, prefiere getByRole o getByLabel."
+    },
+    "xpath-absolute": {
+      "reason": "Ruta estructural sin ancla estable - se rompe con cualquier cambio de marcado.",
+      "prefer": "Reemplaza la ruta absoluta por un locator semántico (getByRole / getByLabel / getByTestId) sobre el elemento objetivo."
+    },
+    "css-positional": {
+      "reason": "CSS posicional (:nth-child / índice) - se rompe cuando se añaden o reordenan elementos.",
+      "prefer": "Ánclate en el texto, el rol o el test id del elemento en lugar de su posición en la lista."
+    },
+    "css-autoclass": {
+      "reason": "Nombre de clase autogenerado (CSS-in-JS) - cambia en cada build.",
+      "prefer": "Prefiere getByRole o getByTestId - los nombres de clase generados son hooks de estilo, no identidad estable."
+    },
+    "css-testattr": {
+      "reason": "Selector de atributo de test."
+    },
+    "css-id-generated": {
+      "reason": "Id generado por el framework ({{lib}}) - los ids autogenerados cambian entre builds o re-renders, así que el locator se rompe cuando el id se regenera.",
+      "prefer": "Prefiere un data-testid, o getByRole/getByLabel - un hook estable e intencional en lugar de un id generado."
+    },
+    "css-id": {
+      "reason": "Selector de un solo id."
+    },
+    "css-data-unknown": {
+      "reason": "Un atributo data-*, pero no un hook de test conocido. Está bien si la app lo define a propósito y se mantiene estable entre builds; frágil si es estado o un valor derivado (data-state, data-index, un id de backend).",
+      "prefer": "Primer paso. Confirma que es un contrato de test real en tu app; si no, prefiere un data-testid, o getByRole / getByLabel."
+    },
+    "css-structural-depth": {
+      "reason": "Cadena de descendientes profunda (4+ combinadores) - atada al anidamiento y al orden, así que se rompe con cualquier reestructuración del DOM.",
+      "prefer": "Ánclate en la identidad propia del objetivo - un rol + nombre, una etiqueta o un test id - no en una ruta a través de ancestros."
+    },
+    "css-utility": {
+      "reason": "Clases de estilo utilitarias/atómicas (tipo Tailwind) - presentación, no identidad; cambian en un rediseño o se purgan.",
+      "prefer": "Ánclate en un rol + nombre, una etiqueta o un test id en lugar de utilidades de estilo."
+    },
+    "css-class": {
+      "reason": "Selector de clase/atributo - la estabilidad depende de tu proyecto.",
+      "prefer": "Primer paso. Si es una clase de estilo puede moverse en un rediseño - getByRole o un test id sobrevive a un restyle."
+    },
+    "selenium-id-generated": {
+      "reason": "Id generado por el framework ({{lib}}) - los ids autogenerados cambian entre builds o re-renders, así que By.id se rompe cuando el id se regenera.",
+      "prefer": "Ánclate en un data-testid o un id estable escrito a mano, no uno generado."
+    },
+    "selenium-id": {
+      "reason": "By.id - anclado en un atributo id estable."
+    },
+    "selenium-name": {
+      "reason": "By.name - anclado en el atributo name."
+    },
+    "selenium-classname": {
+      "reason": "By.className apunta a una sola clase - bien mientras sea estable, pero una clase de estilo puede moverse en un rediseño.",
+      "prefer": "Primer paso. Si es un hook de estilo, prefiere By.id, un data-testid o By.cssSelector sobre un atributo estable."
+    },
+    "selenium-tagname": {
+      "reason": "By.tagName coincide solo por etiqueta - demasiado amplio (coincide con muchos elementos, toma el primero). Es un riesgo de selección, no fragilidad ante cambios de disposición.",
+      "prefer": "Demasiado amplio más que frágil. Apunta al elemento específico con By.id, un data-testid o By.cssSelector."
+    },
+    "selenium-linktext": {
+      "reason": "By.linkText coincide con el texto visible del enlace - puede romperse con la localización o ediciones de copy.",
+      "prefer": "Primer paso. Para estabilidad prefiere By.id o un atributo de test antes que el texto del enlace."
+    },
+    "selenium-partiallinktext": {
+      "reason": "By.partialLinkText coincide con parte del texto del enlace - se rompe con pequeños cambios de copy o localización.",
+      "prefer": "Frágil ante el texto. Prefiere By.id o un atributo de test."
+    },
+    "chain-positional": {
+      "reason": "Paso de cadena posicional (.nth / .eq con un índice) - elige por posición dentro del conjunto coincidente, así que se rompe cuando se añaden o reordenan elementos.",
+      "prefer": "Ánclate en la identidad, no en la posición - un rol + nombre, una etiqueta o un test id. Para elegir dentro de un conjunto, filtra por contenido único en lugar de un índice."
+    },
+    "chain-positional-edge": {
+      "reason": "Selección de extremo (.first / .last / .nth(0)) - bien si la coincidencia ya es única, frágil si el conjunto puede crecer o reordenarse.",
+      "prefer": "Primer paso. Si un filtro ya reduce a un elemento, .first() es redundante - quítalo; si no, ánclate en la identidad (rol + nombre, etiqueta o un test id)."
+    },
+    "method-stable": {
+      "reason": "Locator orientado al usuario ({{method}}) - recomendado, resiliente."
+    },
+    "method-text": {
+      "reason": "Locator basado en texto/etiqueta ({{method}}) - puede romperse con la localización.",
+      "prefer": "Primer paso - bien para aserciones. Para clics en contenido dinámico prefiere getByRole(..., { name }) o getByLabel."
+    },
+    "cy-alias": {
+      "reason": "Alias de Cypress - referencia basada en intención."
+    },
+    "dynamicRuntime": {
+      "reason": "Selector construido en tiempo de ejecución (variable/plantilla) - no clasificado."
+    },
+    "textUsageAssert": "Bien aquí - coincidir por texto visible es para lo que sirve una aserción. getByText también normaliza los espacios.",
+    "textUsageAction": "Se usa para ejecutar una acción. Para un clic/relleno, getByRole(..., { name }) suele ser más estable que el texto visible (que puede variar con el copy/i18n y quizá no sea único). Confirma que la etiqueta es estable y única."
   }
 }

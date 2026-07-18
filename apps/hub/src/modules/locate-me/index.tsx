@@ -686,10 +686,35 @@ function MethodModal({ onClose }: { onClose: () => void }) {
   )
 }
 
+// Verdict prose (reason / prefer) comes from the engine in English - the core lib is
+// i18n-free by design (it also feeds the exportable report). For non-English UIs we
+// translate by the stable `subcause` code via the `verdict.*` table, interpolating the
+// method name and, for framework-generated ids, the library pulled out of the English
+// text. Text buckets get a usage-specific prefer (assert/action) to match applyUsage.
+// English (and any unmapped code) falls back to the exact engine wording.
+function localizedVerdict(
+  finding: Finding,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+  lang: string,
+): { reason: string; prefer?: string } {
+  const key = finding.subcause ?? (finding.kind === 'dynamic' ? 'dynamicRuntime' : undefined)
+  if (lang.startsWith('en') || !key) return { reason: finding.reason, prefer: finding.prefer }
+  const lib = finding.reason.match(/\(([^)]+)\)/)?.[1]
+  const opts = { method: finding.method, lib, defaultValue: '' }
+  const reason = t(`verdict.${key}.reason`, opts) || finding.reason
+  let preferKey = `verdict.${key}.prefer`
+  if ((key === 'method-text' || key === 'xpath-text') && (finding.usage === 'assert' || finding.usage === 'action')) {
+    preferKey = finding.usage === 'assert' ? 'verdict.textUsageAssert' : 'verdict.textUsageAction'
+  }
+  const prefer = finding.prefer ? (t(preferKey, opts) || finding.prefer) : finding.prefer
+  return { reason, prefer }
+}
+
 // Inner inspector content for a selected finding - shared by the desktop side
 // panel and the mobile bottom sheet.
 function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dupLocations: string[]; onClose: () => void }) {
-  const { t } = useTranslation('locate-me')
+  const { t, i18n } = useTranslation('locate-me')
+  const { reason: verdictReason, prefer: verdictPrefer } = localizedVerdict(finding, t, i18n.language)
   const [copied, setCopied] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
   const [showCode, setShowCode] = useState(false)
@@ -721,7 +746,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
                 )}
               </span>
-              <p className="text-sub text-muted-foreground leading-relaxed">{finding.reason}</p>
+              <p className="text-sub text-muted-foreground leading-relaxed">{verdictReason}</p>
             </div>
             <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
           </div>
@@ -738,13 +763,13 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                 <code className="block text-code text-foreground bg-muted/40 rounded border-l-2 border-l-transparent px-3 py-2.5 break-all">{selectorText(finding)}</code>
               </div>
 
-              {(finding.prefer || finding.preferCode) && (
+              {(verdictPrefer || finding.preferCode) && (
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-1.5">
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  {finding.prefer && <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{finding.prefer}</p>}
+                  {verdictPrefer && <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
                   {finding.preferCode && (
                     <div className="flex items-stretch gap-2">
                       <code className="flex-1 text-code text-foreground bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
