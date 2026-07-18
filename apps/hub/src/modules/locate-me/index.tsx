@@ -945,6 +945,10 @@ export default function LocateMePage() {
     runOnWorker([{ path, text }], 'pasted', t('pastedSnippet'))
   }
 
+  // Open the New Audit modal with a clean paste box - stale code from a previous
+  // run shouldn't linger in the textarea.
+  const openNewAudit = () => { setCode(''); setNewAuditOpen(true) }
+
   const runSample = () => {
     setCode(''); setSkipped(0)
     runOnWorker(SAMPLE_FILES, 'sample', t('sampleLabel'))
@@ -1158,7 +1162,7 @@ export default function LocateMePage() {
                 <div className="rounded-md border border-border/60 p-4 max-w-3xl">
                   <p className="text-body text-foreground mb-1">{t('noLocators')}</p>
                   <p className="text-sub text-content mb-3">{t('noLocatorsDesc')}</p>
-                  <button onClick={() => setNewAuditOpen(true)}
+                  <button onClick={openNewAudit}
                     className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors">
                     {t('newAudit')}
                   </button>
@@ -1169,7 +1173,7 @@ export default function LocateMePage() {
                     action={
                       <div className="flex items-center gap-2">
                         {loading && <span className="text-meta text-muted-foreground animate-pulse">{t('analyzing')}</span>}
-                        <button onClick={() => setNewAuditOpen(true)} disabled={loading}
+                        <button onClick={openNewAudit} disabled={loading}
                           className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                           {t('newAudit')}
                         </button>
