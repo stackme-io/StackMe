@@ -777,7 +777,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
                 )}
               </span>
-              <p className="text-body text-content leading-relaxed">{verdictReason}</p>
+              <p className="text-body text-foreground leading-relaxed">{verdictReason}</p>
             </div>
             <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
           </div>
