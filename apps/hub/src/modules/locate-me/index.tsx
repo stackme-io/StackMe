@@ -817,8 +817,12 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
               <div className="border-t border-border px-4 py-5 flex flex-col gap-5">
                 {dupLocations.length > 1 && (
                   <div>
-                    <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
-                    <p className="text-sub text-muted-foreground mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
+                    {/* Count lives in the header, not in a sentence: a line reading "appears N
+                        times" only restates the list right below it. */}
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className="text-label text-muted-foreground">{t('dupTitle')}</span>
+                      <span className="text-meta text-muted-foreground" title={t('copiesTip', { count: dupLocations.length })}>· {dupLocations.length}</span>
+                    </div>
                     <div className="flex flex-col gap-0.5">
                       {dupLocations.map((loc, i) => (
                         <span key={i} className="text-code text-content">{loc}</span>
