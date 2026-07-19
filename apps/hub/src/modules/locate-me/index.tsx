@@ -793,7 +793,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
                   )}
                 </div>
-                <code className="block text-code text-content bg-muted/40 border border-border rounded px-3 py-2.5 break-all whitespace-pre-wrap">{selectorText(finding)}</code>
+                <code className="block text-code text-content bg-background rounded px-3 py-2.5 break-all whitespace-pre-wrap">{selectorText(finding)}</code>
               </div>
 
               {(verdictPrefer || finding.preferCode) && (
@@ -802,10 +802,10 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  {verdictPrefer && <p className="text-body text-content leading-relaxed border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
+                  {verdictPrefer && <p className="text-body text-content leading-relaxed border-l-2 border-l-k-stable/70 pl-3">{verdictPrefer}</p>}
                   {finding.preferCode && (
                     <div className="flex items-stretch gap-2">
-                      <code className="flex-1 text-code text-foreground bg-muted/40 border border-border rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
+                      <code className="flex-1 text-code text-foreground bg-background rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
                       <button onClick={copyCode} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 px-1">{copiedCode ? t('copied') : t('copy')}</button>
                     </div>
                   )}
@@ -822,9 +822,9 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                       <span className="text-label text-muted-foreground flex-shrink-0">{t('dupTitle')}</span>
                       <span className="text-meta text-muted-foreground">· {t('copiesTip', { count: dupLocations.length })}</span>
                     </div>
-                    {/* One plate holding every location, like the snippet block. A plate per line
-                        pulled as much attention as the selector itself; the lines stay plain. */}
-                    <div className="bg-muted/40 border border-border rounded px-3 py-2 flex flex-col gap-1">
+                    {/* No container: these are references to jump to, not verbatim code to copy.
+                        Boxing them would say "read this literally", which isn't true. */}
+                    <div className="flex flex-col gap-1">
                       {dupLocations.map((loc, i) => (
                         <code key={i} className="block text-code text-content break-all">{loc}</code>
                       ))}
@@ -839,7 +839,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                       <span className="text-meta text-muted-foreground font-mono normal-case ml-1">{finding.file}:{finding.line}</span>
                     </button>
                     {showCode && (
-                      <div className="text-code-block bg-muted/40 border border-border rounded py-2 overflow-hidden mt-2">
+                      <div className="text-code-block bg-background rounded py-2 overflow-hidden mt-2">
                         {finding.snippet.split('\n').map((raw, i) => {
                           const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
                           const active = raw.startsWith('›')
@@ -864,8 +864,10 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
 // Desktop inspector side panel (hidden on mobile - mobile uses a bottom sheet).
 function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
+  // bg-card so the code wells (bg-background) read as recessed. Matches the mobile
+  // bottom sheet, which was already a card surface.
   return (
-    <div className="hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
+    <div className="hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 bg-card border-l border-border flex-col overflow-hidden">
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
