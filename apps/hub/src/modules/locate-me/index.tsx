@@ -7,7 +7,7 @@ import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
-import { Crosshair, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
+import { Anchor, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -857,7 +857,7 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
 }) {
   const { t } = useTranslation('locate-me')
   const nav = [
-    { id: 'audit',   label: t('tabs.audit'),   Icon: Crosshair },
+    { id: 'audit',   label: t('tabs.audit'),   Icon: Anchor },
     { id: 'reports', label: t('tabs.reports'), Icon: Archive },
     { id: 'roadmap', label: t('tabs.roadmap'), Icon: Route },
     { id: 'about',   label: t('tabs.about'),   Icon: Info },
@@ -1084,7 +1084,7 @@ export default function LocateMePage() {
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* ---- Mobile sub-nav (replaces the desktop rail nav) ---- */}
         <div className="md:hidden flex items-center gap-1 px-3 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
-          {([['audit', Crosshair], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
+          {([['audit', Anchor], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
             <button key={id} onClick={() => navTo(id)}
               style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)', borderColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 45%, transparent)' } : undefined}
               className={`flex items-center gap-1 px-2 py-1.5 rounded-md border text-meta whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === id ? 'text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>

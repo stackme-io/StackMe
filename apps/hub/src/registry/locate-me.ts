@@ -5,7 +5,7 @@ export const locateMeManifest: ModuleManifest = {
   id: 'locate-me',
   name: 'LocateMe',
   description: 'Static locator-fragility audit for Playwright/TypeScript test suites.',
-  icon: 'Crosshair',
+  icon: 'Anchor',
   route: '/locate-me',
   category: 'testing',
   defaultForNewUsers: true,
