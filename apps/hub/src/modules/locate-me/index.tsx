@@ -770,7 +770,9 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
     <>
           <div className="px-4 py-3.5 border-b border-border flex items-start justify-between gap-3">
             <div className="flex flex-col gap-2.5 min-w-0">
-              <span className={`text-heading font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
+              {/* Explicit 15px/500 rather than `text-heading` (600) plus a contradicting
+                  font-medium: a saturated kind colour at 600 blooms on dark. */}
+              <span className={`text-[15px] leading-[1.35] font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
                 {t(`kinds.${finding.kind}.label`)}
                 {finding.confidence === 'context' && (
@@ -791,7 +793,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <button onClick={copy} className="text-meta text-muted-foreground hover:text-foreground">{copied ? t('copied') : t('copy')}</button>
                   )}
                 </div>
-                <code className="block text-code text-foreground bg-muted/40 rounded border-l-2 border-l-transparent px-3 py-2.5 break-all">{selectorText(finding)}</code>
+                <code className="block text-code text-content bg-muted/40 border border-border rounded px-3 py-2.5 break-all whitespace-pre-wrap">{selectorText(finding)}</code>
               </div>
 
               {(verdictPrefer || finding.preferCode) && (
@@ -800,10 +802,10 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  {verdictPrefer && <p className="text-body text-content leading-relaxed bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
+                  {verdictPrefer && <p className="text-body text-content leading-relaxed border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
                   {finding.preferCode && (
                     <div className="flex items-stretch gap-2">
-                      <code className="flex-1 text-code text-foreground bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
+                      <code className="flex-1 text-code text-foreground bg-muted/40 border border-border rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
                       <button onClick={copyCode} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 px-1">{copiedCode ? t('copied') : t('copy')}</button>
                     </div>
                   )}
@@ -819,7 +821,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <p className="text-sub text-muted-foreground mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
                     <div className="flex flex-col gap-0.5">
                       {dupLocations.map((loc, i) => (
-                        <span key={i} className="text-sub text-content font-mono">{loc}</span>
+                        <span key={i} className="text-code text-content">{loc}</span>
                       ))}
                     </div>
                   </div>
@@ -829,10 +831,10 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <button onClick={() => setShowCode(s => !s)} className="flex items-center gap-1.5 text-label text-muted-foreground hover:text-foreground">
                       <ChevronRight className={`w-3 h-3 transition-transform ${showCode ? 'rotate-90' : ''}`} />
                       code
-                      <span className="text-meta text-faint font-mono normal-case ml-1">{finding.file}:{finding.line}</span>
+                      <span className="text-meta text-muted-foreground font-mono normal-case ml-1">{finding.file}:{finding.line}</span>
                     </button>
                     {showCode && (
-                      <div className="text-code-block bg-muted/40 rounded py-2 overflow-hidden mt-2">
+                      <div className="text-code-block bg-muted/40 border border-border rounded py-2 overflow-hidden mt-2">
                         {finding.snippet.split('\n').map((raw, i) => {
                           const m = raw.match(/^(.) +(\d+) {2}(.*)$/)
                           const active = raw.startsWith('›')
