@@ -779,7 +779,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
                 )}
               </span>
-              <p className="text-sub text-muted-foreground leading-relaxed">{verdictReason}</p>
+              <p className="text-body text-content leading-relaxed">{verdictReason}</p>
             </div>
             <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
           </div>
@@ -802,7 +802,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                     <ArrowRight className="w-3.5 h-3.5 text-k-stable" />
                     <span className="text-label text-k-stable">prefer</span>
                   </div>
-                  {verdictPrefer && <p className="text-sub text-content bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
+                  {verdictPrefer && <p className="text-body text-content leading-relaxed bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2.5">{verdictPrefer}</p>}
                   {finding.preferCode && (
                     <div className="flex items-stretch gap-2">
                       <code className="flex-1 text-code text-foreground bg-k-stable/10 rounded border-l-2 border-l-k-stable px-3 py-2 break-all">{finding.preferCode}</code>
