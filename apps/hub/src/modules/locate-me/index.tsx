@@ -816,10 +816,10 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                 {dupLocations.length > 1 && (
                   <div>
                     <div className="text-label text-muted-foreground mb-1.5">{t('dupTitle')}</div>
-                    <p className="text-sub text-content mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
+                    <p className="text-sub text-muted-foreground mb-1.5">{t('copiesTip', { count: dupLocations.length })}</p>
                     <div className="flex flex-col gap-0.5">
                       {dupLocations.map((loc, i) => (
-                        <span key={i} className="text-meta text-muted-foreground font-mono">{loc}</span>
+                        <span key={i} className="text-sub text-content font-mono">{loc}</span>
                       ))}
                     </div>
                   </div>
@@ -839,7 +839,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                           return (
                             <div key={i} className={`flex items-center border-l-2 ${active ? 'bg-k-fragile/10 border-l-k-fragile/70' : 'border-l-transparent'}`}>
                               <span className="select-none text-faint text-right pl-2 pr-2.5 tabular-nums flex-shrink-0" style={{ minWidth: '2.75rem' }}>{m ? m[2] : ''}</span>
-                              <code className="whitespace-pre overflow-hidden text-ellipsis pr-2.5 text-muted-foreground">{m ? m[3] : raw}</code>
+                              <code className={`whitespace-pre overflow-hidden text-ellipsis pr-2.5 ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{m ? m[3] : raw}</code>
                             </div>
                           )
                         })}
