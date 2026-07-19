@@ -97,10 +97,18 @@
     "precision": "La regla: precisión sobre ruido."
   },
   "aboutMethodTitle": "Método",
+  "ladderTitle": "Escala de prioridad",
+  "ladder": {
+    "role":   { "name": "Role",        "when": "cómo lo perciben usuarios y tecnología asistiva" },
+    "label":  { "name": "Label",       "when": "campos de formulario" },
+    "text":   { "name": "Text",        "when": "contenido no interactivo" },
+    "testid": { "name": "TestId",      "when": "cuando rol y texto no encajan" },
+    "raw":    { "name": "CSS / XPath", "when": "último recurso" }
+  },
   "fullRuleList": "Lista completa de reglas →",
   "howWeJudge": "Cómo juzgamos",
   "method": {
-    "p1": "El orden que recomendamos - Role, luego Label, luego Text, luego TestId, y por último CSS/XPath en crudo - no es nuestro. Es la guía de <pw>Playwright</pw> y <tl>Testing Library</tl>; la aplicamos a tu código.",
+    "p1": "Ese orden no es nuestro - es la guía de <pw>Playwright</pw> y <tl>Testing Library</tl>; la aplicamos a tu código.",
     "p2": "Marcamos un locator como frágil solo cuando la cadena lo demuestra por sí sola: clases hasheadas de CSS-in-JS, ids generados por frameworks (React useId, Radix, MUI), :nth-child posicional, XPath con ejes. Esos cambian al recompilar por definición - mecánica, no opinión.",
     "p3": "Una clase semántica, un atributo data-*, una coincidencia por texto exacto - a esos no les damos un veredicto. Su estabilidad depende de lo que la cadena no puede mostrar: el DOM, la intención, la localización. Marcarlos frágiles sería adivinar por ti. Esa decisión te la dejamos a ti.",
     "p4": "La auditoría es de solo lectura - un \"frágil\" falso no se puede descartar. Así que ante la duda, callamos."

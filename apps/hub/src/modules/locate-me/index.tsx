@@ -578,6 +578,38 @@ const METHOD_LINKS = {
 // principle; the catalogue is for readers who want every rule.
 const RULES_URL = "https://github.com/stackme-io/StackMe/blob/main/packages/locateme/FRAGILITY.md"
 
+// The prefer-ladder is the tool's central doctrine - every `prefer` note points back at it -
+// so it gets a shape instead of a sentence. Each rung carries WHEN to use it, which the prose
+// never said. The last rung is deliberately muted, not accent: raw CSS/XPath is the fallback,
+// and the colour says so before the words do. One component, rendered in both the modal and
+// About, so the two can never drift apart.
+const LADDER = ['role', 'label', 'text', 'testid', 'raw'] as const
+
+function PriorityLadder() {
+  const { t } = useTranslation('locate-me')
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-label text-muted-foreground">{t('ladderTitle')}</span>
+      <ol className="flex flex-col gap-1.5">
+        {LADDER.map((k, i) => {
+          const last = i === LADDER.length - 1
+          return (
+            <li key={k} className="flex items-center gap-2.5">
+              <span className={`flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full border text-meta font-medium ${
+                last ? 'border-border text-muted-foreground' : 'border-[var(--tool-accent,#22d3ee)] text-[var(--tool-accent,#22d3ee)]'
+              }`}>{i + 1}</span>
+              <span className={`text-sub font-medium flex-shrink-0 ${last ? 'text-muted-foreground' : 'text-foreground'}`}>
+                {t(`ladder.${k}.name`)}
+              </span>
+              <span className="text-meta text-muted-foreground min-w-0">{t(`ladder.${k}.when`)}</span>
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
+}
+
 // "New audit" as a modal over the current audit - a stray click never destroys what the
 // user has been collecting. Only committing a source (folder / sample / paste) replaces it;
 // closing leaves the running audit untouched. Same adaptive shell as the Method sheet.
@@ -672,6 +704,7 @@ function MethodModal({ onClose }: { onClose: () => void }) {
 
         <div className="mt-5 pt-5 border-t border-border flex flex-col gap-3">
           <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
+          <PriorityLadder />
           <p className="text-sub text-muted-foreground leading-relaxed"><Trans t={t} i18nKey="method.p1" components={METHOD_LINKS} /></p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p2')}</p>
           <p className="text-sub text-muted-foreground leading-relaxed">{t('method.p3')}</p>
@@ -1267,6 +1300,7 @@ export default function LocateMePage() {
 
             <div id="locate-method" className="border-t border-border/50 pt-5 mt-2 flex flex-col gap-4 scroll-mt-4">
               <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
+              <PriorityLadder />
               <p><Trans t={t} i18nKey="method.p1" components={METHOD_LINKS} /></p>
               <p>{t('method.p2')}</p>
               <p>{t('method.p3')}</p>

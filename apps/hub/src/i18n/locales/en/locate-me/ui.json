@@ -97,10 +97,18 @@
     "precision": "The rule: precision over noise."
   },
   "aboutMethodTitle": "Method",
+  "ladderTitle": "Priority ladder",
+  "ladder": {
+    "role":   { "name": "Role",        "when": "how users and assistive tech perceive it" },
+    "label":  { "name": "Label",       "when": "form fields" },
+    "text":   { "name": "Text",        "when": "non-interactive content" },
+    "testid": { "name": "TestId",      "when": "when role and text don't fit" },
+    "raw":    { "name": "CSS / XPath", "when": "last resort" }
+  },
   "fullRuleList": "Full rule list →",
   "howWeJudge": "How we judge",
   "method": {
-    "p1": "The order we recommend - Role, then Label, then Text, then TestId, then raw CSS/XPath - isn't ours. It's the guidance from <pw>Playwright</pw> and <tl>Testing Library</tl>; we apply it to your code.",
+    "p1": "That order isn't ours - it's the guidance from <pw>Playwright</pw> and <tl>Testing Library</tl>; we apply it to your code.",
     "p2": "We call a locator fragile only when the string itself proves it: CSS-in-JS hashed classes, framework-generated ids (React useId, Radix, MUI), positional :nth-child, axis XPath. Those change on rebuild by definition - mechanics, not opinion.",
     "p3": "A semantic class, a data-* attribute, an exact text match - we don't hand those a verdict. Their stability depends on what the string can't show: the DOM, intent, localization. Flagging them fragile would be guessing on your behalf. We leave that call to you.",
     "p4": "The audit is read-only - a false \"fragile\" can't be dismissed. So when in doubt, we stay quiet."
