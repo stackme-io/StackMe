@@ -753,9 +753,12 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
   // Reset transient panel state whenever a different finding is selected.
   useEffect(() => { setShowCode(false); setCopied(false); setCopiedCode(false) }, [finding])
 
+  // Copy what is shown, not the bare argument: for the getBy* family `selector` holds only
+  // the method's argument (a role name like "button"), which can't be turned back into a
+  // usable locator. Trimming `locator(...)` by hand is trivial; reconstructing it is not.
   const copy = () => {
     if (finding.selector === null) return
-    navigator.clipboard?.writeText(finding.selector)
+    navigator.clipboard?.writeText(selectorText(finding))
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
       .catch(() => {})
   }
