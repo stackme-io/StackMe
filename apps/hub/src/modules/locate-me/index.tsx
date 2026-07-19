@@ -817,15 +817,16 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
               <div className="border-t border-border px-4 py-5 flex flex-col gap-5">
                 {dupLocations.length > 1 && (
                   <div>
-                    {/* Count lives in the header, not in a sentence: a line reading "appears N
-                        times" only restates the list right below it. */}
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="text-label text-muted-foreground">{t('dupTitle')}</span>
-                      <span className="text-meta text-muted-foreground" title={t('copiesTip', { count: dupLocations.length })}>· {dupLocations.length}</span>
+                    {/* Label and count read as one line - a bare "· 3" is a fragment. */}
+                    <div className="flex items-baseline gap-1.5 mb-2 flex-wrap">
+                      <span className="text-label text-muted-foreground flex-shrink-0">{t('dupTitle')}</span>
+                      <span className="text-meta text-muted-foreground">· {t('copiesTip', { count: dupLocations.length })}</span>
                     </div>
-                    <div className="flex flex-col gap-0.5">
+                    {/* Same plate material as the selector: each location is a discrete artifact
+                        you copy or jump to, not a run-on line of text. */}
+                    <div className="flex flex-col gap-1">
                       {dupLocations.map((loc, i) => (
-                        <span key={i} className="text-code text-content">{loc}</span>
+                        <code key={i} className="block text-code text-content bg-muted/40 border border-border rounded px-3 py-1.5 break-all">{loc}</code>
                       ))}
                     </div>
                   </div>
