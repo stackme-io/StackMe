@@ -580,9 +580,11 @@ const RULES_URL = "https://github.com/stackme-io/StackMe/blob/main/packages/loca
 
 // The prefer-ladder is the tool's central doctrine - every `prefer` note points back at it -
 // so it gets a shape instead of a sentence. Each rung carries WHEN to use it, which the prose
-// never said. The last rung is deliberately muted, not accent: raw CSS/XPath is the fallback,
-// and the colour says so before the words do. One component, rendered in both the modal and
-// About, so the two can never drift apart.
+// never said. All rungs are drawn identically on purpose: an earlier version muted the last
+// one to hint "fallback", but a colour difference with no legend reads as a bug, not a
+// message - the ranking already says it, and the rung's own text says "last resort".
+// Filled chips, not 1px outlines: a hairline circle at 20px aliases into a wobbly ring.
+// One component, rendered in both the modal and About, so the two can never drift apart.
 const LADDER = ['role', 'label', 'text', 'testid', 'raw'] as const
 
 function PriorityLadder() {
@@ -591,20 +593,16 @@ function PriorityLadder() {
     <div className="flex flex-col gap-2">
       <span className="text-label text-muted-foreground">{t('ladderTitle')}</span>
       <ol className="flex flex-col gap-1.5">
-        {LADDER.map((k, i) => {
-          const last = i === LADDER.length - 1
-          return (
-            <li key={k} className="flex items-center gap-2.5">
-              <span className={`flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full border text-meta font-medium ${
-                last ? 'border-border text-muted-foreground' : 'border-[var(--tool-accent,#22d3ee)] text-[var(--tool-accent,#22d3ee)]'
-              }`}>{i + 1}</span>
-              <span className={`text-sub font-medium flex-shrink-0 ${last ? 'text-muted-foreground' : 'text-foreground'}`}>
-                {t(`ladder.${k}.name`)}
-              </span>
-              <span className="text-meta text-muted-foreground min-w-0">{t(`ladder.${k}.when`)}</span>
-            </li>
-          )
-        })}
+        {LADDER.map((k, i) => (
+          <li key={k} className="flex items-center gap-2.5">
+            <span
+              className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-meta font-medium leading-none text-[var(--tool-accent,#22d3ee)]"
+              style={{ backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 16%, transparent)' }}
+            >{i + 1}</span>
+            <span className="text-sub font-medium flex-shrink-0 text-foreground">{t(`ladder.${k}.name`)}</span>
+            <span className="text-meta text-muted-foreground min-w-0">{t(`ladder.${k}.when`)}</span>
+          </li>
+        ))}
       </ol>
     </div>
   )
