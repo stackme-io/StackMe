@@ -822,11 +822,11 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                       <span className="text-label text-muted-foreground flex-shrink-0">{t('dupTitle')}</span>
                       <span className="text-meta text-muted-foreground">· {t('copiesTip', { count: dupLocations.length })}</span>
                     </div>
-                    {/* Same plate material as the selector: each location is a discrete artifact
-                        you copy or jump to, not a run-on line of text. */}
-                    <div className="flex flex-col gap-1">
+                    {/* One plate holding every location, like the snippet block. A plate per line
+                        pulled as much attention as the selector itself; the lines stay plain. */}
+                    <div className="bg-muted/40 border border-border rounded px-3 py-2 flex flex-col gap-1">
                       {dupLocations.map((loc, i) => (
-                        <code key={i} className="block text-code text-content bg-muted/40 border border-border rounded px-3 py-1.5 break-all">{loc}</code>
+                        <code key={i} className="block text-code text-content break-all">{loc}</code>
                       ))}
                     </div>
                   </div>
