@@ -822,11 +822,11 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
                       <span className="text-label text-muted-foreground flex-shrink-0">{t('dupTitle')}</span>
                       <span className="text-meta text-muted-foreground">· {t('copiesTip', { count: dupLocations.length })}</span>
                     </div>
-                    {/* No container: these are references to jump to, not verbatim code to copy.
-                        Boxing them would say "read this literally", which isn't true. */}
-                    <div className="flex flex-col gap-1">
+                    {/* Reference material you consult, not the payload you read every time -
+                        the count above already gives the scale. Kept small and quiet on purpose. */}
+                    <div className="flex flex-col gap-0.5">
                       {dupLocations.map((loc, i) => (
-                        <code key={i} className="block text-code text-content break-all">{loc}</code>
+                        <span key={i} className="text-meta text-muted-foreground font-mono break-all">{loc}</span>
                       ))}
                     </div>
                   </div>
