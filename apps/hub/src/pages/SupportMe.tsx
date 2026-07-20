@@ -10,10 +10,21 @@ import GithubMark from '../shared/GithubMark'
 const GITHUB_SPONSORS = ''  // https://github.com/sponsors/<user>
 const KOFI            = ''  // https://ko-fi.com/<user>
 
-// { label: 'BTC', address: 'bc1...' }
-const CRYPTO: { label: string; address: string }[] = []
+// A Tron address takes both native TRX and TRC20 tokens like USDT, so it is labelled for
+// both. The network is shown on purpose: USDT also exists on ERC20 and BEP20, and funds
+// sent on the wrong network are unrecoverable.
+const CRYPTO: { label: string; network: string; address: string }[] = [
+  { label: 'USDT / TRX', network: 'TRC20 · Tron', address: 'TG4hY9LhPvd2YxE3F7TzDp6qgXrJxaadYS' },
+]
 
-function CryptoRow({ label, address }: { label: string; address: string }) {
+// Generate once and commit the file, then set this path:
+//   npx qrcode -o apps/hub/public/donate-trc20.svg -t svg "<address>"
+// Then scan the result and verify it resolves to the exact address before shipping.
+// Never point this at an external QR service: that is a third-party request on every page
+// load, and it would contradict the "nothing leaves your browser" claim.
+const CRYPTO_QR = '/donate-trc20.svg'
+
+function CryptoRow({ label, network, address }: { label: string; network: string; address: string }) {
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
@@ -24,17 +35,30 @@ function CryptoRow({ label, address }: { label: string; address: string }) {
   }
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 border-t border-border/50 first:border-t-0">
-      <span className="text-label text-muted-foreground flex-shrink-0 w-12">{label}</span>
-      <code className="flex-1 min-w-0 text-code text-content break-all">{address}</code>
-      <button
-        onClick={copy}
-        className="flex-shrink-0 flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {copied
-          ? <><Check className="w-3.5 h-3.5" />{t('support.copied')}</>
-          : <><Copy className="w-3.5 h-3.5" />{t('support.copy')}</>}
-      </button>
+    <div className="bg-muted/40 border border-border rounded-lg p-3.5 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5 items-start">
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-sub font-medium text-foreground">{label}</span>
+          <span className="text-meta text-[var(--tool-accent,#22d3ee)]">{network}</span>
+        </div>
+        <code className="text-code text-content break-all">{address}</code>
+        <button
+          onClick={copy}
+          className="flex items-center gap-1.5 text-meta text-muted-foreground hover:text-foreground border border-border rounded-md px-2 py-1 transition-colors"
+        >
+          {copied
+            ? <><Check className="w-3 h-3" />{t('support.copied')}</>
+            : <><Copy className="w-3 h-3" />{t('support.copy')}</>}
+        </button>
+      </div>
+      {CRYPTO_QR && (
+        <img
+          src={CRYPTO_QR}
+          alt=""
+          aria-hidden="true"
+          className="w-[92px] h-[92px] flex-shrink-0 self-start sm:self-center rounded bg-white p-1.5"
+        />
+      )}
     </div>
   )
 }
@@ -89,9 +113,10 @@ export default function SupportMePage() {
           {CRYPTO.length > 0 && (
             <div className="flex flex-col gap-2">
               <p className="text-sub text-muted-foreground">{t('support.cryptoDesc')}</p>
-              <div className="rounded-lg border border-border bg-muted/40 overflow-hidden">
-                {CRYPTO.map(c => <CryptoRow key={c.label} label={c.label} address={c.address} />)}
-              </div>
+              {CRYPTO.map(c => (
+                <CryptoRow key={c.label} label={c.label} network={c.network} address={c.address} />
+              ))}
+              <p className="text-meta text-faint">{t('support.cryptoWarn')}</p>
             </div>
           )}
         </div>
