@@ -3,6 +3,7 @@
     "marketplace": "+ MarketMe",
     "accountMe": "AccountMe",
     "notifications": "Notificaciones",
+    "supportMe": "SupportMe",
     "services": "Servicios",
     "lock": "Fijar",
     "unlock": "Desfijar",
@@ -81,7 +82,8 @@
     "titleAnalyzeMe": "AnalyzeMe - Detector de Anomalías CSV/JSON - StackMe",
     "titleMarketMe": "Marketplace - StackMe",
     "titleAccountMe": "Mi Cuenta - StackMe",
-    "titleNotifyMe": "Notificaciones - StackMe"
+    "titleNotifyMe": "Notificaciones - StackMe",
+    "titleSupportMe": "Apoyar el proyecto - StackMe"
   },
   "account": {
     "adminLabel": "Admin · Notificación masiva",
@@ -119,5 +121,24 @@
     "sent": "Gracias - leemos cada mensaje.",
     "error": "Algo salió mal, inténtalo de nuevo.",
     "cancel": "Cancelar"
+  },
+  "support": {
+    "menuItem": "Apoyar el proyecto",
+    "title": "SupportMe",
+    "lead": "StackMe es gratuito, de código abierto, y no tiene anuncios, ni rastreadores, ni plan de pago. Lo construye una sola persona por las tardes y los fines de semana.",
+    "whatForTitle": "Para qué sirve el apoyo",
+    "whatFor": "Hosting y dominios, que son pequeños pero constantes, y el tiempo para mantener las herramientas en lugar de abandonarlas.",
+    "staysFree": "Apoyar no cambia nada de lo que recibes. No hay ninguna función exclusiva para quien aporta, y nunca la habrá: las herramientas siguen siendo gratuitas para todos, incluido quien no da ni un céntimo.",
+    "waysTitle": "Formas de apoyar",
+    "githubTitle": "GitHub Sponsors",
+    "githubDesc": "Una vez o cada mes, gestionado por GitHub.",
+    "kofiTitle": "Ko-fi",
+    "kofiDesc": "Una aportación puntual, sin necesidad de cuenta.",
+    "cryptoDesc": "O envía directamente:",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "freeTitle": "Formas gratuitas que ayudan igual",
+    "freeWays": "Dale una estrella al repositorio para que otros lo encuentren. Reporta un falso positivo: un locator que marcamos como frágil y que en tu proyecto está bien; esos van directos a los tests y mejoran la herramienta para todos. Cuéntaselo a alguien que pelea con tests inestables.",
+    "repoLink": "Abrir el repositorio →"
   }
 }

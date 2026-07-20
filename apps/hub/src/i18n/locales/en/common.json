@@ -3,6 +3,7 @@
     "marketplace": "MarketMe",
     "accountMe": "AccountMe",
     "notifications": "Notifications",
+    "supportMe": "SupportMe",
     "services": "Services",
     "lock": "Lock",
     "unlock": "Unlock",
@@ -81,7 +82,8 @@
     "titleAnalyzeMe": "AnalyzeMe - CSV & JSON Anomaly Detector - StackMe",
     "titleMarketMe": "Marketplace - StackMe",
     "titleAccountMe": "My Account - StackMe",
-    "titleNotifyMe": "Notifications - StackMe"
+    "titleNotifyMe": "Notifications - StackMe",
+    "titleSupportMe": "Support the project - StackMe"
   },
   "account": {
     "adminLabel": "Admin · Broadcast notification",
@@ -119,5 +121,24 @@
     "sent": "Thanks - we read every message.",
     "error": "Something went wrong, try again.",
     "cancel": "Cancel"
+  },
+  "support": {
+    "menuItem": "Support the project",
+    "title": "SupportMe",
+    "lead": "StackMe is free, open source, and has no ads, no trackers and no paid tier. It is built by one person in evenings and weekends.",
+    "whatForTitle": "What support pays for",
+    "whatFor": "Hosting and domains, which are small but constant, and the time to keep the tools maintained rather than abandoned.",
+    "staysFree": "Support changes nothing about what you get. There is no supporter-only feature and there never will be - the tools stay free for everyone, including people who never give a cent.",
+    "waysTitle": "Ways to support",
+    "githubTitle": "GitHub Sponsors",
+    "githubDesc": "One-off or monthly, handled by GitHub.",
+    "kofiTitle": "Ko-fi",
+    "kofiDesc": "A one-off contribution, no account needed.",
+    "cryptoDesc": "Or send directly:",
+    "copy": "Copy",
+    "copied": "Copied",
+    "freeTitle": "Free ways that help just as much",
+    "freeWays": "Star the repo so other people find it. Report a false positive - a locator we called fragile that is fine in your project; those go straight into the test fixtures and make the tool better for everyone. Tell one colleague who fights flaky tests.",
+    "repoLink": "Open the repository →"
   }
 }

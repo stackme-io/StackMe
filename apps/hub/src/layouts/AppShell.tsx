@@ -73,7 +73,7 @@ export default function AppShell() {
     if (panels.length === 0) {
       // On direct URL navigation (e.g. /analyze-me shared link) open the matching panel,
       // not always market-me.
-      const systemPaths = ['/account-me', '/notify-me', '/']
+      const systemPaths = ['/account-me', '/notify-me', '/support-me', '/']
       if (!systemPaths.includes(location.pathname)) {
         const allManifests = [...MODULE_REGISTRY, MARKET_ME_MANIFEST]
         const matched = allManifests.find(m => m.route === location.pathname)
@@ -104,7 +104,7 @@ export default function AppShell() {
   }, [isSignedIn])
 
   useEffect(() => {
-    const systemPaths = ['/account-me', '/notify-me']
+    const systemPaths = ['/account-me', '/notify-me', '/support-me']
     if (systemPaths.includes(location.pathname)) return
     const active = panels.find((p: Panel) => p.id === activeId)
     if (active && location.pathname !== active.manifest.route) {
@@ -125,7 +125,8 @@ export default function AppShell() {
 
   const isAccountMe = location.pathname === '/account-me'
   const isNotifyMe  = location.pathname === '/notify-me'
-  const isSystemPage = isAccountMe || isNotifyMe
+  const isSupportMe = location.pathname === '/support-me'
+  const isSystemPage = isAccountMe || isNotifyMe || isSupportMe
 
   const logoColor = isSystemPage || !activeId
     ? '#ffffff'
@@ -143,6 +144,7 @@ export default function AppShell() {
     const systemTitles: Record<string, string> = {
       '/account-me': t('seo.titleAccountMe'),
       '/notify-me':  t('seo.titleNotifyMe'),
+      '/support-me': t('seo.titleSupportMe'),
     }
     const moduleTitles: Record<string, string> = {
       'forge-me':   t('seo.titleForgeMe'),
@@ -210,6 +212,12 @@ export default function AppShell() {
             <>
               <span className="text-border">|</span>
               <span className="text-xs font-medium text-foreground">{t('nav.notifications')}</span>
+            </>
+          )}
+          {isSupportMe && (
+            <>
+              <span className="text-border">|</span>
+              <span className="text-xs font-medium text-foreground">{t('nav.supportMe')}</span>
             </>
           )}
 
@@ -390,6 +398,12 @@ export default function AppShell() {
                   onClick={() => setContactOpen(true)}
                 >
                   {t('contact.menuItem')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => navigate('/support-me')}
+                >
+                  {t('support.menuItem')}
                 </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
