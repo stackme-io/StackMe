@@ -125,7 +125,7 @@
   "support": {
     "menuItem": "Support the project",
     "title": "SupportMe",
-    "lead": "StackMe is free and open source, with no ads, no trackers and no paid tier. It is independent, self-funded, and maintained by one person.",
+    "lead": "StackMe is free and open source, with no ads, no trackers and no paid tier. It is independent and self-funded.",
     "whatForTitle": "What support pays for",
     "whatFor": "Hosting and domains, which are small costs but constant ones, and the time to keep the tools maintained rather than abandoned.",
     "staysFree": "Support changes nothing about what you get. There is no supporter-only feature and there never will be. The tools stay free for everyone, including everyone who never gives a cent.",
