@@ -97,16 +97,26 @@ export default function SupportMePage() {
         </div>
       )}
 
+      {/* Three separate keys, not one paragraph: they are three independent asks, they
+          render as a list, and a translator gets three short strings instead of a blob. */}
       <div className="flex flex-col gap-3 border-t border-border pt-6">
         <h2 className="text-label text-muted-foreground">{t('support.freeTitle')}</h2>
-        <p className="text-body text-content leading-relaxed">{t('support.freeWays')}</p>
+        <ul className="flex flex-col gap-2">
+          {(['freeWaysStar', 'freeWaysReport', 'freeWaysTell'] as const).map(k => (
+            <li key={k} className="flex gap-2.5 text-body text-content leading-relaxed">
+              <span className="text-muted-foreground flex-shrink-0" aria-hidden="true">-</span>
+              <span className="min-w-0">{t(`support.${k}`)}</span>
+            </li>
+          ))}
+        </ul>
         <a
           href="https://github.com/stackme-io/StackMe"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-body text-[var(--tool-accent,#22d3ee)] hover:underline self-start"
+          className="text-body text-[var(--tool-accent,#22d3ee)] hover:underline self-start inline-flex items-center gap-1.5"
         >
           {t('support.repoLink')}
+          <span aria-hidden="true">→</span>
         </a>
       </div>
 

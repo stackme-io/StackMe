@@ -107,9 +107,9 @@
     "nicknameTaken": "Este apodo ya está en uso. Elige otro."
   },
   "contact": {
-    "menuItem": "Escribir al equipo",
-    "title": "Escribir al equipo",
-    "lead": "¿Viste un fallo o tienes una idea? Escríbenos - lo que sea.",
+    "menuItem": "Contacto",
+    "title": "Ponte en contacto",
+    "lead": "¿Viste un fallo o tienes una idea? Escribe - lo que sea.",
     "messagePlaceholder": "¿Qué tienes en mente?",
     "catBug": "Fallo",
     "catIdea": "Idea",
@@ -125,20 +125,22 @@
   "support": {
     "menuItem": "Apoyar el proyecto",
     "title": "SupportMe",
-    "lead": "StackMe es gratuito, de código abierto, y no tiene anuncios, ni rastreadores, ni plan de pago. Lo construye una sola persona por las tardes y los fines de semana.",
+    "lead": "StackMe es gratuito y de código abierto, sin anuncios, sin rastreadores y sin plan de pago. Es independiente, autofinanciado, y lo mantiene una sola persona.",
     "whatForTitle": "Para qué sirve el apoyo",
-    "whatFor": "Hosting y dominios, que son pequeños pero constantes, y el tiempo para mantener las herramientas en lugar de abandonarlas.",
-    "staysFree": "Apoyar no cambia nada de lo que recibes. No hay ninguna función exclusiva para quien aporta, y nunca la habrá: las herramientas siguen siendo gratuitas para todos, incluido quien no da ni un céntimo.",
+    "whatFor": "Hosting y dominios, costes pequeños pero constantes, y el tiempo para mantener las herramientas en lugar de abandonarlas.",
+    "staysFree": "Apoyar no cambia nada de lo que recibes. No hay ninguna función exclusiva para quien aporta, y nunca la habrá. Las herramientas siguen siendo gratuitas para todos, incluido todo el que no dé ni un céntimo.",
     "waysTitle": "Formas de apoyar",
     "githubTitle": "GitHub Sponsors",
     "githubDesc": "Una vez o cada mes, gestionado por GitHub.",
     "kofiTitle": "Ko-fi",
     "kofiDesc": "Una aportación puntual, sin necesidad de cuenta.",
-    "cryptoDesc": "O envía directamente:",
+    "cryptoDesc": "O envía directamente a una de estas direcciones:",
     "copy": "Copiar",
     "copied": "Copiado",
     "freeTitle": "Formas gratuitas que ayudan igual",
-    "freeWays": "Dale una estrella al repositorio para que otros lo encuentren. Reporta un falso positivo: un locator que marcamos como frágil y que en tu proyecto está bien; esos van directos a los tests y mejoran la herramienta para todos. Cuéntaselo a alguien que pelea con tests inestables.",
-    "repoLink": "Abrir el repositorio →"
+    "freeWaysStar": "Dale una estrella al repositorio para que otros lo encuentren.",
+    "freeWaysReport": "Reporta un falso positivo: un locator que LocateMe marcó como frágil y que en tu proyecto está bien. Esos reportes van directos a los tests, así que la siguiente versión es más precisa para todos.",
+    "freeWaysTell": "Cuéntaselo a un colega que se pasa la semana peleando con tests inestables.",
+    "repoLink": "Abrir el repositorio"
   }
 }

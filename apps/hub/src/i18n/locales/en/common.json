@@ -107,9 +107,9 @@
     "nicknameTaken": "This nickname is already taken. Please choose another."
   },
   "contact": {
-    "menuItem": "Contact the team",
-    "title": "Contact the team",
-    "lead": "Spotted a bug or have an idea? Write to us - anything at all.",
+    "menuItem": "Contact",
+    "title": "Get in touch",
+    "lead": "Spotted a bug or have an idea? Write in - anything at all.",
     "messagePlaceholder": "What's on your mind?",
     "catBug": "Bug",
     "catIdea": "Idea",
@@ -125,20 +125,22 @@
   "support": {
     "menuItem": "Support the project",
     "title": "SupportMe",
-    "lead": "StackMe is free, open source, and has no ads, no trackers and no paid tier. It is built by one person in evenings and weekends.",
+    "lead": "StackMe is free and open source, with no ads, no trackers and no paid tier. It is independent, self-funded, and maintained by one person.",
     "whatForTitle": "What support pays for",
-    "whatFor": "Hosting and domains, which are small but constant, and the time to keep the tools maintained rather than abandoned.",
-    "staysFree": "Support changes nothing about what you get. There is no supporter-only feature and there never will be - the tools stay free for everyone, including people who never give a cent.",
+    "whatFor": "Hosting and domains, which are small costs but constant ones, and the time to keep the tools maintained rather than abandoned.",
+    "staysFree": "Support changes nothing about what you get. There is no supporter-only feature and there never will be. The tools stay free for everyone, including everyone who never gives a cent.",
     "waysTitle": "Ways to support",
     "githubTitle": "GitHub Sponsors",
     "githubDesc": "One-off or monthly, handled by GitHub.",
     "kofiTitle": "Ko-fi",
     "kofiDesc": "A one-off contribution, no account needed.",
-    "cryptoDesc": "Or send directly:",
+    "cryptoDesc": "Or send directly to one of these addresses:",
     "copy": "Copy",
     "copied": "Copied",
     "freeTitle": "Free ways that help just as much",
-    "freeWays": "Star the repo so other people find it. Report a false positive - a locator we called fragile that is fine in your project; those go straight into the test fixtures and make the tool better for everyone. Tell one colleague who fights flaky tests.",
-    "repoLink": "Open the repository →"
+    "freeWaysStar": "Star the repo so other people find it.",
+    "freeWaysReport": "Report a false positive: a locator LocateMe called fragile that is fine in your project. Those reports go straight into the test fixtures, so the next release is more precise for everyone.",
+    "freeWaysTell": "Tell one colleague who spends their week on flaky tests.",
+    "repoLink": "Open the repository"
   }
 }
