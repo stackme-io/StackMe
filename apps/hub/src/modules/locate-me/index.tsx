@@ -269,12 +269,19 @@ function scopedReport(report: ReportData, fileExcluded: Set<string>): ReportData
   }
 }
 
+// Guests who save must sign in, and Clerk does a full-page reload on sign-in. The audit
+// (in-memory only) would be lost, so we stash it under this key before sign-in and restore
+// it + reopen the save dialog on return. See LocateMePage.
+const RESUME_SAVE_KEY = 'locate:resumeSave'
+
 // Explicit data export - the deliberate opposite of Share. Opens a self-contained,
 // printable HTML report (save as PDF via the browser). Client-safe masks paths + code.
-function ReportButton({ report, fileExcluded, source }: { report: ReportData; fileExcluded: Set<string>; source: string | null }) {
+function ReportButton({ report, fileExcluded, source, onSignInToSave, resumeSave, onResumed }: {
+  report: ReportData; fileExcluded: Set<string>; source: string | null
+  onSignInToSave: () => void; resumeSave: boolean; onResumed: () => void
+}) {
   const { t } = useTranslation('locate-me')
   const { isSignedIn, getToken } = useAuth()
-  const { openSignIn } = useClerk()
   const [open, setOpen] = useState(false)
   const [saveMode, setSaveMode] = useState(false)
   const [title, setTitle] = useState('')
@@ -311,11 +318,21 @@ function ReportButton({ report, fileExcluded, source }: { report: ReportData; fi
   }
 
   // Save = explicit opt-in that sends the report data to your account (leaves the browser).
-  const startSave = () => {
-    if (!isSignedIn) { openSignIn(); return }
+  const openSaveDialog = () => {
     setTitle((source ?? 'Locator audit').slice(0, 120))
     setSaved(false); setError(''); setSaveMode(true)
   }
+  const startSave = () => {
+    if (!isSignedIn) { onSignInToSave(); return }
+    openSaveDialog()
+  }
+
+  // Returning from sign-in: the parent restored the audit and flipped resumeSave, so pick
+  // up exactly where the guest left off - popover open, name dialog showing.
+  useEffect(() => {
+    if (resumeSave && report) { setOpen(true); openSaveDialog(); onResumed() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeSave, report])
   const doSave = async () => {
     setSaving(true); setError('')
     try {
@@ -955,8 +972,38 @@ export default function LocateMePage() {
   const [sortMode, setSortMode] = useState<SortMode>('file')
   const [methodOpen, setMethodOpen] = useState(false)
   const [newAuditOpen, setNewAuditOpen] = useState(false)
+  const [resumeSave, setResumeSave] = useState(false)
   const isMobile = useIsMobile()
+  const { isSignedIn } = useAuth()
+  const { openSignIn } = useClerk()
   const workerRef = useRef<Worker | null>(null)
+
+  // Guest clicks "sign in to save" -> stash the audit (Clerk reloads the page on sign-in and
+  // it would otherwise be gone), send them back to /locate-me. fileExcluded is not persisted:
+  // the report-change effect resets it anyway, so it returns to "all files included".
+  const requestSignInToSave = () => {
+    try { sessionStorage.setItem(RESUME_SAVE_KEY, JSON.stringify({ report, detection, source })) } catch { /* ignore */ }
+    openSignIn({ forceRedirectUrl: '/locate-me' })
+  }
+
+  // On return from sign-in: restore the stashed audit and flip resumeSave so the report
+  // button reopens the save dialog. Runs once isSignedIn resolves true after the reload.
+  useEffect(() => {
+    if (!isSignedIn) return
+    const raw = sessionStorage.getItem(RESUME_SAVE_KEY)
+    if (!raw) return
+    sessionStorage.removeItem(RESUME_SAVE_KEY)
+    try {
+      const s = JSON.parse(raw) as { report?: ReportData; detection?: Detection | null; source?: string | null }
+      if (s.report) {
+        setReport(s.report)
+        setDetection(s.detection ?? null)
+        setSource(s.source ?? null)
+        setActiveTab('audit')
+        setResumeSave(true)
+      }
+    } catch { /* ignore */ }
+  }, [isSignedIn])
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
 
@@ -977,6 +1024,9 @@ export default function LocateMePage() {
     // Keep the current audit on screen while the new one runs. Only swap on success -
     // a bad input (parse error) then surfaces as an error banner and never drops the
     // user to the empty page, losing the audit they were looking at.
+    // A fresh audit invalidates any pending sign-in-to-save stash (guest cancelled the
+    // modal, then started something new).
+    try { sessionStorage.removeItem(RESUME_SAVE_KEY) } catch { /* ignore */ }
     setLoading(true); setError(null)
     const w = getWorker()
     w.onmessage = (e: MessageEvent<WorkerResult>) => {
@@ -1234,7 +1284,8 @@ export default function LocateMePage() {
                           className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                           {t('selectFolder')}
                         </button>
-                        <ReportButton report={report} fileExcluded={fileExcluded} source={source} />
+                        <ReportButton report={report} fileExcluded={fileExcluded} source={source}
+                          onSignInToSave={requestSignInToSave} resumeSave={resumeSave} onResumed={() => setResumeSave(false)} />
                       </div>
                     } /></div>
                   {skipped > 0 && (
