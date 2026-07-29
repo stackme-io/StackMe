@@ -2,6 +2,7 @@
 // Recursively reads JS/TS test files, skipping vendored / build dirs - mirrors the CLI walk.
 import type { SourceFileInput } from '@locateme/core/types'
 
+// Vendored / build dirs skipped entirely (not descended, not counted).
 const SKIP_DIRS = new Set([
   'node_modules', 'dist', 'build', 'coverage', '.git', '.next', '.turbo', '.cache',
 ])
@@ -9,12 +10,25 @@ const SKIP_DIRS = new Set([
 // Files the engine can parse: JS/TS family (ts-morph) + Java (tree-sitter, Selenium).
 const PARSE_EXT = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts', '.java']
 // Code files in other languages we cannot parse yet. Counted so we can be honest
-// that they were left out of the scan.
+// that they were left out of the scan. NOT assets (.css/.json/.md/...) - those are
+// ignored silently, since counting them would make the "skipped" note noisy and alarming.
 const SKIPPED_CODE_EXT = ['.py', '.cs', '.rb', '.go', '.php', '.kt', '.swift']
 
-function isParseable(name: string): boolean {
-  if (name.endsWith('.d.ts')) return false
+// The three file categories, as pure predicates so the extension policy is unit-tested
+// (the walk() below is browser-API-coupled and hard to test; the policy is the part that
+// regresses). isParseable -> analyzed; isSkippedCode -> counted in the "skipped" note;
+// neither -> ignored asset.
+export function isParseable(name: string): boolean {
+  if (name.endsWith('.d.ts')) return false // type decls, no runtime locators
   return PARSE_EXT.some(ext => name.endsWith(ext))
+}
+
+export function isSkippedCode(name: string): boolean {
+  return SKIPPED_CODE_EXT.some(ext => name.endsWith(ext))
+}
+
+export function isSkipDir(name: string): boolean {
+  return SKIP_DIRS.has(name)
 }
 
 export interface FolderScan {
@@ -40,12 +54,12 @@ async function walk(dir: unknown, prefix: string, out: SourceFileInput[], stats:
   for await (const entry of handle.values()) {
     const path = prefix ? `${prefix}/${entry.name}` : entry.name
     if (entry.kind === 'directory') {
-      if (SKIP_DIRS.has(entry.name)) continue
+      if (isSkipDir(entry.name)) continue
       await walk(entry, path, out, stats)
     } else if (isParseable(entry.name)) {
       const file = await entry.getFile()
       out.push({ path, text: await file.text() })
-    } else if (SKIPPED_CODE_EXT.some(ext => entry.name.endsWith(ext))) {
+    } else if (isSkippedCode(entry.name)) {
       stats.skipped++
     }
   }
