@@ -489,12 +489,21 @@ function SavedReports() {
               <div className="flex-1 min-w-0">
                 <p className="text-sub text-foreground truncate">{r.title}</p>
                 <p className="text-meta text-muted-foreground">
-                  <span className="text-k-fragile">{t('nLocators', { count: r.fragile })}</span>
+                  {/* Health-first: fragile>0 is the actionable "how many problems" (red);
+                      0 fragile reads green "Clean" instead of a red "0". */}
+                  {r.fragile > 0
+                    ? <span className="text-k-fragile font-medium">{t('kinds.fragile.label')} {r.fragile}</span>
+                    : <span className="text-k-stable font-medium">{t('reports.clean')}</span>}
                   <span className="text-faint"> · </span>
                   {t('reports.meta', { total: r.total, files: r.files })}
                   <span className="text-faint"> · </span>
                   {new Date(r.created_at).toLocaleDateString()}
                 </p>
+                {/* Thin health bar: red portion = fragile share; all-green when clean. */}
+                <div className="mt-1.5 h-1 w-full max-w-[200px] rounded-full overflow-hidden bg-muted/40">
+                  <div className={`h-full ${r.fragile > 0 ? 'bg-k-fragile' : 'bg-k-stable'}`}
+                    style={{ width: r.fragile > 0 ? `${r.total ? Math.min(100, (r.fragile / r.total) * 100) : 0}%` : '100%' }} />
+                </div>
               </div>
               <button onClick={() => openSaved(r.id)} className="text-meta text-muted-foreground hover:text-foreground whitespace-nowrap">{t('report.open')}</button>
               <button onClick={() => setConfirmId(r.id)} title={t('reports.delete')} className="text-muted-foreground hover:text-k-fragile flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>

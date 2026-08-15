@@ -133,6 +133,7 @@
     "count": "{{count}} guardados",
     "empty": "Aún no hay informes guardados. Guarda uno desde el menú Informe tras una auditoría.",
     "meta": "{{total}} localizadores · {{files}} archivos",
+    "clean": "Limpio",
     "delete": "Eliminar",
     "signIn": "Iniciar sesión",
     "signInDesc": "Inicia sesión para guardar auditorías en tu cuenta y volver a verlas aquí.",

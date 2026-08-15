@@ -133,6 +133,7 @@
     "count": "{{count}} saved",
     "empty": "No saved reports yet. Save one from the Report menu after an audit.",
     "meta": "{{total}} locators · {{files}} files",
+    "clean": "Clean",
     "delete": "Delete",
     "signIn": "Sign in",
     "signInDesc": "Sign in to save audits to your account and revisit them here.",
