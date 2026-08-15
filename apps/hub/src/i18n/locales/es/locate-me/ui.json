@@ -26,6 +26,7 @@
   "firstPass": "primera pasada",
   "testsNotRun": "tests no ejecutados",
   "headlineCount": "{{calls}} en {{files}}",
+  "fromSource": "de",
   "showingOf": "Mostrando {{shown}} de {{total}}",
   "sampleLabel": "suite de ejemplo",
   "copies_one": "{{count}} copia",

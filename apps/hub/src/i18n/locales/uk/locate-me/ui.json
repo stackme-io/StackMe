@@ -26,6 +26,7 @@
   "firstPass": "перший прохід",
   "testsNotRun": "тести не запускались",
   "headlineCount": "{{calls}} у {{files}}",
+  "fromSource": "з",
   "showingOf": "Показано {{shown}} з {{total}}",
   "sampleLabel": "демо-набір",
   "copies_one": "{{count}} копія",
