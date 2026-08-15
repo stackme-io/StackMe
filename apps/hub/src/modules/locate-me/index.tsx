@@ -197,7 +197,7 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
   return (
     <div className="flex flex-col w-fit max-w-full">
       <div className="flex items-center justify-between gap-x-4 gap-y-1 flex-wrap">
-        <h2 className="text-title text-foreground">
+        <h2 className="text-title text-foreground leading-none">
           {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
         </h2>
         {action}
