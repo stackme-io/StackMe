@@ -204,7 +204,7 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
       </div>
       {/* Source = "what am I looking at", on its own line tight under the count (out of the
           meta line, no duplication). Spacing: H1→source tight, source→meta looser. */}
-      {source && <span className="text-sub font-medium text-foreground truncate mt-1">{source}</span>}
+      {source && <span className="text-sub font-medium text-foreground truncate mt-0.5">{source}</span>}
       {/* The caveat sits next to the number it qualifies - a scope limit must never be
           a click away (the mechanics of HOW we judge live in the "How we judge" sheet). */}
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-2">
