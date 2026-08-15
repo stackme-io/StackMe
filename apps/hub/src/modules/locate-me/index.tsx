@@ -195,21 +195,19 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
   if (detection && detection.framework !== 'unknown') stack.push(detection.framework)
 
   return (
-    <div className="flex flex-col gap-1.5 w-fit max-w-full">
+    <div className="flex flex-col w-fit max-w-full">
       <div className="flex items-center justify-between gap-x-4 gap-y-1 flex-wrap">
-        {/* Source is the identity of the view ("what am I looking at"), so it leads as an
-            eyebrow above the count. It moves OUT of the meta line to avoid duplication. */}
-        <div className="flex flex-col gap-0.5 min-w-0">
-          {source && <span className="text-sub font-medium text-foreground truncate">{source}</span>}
-          <h2 className="text-title text-foreground">
-            {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
-          </h2>
-        </div>
+        <h2 className="text-title text-foreground">
+          {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
+        </h2>
         {action}
       </div>
+      {/* Source = "what am I looking at", on its own line tight under the count (out of the
+          meta line, no duplication). Spacing: H1→source tight, source→meta looser. */}
+      {source && <span className="text-sub font-medium text-foreground truncate mt-1">{source}</span>}
       {/* The caveat sits next to the number it qualifies - a scope limit must never be
           a click away (the mechanics of HOW we judge live in the "How we judge" sheet). */}
-      <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
+      <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-2">
         <span className="text-content">{t('firstPass')}, {t('testsNotRun')}</span>
         {stack.length > 0 && <><span className="text-faint">·</span><span>{stack.join(' · ')}</span></>}
         {detection?.framework === 'Selenium' && (
