@@ -815,7 +815,7 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
 
   return (
     <>
-          <div className="px-4 py-3.5 border-b border-border flex items-start justify-between gap-3">
+          <div className="px-4 py-3.5 flex items-start justify-between gap-3">
             <div className="flex flex-col gap-2.5 min-w-0">
               {/* Explicit 15px/500 rather than `text-heading` (600) plus a contradicting
                   font-medium: a saturated kind colour at 600 blooms on dark. */}
@@ -832,6 +832,9 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
               <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
             )}
           </div>
+          {/* Inset seam (GitHub-style): groups the pinned verdict head off the scroll body
+              without a full-bleed wall that would fight the card border. */}
+          <div className="mx-4 h-px bg-border flex-shrink-0" />
           <div className="flex-1 overflow-y-auto">
 
             <div className="px-4 py-4 flex flex-col gap-4">
@@ -863,7 +866,9 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
             </div>
 
             {(dupLocations.length > 1 || finding.snippet) && (
-              <div className="border-t border-border px-4 py-5 flex flex-col gap-5">
+              <>
+              <div className="mx-4 h-px bg-border" />
+              <div className="px-4 py-5 flex flex-col gap-5">
                 {dupLocations.length > 1 && (
                   <div>
                     {/* Label and count read as one line - a bare "· 3" is a fragment. */}
@@ -904,6 +909,7 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
                   </div>
                 )}
               </div>
+              </>
             )}
           </div>
     </>
