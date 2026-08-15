@@ -114,7 +114,7 @@
     "p4": "The audit is read-only - a false \"fragile\" can't be dismissed. So when in doubt, we stay quiet."
   },
   "report": {
-    "button": "Report",
+    "button": "Get report",
     "open": "Open report",
     "download": "Download HTML",
     "clientSafe": "Client-safe",

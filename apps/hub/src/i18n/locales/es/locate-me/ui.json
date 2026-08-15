@@ -114,7 +114,7 @@
     "p4": "La auditoría es de solo lectura - un \"frágil\" falso no se puede descartar. Así que ante la duda, callamos."
   },
   "report": {
-    "button": "Informe",
+    "button": "Obtener informe",
     "open": "Abrir informe",
     "download": "Descargar HTML",
     "clientSafe": "Modo seguro",

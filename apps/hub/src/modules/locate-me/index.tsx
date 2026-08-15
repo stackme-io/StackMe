@@ -25,6 +25,15 @@ const KIND_STYLE: Record<Kind, { text: string; dot: string }> = {
   dynamic: { text: 'text-k-dynamic', dot: 'bg-k-dynamic' },
 }
 
+// Accent-tint ("variant B") - the one primary action per context (welcome: Select folder,
+// results: Get report). Same cyan-tint language as the active rail tab: subtle fill + a
+// readable border + accent text. NOT a solid fill (harsh dark-text-on-cyan, off-system).
+const ACCENT_TINT: React.CSSProperties = {
+  backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 16%, transparent)',
+  borderColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 45%, transparent)',
+  color: 'var(--tool-accent,#22d3ee)',
+}
+
 const KIND_SEG: Record<Kind, string> = {
   fragile: 'bg-k-fragile',
   context: 'bg-k-context/80',
@@ -188,16 +197,20 @@ function Headline({ detection, source, calls, files, action }: { detection: Dete
   return (
     <div className="flex flex-col gap-1.5 w-fit max-w-full">
       <div className="flex items-center justify-between gap-x-4 gap-y-1 flex-wrap">
-        <h2 className="text-title text-foreground">
-          {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
-        </h2>
+        {/* Source is the identity of the view ("what am I looking at"), so it leads as an
+            eyebrow above the count. It moves OUT of the meta line to avoid duplication. */}
+        <div className="flex flex-col gap-0.5 min-w-0">
+          {source && <span className="text-sub font-medium text-foreground truncate">{source}</span>}
+          <h2 className="text-title text-foreground">
+            {t('headlineCount', { calls: t('nCalls', { count: calls }), files: t('nFiles', { count: files }) })}
+          </h2>
+        </div>
         {action}
       </div>
       {/* The caveat sits next to the number it qualifies - a scope limit must never be
           a click away (the mechanics of HOW we judge live in the "How we judge" sheet). */}
       <p className="text-meta text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
         <span className="text-content">{t('firstPass')}, {t('testsNotRun')}</span>
-        {source && <><span className="text-faint">·</span><span>{source}</span></>}
         {stack.length > 0 && <><span className="text-faint">·</span><span>{stack.join(' · ')}</span></>}
         {detection?.framework === 'Selenium' && (
           <span className="text-meta px-1.5 py-0.5 rounded border border-border text-muted-foreground/80">beta</span>
@@ -356,8 +369,8 @@ function ReportButton({ report, fileExcluded, source, onSignInToSave, resumeSave
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(o => !o)} title={t('report.button')}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 transition-colors">
+      <button onClick={() => setOpen(o => !o)} title={t('report.button')} style={ACCENT_TINT}
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sub font-medium border transition-colors hover:brightness-110">
         <FileText className="w-3.5 h-3.5" />
         {t('report.button')}
       </button>
@@ -539,7 +552,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
                 <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate" title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
                 <td className="px-4 py-3 border-b border-border/40">
                   <span className="flex items-start gap-2 min-w-0">
-                    <code className="text-code text-foreground break-all">{selectorText(f)}</code>
+                    <code className="text-code text-foreground break-all bg-transparent p-0">{selectorText(f)}</code>
                     {n > 1 && (
                       <span title={t('copiesTip', { count: n })}
                         className="flex-shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-k-context/15 text-k-context text-meta leading-none whitespace-nowrap">
@@ -569,7 +582,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
                   <span className="text-meta text-faint font-mono ml-auto truncate max-w-[48%]">{f.file}:{f.line}</span>
                 </span>
                 <span className="flex items-start gap-2 min-w-0">
-                  <code className="text-code text-foreground break-all">{selectorText(f)}</code>
+                  <code className="text-code text-foreground break-all bg-transparent p-0">{selectorText(f)}</code>
                   {n > 1 && (
                     <span className="flex-shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-k-context/15 text-k-context text-meta leading-none whitespace-nowrap">{t('copies', { count: n })}</span>
                   )}
@@ -645,7 +658,7 @@ function NewAuditModal({ onClose, onSelectFolder, onSample, onAnalyze, code, set
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-[var(--tool-accent,#22d3ee)] text-[#131417] hover:brightness-110 disabled:opacity-50 transition'
+  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium border border-[#22d3ee]/45 bg-[#22d3ee]/15 text-[#22d3ee] hover:brightness-110 disabled:opacity-50 transition'
   const btnGhost = 'px-3 py-2 rounded-md text-sub font-medium text-foreground border border-border hover:bg-muted hover:border-muted-foreground/40 disabled:opacity-50 transition-colors'
 
   return (
@@ -760,7 +773,10 @@ function localizedVerdict(
 
 // Inner inspector content for a selected finding - shared by the desktop side
 // panel and the mobile bottom sheet.
-function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dupLocations: string[]; onClose: () => void }) {
+// dismissable: show the close ✕ only where the panel is an OVERLAY the user must dismiss
+// (mobile bottom sheet). On desktop the inspector is a permanent column - closing reclaims
+// no space and only empties it, so no ✕ (per UX review).
+function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { finding: Finding; dupLocations: string[]; onClose: () => void; dismissable?: boolean }) {
   const { t, i18n } = useTranslation('locate-me')
   const { reason: verdictReason, prefer: verdictPrefer } = localizedVerdict(finding, t, i18n.language)
   const [copied, setCopied] = useState(false)
@@ -793,7 +809,7 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
               {/* Explicit 15px/500 rather than `text-heading` (600) plus a contradicting
                   font-medium: a saturated kind colour at 600 blooms on dark. */}
               <span className={`text-[15px] leading-[1.35] font-medium ${KIND_STYLE[finding.kind].text} flex items-center gap-2`}>
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${finding.confidence === 'context' ? 'border border-current' : KIND_STYLE[finding.kind].dot}`} />
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${KIND_STYLE[finding.kind].dot}`} />
                 {t(`kinds.${finding.kind}.label`)}
                 {finding.confidence === 'context' && (
                   <span className="text-meta font-normal text-muted-foreground normal-case">· first pass</span>
@@ -801,7 +817,9 @@ function InspectBody({ finding, dupLocations, onClose }: { finding: Finding; dup
               </span>
               <p className="text-body text-foreground leading-relaxed">{verdictReason}</p>
             </div>
-            <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
+            {dismissable && (
+              <button onClick={onClose} className="text-meta text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5" title={t('close')}>✕</button>
+            )}
           </div>
           <div className="flex-1 overflow-y-auto">
 
@@ -1148,7 +1166,7 @@ export default function LocateMePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report, filterKinds, sortMode, fileExcluded, isMobile])
 
-  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium bg-[var(--tool-accent,#22d3ee)] text-[#131417] hover:brightness-110 disabled:opacity-50 transition'
+  const btnPrimary = 'px-4 py-2 rounded-md text-sub font-medium border border-[#22d3ee]/45 bg-[#22d3ee]/15 text-[#22d3ee] hover:brightness-110 disabled:opacity-50 transition'
   const btnGhost = 'px-3 py-2 rounded-md text-sub font-medium text-foreground border border-border hover:bg-muted hover:border-muted-foreground/40 disabled:opacity-50 transition-colors'
 
   return (
@@ -1280,10 +1298,6 @@ export default function LocateMePage() {
                           className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
                           {t('newAudit')}
                         </button>
-                        <button onClick={selectFolder} disabled={loading}
-                          className="px-2.5 py-1 rounded-md text-sub text-muted-foreground border border-border hover:text-foreground hover:bg-muted/40 disabled:opacity-50 transition-colors">
-                          {t('selectFolder')}
-                        </button>
                         <ReportButton report={report} fileExcluded={fileExcluded} source={source}
                           onSignInToSave={requestSignInToSave} resumeSave={resumeSave} onResumed={() => setResumeSave(false)} />
                       </div>
@@ -1325,7 +1339,7 @@ export default function LocateMePage() {
                           <div className="absolute inset-0 bg-black/40" />
                           <div onClick={e => e.stopPropagation()} className="relative bg-card border-t border-border rounded-t-2xl max-h-[80vh] flex flex-col overflow-hidden">
                             <div className="flex justify-center pt-2 pb-1 flex-shrink-0"><span className="w-9 h-1 rounded-full bg-border" /></div>
-                            <InspectBody finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
+                            <InspectBody finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} dismissable />
                           </div>
                         </div>
                       )}
