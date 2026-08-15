@@ -999,6 +999,7 @@ export default function LocateMePage() {
   const [detection, setDetection] = useState<Detection | null>(null)
   const [selected, setSelected] = useState<Finding | null>(null)
   const [loading, setLoading] = useState(false)
+  const [copiedTable, setCopiedTable] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [source, setSource] = useState<string | null>(null)
   const [skipped, setSkipped] = useState(0)
@@ -1170,6 +1171,17 @@ export default function LocateMePage() {
     ? findings.filter(f => dupKey(f) === dupKey(selected)).map(f => `${f.file}:${f.line}`)
     : []
 
+  // Copy the table exactly as shown - current filter + sort order (that's `rows`).
+  // TSV so it pastes into Docs/Sheets as a real table; header mirrors the visible columns.
+  const copyTable = () => {
+    if (rows.length === 0) return
+    const header = [t('colKind'), t('colLocation'), t('colSelector')].join('\t')
+    const body = rows.map(f => [t(`kinds.${f.kind}.label`), `${f.file}:${f.line}`, selectorText(f)].join('\t')).join('\n')
+    navigator.clipboard?.writeText(`${header}\n${body}`)
+      .then(() => { setCopiedTable(true); setTimeout(() => setCopiedTable(false), 1500) })
+      .catch(() => {})
+  }
+
   // Reset the per-file filter whenever a new report loads.
   useEffect(() => { setFileExcluded(new Set()) }, [report])
 
@@ -1340,10 +1352,16 @@ export default function LocateMePage() {
                     <>
                       <div className="flex items-center justify-between gap-3 flex-shrink-0 -mb-1">
                         <p className="text-meta text-muted-foreground">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
-                        <button onClick={showMethod}
-                          className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2 flex-shrink-0">
-                          {t('howWeJudge')}
-                        </button>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <button onClick={copyTable}
+                            className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
+                            {copiedTable ? t('copied') : t('copyTable')}
+                          </button>
+                          <button onClick={showMethod}
+                            className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
+                            {t('howWeJudge')}
+                          </button>
+                        </div>
                       </div>
                       <div className="flex-1 min-h-0 flex bg-card rounded-xl border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />

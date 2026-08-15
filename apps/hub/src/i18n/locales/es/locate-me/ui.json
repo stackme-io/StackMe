@@ -65,6 +65,7 @@
   "unknownStack": "no se pudo detectar un stack conocido",
   "copy": "Copiar",
   "copied": "Copiado",
+  "copyTable": "Copiar tabla",
   "close": "Cerrar",
   "selectHint": "Selecciona un locator frágil a la izquierda para inspeccionarlo aquí.",
   "explain": {
