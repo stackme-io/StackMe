@@ -914,7 +914,7 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
 function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   return (
-    <div className={`hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 flex-col overflow-hidden ${finding ? 'border-l-2 border-l-[#22d3ee]' : 'border-l border-border'}`}>
+    <div className="hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
