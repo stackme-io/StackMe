@@ -538,11 +538,11 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
 }) {
   const { t } = useTranslation('locate-me')
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-      <table className="hidden md:table w-full border-collapse table-fixed">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 md:px-2">
+      <table className="hidden md:table w-full border-separate [border-spacing:0_2px] table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border border-l-2 border-l-transparent w-[116px]">{t('colKind')}</th>
+            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[116px]">{t('colKind')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[180px] 2xl:w-[220px]">{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
@@ -553,16 +553,15 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             const n = dup.get(dupKey(f)) ?? 0
             const s = KIND_STYLE[f.kind]
             return (
-              <tr key={i} onClick={() => onSelect(f)}
-                className={`cursor-pointer transition-colors ${isSel ? 'bg-muted/70' : 'hover:bg-muted/20'}`}>
-                <td className={`px-4 py-3 border-b border-border/40 border-l-2 ${isSel ? 'border-l-[var(--tool-accent,#22d3ee)]' : 'border-l-transparent'}`}>
+              <tr key={i} onClick={() => onSelect(f)} className="group cursor-pointer">
+                <td className={`px-4 py-3 rounded-l-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
                   <span className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                     <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
                   </span>
                 </td>
-                <td className="px-4 py-3 border-b border-border/40 text-meta text-muted-foreground font-mono truncate" title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
-                <td className="px-4 py-3 border-b border-border/40">
+                <td className={`px-4 py-3 text-meta text-muted-foreground font-mono truncate transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`} title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
+                <td className={`px-4 py-3 rounded-r-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
                   <span className="flex items-start gap-2 min-w-0">
                     <code className="text-code text-foreground break-all bg-transparent p-0">{selectorText(f)}</code>
                     {n > 1 && (
@@ -587,7 +586,7 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
           return (
             <li key={i}>
               <button onClick={() => onSelect(f)}
-                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 border-l-2 transition-colors ${isSel ? 'bg-muted/60 border-l-[var(--tool-accent,#22d3ee)]' : 'border-l-transparent'}`}>
+                className={`w-full text-left px-4 py-3 flex flex-col gap-1.5 transition-colors ${isSel ? 'bg-[#22d3ee]/15' : ''}`}>
                 <span className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
                   <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
@@ -915,7 +914,7 @@ function InspectBody({ finding, dupLocations, onClose, dismissable = false }: { 
 function FindingInspect({ finding, dupLocations, onClose }: { finding: Finding | null; dupLocations: string[]; onClose: () => void }) {
   const { t } = useTranslation('locate-me')
   return (
-    <div className="hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 border-l border-border flex-col overflow-hidden">
+    <div className={`hidden md:flex w-[380px] 2xl:w-[440px] flex-shrink-0 flex-col overflow-hidden ${finding ? 'border-l-2 border-l-[#22d3ee]' : 'border-l border-border'}`}>
       {!finding ? (
         <>
           <div className="px-4 py-3 border-b border-border">
@@ -1340,7 +1339,7 @@ export default function LocateMePage() {
                           {t('howWeJudge')}
                         </button>
                       </div>
-                      <div className="flex-1 min-h-0 flex rounded-lg border border-border overflow-hidden">
+                      <div className="flex-1 min-h-0 flex bg-card rounded-xl border border-border overflow-hidden">
                         <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
                       </div>
