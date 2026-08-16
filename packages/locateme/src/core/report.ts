@@ -91,7 +91,8 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
     .join("") || `<div class="muted">none</div>`;
   const moreFragile = fragile.length > 50 ? `<div class="muted small">…and ${fragile.length - 50} more</div>` : "";
   const canToggle = !hideSnippets && fragile.some((f) => !!f.snippet);
-  const tools = `<div class="tools"><button type="button" onclick="window.print()">Print / Save as PDF</button>${canToggle ? `<button type="button" onclick="toggleAll(true)">Expand all</button><button type="button" onclick="toggleAll(false)">Collapse all</button>` : ""}</div>`;
+  const printIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+  const tools = `<div class="tools"><button type="button" class="primary" onclick="window.print()">${printIcon}Print / Save as PDF</button>${canToggle ? `<span class="tool-group"><button type="button" onclick="toggleAll(true)">Expand all</button><button type="button" onclick="toggleAll(false)">Collapse all</button></span>` : ""}</div>`;
 
   const plaque = `Static audit of <b>locator shape</b> - tests were not run. ${d.summary.coverage.total} locator calls analyzed, ${d.summary.coverage.dynamic} dynamic (not classified). This is a <b>first pass, not a full-suite verdict</b>, and <b>not a project score or grade</b> - every verdict is per-locator.`;
 
@@ -100,7 +101,7 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LocateMe report</title>
 <style>
-:root{--bg:#0f1320;--card:#171c2e;--ink:#e6e9f2;--muted:#8b93a7;--line:#262d44}
+:root{--bg:#0f1320;--card:#171c2e;--ink:#e6e9f2;--muted:#8b93a7;--line:#262d44;--accent:#22d3ee}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:32px}
 .wrap{max-width:880px;margin:0 auto}
@@ -130,7 +131,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cdd3e6;wo
 .loc{color:var(--muted);font-size:12px;white-space:nowrap}
 footer{color:var(--muted);font-size:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
 a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
-.tools{display:flex;gap:8px;margin:0 0 12px}.tools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}.tools button:hover{color:var(--ink)}
+.tools{display:flex;gap:8px;margin:0 0 12px;align-items:center}.tools button{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}.tools button:hover{color:var(--ink)}.tools button svg{flex:0 0 auto}.tools button.primary{background:var(--accent);border-color:var(--accent);color:#0a0e1a;font-weight:600}.tools button.primary:hover{background:#38dbea;border-color:#38dbea;color:#0a0e1a}.tool-group{display:flex;gap:8px;margin-left:auto}
 @page{margin:1.4cm}
 @media print{
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact}

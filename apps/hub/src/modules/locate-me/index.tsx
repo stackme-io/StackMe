@@ -1350,13 +1350,18 @@ export default function LocateMePage() {
                     <p className="text-sub text-content">{t('noneForFilter')}</p>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between gap-3 flex-shrink-0 -mb-1">
-                        <p className="text-meta text-muted-foreground">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
-                        <div className="flex items-center gap-3 flex-shrink-0">
+                      <div className="flex items-center gap-3 flex-shrink-0 -mb-1">
+                        {/* Left block spans the table width: "Showing X of Y" at the far left,
+                            "Copy table" pinned to the table's right edge (where the panel begins). */}
+                        <div className="flex-1 min-w-0 flex items-center justify-between gap-3">
+                          <p className="text-meta text-muted-foreground">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
                           <button onClick={copyTable}
                             className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
                             {copiedTable ? t('copied') : t('copyTable')}
                           </button>
+                        </div>
+                        {/* Right block mirrors the inspector panel width so "How we judge" sits above it. */}
+                        <div className="flex items-center justify-end flex-shrink-0 md:w-[380px] 2xl:w-[440px]">
                           <button onClick={showMethod}
                             className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
                             {t('howWeJudge')}
