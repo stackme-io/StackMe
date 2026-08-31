@@ -9,6 +9,7 @@
   "selectFolder": "Elegir carpeta",
   "newAudit": "Nueva auditoría",
   "trySample": "Probar ejemplo",
+  "trySampleHint": "Mira cómo funciona",
   "analyze": "Analizar",
   "clear": "Limpiar",
   "pasteToggle": "…o pega un archivo",

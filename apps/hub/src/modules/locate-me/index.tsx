@@ -1284,9 +1284,12 @@ export default function LocateMePage() {
                     <p className="text-heading text-foreground mb-1 max-w-[300px] mx-auto text-balance">{t('emptyTitle')}</p>
                     <p className="text-sub text-content max-w-[280px] mx-auto">{t('emptyDesc')}</p>
                   </div>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-start justify-center gap-2">
                     <button onClick={selectFolder} disabled={loading} className={btnPrimary}>{t('selectFolder')}</button>
-                    <button onClick={runSample} disabled={loading} className={btnGhost}>{t('trySample')}</button>
+                    <span className="flex flex-col items-center gap-1">
+                      <button onClick={runSample} disabled={loading} className={btnGhost}>{t('trySample')}</button>
+                      <span className="text-meta text-muted-foreground/70">{t('trySampleHint')}</span>
+                    </span>
                   </div>
                   <p className="md:hidden text-meta text-muted-foreground/90 mt-3 max-w-[280px] mx-auto">{t('mobileHint')}</p>
                   {loading && <div className="text-sub text-muted-foreground animate-pulse mt-3">{t('analyzing')}</div>}

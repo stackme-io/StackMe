@@ -9,6 +9,7 @@
   "selectFolder": "Обрати папку",
   "newAudit": "Новий аудит",
   "trySample": "Спробувати приклад",
+  "trySampleHint": "Подивись, як працює",
   "analyze": "Аналізувати",
   "clear": "Очистити",
   "pasteToggle": "…або встав один файл",

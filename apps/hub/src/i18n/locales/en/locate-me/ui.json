@@ -9,6 +9,7 @@
   "selectFolder": "Select folder",
   "newAudit": "New audit",
   "trySample": "Try sample",
+  "trySampleHint": "See how it works",
   "analyze": "Analyze",
   "clear": "Clear",
   "pasteToggle": "…or paste a single file",
