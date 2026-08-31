@@ -3,7 +3,7 @@
   "version": "v0.1.0 · Licencia MIT",
   "description": "Detección de anomalías local para datasets reales. Sube un CSV o JSON - el archivo nunca sale de tu navegador. El análisis corre completamente en DuckDB-Wasm.",
 
-  "doneLabel": "Qué hay en v0.1.0",
+  "doneLabel": "Disponible ahora",
   "done": [
     {
       "group": "Tipos de anomalías",
