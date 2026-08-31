@@ -140,6 +140,8 @@ export default function AccountMePage() {
   const isAdmin  = ADMIN_USER_ID && userId === ADMIN_USER_ID
 
   return (
+    // main is overflow-hidden, so this page owns its own vertical scroll.
+    <div className="h-full overflow-y-auto">
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
 
       <div className="flex items-center gap-4">
@@ -190,6 +192,7 @@ export default function AccountMePage() {
 
       {isAdmin && <AdminPanel getToken={getToken} />}
 
+    </div>
     </div>
   )
 }

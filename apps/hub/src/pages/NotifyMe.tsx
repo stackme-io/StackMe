@@ -81,6 +81,8 @@ export default function NotifyMePage() {
   const unreadCount = notifications.filter(n => !n.read).length
 
   return (
+    // main is overflow-hidden, so this page owns its own vertical scroll.
+    <div className="h-full overflow-y-auto">
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
 
       {/* Header */}
@@ -169,6 +171,7 @@ export default function NotifyMePage() {
         </div>
       )}
 
+    </div>
     </div>
   )
 }
