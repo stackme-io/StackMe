@@ -1418,6 +1418,9 @@ export default function LocateMePage() {
         <div style={{ display: activeTab === 'about' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-4 md:px-6 pt-5">
           <div className="max-w-2xl flex flex-col gap-4 text-body leading-relaxed text-content">
             <h2 className="text-title text-foreground">{t('aboutTitle')}</h2>
+            {/* Easter egg: LocateMe is the Caterpillar - "Who are you?" is exactly its job,
+                pinning a stable identity. Kept small, quiet, and in Carroll's original English. */}
+            <p className="text-meta text-muted-foreground/50 italic -mt-3" aria-hidden="true">Who are you?</p>
             <p><Trans t={t} i18nKey="about.p1" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p><Trans t={t} i18nKey="about.p2" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p><Trans t={t} i18nKey="about.p4" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
