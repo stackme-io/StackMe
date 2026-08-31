@@ -77,7 +77,7 @@ export default function SupportMePage() {
           <Heart className="w-4 h-4 text-muted-foreground" />
           <h1 className="text-title text-foreground">{t('support.title')}</h1>
         </div>
-        <p className="text-body text-content leading-relaxed">{t('support.lead')}</p>
+        <p className="text-body font-medium text-foreground leading-relaxed">{t('support.lead')}</p>
       </div>
 
       <div className="flex flex-col gap-3">
