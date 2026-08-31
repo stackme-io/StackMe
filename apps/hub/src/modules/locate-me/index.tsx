@@ -1185,15 +1185,16 @@ export default function LocateMePage() {
   // Reset the per-file filter whenever a new report loads.
   useEffect(() => { setFileExcluded(new Set()) }, [report])
 
-  // If the active kind filter matches none of this report's findings - the default "fragile"
-  // filter on an audit with zero fragile locators, or a filter reset to default when the
-  // component remounts after Clerk's sign-in reload - fall back to every kind present so the
-  // user never lands on an empty "nothing matches this filter" screen while results exist.
-  // Only fires on report change, so it never fights a manual chip toggle.
+  // Each new audit resets the kind filter to its natural default: fragile-first when the
+  // audit has fragile locators, otherwise every kind present. This keeps fragile-first for
+  // normal audits, stops a zero-fragile audit (or one restored after Clerk's sign-in reload)
+  // from opening on an empty "nothing matches this filter" screen, and prevents a widened
+  // filter from carrying a stale selection over into the next audit. Fires only on report
+  // change, so it never fights a manual chip toggle within the same audit.
   useEffect(() => {
     if (!report || findings.length === 0) return
     const present = new Set<Kind>(findings.map(f => f.kind))
-    if (![...filterKinds].some(k => present.has(k))) setFilterKinds(present)
+    setFilterKinds(present.has('fragile') ? new Set<Kind>(['fragile']) : present)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report])
 
