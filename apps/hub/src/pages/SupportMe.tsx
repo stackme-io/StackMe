@@ -70,6 +70,9 @@ export default function SupportMePage() {
   const card = 'flex items-start gap-3 p-4 rounded-lg border border-border hover:bg-muted/30 transition-colors'
 
   return (
+    // main is overflow-hidden, so this page owns its own vertical scroll (full width,
+    // content stays centered) - otherwise long content (crypto + free ways) gets clipped.
+    <div className="h-full overflow-y-auto">
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
 
       <div className="flex flex-col gap-3">
@@ -145,6 +148,7 @@ export default function SupportMePage() {
         </a>
       </div>
 
+    </div>
     </div>
   )
 }
