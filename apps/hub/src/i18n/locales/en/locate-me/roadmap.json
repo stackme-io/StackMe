@@ -35,7 +35,7 @@
       "group": "Privacy",
       "items": [
         { "title": "Runs locally", "desc": "Folder analyzed in your browser - code never leaves the page" },
-        { "title": "Open source",  "desc": "MIT, no signup, no data collected" }
+        { "title": "Open source",  "desc": "MIT, no signup or data collected by default" }
       ]
     }
   ],

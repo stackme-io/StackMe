@@ -35,7 +35,7 @@
       "group": "Privacidad",
       "items": [
         { "title": "Se ejecuta localmente", "desc": "La carpeta se analiza en tu navegador - el código no sale de la página" },
-        { "title": "Código abierto",        "desc": "MIT, sin registro, sin recopilación de datos" }
+        { "title": "Código abierto",        "desc": "MIT, sin registro ni recopilación de datos por defecto" }
       ]
     }
   ],
