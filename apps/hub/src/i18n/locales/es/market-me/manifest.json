@@ -53,7 +53,7 @@
     "tagQA": "QA",
     "tagBeta": "Beta",
     "groupBeta": "En beta",
-    "locateSubtitle": "Auditoría estática de localizadores para Playwright & Cypress",
+    "locateSubtitle": "Auditoría estática de localizadores para Playwright, Cypress & Selenium (Java, beta)",
     "locateNeedLabel": "Lo necesitas si",
     "locateNeed": "estás evaluando una suite de tests que no escribiste - un repo de cliente o heredado, o trabajo que estás midiendo antes de comprometerte. Una lectura rápida de qué tan frágiles son los localizadores, sin ejecutar nada. (También sirve para tu propia suite, cuando los cambios de UI rompen los tests.)",
     "locateGetLabel": "Obtienes",

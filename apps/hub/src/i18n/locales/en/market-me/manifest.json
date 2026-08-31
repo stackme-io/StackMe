@@ -53,7 +53,7 @@
     "tagQA": "QA",
     "tagBeta": "Beta",
     "groupBeta": "In beta",
-    "locateSubtitle": "Static locator audit for Playwright & Cypress",
+    "locateSubtitle": "Static locator audit for Playwright, Cypress & Selenium (Java, beta)",
     "locateNeedLabel": "You need this if",
     "locateNeed": "you're judging a test suite you didn't write - a client or legacy repo, or work you're scoping before you commit. Get a fast read on how fragile the locators are, without running a thing. (Works on your own suite too, when UI changes keep breaking tests.)",
     "locateGetLabel": "You get",
