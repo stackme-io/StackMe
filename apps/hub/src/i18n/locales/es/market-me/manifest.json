@@ -55,7 +55,7 @@
     "groupBeta": "En beta",
     "locateSubtitle": "Auditoría estática de localizadores para Playwright & Cypress",
     "locateNeedLabel": "Lo necesitas si",
-    "locateNeed": "tienes que evaluar una suite de tests que no escribiste - un repo de cliente o heredado, un proyecto al que te unes a ciegas, o trabajo que estás midiendo antes de comprometerte. Obtienes una lectura rápida de qué tan sólidos o frágiles son los localizadores, sin ejecutar nada. (También sirve para tu propia suite, cuando los cambios de UI rompen los tests.)",
+    "locateNeed": "estás evaluando una suite de tests que no escribiste - un repo de cliente o heredado, o trabajo que estás midiendo antes de comprometerte. Una lectura rápida de qué tan frágiles son los localizadores, sin ejecutar nada. (También sirve para tu propia suite, cuando los cambios de UI rompen los tests.)",
     "locateGetLabel": "Obtienes",
     "locateGet": "cada localizador clasificado por forma (frágil / estable / contexto / dinámico), el porqué, y los selectores duplicados agrupados para que arregles uno y cierres muchos. Leído estáticamente - por defecto, nada sale de tu navegador.",
     "locateNotLabel": "No es para ti si",
