@@ -108,81 +108,87 @@ function shortDir(dir: string): string {
   return segs.length <= 2 ? segs.join('/') : '…/' + segs.slice(-2).join('/')
 }
 
-function AuditControls({ sortMode, onSort, fileList, fileExcluded, onToggleFile, fileFragile }: {
-  sortMode: SortMode
-  onSort: (m: SortMode) => void
+// FILES list - the tall, variable part; it lives in the rail's scroll region.
+function FilesControls({ fileList, fileExcluded, onToggleFile, fileFragile }: {
   fileList: string[]
   fileExcluded: Set<string>
   onToggleFile: (f: string) => void
   fileFragile: Map<string, number>
 }) {
   const { t } = useTranslation('locate-me')
-  const multi = fileList.length > 1
   // Reveal the folder line only for basenames that appear more than once.
   const baseCounts = new Map<string, number>()
   for (const f of fileList) baseCounts.set(baseName(f), (baseCounts.get(baseName(f)) ?? 0) + 1)
+  return (
+    <div className="px-3 pt-5 pb-3">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-label text-muted-foreground">{t('filesTitle')}</p>
+        <span className="text-meta text-faint pr-2">{t('fragileWord')}</span>
+      </div>
+      <div className="flex flex-col gap-0.5">
+        {fileList.map(file => {
+          const on = !fileExcluded.has(file)
+          const frag = fileFragile.get(file) ?? 0
+          const collides = (baseCounts.get(baseName(file)) ?? 0) > 1
+          return (
+            <button key={file} onClick={() => onToggleFile(file)} title={file}
+              className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
+              <span className={`w-3.5 h-3.5 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? 'border-muted-foreground/50 bg-muted-foreground/15 text-foreground' : 'border-border text-transparent'}`}>
+                {on && (
+                  <svg width="9" height="9" viewBox="0 0 8 8" fill="none">
+                    <path d="M1.5 4L3 5.5L6.5 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-sub truncate">{baseName(file)}</span>
+                {collides && dirName(file) && (
+                  <span className="block text-meta text-muted-foreground/70 truncate">{shortDir(dirName(file))}</span>
+                )}
+              </span>
+              {frag > 0 && (
+                <span title={t('nLocators', { count: frag })} className="flex items-center gap-1 flex-shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-k-fragile flex-shrink-0" />
+                  <span className="text-meta text-muted-foreground tabular-nums">{frag}</span>
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// SORT - short and fixed; pinned above the tab nav so it never scrolls out of view.
+function SortControls({ sortMode, onSort, fileList }: {
+  sortMode: SortMode
+  onSort: (m: SortMode) => void
+  fileList: string[]
+}) {
+  const { t } = useTranslation('locate-me')
+  const multi = fileList.length > 1
   const sorts: [SortMode, string, string][] = [
     ['file', t('sortFile'), t('sortFileHint')],
     ['repeated', t('sortRepeated'), t('sortRepeatedHint')],
     ...(multi ? [['hot', t('sortHot'), t('sortHotHint')] as [SortMode, string, string]] : []),
   ]
   return (
-    <div className="flex flex-col">
-      {multi && (
-        <div className="px-3 pt-5 pb-3 border-b border-border">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-label text-muted-foreground">{t('filesTitle')}</p>
-            <span className="text-meta text-faint pr-2">{t('fragileWord')}</span>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            {fileList.map(file => {
-              const on = !fileExcluded.has(file)
-              const frag = fileFragile.get(file) ?? 0
-              const collides = (baseCounts.get(baseName(file)) ?? 0) > 1
-              return (
-                <button key={file} onClick={() => onToggleFile(file)} title={file}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
-                  <span className={`w-3.5 h-3.5 rounded-sm border flex-shrink-0 flex items-center justify-center ${on ? 'border-muted-foreground/50 bg-muted-foreground/15 text-foreground' : 'border-border text-transparent'}`}>
-                    {on && (
-                      <svg width="9" height="9" viewBox="0 0 8 8" fill="none">
-                        <path d="M1.5 4L3 5.5L6.5 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </span>
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-sub truncate">{baseName(file)}</span>
-                    {collides && dirName(file) && (
-                      <span className="block text-meta text-muted-foreground/70 truncate">{shortDir(dirName(file))}</span>
-                    )}
-                  </span>
-                  {frag > 0 && (
-                    <span title={t('nLocators', { count: frag })} className="flex items-center gap-1 flex-shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-k-fragile flex-shrink-0" />
-                      <span className="text-meta text-muted-foreground tabular-nums">{frag}</span>
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-      <div className="px-3 pt-5 pb-3">
-        <div className="mb-5"><p className="text-label text-muted-foreground">{t('sortBy')}</p></div>
-        {/* Flat list (same visual language as FILES above) and the hint shows only under
-            the selected option - three permanent hint lines become one. */}
-        <div className="flex flex-col gap-0.5">
-          {sorts.map(([m, label, hint]) => {
-            const on = sortMode === m
-            return (
-              <button key={m} onClick={() => onSort(m)}
-                className={`flex flex-col items-start gap-0.5 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
-                <span className="text-sub">{label}</span>
-                {on && <span className="text-meta text-muted-foreground/80 leading-snug">{hint}</span>}
-              </button>
-            )
-          })}
-        </div>
+    <div className="px-3 pt-4 pb-3">
+      <div className="mb-3"><p className="text-label text-muted-foreground">{t('sortBy')}</p></div>
+      {/* Flat list (same visual language as FILES) and the hint shows only under the
+          selected option - three permanent hint lines become one. */}
+      <div className="flex flex-col gap-0.5">
+        {sorts.map(([m, label, hint]) => {
+          const on = sortMode === m
+          return (
+            <button key={m} onClick={() => onSort(m)}
+              className={`flex flex-col items-start gap-0.5 px-2 py-1.5 rounded-md text-left transition-colors ${on ? 'bg-muted/50 text-foreground' : 'text-muted-foreground hover:bg-muted/30'}`}>
+              <span className="text-sub">{label}</span>
+              {on && <span className="text-meta text-muted-foreground/80 leading-snug">{hint}</span>}
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -956,16 +962,21 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
     { id: 'about',   label: t('tabs.about'),   Icon: Info },
     { id: 'privacy', label: t('tabs.privacy'), Icon: Shield },
   ]
+  const multi = fileList.length > 1
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto">
-        {controlsVisible && (
-          <div className={controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}>
-            <AuditControls sortMode={sortMode} onSort={onSort} fileList={fileList} fileExcluded={fileExcluded} onToggleFile={onToggleFile} fileFragile={fileFragile} />
-          </div>
-        )}
-      </div>
-      <nav className="border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
+      {/* FILES scrolls; SORT is pinned above the tab nav so it never scrolls out of view. */}
+      {controlsVisible && multi && (
+        <div className={`flex-1 min-h-0 overflow-y-auto ${controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}`}>
+          <FilesControls fileList={fileList} fileExcluded={fileExcluded} onToggleFile={onToggleFile} fileFragile={fileFragile} />
+        </div>
+      )}
+      {controlsVisible && (
+        <div className={`flex-shrink-0 ${multi ? 'border-t border-border' : ''} ${controlsActive ? '' : 'opacity-50 pointer-events-none select-none'}`}>
+          <SortControls sortMode={sortMode} onSort={onSort} fileList={fileList} />
+        </div>
+      )}
+      <nav className="mt-auto border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
         {nav.map(({ id, label, Icon }) => (
           <button key={id} onClick={() => onNav(id)}
             style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)' } : undefined}
