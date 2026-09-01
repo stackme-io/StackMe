@@ -556,7 +556,7 @@ function FindingsTable({ rows, dup, selected, onSelect, density }: {
   const fileW = compact ? 'w-[200px] 2xl:w-[240px]' : 'w-[180px] 2xl:w-[220px]'
   const fileText = compact ? 'text-[13px]' : 'text-meta'
   const selCls = compact
-    ? 'text-[13px] text-foreground bg-transparent p-0 truncate flex-1 min-w-0'
+    ? 'text-[12px] text-foreground bg-transparent p-0 truncate flex-1 min-w-0 font-mono'
     : 'text-code text-foreground break-all bg-transparent p-0'
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 md:px-2">
