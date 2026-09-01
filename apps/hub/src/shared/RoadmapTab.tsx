@@ -206,7 +206,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
           <div className="h-px flex-1 bg-primary/30" />
           <span className="text-label text-foreground inline-flex items-center gap-1.5">
             {t('doneLabel')}
-            <span className="text-[9px] text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">{doneOpen ? '▾' : '▸'}</span>
+            <span className="text-[15px] leading-none text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">{doneOpen ? '▾' : '▸'}</span>
           </span>
           <div className="h-px flex-1 bg-primary/30" />
         </button>
