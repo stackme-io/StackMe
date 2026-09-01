@@ -553,7 +553,7 @@ function FindingsTable({ rows, dup, selected, onSelect, density }: {
   const compact = density === 'compact'
   const py = compact ? 'py-1.5' : 'py-3'
   const kindW = compact ? 'w-[48px]' : 'w-[116px]'
-  const fileW = compact ? 'w-[160px] 2xl:w-[190px]' : 'w-[200px] xl:w-[300px] 2xl:w-[380px]'
+  const fileW = compact ? 'w-[160px] 2xl:w-[190px]' : 'w-[200px] 2xl:w-[340px]'
   const fileText = compact ? 'text-[13px]' : 'text-meta'
   const selCls = compact
     ? 'text-[12px] text-foreground bg-transparent p-0 truncate flex-1 min-w-0 font-mono'
