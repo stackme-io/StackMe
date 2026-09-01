@@ -101,7 +101,7 @@
   },
   "privacy": {
     "title": "Privacidad",
-    "lead": "Por defecto, todo permanece en tu dispositivo - LocateMe lee tus localizadores localmente y no se envía nada a ningún lado.",
+    "lead": "Por defecto, todo permanece en tu dispositivo - LocateMe lee tus localizadores localmente y no se envía nada a ningún lado. La única excepción: si guardas un informe en tu cuenta - lo mismo que haces a diario en cualquier app - solo ese informe se sube, para que puedas volver a abrirlo más tarde.",
     "verifyTitle": "Compruébalo tú mismo",
     "verifyIntro": "No nos creas sin más - puedes comprobarlo en tu propio navegador:",
     "verifySteps": [
@@ -110,7 +110,7 @@
       "Ejecuta una auditoría: Probar ejemplo, pega un archivo o elige una carpeta",
       "Observa: cero peticiones salientes con tus localizadores o código"
     ],
-    "save": "Si eliges <b>guardar un informe en tu cuenta</b>, ese informe (incluidas las cadenas de selectores y fragmentos cortos de código) se sube a nuestros servidores para que puedas acceder a él más tarde. Descargar un informe a tu propio ordenador es totalmente local. Código abierto, MIT."
+    "save": "Un informe guardado incluye sus cadenas de selectores y fragmentos cortos de código. Descargar un informe a tu propio ordenador, en cambio, es totalmente local. Código abierto, MIT."
   },
   "aboutMethodTitle": "Método",
   "ladderTitle": "Escala de prioridad",

@@ -101,7 +101,7 @@
   },
   "privacy": {
     "title": "Privacy",
-    "lead": "By default, everything stays on your device - LocateMe reads your locators locally and nothing is sent anywhere.",
+    "lead": "By default, everything stays on your device - LocateMe reads your locators locally, and nothing is sent anywhere. The one exception: if you save a report to your account - the same everyday thing you do in any app - only that report is uploaded, so you can reopen it later.",
     "verifyTitle": "Verify it yourself",
     "verifyIntro": "Don't take our word for it - you can check in your own browser:",
     "verifySteps": [
@@ -110,7 +110,7 @@
       "Run an audit: Try sample, paste a file, or pick a folder",
       "Observe: zero outbound requests containing your selectors or code"
     ],
-    "save": "If you choose to <b>save a report to your account</b>, that report (including selector strings and short code snippets) is uploaded to our servers so you can access it later. Downloading a report to your own computer stays fully local. Open source, MIT."
+    "save": "A saved report includes its selector strings and short code snippets. Downloading a report to your own computer instead stays fully local. Open source, MIT."
   },
   "aboutMethodTitle": "Method",
   "ladderTitle": "Priority ladder",
