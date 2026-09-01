@@ -7,7 +7,7 @@ import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
-import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield, List, AlignJustify } from 'lucide-react'
+import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -1263,8 +1263,9 @@ export default function LocateMePage() {
   // TSV so it pastes into Docs/Sheets as a real table; header mirrors the visible columns.
   const copyTable = () => {
     if (rows.length === 0) return
+    // Mirror the visible view: compact shows basenames, standard shows full paths.
     const header = [t('colKind'), t('colLocation'), t('colSelector')].join('\t')
-    const body = rows.map(f => [t(`kinds.${f.kind}.label`), `${f.file}:${f.line}`, selectorText(f)].join('\t')).join('\n')
+    const body = rows.map(f => [t(`kinds.${f.kind}.label`), `${density === 'compact' ? baseName(f.file) : f.file}:${f.line}`, selectorText(f)].join('\t')).join('\n')
     navigator.clipboard?.writeText(`${header}\n${body}`)
       .then(() => { setCopiedTable(true); setTimeout(() => setCopiedTable(false), 1500) })
       .catch(() => {})
@@ -1458,24 +1459,25 @@ export default function LocateMePage() {
                         {/* Left block spans the table width: "Showing X of Y" at the far left,
                             "Copy table" pinned to the table's right edge (where the panel begins). */}
                         <div className="flex-1 min-w-0 flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2 min-w-0">
-                            {/* Density toggle - standard (roomy, wraps) vs compact (13px, one line). */}
-                            <div className="flex items-center rounded-md border border-border/60 overflow-hidden flex-shrink-0">
-                              <button onClick={() => setDensityMode('standard')} title={t('viewStandard')} aria-label={t('viewStandard')}
-                                className={`flex items-center justify-center w-6 h-6 transition-colors ${density === 'standard' ? 'text-foreground bg-muted/60' : 'text-muted-foreground/60 hover:text-foreground'}`}>
-                                <List className="w-3.5 h-3.5" />
+                          <p className="text-meta text-muted-foreground whitespace-nowrap">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                          <div className="flex items-center gap-3 flex-shrink-0">
+                            {/* Density toggle - small text, sits next to Copy table on the right. */}
+                            <span className="text-meta flex items-center gap-1.5 flex-shrink-0">
+                              <button onClick={() => setDensityMode('standard')}
+                                className={`transition-colors ${density === 'standard' ? 'text-foreground' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+                                {t('viewStandard')}
                               </button>
-                              <button onClick={() => setDensityMode('compact')} title={t('viewCompact')} aria-label={t('viewCompact')}
-                                className={`flex items-center justify-center w-6 h-6 transition-colors ${density === 'compact' ? 'text-foreground bg-muted/60' : 'text-muted-foreground/60 hover:text-foreground'}`}>
-                                <AlignJustify className="w-3.5 h-3.5" />
+                              <span className="text-muted-foreground/30" aria-hidden="true">|</span>
+                              <button onClick={() => setDensityMode('compact')}
+                                className={`transition-colors ${density === 'compact' ? 'text-foreground' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+                                {t('viewCompact')}
                               </button>
-                            </div>
-                            <p className="text-meta text-muted-foreground whitespace-nowrap">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                            </span>
+                            <button onClick={copyTable}
+                              className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
+                              {copiedTable ? t('copied') : t('copyTable')}
+                            </button>
                           </div>
-                          <button onClick={copyTable}
-                            className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
-                            {copiedTable ? t('copied') : t('copyTable')}
-                          </button>
                         </div>
                         {/* Right block mirrors the inspector panel width so "How we judge" sits above it. */}
                         <div className="flex items-center justify-end flex-shrink-0 md:w-[380px] 2xl:w-[440px]">
