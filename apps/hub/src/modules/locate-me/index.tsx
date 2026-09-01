@@ -7,7 +7,7 @@ import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
-import { Anchor, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2, Shield } from 'lucide-react'
+import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -962,6 +962,30 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
     { id: 'about',   label: t('tabs.about'),   Icon: Info },
     { id: 'privacy', label: t('tabs.privacy'), Icon: Shield },
   ]
+  // Working tabs stay visible; read-once info (Roadmap/About) goes into an upward "More"
+  // menu so it stops eating rail height. Privacy stays visible as a passive trust signal.
+  const primary = nav.filter(n => n.id === 'audit' || n.id === 'reports')
+  const privacyItem = nav.find(n => n.id === 'privacy')!
+  const more = nav.filter(n => n.id === 'roadmap' || n.id === 'about')
+  const activeMore = more.some(n => n.id === activeTab)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const moreRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!moreOpen) return
+    const onDoc = (e: MouseEvent) => { if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [moreOpen])
+  const renderNavButton = ({ id, label, Icon }: (typeof nav)[number]) => (
+    <button key={id} onClick={() => { onNav(id); setMoreOpen(false) }}
+      style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)' } : undefined}
+      className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-sub text-left transition-colors ${
+        activeTab === id ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+      }`}>
+      <Icon className="w-3.5 h-3.5 flex-shrink-0" style={activeTab === id ? { color: 'var(--tool-accent,#22d3ee)' } : undefined} />
+      {label}
+    </button>
+  )
   const multi = fileList.length > 1
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
@@ -977,18 +1001,32 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
         </div>
       )}
       <nav className="mt-auto border-t border-border p-3 flex flex-col gap-1.5 flex-shrink-0">
-        {nav.map(({ id, label, Icon }) => (
-          <button key={id} onClick={() => onNav(id)}
-            style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)' } : undefined}
-            className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-sub text-left transition-colors ${
-              activeTab === id
-                ? 'text-foreground font-medium'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
-            }`}>
-            <Icon className="w-3.5 h-3.5 flex-shrink-0" style={activeTab === id ? { color: 'var(--tool-accent,#22d3ee)' } : undefined} />
-            {label}
-          </button>
-        ))}
+        {primary.map(renderNavButton)}
+
+        {/* Privacy stays a tab; the caret on its right opens Roadmap/About in an upward menu
+            that auto-closes on any outside click. Read-once info, tucked away but reachable. */}
+        <div className="relative" ref={moreRef}>
+          {moreOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1.5 p-1.5 rounded-md border border-border bg-card shadow-lg flex flex-col gap-1.5 z-20">
+              {more.map(renderNavButton)}
+            </div>
+          )}
+          <div
+            style={activeTab === 'privacy' ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)' } : undefined}
+            className={`flex items-center rounded-md transition-colors ${activeTab === 'privacy' ? '' : 'hover:bg-muted/30'}`}>
+            <button onClick={() => { onNav('privacy'); setMoreOpen(false) }}
+              className={`flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 text-sub text-left transition-colors ${
+                activeTab === 'privacy' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+              }`}>
+              <privacyItem.Icon className="w-3.5 h-3.5 flex-shrink-0" style={activeTab === 'privacy' ? { color: 'var(--tool-accent,#22d3ee)' } : undefined} />
+              {privacyItem.label}
+            </button>
+            <button onClick={() => setMoreOpen(o => !o)} aria-label={t('tabs.more')} title={t('tabs.more')}
+              className={`flex-shrink-0 px-2 py-2 transition-colors ${activeMore ? 'text-[var(--tool-accent,#22d3ee)]' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </div>
       </nav>
     </div>
   )
