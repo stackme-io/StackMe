@@ -197,6 +197,41 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
     </div>
   )
 
+  // A roadmap row with a vote control - shared by "Coming up" and "Later" so both are votable.
+  const renderVoteRow = (item: RoadmapItem, prefix: string) => {
+    const key   = toKey(item.title)
+    const voted = userVotes.has(key)
+    const count = counts[key] ?? 0
+    const tipId = `vote-${key}`
+    return (
+      <div key={item.title} className="relative">
+        <RoadmapRow
+          prefix={prefix}
+          title={item.title}
+          desc={item.desc}
+          action={
+            <div className="relative flex-shrink-0">
+              <button
+                onClick={() => handleVote(item.title)}
+                disabled={pending.has(key)}
+                className={`text-meta flex items-center gap-1 transition-colors disabled:opacity-40 ${
+                  voted ? 'text-primary hover:text-primary/70' : 'text-muted-foreground/40 hover:text-foreground'
+                }`}
+              >
+                ▲ {count > 0 ? count : 'vote'}
+              </button>
+              {tooltip === tipId && (
+                <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 bg-popover border border-border rounded text-meta text-muted-foreground whitespace-nowrap shadow-sm z-10">
+                  {t('signInToVote')}
+                </div>
+              )}
+            </div>
+          }
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-2xl pb-8">
 
@@ -222,39 +257,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
       <div className="mb-6">
         <SectionDivider label={t('nextLabel')} accent />
         <p className="text-meta text-muted-foreground/95 mb-3 leading-relaxed">{t('nextDesc')}</p>
-        {(t('next', { returnObjects: true }) as RoadmapItem[]).map(item => {
-          const key   = toKey(item.title)
-          const voted = userVotes.has(key)
-          const count = counts[key] ?? 0
-          const tipId = `vote-${key}`
-          return (
-            <div key={item.title} className="relative">
-              <RoadmapRow
-                prefix="→"
-                title={item.title}
-                desc={item.desc}
-                action={
-                  <div className="relative flex-shrink-0">
-                    <button
-                      onClick={() => handleVote(item.title)}
-                      disabled={pending.has(key)}
-                      className={`text-meta flex items-center gap-1 transition-colors disabled:opacity-40 ${
-                        voted ? 'text-primary hover:text-primary/70' : 'text-muted-foreground/40 hover:text-foreground'
-                      }`}
-                    >
-                      ▲ {count > 0 ? count : 'vote'}
-                    </button>
-                    {tooltip === tipId && (
-                      <div className="absolute bottom-full right-0 mb-1.5 px-2 py-1 bg-popover border border-border rounded text-meta text-muted-foreground whitespace-nowrap shadow-sm z-10">
-                        {t('signInToVote')}
-                      </div>
-                    )}
-                  </div>
-                }
-              />
-            </div>
-          )
-        })}
+        {(t('next', { returnObjects: true }) as RoadmapItem[]).map(item => renderVoteRow(item, '→'))}
       </div>
 
       {/* Later - collapsed */}
@@ -269,9 +272,7 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
           </p>
           <div className="h-px flex-1 bg-border" />
         </button>
-        {laterOpen && (t('later', { returnObjects: true }) as RoadmapItem[]).map(item => (
-          <RoadmapRow key={item.title} prefix="·" title={item.title} desc={item.desc} />
-        ))}
+        {laterOpen && (t('later', { returnObjects: true }) as RoadmapItem[]).map(item => renderVoteRow(item, '·'))}
       </div>
 
       {/* From the community */}
