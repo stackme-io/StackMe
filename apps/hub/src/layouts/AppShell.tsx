@@ -187,16 +187,20 @@ export default function AppShell() {
       <header className="flex items-center justify-between px-4 h-11 border-b border-border flex-shrink-0">
 
         <div className="flex items-center gap-3 min-w-0">
-          {railAvailable && (
-            <button
-              onClick={toggleRail}
-              className="hidden md:flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
-              aria-label={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
-            >
-              {railOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
-            </button>
-          )}
+          {/* Reserve the toggle slot on desktop always, so the logo doesn't jump when the
+              rail (and its toggle) is only present on the Audit tab. */}
+          <div className="hidden md:block w-7 flex-shrink-0">
+            {railAvailable && (
+              <button
+                onClick={toggleRail}
+                className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
+                aria-label={railOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
+              >
+                {railOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
+              </button>
+            )}
+          </div>
           <Link to="/market-me" className="flex items-center gap-3 flex-shrink-0" onClick={() => openPanel(MARKET_ME_MANIFEST)}>
             <LogoMark color={logoColor} height={22} />
             <span className="hidden sm:inline text-sm font-medium text-muted-foreground">StackMe</span>
