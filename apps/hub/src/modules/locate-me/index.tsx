@@ -1473,6 +1473,7 @@ export default function LocateMePage() {
                                 {t('viewCompact')}
                               </button>
                             </span>
+                            <span className="w-px h-3 bg-border/60 flex-shrink-0" aria-hidden="true" />
                             <button onClick={copyTable}
                               className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
                               {copiedTable ? t('copied') : t('copyTable')}
