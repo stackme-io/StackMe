@@ -295,6 +295,10 @@ function scopedReport(report: ReportData, fileExcluded: Set<string>): ReportData
 // (in-memory only) would be lost, so we stash it under this key before sign-in and restore
 // it + reopen the save dialog on return. See LocateMePage.
 const RESUME_SAVE_KEY = 'locate:resumeSave'
+// Persist the in-memory audit for this tab session so it survives leaving LocateMe (route change,
+// e.g. opening Notifications) or a reload. sessionStorage: tab-scoped, cleared when the tab closes
+// - matches "ephemeral, local-only". Only report/detection/source; derivatives are re-derived.
+const AUDIT_KEY = 'locate:audit'
 
 // Explicit data export - the deliberate opposite of Share. Opens a self-contained,
 // printable HTML report (save as PDF via the browser). Client-safe masks paths + code.
@@ -1068,27 +1072,43 @@ export default function LocateMePage() {
   // it would otherwise be gone), send them back to /locate-me. fileExcluded is not persisted:
   // the report-change effect resets it anyway, so it returns to "all files included".
   const requestSignInToSave = () => {
-    try { sessionStorage.setItem(RESUME_SAVE_KEY, JSON.stringify({ report, detection, source })) } catch { /* ignore */ }
+    // The audit itself is already persisted under AUDIT_KEY; here we only flag the intent to
+    // reopen the save dialog after Clerk's sign-in reload.
+    try { sessionStorage.setItem(RESUME_SAVE_KEY, '1') } catch { /* ignore */ }
     openSignIn({ forceRedirectUrl: '/locate-me' })
   }
 
-  // On return from sign-in: restore the stashed audit and flip resumeSave so the report
-  // button reopens the save dialog. Runs once isSignedIn resolves true after the reload.
+  // Restore the audit on mount so it survives leaving LocateMe (route change) or a reload.
+  // Mount-only and NOT gated on auth - the whole point is to be independent of sign-in.
   useEffect(() => {
-    if (!isSignedIn) return
-    const raw = sessionStorage.getItem(RESUME_SAVE_KEY)
-    if (!raw) return
-    sessionStorage.removeItem(RESUME_SAVE_KEY)
     try {
+      const raw = sessionStorage.getItem(AUDIT_KEY)
+      if (!raw) return
       const s = JSON.parse(raw) as { report?: ReportData; detection?: Detection | null; source?: string | null }
       if (s.report) {
         setReport(s.report)
         setDetection(s.detection ?? null)
         setSource(s.source ?? null)
-        setActiveTab('audit')
-        setResumeSave(true)
       }
     } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist the current audit whenever it changes. Skipped on quota overflow (big audits) so a
+  // failed write never white-screens - the audit just won't survive the next reload.
+  useEffect(() => {
+    if (!report) return
+    try { sessionStorage.setItem(AUDIT_KEY, JSON.stringify({ report, detection, source })) } catch { /* ignore */ }
+  }, [report, detection, source])
+
+  // On return from sign-in: the audit is already restored by the mount-hydrate effect above;
+  // here we only reopen the save dialog. Runs once isSignedIn resolves true after the reload.
+  useEffect(() => {
+    if (!isSignedIn) return
+    if (!sessionStorage.getItem(RESUME_SAVE_KEY)) return
+    sessionStorage.removeItem(RESUME_SAVE_KEY)
+    setActiveTab('audit')
+    setResumeSave(true)
   }, [isSignedIn])
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
