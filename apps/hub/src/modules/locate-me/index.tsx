@@ -581,7 +581,7 @@ function FindingsTable({ rows, dup, selected, onSelect, density }: {
                     {!compact && <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>}
                   </span>
                 </td>
-                <td className={`px-4 ${py} ${fileText} text-muted-foreground font-mono truncate transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`} title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
+                <td className={`px-4 ${py} ${fileText} text-muted-foreground font-mono truncate transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`} title={`${f.file}:${f.line}`}>{compact ? `${baseName(f.file)}:${f.line}` : `${f.file}:${f.line}`}</td>
                 <td className={`px-4 ${py} rounded-r-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
                   <span className={`flex ${compact ? 'items-center' : 'items-start'} gap-2 min-w-0`}>
                     <code className={selCls}>{selectorText(f)}</code>
