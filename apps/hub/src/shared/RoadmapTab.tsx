@@ -64,6 +64,8 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
 
   // Later collapsed
   const [laterOpen, setLaterOpen] = useState(false)
+  // Available now - collapsible, open by default; small caret toggle in the divider
+  const [doneOpen, setDoneOpen] = useState(true)
 
   // Community suggestions
   const [suggestions, setSuggestions]   = useState<CommSuggestion[]>([])
@@ -198,13 +200,22 @@ export function RoadmapTab({ namespace }: RoadmapTabProps) {
   return (
     <div className="max-w-2xl pb-8">
 
-      {/* Done - two columns to shorten the list */}
+      {/* Done - two columns to shorten the list; collapsible via a small caret in the divider */}
       <div className="mb-6">
-        <SectionDivider label={t('doneLabel')} accent />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-          <div>{doneGroups.slice(0, doneMid).map(renderDoneGroup)}</div>
-          <div>{doneGroups.slice(doneMid).map(renderDoneGroup)}</div>
-        </div>
+        <button onClick={() => setDoneOpen(o => !o)} className="w-full flex items-center gap-3 mb-3 group">
+          <div className="h-px flex-1 bg-primary/30" />
+          <span className="text-label text-foreground inline-flex items-center gap-1.5">
+            {t('doneLabel')}
+            <span className="text-[9px] text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">{doneOpen ? '▾' : '▸'}</span>
+          </span>
+          <div className="h-px flex-1 bg-primary/30" />
+        </button>
+        {doneOpen && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+            <div>{doneGroups.slice(0, doneMid).map(renderDoneGroup)}</div>
+            <div>{doneGroups.slice(doneMid).map(renderDoneGroup)}</div>
+          </div>
+        )}
       </div>
 
       {/* Coming up - with voting */}
