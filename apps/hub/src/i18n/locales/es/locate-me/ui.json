@@ -99,6 +99,19 @@
     "p4": "Cómo juzga: LocateMe ve cómo está escrito un locator, no tu app en vivo. Marca un locator como frágil <b>solo cuando el código por sí solo lo demuestra</b> - una ruta posicional, una clase o id autogenerada. Cuando una señal es ambigua, calla en lugar de dar una falsa alarma que no podrías descartar. Así que un informe limpio significa \"nada que podamos probar está mal\", no \"nada está mal\".",
     "precision": "La regla: precisión sobre ruido."
   },
+  "privacy": {
+    "title": "Privacidad",
+    "lead": "Por defecto, todo permanece en tu dispositivo - LocateMe lee tus localizadores localmente y no se envía nada a ningún lado.",
+    "verifyTitle": "Compruébalo tú mismo",
+    "verifyIntro": "No nos creas sin más - puedes comprobarlo en tu propio navegador:",
+    "verifySteps": [
+      "Abre stackme-app.vercel.app/locate-me en un navegador",
+      "Pulsa F12 - DevTools - pestaña Network - borra el registro",
+      "Ejecuta una auditoría: Probar ejemplo, pega un archivo o elige una carpeta",
+      "Observa: cero peticiones salientes con tus localizadores o código"
+    ],
+    "save": "Si eliges <b>guardar un informe en tu cuenta</b>, ese informe (incluidas las cadenas de selectores y fragmentos cortos de código) se sube a nuestros servidores para que puedas acceder a él más tarde. Descargar un informe a tu propio ordenador es totalmente local. Código abierto, MIT."
+  },
   "aboutMethodTitle": "Método",
   "ladderTitle": "Escala de prioridad",
   "ladder": {

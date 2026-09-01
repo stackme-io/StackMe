@@ -7,7 +7,7 @@ import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
-import { Anchor, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2 } from 'lucide-react'
+import { Anchor, Route, Info, ArrowRight, ChevronRight, FileText, Archive, Trash2, Shield } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -51,7 +51,7 @@ const KIND_CHIP: Record<Kind, string> = {
   dynamic: 'bg-k-dynamic/15 border-k-dynamic/40',
 }
 
-const TAB_IDS: string[] = ['audit', 'roadmap', 'about', 'reports']
+const TAB_IDS: string[] = ['audit', 'roadmap', 'about', 'privacy', 'reports']
 type SortMode = 'file' | 'repeated' | 'hot'
 
 interface WorkerResult {
@@ -954,6 +954,7 @@ function Rail({ activeTab, onNav, controlsVisible, controlsActive, sortMode, onS
     { id: 'reports', label: t('tabs.reports'), Icon: Archive },
     { id: 'roadmap', label: t('tabs.roadmap'), Icon: Route },
     { id: 'about',   label: t('tabs.about'),   Icon: Info },
+    { id: 'privacy', label: t('tabs.privacy'), Icon: Shield },
   ]
   return (
     <div className="w-[208px] h-full flex flex-col overflow-hidden">
@@ -1235,7 +1236,7 @@ export default function LocateMePage() {
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* ---- Mobile sub-nav (replaces the desktop rail nav) ---- */}
         <div className="md:hidden flex items-center gap-1 px-3 py-2 border-b border-border/60 overflow-x-auto flex-shrink-0">
-          {([['audit', Anchor], ['reports', Archive], ['roadmap', Route], ['about', Info]] as const).map(([id, Icon]) => (
+          {([['audit', Anchor], ['reports', Archive], ['roadmap', Route], ['about', Info], ['privacy', Shield]] as const).map(([id, Icon]) => (
             <button key={id} onClick={() => navTo(id)}
               style={activeTab === id ? { backgroundColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 14%, transparent)', borderColor: 'color-mix(in oklab, var(--tool-accent,#22d3ee) 45%, transparent)' } : undefined}
               className={`flex items-center gap-1 px-2 py-1.5 rounded-md border text-meta whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === id ? 'text-foreground font-medium' : 'border-border/50 text-muted-foreground'}`}>
@@ -1428,7 +1429,6 @@ export default function LocateMePage() {
             <p><Trans t={t} i18nKey="about.p2" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p><Trans t={t} i18nKey="about.p4" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
             <p className="text-foreground font-medium border-l-2 border-l-border bg-muted/30 rounded-r px-3.5 py-2.5">{t('about.precision')}</p>
-            <p className="border-t border-border/50 pt-4 mt-1"><Trans t={t} i18nKey="about.p3" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
 
             <div id="locate-method" className="border-t border-border/50 pt-5 mt-2 flex flex-col gap-4 scroll-mt-4">
               <h3 className="text-heading text-foreground">{t('aboutMethodTitle')}</h3>
@@ -1439,6 +1439,31 @@ export default function LocateMePage() {
               <p>{t('method.p4')}</p>
               <a href={RULES_URL} target="_blank" rel="noopener noreferrer" className="text-[var(--tool-accent,#22d3ee)] hover:underline self-start">{t('fullRuleList')}</a>
             </div>
+          </div>
+        </div>
+
+        {/* ---- PRIVACY ---- */}
+        <div style={{ display: activeTab === 'privacy' ? 'block' : 'none' }} className="flex-1 overflow-y-auto px-4 md:px-6 pt-5">
+          <div className="max-w-2xl flex flex-col gap-4 text-body leading-relaxed text-content">
+            <h2 className="text-title text-foreground">{t('privacy.title')}</h2>
+            <p className="text-foreground font-medium">{t('privacy.lead')}</p>
+
+            {/* Verify it yourself - the trust anchor. Steps mirror AnalyzeMe's Security tab
+                so "check it yourself" reads as one product pattern. Calm, factual, no hype. */}
+            <div className="border border-border rounded-lg bg-muted/20 px-4 py-3.5 flex flex-col gap-2">
+              <h3 className="text-heading text-foreground">{t('privacy.verifyTitle')}</h3>
+              <p className="text-sub text-content">{t('privacy.verifyIntro')}</p>
+              <ol className="flex flex-col gap-1.5 mt-1">
+                {(t('privacy.verifySteps', { returnObjects: true }) as string[]).map((s, i) => (
+                  <li key={i} className="flex gap-2.5 text-sub text-content">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-meta text-muted-foreground">{i + 1}</span>
+                    <span className="min-w-0">{s}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <p><Trans t={t} i18nKey="privacy.save" components={{ b: <strong className="font-medium text-foreground" /> }} /></p>
           </div>
         </div>
 
