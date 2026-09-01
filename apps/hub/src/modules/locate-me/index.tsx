@@ -7,7 +7,7 @@ import type { Detection } from '@locateme/core/detect'
 import { pickAndReadFolder, supportsFolderPicker } from './folder'
 import { SAMPLE_FILES } from './sample'
 import { renderHtml } from '@locateme/core/report'
-import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield } from 'lucide-react'
+import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield, List, AlignJustify } from 'lucide-react'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -540,20 +540,31 @@ function SavedReports() {
   )
 }
 
-function FindingsTable({ rows, dup, selected, onSelect }: {
+function FindingsTable({ rows, dup, selected, onSelect, density }: {
   rows: Finding[]
   dup: Map<string, number>
   selected: Finding | null
   onSelect: (f: Finding) => void
+  density: 'standard' | 'compact'
 }) {
   const { t } = useTranslation('locate-me')
+  // Compact: tighter rows, 13px file + selector on one line (truncated, full text in the
+  // inspector), TYPE reduced to its colour dot. Standard keeps the roomy, wrapping layout.
+  const compact = density === 'compact'
+  const py = compact ? 'py-1.5' : 'py-3'
+  const kindW = compact ? 'w-[48px]' : 'w-[116px]'
+  const fileW = compact ? 'w-[200px] 2xl:w-[240px]' : 'w-[180px] 2xl:w-[220px]'
+  const fileText = compact ? 'text-[13px]' : 'text-meta'
+  const selCls = compact
+    ? 'text-[13px] text-foreground bg-transparent p-0 truncate flex-1 min-w-0'
+    : 'text-code text-foreground break-all bg-transparent p-0'
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 md:px-2">
       <table className="hidden md:table w-full border-separate [border-spacing:0_2px] table-fixed">
         <thead className="sticky top-0 z-10">
           <tr className="bg-card">
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[116px]">{t('colKind')}</th>
-            <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border w-[180px] 2xl:w-[220px]">{t('colLocation')}</th>
+            <th className={`px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border ${kindW}`}>{compact ? '' : t('colKind')}</th>
+            <th className={`px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border ${fileW}`}>{t('colLocation')}</th>
             <th className="px-4 py-2.5 text-left text-label text-muted-foreground border-b border-border">{t('colSelector')}</th>
           </tr>
         </thead>
@@ -564,16 +575,16 @@ function FindingsTable({ rows, dup, selected, onSelect }: {
             const s = KIND_STYLE[f.kind]
             return (
               <tr key={i} onClick={() => onSelect(f)} className="group cursor-pointer">
-                <td className={`px-4 py-3 rounded-l-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
+                <td className={`px-4 ${py} rounded-l-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
                   <span className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
-                    <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>
+                    <span className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} title={compact ? t(`kinds.${f.kind}.label`) : undefined} />
+                    {!compact && <span className="text-meta text-muted-foreground">{t(`kinds.${f.kind}.label`)}</span>}
                   </span>
                 </td>
-                <td className={`px-4 py-3 text-meta text-muted-foreground font-mono truncate transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`} title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
-                <td className={`px-4 py-3 rounded-r-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
-                  <span className="flex items-start gap-2 min-w-0">
-                    <code className="text-code text-foreground break-all bg-transparent p-0">{selectorText(f)}</code>
+                <td className={`px-4 ${py} ${fileText} text-muted-foreground font-mono truncate transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`} title={`${f.file}:${f.line}`}>{f.file}:{f.line}</td>
+                <td className={`px-4 ${py} rounded-r-[6px] transition-colors ${isSel ? 'bg-[#22d3ee]/15' : 'group-hover:bg-muted/25'}`}>
+                  <span className={`flex ${compact ? 'items-center' : 'items-start'} gap-2 min-w-0`}>
+                    <code className={selCls}>{selectorText(f)}</code>
                     {n > 1 && (
                       <span title={t('copiesTip', { count: n })}
                         className="flex-shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-k-context/15 text-k-context text-meta leading-none whitespace-nowrap">
@@ -1054,6 +1065,13 @@ export default function LocateMePage() {
   const [selected, setSelected] = useState<Finding | null>(null)
   const [loading, setLoading] = useState(false)
   const [copiedTable, setCopiedTable] = useState(false)
+  const [density, setDensity] = useState<'standard' | 'compact'>(() => {
+    try { return localStorage.getItem('locateme-density') === 'compact' ? 'compact' : 'standard' } catch { return 'standard' }
+  })
+  const setDensityMode = (m: 'standard' | 'compact') => {
+    try { localStorage.setItem('locateme-density', m) } catch { /* ignore */ }
+    setDensity(m)
+  }
   const [error, setError] = useState<string | null>(null)
   const [source, setSource] = useState<string | null>(null)
   const [skipped, setSkipped] = useState(0)
@@ -1440,7 +1458,20 @@ export default function LocateMePage() {
                         {/* Left block spans the table width: "Showing X of Y" at the far left,
                             "Copy table" pinned to the table's right edge (where the panel begins). */}
                         <div className="flex-1 min-w-0 flex items-center justify-between gap-3">
-                          <p className="text-meta text-muted-foreground">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                          <div className="flex items-center gap-2 min-w-0">
+                            {/* Density toggle - standard (roomy, wraps) vs compact (13px, one line). */}
+                            <div className="flex items-center rounded-md border border-border/60 overflow-hidden flex-shrink-0">
+                              <button onClick={() => setDensityMode('standard')} title={t('viewStandard')} aria-label={t('viewStandard')}
+                                className={`flex items-center justify-center w-6 h-6 transition-colors ${density === 'standard' ? 'text-foreground bg-muted/60' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+                                <List className="w-3.5 h-3.5" />
+                              </button>
+                              <button onClick={() => setDensityMode('compact')} title={t('viewCompact')} aria-label={t('viewCompact')}
+                                className={`flex items-center justify-center w-6 h-6 transition-colors ${density === 'compact' ? 'text-foreground bg-muted/60' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+                                <AlignJustify className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <p className="text-meta text-muted-foreground whitespace-nowrap">{t('showingOf', { shown: rows.length, total: visCalls })}</p>
+                          </div>
                           <button onClick={copyTable}
                             className="text-meta text-muted-foreground/80 hover:text-foreground underline decoration-dotted underline-offset-2">
                             {copiedTable ? t('copied') : t('copyTable')}
@@ -1455,7 +1486,7 @@ export default function LocateMePage() {
                         </div>
                       </div>
                       <div className="flex-1 min-h-0 flex bg-card rounded-xl border border-border overflow-hidden">
-                        <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} />
+                        <FindingsTable rows={rows} dup={dup} selected={selected} onSelect={setSelected} density={density} />
                         <FindingInspect finding={selected} dupLocations={selDupLocations} onClose={() => setSelected(null)} />
                       </div>
 

@@ -67,6 +67,8 @@
   "copy": "Copy",
   "copied": "Copied",
   "copyTable": "Copy table",
+  "viewStandard": "Standard view",
+  "viewCompact": "Compact view",
   "close": "Close",
   "selectHint": "Select a fragile locator on the left to inspect it here.",
   "explain": {

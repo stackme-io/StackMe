@@ -67,6 +67,8 @@
   "copy": "Copiar",
   "copied": "Copiado",
   "copyTable": "Copiar tabla",
+  "viewStandard": "Vista estándar",
+  "viewCompact": "Vista compacta",
   "close": "Cerrar",
   "selectHint": "Selecciona un locator frágil a la izquierda para inspeccionarlo aquí.",
   "explain": {
