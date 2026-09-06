@@ -26,6 +26,7 @@ export function detectStack(files: SourceFileInput[]): Detection {
   let se = 0
   for (const f of files) {
     const t = f.text
+    const isJava = /\.java$/.test(f.path)
     if (/@playwright\/test/.test(t)) pw += 3
     if (/\.(getByRole|getByTestId|getByText|getByLabel|getByPlaceholder|getByTitle|getByAltText)\s*\(/.test(t)) pw += 1
     if (/\bcy\.(get|contains|find|visit|intercept)\s*\(/.test(t)) cy += 2
@@ -33,7 +34,8 @@ export function detectStack(files: SourceFileInput[]): Detection {
     if (/selenium-webdriver/.test(t)) se += 3
     if (/import\s+org\.openqa\.selenium/.test(t)) se += 3
     if (/com\.codeborne\.selenide/.test(t)) se += 3        // Selenide (Selenium wrapper)
-    if (/(^|[^\w$])\$\$?x?\s*\(\s*["']/.test(t)) se += 1   // $("css") / $x("xpath")
+    // Selenide $()/$x() - Java only. In JS/TS "$(" is jQuery or Playwright's page.$(), not Selenium.
+    if (isJava && /(^|[^\w$])\$\$?x?\s*\(\s*["']/.test(t)) se += 1
     if (/@FindBy\b/.test(t)) se += 2
     if (/\bBy\.(xpath|cssSelector|css|id|name|className|tagName|linkText|partialLinkText)\s*\(/.test(t)) se += 2
     if (/driver\.findElement/.test(t)) se += 1
