@@ -102,9 +102,26 @@ function getLiteralSelector(arg: Node | undefined): string | null {
 // { exact: false } option. A loose match is provably fragile from the string alone.
 const TEXT_METHODS = new Set(["getByText", "getByPlaceholder", "getByTitle", "getByAltText"]);
 
+// A fully-anchored regex with no metacharacters (e.g. /^Delete$/i) is functionally an EXACT
+// match - just case-insensitive literal text - not a "loose" partial/dynamic match. Don't flag
+// it as fragile: it's equivalent to getByText('Delete', { exact: true }), a recommended locator.
+// Anything with anchors missing, or a metacharacter inside (\d, +, |, ., [], (), {}, \s, ...),
+// is a real pattern and stays loose.
+function isEffectivelyExactRegex(reText: string): boolean {
+  const m = /^\/(.*)\/([a-z]*)$/.exec(reText); // "/^delete$/i" -> body "^delete$", flags "i"
+  if (!m) return false;
+  let body = m[1];
+  if (!(body.startsWith("^") && body.endsWith("$"))) return false;
+  body = body.slice(1, -1); // strip the anchors
+  if (body.length === 0) return false; // /^$/ - empty, not a normal exact label
+  return !/[\\.*+?()[\]{}|^$]/.test(body); // any leftover metachar => real pattern => still loose
+}
+
 function isLooseTextMatch(method: string, args: Node[]): boolean {
   if (!TEXT_METHODS.has(method)) return false;
-  if (args[0] && Node.isRegularExpressionLiteral(args[0])) return true;
+  if (args[0] && Node.isRegularExpressionLiteral(args[0])) {
+    return !isEffectivelyExactRegex(args[0].getText());
+  }
   const opts = args[1];
   if (opts && Node.isObjectLiteralExpression(opts)) {
     for (const prop of opts.getProperties()) {
