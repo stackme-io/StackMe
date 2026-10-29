@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Locator fragility study — 296 open-source projects | LocateMe</title>
+<title>Locator fragility study - 296 open-source projects | LocateMe</title>
 <meta name="description" content="Static locator audit across 296 open-source Playwright/Cypress projects: full project list, per-repo numbers, method and limitations.">
 <style>
   :root{
@@ -58,17 +58,17 @@
 <div class="wrap">
 
   <h1>Locator fragility in open source</h1>
-  <p class="lede">A static audit of test locators across <span class="ink">296 open-source projects</span> (~101,491 locators, Playwright + Cypress). Full project list, per-repo numbers, method and limitations — below. No tests were run.</p>
+  <p class="lede">A static audit of test locators across <span class="ink">296 open-source projects</span> (~101,491 locators, Playwright + Cypress). Full project list, per-repo numbers, method and limitations - below. No tests were run.</p>
 
   <div class="tiles">
     <div class="tile"><div class="l">Fragile (Top ≥100★)</div><div class="v">2.5%</div><div class="s">66 projects · 37,111 locators</div></div>
-    <div class="tile"><div class="l">Fragile (Mid 10–50★)</div><div class="v">2.9%</div><div class="s">107 projects · 35,603 locators</div></div>
-    <div class="tile"><div class="l">Fragile (Tail 2–5★)</div><div class="v">2.9%</div><div class="s">123 projects · 28,777 locators</div></div>
+    <div class="tile"><div class="l">Fragile (Mid 10-50★)</div><div class="v">2.9%</div><div class="s">107 projects · 35,603 locators</div></div>
+    <div class="tile"><div class="l">Fragile (Tail 2-5★)</div><div class="v">2.9%</div><div class="s">123 projects · 28,777 locators</div></div>
   </div>
-  <p>Of all fragile findings, <span class="ink">~90% are two patterns</span>: locating by position (<code>.nth</code>/<code>:nth-child</code>) and by loose text (<code>getByText(/…/)</code>). XPath and deep-CSS together ≈ 10%. In 83–94% of projects that have any fragility, one of those two is the dominant cause.</p>
+  <p>Of all fragile findings, <span class="ink">~90% are two patterns</span>: locating by position (<code>.nth</code>/<code>:nth-child</code>) and by loose text (<code>getByText(/…/)</code>). XPath and deep-CSS together ≈ 10%. In 83-94% of projects that have any fragility, one of those two is the dominant cause.</p>
 
   <h2>Notable projects in the sample</h2>
-  <p>A static-only run — these are examples of what was analyzed, not a “worst offenders” list.</p>
+  <p>A static-only run - these are examples of what was analyzed, not a “worst offenders” list.</p>
   <div class="whales" id="whales"></div>
 
   <h2>All 296 projects</h2>
@@ -93,18 +93,18 @@
   </table>
 
   <h2>Method</h2>
-  <p>Static analysis of test source — <span class="ink">no tests are run</span>. Projects with a live Playwright/Cypress setup, ≥10 locators, not a fork/archive, pushed within 3 years, in three star tiers. Excluded: unit tests (React Testing Library isn’t e2e locators), framework scaffolds, files copied verbatim across repos, and hand-curated non-product repos (courses, bootcamp projects, demos, <code>-example</code>/<code>-starter</code> templates).</p>
-  <p>Four classes: <span class="ink">stable</span> (role/testid/label/hand-written id), <span class="ink">fragile</span> (position, <code>:nth-child</code>, loose text, generated classes, deep CSS chains, xpath axes), <span class="ink">context</span> (can’t tell from the string — exact text, a plain class, an unknown <code>data-*</code>; not counted as fragility), and <span class="ink">dynamic</span> (built at runtime).</p>
+  <p>Static analysis of test source - <span class="ink">no tests are run</span>. Projects with a live Playwright/Cypress setup, ≥10 locators, not a fork/archive, pushed within 3 years, in three star tiers. Excluded: unit tests (React Testing Library isn’t e2e locators), framework scaffolds, files copied verbatim across repos, and hand-curated non-product repos (courses, bootcamp projects, demos, <code>-example</code>/<code>-starter</code> templates).</p>
+  <p>Four classes: <span class="ink">stable</span> (role/testid/label/hand-written id), <span class="ink">fragile</span> (position, <code>:nth-child</code>, loose text, generated classes, deep CSS chains, xpath axes), <span class="ink">context</span> (can’t tell from the string - exact text, a plain class, an unknown <code>data-*</code>; not counted as fragility), and <span class="ink">dynamic</span> (built at runtime).</p>
 
   <h2>Limitations</h2>
   <ul>
-    <li><span class="ink">“Fragile” is a static smell, not proven breakage</span> — no flaky/git-history correlation yet.</li>
+    <li><span class="ink">“Fragile” is a static smell, not proven breakage</span> - no flaky/git-history correlation yet.</li>
     <li>Precision is a single, non-blind manual check (~96% true fragile).</li>
-    <li>Percentages are noisy on small suites — headlines lean on the pooled rate and a per-project metric.</li>
+    <li>Percentages are noisy on small suites - headlines lean on the pooled rate and a per-project metric.</li>
     <li>The classification is our heuristic. Found it wrong on your repo? Tell us.</li>
   </ul>
 
-  <div class="note">Run it on your own repo and see your two habits — locally, no test run, nothing uploaded. <a href="/locate-me">Open LocateMe →</a></div>
+  <div class="note">Run it on your own repo and see your two habits - locally, no test run, nothing uploaded. <a href="/locate-me">Open LocateMe →</a></div>
 
   <div class="foot">Static-only audit · aggregate by default · project names shown as neutral examples, never as a call-out · fragile patterns are described as anonymized code in the write-up.</div>
 
