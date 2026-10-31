@@ -43,6 +43,9 @@
   th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border)}
   th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
   thead th{position:sticky;top:0;background:var(--bg)}
+  th[data-sort]{cursor:pointer;user-select:none}
+  th[data-sort]:hover,th[aria-sort="ascending"],th[aria-sort="descending"]{color:var(--ink)}
+  th .arr{margin-left:4px}
   td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
   .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);color:var(--sub)}
   .b-t{color:var(--coralink);border-color:rgba(240,136,90,.4)}
@@ -70,14 +73,14 @@
 <div class="wrap">
 
   <h1>Locator fragility in open source</h1>
-  <p class="lede">A static audit of test locators across <span class="ink">296 open-source projects</span> (~101,491 locators, Playwright + Cypress). Full project list, per-repo numbers, method and limitations - below. No tests were run.</p>
+  <p class="lede">A static audit of test locators across <span class="ink">296 open-source projects</span> (101,491 locators, Playwright + Cypress). Full project list, per-repo numbers, method and limitations - below. No tests were run.</p>
 
   <div class="tiles">
     <div class="tile"><div class="l">Fragile (Top ≥100★)</div><div class="v">2.5%</div><div class="s">66 projects · 37,111 locators</div></div>
     <div class="tile"><div class="l">Fragile (Mid 10-50★)</div><div class="v">2.9%</div><div class="s">107 projects · 35,603 locators</div></div>
     <div class="tile"><div class="l">Fragile (Tail 2-5★)</div><div class="v">2.9%</div><div class="s">123 projects · 28,777 locators</div></div>
   </div>
-  <p>Of all fragile findings, <span class="ink">~90% are two patterns</span>: locating by position (<code>.nth</code>/<code>:nth-child</code>) and by loose text (<code>getByText(/…/)</code>). XPath and deep-CSS together ≈ 10%. In 83-94% of projects that have any fragility, one of those two is the dominant cause.</p>
+  <p>Of all fragile findings, <span class="ink">~90% are two patterns</span>: locating by position (<code>.nth</code>/<code>:nth-child</code>) and by loose text (<code>getByText(/…/)</code>). Everything else ≈ 10% (XPath and deep-CSS together ≈ 7%). In 83-94% of projects that have any fragility, one of those two is the dominant cause.</p>
 
   <h2>Notable projects in the sample</h2>
   <p>A static-only run - these are examples of what was analyzed, not a “worst offenders” list.</p>
@@ -97,29 +100,29 @@
   </div>
   <table>
     <thead><tr>
-      <th>Project</th><th>Cohort</th><th>Framework</th>
-      <th class="num" data-sort="loc">Locators</th>
-      <th class="num" data-sort="fr">Fragile %</th>
+      <th data-sort="name">Project<span class="arr"></span></th><th>Cohort</th><th>Framework</th>
+      <th class="num" data-sort="loc">Locators<span class="arr"></span></th>
+      <th class="num" data-sort="fr">Fragile %<span class="arr"></span></th>
     </tr></thead>
     <tbody id="rows"></tbody>
   </table>
 
   <h2>Method</h2>
   <p>Static analysis of test source - <span class="ink">no tests are run</span>. Projects with a live Playwright/Cypress setup, ≥10 locators, not a fork/archive, pushed within 3 years, in three star tiers. Excluded: unit tests (React Testing Library isn’t e2e locators), framework scaffolds, files copied verbatim across repos, and hand-curated non-product repos (courses, bootcamp projects, demos, <code>-example</code>/<code>-starter</code> templates).</p>
-  <p>Data collected on <span class="ink">7 September 2026</span>. Of 547 repos that went through the harness, 296 were analyzed and 251 skipped: 124 with fewer than 10 locators, 60 hand-curated non-product repos, 50 with no usable e2e test files, 6 with an unknown framework and 11 that failed with errors.</p>
+  <p>Data collected on <span class="ink">7 September 2026</span>. The list of 547 repos was itself selected from GitHub search results. Of those, 296 were analyzed and 251 skipped: 124 with fewer than 10 locators, 60 hand-curated non-product repos, 50 with no test files left to analyze after our filters (including Immich and PostHog), 11 that failed to clone (including n8n, Kibana, Gatsby, Twenty and Element Web) and 6 with an unknown framework.</p>
   <p>Four classes: <span class="ink">stable</span> (role/testid/label/hand-written id), <span class="ink">fragile</span> (position, <code>:nth-child</code>, loose text, generated classes, deep CSS chains, xpath axes), <span class="ink">context</span> (can’t tell from the string - exact text, a plain class, an unknown <code>data-*</code>; not counted as fragility), and <span class="ink">dynamic</span> (built at runtime).</p>
 
   <h2>Limitations</h2>
   <ul>
     <li><span class="ink">“Fragile” is a static smell, not proven breakage</span> - no flaky/git-history correlation yet.</li>
-    <li>Precision is a single, non-blind manual check (~96% true fragile).</li>
+    <li>Precision is an estimate, not independent validation: ~96% true fragile in a pattern-based review of an earlier top-cohort run, ~90%+ in a spot check of about 200 tail findings. The mid cohort was not sampled. One non-blind rater.</li>
     <li>Percentages are noisy on small suites - headlines lean on the pooled rate and a per-project metric.</li>
     <li>The classification is our heuristic. Found it wrong on your repo? Tell us.</li>
   </ul>
 
   <div class="note">Run it on your own repo and see your two habits - locally, no test run, nothing uploaded. <a href="/locate-me">Open LocateMe →</a></div>
 
-  <div class="foot">Static-only audit · aggregate by default · project names shown as neutral examples, never as a call-out · fragile patterns are described as anonymized code in the write-up.</div>
+  <div class="foot">Static-only audit · per-project numbers are shown so they can be checked, not to call out any project · code examples in the write-up are anonymized.</div>
 
 </div>
 
@@ -142,7 +145,7 @@ const maxFr=Math.max(...D.map(r=>r[4]));
 function frColor(v){if(v===0)return'<span class="z">0</span>';const w=Math.max(4,Math.round(v/maxFr*90));return `<span class="bar"><i style="width:${w}px"></i>${v}%</span>`;}
 function render(){
   let rows=D.filter(r=>(coh==="all"||r[0]===coh)&&(fw==="all"||r[2]===fw)&&(q===""||r[1].toLowerCase().includes(q)));
-  rows.sort((a,b)=>{const k=sort==="loc"?3:4;return (a[k]-b[k])*dir;});
+  rows.sort((a,b)=>{if(sort==="name")return a[1].localeCompare(b[1])*dir;const k=sort==="loc"?3:4;return (a[k]-b[k])*dir;});
   document.getElementById("rows").innerHTML=rows.map(r=>{
     const[c,name,f,loc,fr]=r;const[cl,cls]=COH[c];
     return `<tr><td><a href="https://github.com/${name}" target="_blank" rel="noopener">${name}</a></td>`+
@@ -152,12 +155,14 @@ function render(){
       `<td class="num">${frColor(fr)}</td></tr>`;
   }).join("");
   document.getElementById("count").textContent=rows.length+" of 296";
+  document.querySelectorAll("[data-sort]").forEach(th=>{const on=th.dataset.sort===sort;th.setAttribute("aria-sort",on?(dir<0?"descending":"ascending"):"none");th.querySelector(".arr").textContent=on?(dir<0?"↓":"↑"):"↕";});
 }
 document.getElementById("q").addEventListener("input",e=>{q=e.target.value.toLowerCase().trim();render();});
 document.querySelectorAll("[data-coh]").forEach(b=>b.addEventListener("click",()=>{coh=b.dataset.coh;document.querySelectorAll("[data-coh]").forEach(x=>x.setAttribute("aria-pressed",x===b));render();}));
 document.querySelectorAll("[data-fw]").forEach(b=>b.addEventListener("click",()=>{fw=b.dataset.fw;document.querySelectorAll("[data-fw]").forEach(x=>x.setAttribute("aria-pressed",x===b));render();}));
-document.querySelectorAll("[data-sort]").forEach(th=>th.style.cursor="pointer");
-document.querySelectorAll("[data-sort]").forEach(th=>th.addEventListener("click",()=>{const s=th.dataset.sort;if(sort===s)dir=-dir;else{sort=s;dir=-1;}render();}));
+document.querySelectorAll("[data-sort]").forEach(th=>th.tabIndex=0);
+function setSort(s){if(sort===s)dir=-dir;else{sort=s;dir=s==="name"?1:-1;}render();}
+document.querySelectorAll("[data-sort]").forEach(th=>{th.addEventListener("click",()=>setSort(th.dataset.sort));th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setSort(th.dataset.sort);}});});
 render();
 </script>
 </body>
