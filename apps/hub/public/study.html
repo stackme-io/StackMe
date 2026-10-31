@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Locator fragility study - 296 open-source projects | LocateMe</title>
 <meta name="description" content="Static locator audit across 296 open-source Playwright/Cypress projects: full project list, per-repo numbers, method and limitations.">
+<link rel="canonical" href="https://stackme-app.vercel.app/study.html">
+<meta property="og:title" content="Locator fragility in open source - 296 projects">
+<meta property="og:description" content="Static locator audit across 296 open-source Playwright/Cypress projects: full project list, per-repo numbers, method and limitations.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://stackme-app.vercel.app/study.html">
+<meta property="og:image" content="https://stackme-app.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Locator fragility in open source - 296 projects">
+<meta name="twitter:description" content="Static locator audit across 296 open-source Playwright/Cypress projects: full project list, per-repo numbers, method and limitations.">
+<meta name="twitter:image" content="https://stackme-app.vercel.app/og-image.png">
 <style>
   :root{
     --bg:#131417;--card:#191B1F;--border:#2E333B;--ink:#e8eaed;--sub:#a6adb5;--muted:#6c7278;
@@ -94,6 +106,7 @@
 
   <h2>Method</h2>
   <p>Static analysis of test source - <span class="ink">no tests are run</span>. Projects with a live Playwright/Cypress setup, ≥10 locators, not a fork/archive, pushed within 3 years, in three star tiers. Excluded: unit tests (React Testing Library isn’t e2e locators), framework scaffolds, files copied verbatim across repos, and hand-curated non-product repos (courses, bootcamp projects, demos, <code>-example</code>/<code>-starter</code> templates).</p>
+  <p>Data collected on <span class="ink">7 September 2026</span>. Of 547 repos that went through the harness, 296 were analyzed and 251 skipped: 124 with fewer than 10 locators, 60 hand-curated non-product repos, 50 with no usable e2e test files, 6 with an unknown framework and 11 that failed with errors.</p>
   <p>Four classes: <span class="ink">stable</span> (role/testid/label/hand-written id), <span class="ink">fragile</span> (position, <code>:nth-child</code>, loose text, generated classes, deep CSS chains, xpath axes), <span class="ink">context</span> (can’t tell from the string - exact text, a plain class, an unknown <code>data-*</code>; not counted as fragility), and <span class="ink">dynamic</span> (built at runtime).</p>
 
   <h2>Limitations</h2>
@@ -124,7 +137,7 @@ document.getElementById("whales").innerHTML=whales.map(w=>{
   return `<a class="whale" href="https://github.com/${w}" target="_blank" rel="noopener">${label}</a>`;
 }).join("");
 
-let coh="all",fw="all",q="",sort="fr",dir=-1;
+let coh="all",fw="all",q="",sort="loc",dir=-1;
 const maxFr=Math.max(...D.map(r=>r[4]));
 function frColor(v){if(v===0)return'<span class="z">0</span>';const w=Math.max(4,Math.round(v/maxFr*90));return `<span class="bar"><i style="width:${w}px"></i>${v}%</span>`;}
 function render(){
