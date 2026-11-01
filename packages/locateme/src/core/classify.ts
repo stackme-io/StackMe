@@ -152,6 +152,12 @@ function isUtilityStack(selector: string): boolean {
   return false;
 }
 
+// Removes escaped characters and quoted strings, so a literal inside an attribute value
+// (name="items[0].title") is not read as selector syntax.
+function withoutLiterals(s: string): string {
+  return s.replace(/\\./g, "").replace(/"[^"]*"|'[^']*'/g, '""');
+}
+
 // Not every xpath is fragile: positional/structural = fragile, but xpath anchored
 // on a stable id/test attribute won't break from layout changes.
 function classifyXpath(raw: string): Classification {
@@ -161,7 +167,7 @@ function classifyXpath(raw: string): Classification {
     reason: "XPath axis traversal - tied to DOM structure, breaks on markup changes.",
     prefer: "Re-anchor on the target's own identity (getByRole, getByLabel, or a test id) instead of walking siblings or ancestors.",
   };
-  if (/\[\d+\]/.test(s)) return {
+  if (/\[\d+\]/.test(withoutLiterals(s))) return {
     kind: "fragile", confidence: "verdict", subcause: "xpath-positional",
     reason: "Positional index in the path - breaks when order or layout changes.",
     prefer: "Anchor on the element's text or role instead of its position, e.g. getByRole('button', { name: '...' }).",
@@ -217,7 +223,8 @@ function classifyXpath(raw: string): Classification {
 }
 
 function classifyCss(s: string): Classification {
-  if (/:nth-(child|of-type)\b/.test(s) || /\bnth=/.test(s) || /\[\d+\]/.test(s))
+  const syntax = withoutLiterals(s);
+  if (/:nth-(child|of-type)\b/.test(syntax) || /\bnth=/.test(syntax) || /\[\d+\]/.test(syntax))
     return {
       kind: "fragile", confidence: "verdict", subcause: "css-positional",
       reason: "Positional CSS (:nth-child / index) - breaks when items are added or reordered.",
