@@ -20,7 +20,7 @@
   "block3Title": "Your data is yours only",
   "block3Icon": "ti-eye-off",
   "block3Tag": "No Dark Patterns",
-  "block3p1": "We care about privacy. Your data is yours only - we never use it or share it with third parties. Full stop.",
+  "block3p1": "We care about privacy. Your data is yours only. We don't sell it or share it with anyone. Full stop. Signing in is optional. If you do sign in, it goes through Clerk, a third-party sign-in service. Tools that run in your browser keep your data on your device.",
   "block3p2": "Monetisation in our products is always transparent and voluntary.",
   "block3accent": "Monetisation in our products is always transparent and voluntary.",
   "block3p2rest": "No hidden subscriptions, fake countdown timers, or dark UI patterns - and there never will be. We don't profit from manipulation. It's not interesting to us, and it's not who we are.",
