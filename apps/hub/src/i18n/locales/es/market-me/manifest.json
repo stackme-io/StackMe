@@ -13,7 +13,7 @@
   "block2Title": "Qué pasa si cerramos",
   "block2Icon": "ti-server",
   "block2Tag": "Self-Hosting First",
-  "block2p1": "Todo el código está abierto en GitHub. Haz un fork del repositorio y despliégalo tú mismo - un solo comando con Docker Compose. Esto no es un plan de respaldo,",
+  "block2p1": "Todo el código está abierto en GitHub. Haz un fork del repositorio y despliégalo tú mismo. Esto no es un plan de respaldo,",
   "block2accent1": "es una garantía integrada en la arquitectura desde el primer día.",
   "block2p2": "Herramientas como AnalyzeMe funcionan directamente en tu navegador - los datos nunca salen de tu dispositivo. Construimos sobre tecnologías abiertas - FastAPI, React, DuckDB - intencionalmente, para que cualquiera pueda levantar su propia copia.",
 

@@ -13,7 +13,7 @@
   "block2Title": "What happens if we shut down",
   "block2Icon": "ti-server",
   "block2Tag": "Self-Hosting First",
-  "block2p1": "All code is open on GitHub. Fork the repo and deploy it yourself - one command via Docker Compose. This isn't a fallback plan,",
+  "block2p1": "All code is open on GitHub. Fork the repo and deploy it yourself. This isn't a fallback plan,",
   "block2accent1": "it's a guarantee built into the architecture from day one.",
   "block2p2": "Tools like AnalyzeMe run directly in your browser - data never leaves your device. We build on open technologies - FastAPI, React, DuckDB - intentionally, so anyone can run their own copy without depending on our infrastructure.",
 
