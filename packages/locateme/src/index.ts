@@ -104,7 +104,7 @@ function main(): void {
   const fragile = report.findings.filter((f) => f.kind === "fragile");
   console.log(`\nfragile locators (${fragile.length}):`);
   for (const f of fragile.slice(0, 40)) {
-    console.log(`  ${f.file}:${f.line}  ${f.method}(${JSON.stringify(f.selector)})`);
+    console.log(`  ${f.file}:${f.line}  ${f.method}(${JSON.stringify(f.selector)})${f.chain ?? ""}`);
   }
   if (fragile.length > 40) console.log(`  ...and ${fragile.length - 40} more`);
 

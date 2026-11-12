@@ -92,7 +92,9 @@ function sortFindings(list: Finding[], mode: SortMode, dup: Map<string, number>,
 }
 
 function selectorText(f: Finding): string {
-  return `${f.method}(${f.selector === null ? '…' : JSON.stringify(f.selector)})`
+  // Append the positional step (.nth(1), .first()...) that drove the verdict, otherwise a
+  // getByTestId(...) flagged as fragile looks like a false alarm.
+  return `${f.method}(${f.selector === null ? '…' : JSON.stringify(f.selector)})${f.chain ?? ''}`
 }
 
 // File-name display for the rail (basename-first). Right-truncating a full path keeps the

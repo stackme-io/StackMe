@@ -27,6 +27,7 @@ export interface Finding {
   preferCode?: string; // copy-paste-ready replacement - ONLY for meaning-preserving swaps
   usage?: Usage; // action/assert/unknown - how the locator is used in its statement
   snippet?: string; // source lines around a fragile locator
+  chain?: string; // positional step that drove the verdict, e.g. ".nth(1)" - display only
 }
 
 export interface ReportData {
@@ -64,6 +65,7 @@ export interface RawLocator {
   usage?: Usage;           // how it's used in the same statement (action/assert/unknown)
   looseText?: boolean;     // text method with a regex or { exact: false } - a loose match
   positional?: "index" | "edge"; // positional chain step: .nth(k)/.eq(k) = index, .first/.last/.nth(0) = edge
+  positionalStep?: string;  // that step as written, e.g. ".nth(1)" - so the UI can show why
 }
 
 // A region the parser could not read (tree-sitter ERROR / MISSING node). We surface

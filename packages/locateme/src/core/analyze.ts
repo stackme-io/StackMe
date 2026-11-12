@@ -55,6 +55,7 @@ export function analyze(files: SourceFileInput[], target = ""): ReportData {
         method: r.method,
         selector: r.selector,
         kind, reason, subcause, confidence, prefer, preferCode, usage: r.usage, snippet,
+        ...(r.positionalStep && r.positional ? { chain: r.positionalStep } : {}),
       });
     }
   }

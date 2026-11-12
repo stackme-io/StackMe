@@ -151,7 +151,7 @@ function positionalKind(method: string, call: Node): "index" | "edge" {
 // receiver chain (like detectUsage), pass through .filter, but STOP at the first re-scope
 // (.locator/.getByX/.find/...) so an index attaches only to the locator it refines - never
 // double-counted across a multi-locator chain.
-function detectPositionalTail(callNode: Node): "index" | "edge" | undefined {
+function detectPositionalTail(callNode: Node): { kind: "index" | "edge"; step: string } | undefined {
   let node: Node = callNode;
   for (let i = 0; i < 25; i++) {
     const parent = node.getParent();
@@ -162,7 +162,11 @@ function detectPositionalTail(callNode: Node): "index" | "edge" | undefined {
       const grand = parent.getParent();
       if (grand && Node.isCallExpression(grand)) {
         const m = parent.getName();
-        if (POSITIONAL_STEPS.has(m)) return positionalKind(m, grand);
+        if (POSITIONAL_STEPS.has(m)) {
+          const args = grand.getArguments().map(a => a.getText()).join(", ");
+          const step = `.${m}(${args.length > 30 ? args.slice(0, 29) + "…" : args})`;
+          return { kind: positionalKind(m, grand), step };
+        }
         if (CHAIN_PASS.has(m)) { node = grand; continue; }
         return undefined; // re-scope (new base) or a terminator - not this locator's index
       }
@@ -198,13 +202,15 @@ export class TsMorphExtractor implements LocatorExtractor {
         if (second && (Node.isStringLiteral(second) || Node.isNoSubstitutionTemplateLiteral(second))) selArg = second;
       }
 
+      const tail = detectPositionalTail(call);
       out.push({
         method,
         selector: getLiteralSelector(selArg),
         line: call.getStartLineNumber(),
         usage: detectUsage(call),
         looseText: isLooseTextMatch(method, call.getArguments()),
-        positional: detectPositionalTail(call),
+        positional: tail?.kind,
+        positionalStep: tail?.step,
       });
     });
 

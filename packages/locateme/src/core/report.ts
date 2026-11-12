@@ -84,7 +84,7 @@ export function renderHtml(d: ReportData, opts: RenderOptions = {}): string {
   const fragile = d.findings.filter((f) => f.kind === "fragile");
   const fragileRows = fragile.slice(0, 50)
     .map((f) => {
-      const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})</code><span class="loc">${esc(showPath(f.file))}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
+      const head = `<div class="row"><code>${esc(f.method)}(${esc(JSON.stringify(f.selector))})${esc(f.chain ?? "")}</code><span class="loc">${esc(showPath(f.file))}:${f.line}</span></div><div class="why">${esc(f.reason)}</div>`;
       if (hideSnippets || !f.snippet) return `<div class="finding">${head}</div>`;
       return `<details class="finding" open><summary>${head}</summary><pre class="snip">${esc(f.snippet)}</pre></details>`;
     })
