@@ -15,4 +15,5 @@ RUN uv sync --frozen
 
 EXPOSE 8000
 
-CMD ["uv", "run", "uvicorn", "core.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Railway injects $PORT; locally it falls back to 8000.
+CMD ["sh", "-c", "uv run uvicorn core.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
