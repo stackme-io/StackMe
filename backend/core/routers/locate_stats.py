@@ -6,6 +6,7 @@ by one: the public endpoint only exposes aggregates, and only once enough suites
 """
 import hashlib
 import json
+import os
 import statistics
 from datetime import datetime, timezone
 from typing import Literal, Optional, Union
@@ -21,7 +22,8 @@ from core.rate_limit import limiter, client_ip
 router = APIRouter()
 
 # Below this many shared suites nothing but the count is published.
-MIN_SUITES = 10
+# Production keeps the default 10 (the UI texts promise it); staging may lower it.
+MIN_SUITES = max(1, int(os.getenv("STATS_MIN_SUITES", "10")))
 
 SIZE_BOUNDS = {
     "50-99": (50, 99), "100-249": (100, 249), "250-499": (250, 499), "500-999": (500, 999),
