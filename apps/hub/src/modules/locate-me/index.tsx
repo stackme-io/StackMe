@@ -10,6 +10,7 @@ import { renderHtml } from '@locateme/core/report'
 import { Anchor, Route, Info, ArrowRight, ChevronRight, ChevronDown, FileText, Archive, Trash2, Shield, BarChart3 } from 'lucide-react'
 import { StatsShareButton } from './StatsShare'
 import { StatsTab } from './StatsTab'
+import { SelfCompare } from './SelfCompare'
 import { useLocateRail } from '../../store/locateRail'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 import { useAuth, useClerk } from '@clerk/clerk-react'
@@ -1319,7 +1320,7 @@ export default function LocateMePage() {
         <Rail
           activeTab={activeTab}
           onNav={navTo}
-          controlsVisible={hasLocators}
+          controlsVisible={hasLocators && isAudit}
           controlsActive={isAudit}
           sortMode={sortMode}
           onSort={setSortMode}
@@ -1463,6 +1464,7 @@ export default function LocateMePage() {
                     </p>
                   ) : null}
                   <div className="flex-shrink-0"><RatioBar byKind={visByKind} filterKinds={filterKinds} onToggle={toggleFilter} /></div>
+                  <SelfCompare byKind={visByKind} calls={visCalls} onOpenStats={() => navTo('stats')} />
 
                   {rows.length === 0 ? (
                     <p className="text-sub text-content">{t('noneForFilter')}</p>

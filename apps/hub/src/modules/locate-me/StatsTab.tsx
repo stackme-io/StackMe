@@ -1,19 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import apiClient from '../../api/client'
-
-// Public baseline from the open-source study (data from 7 September 2026, after the
-// classifier correction). The "comparable" row uses the same 50+ locator rule as shared
-// results, so the two columns measure the same thing.
-const BASELINE = {
-  tiers: [
-    { key: 'top', pct: 2.5 },
-    { key: 'mid', pct: 2.8 },
-    { key: 'tail', pct: 2.9 },
-  ],
-  habits: { position: 45, text: 45, xpath: 2.6 },
-  comparable: { suites: 189, median: 1.2, pooled: 2.7, none: 33, position: 44.4, text: 45.3, xpath: 2.7 },
-}
+import { BASELINE } from './baseline'
 
 interface Summary {
   suites: number
@@ -32,7 +20,7 @@ interface StatsResponse {
   by_age: Array<Summary & { age: string }>
 }
 
-const pct = (v: number | null | undefined) => (v == null ? '-' : `${v}%`)
+const pct = (v: number | null | undefined) => (v == null ? '-' : `${v.toFixed(1)}%`)
 
 export function StatsTab({ active }: { active: boolean }) {
   const { t } = useTranslation('locate-me')
@@ -102,12 +90,13 @@ export function StatsTab({ active }: { active: boolean }) {
             </table>
           </div>
         )}
-        {data && o && (data.by_framework.length > 0 || data.by_age.length > 0) && (
+        {/* A breakdown only says something once there are at least two groups to compare. */}
+        {data && o && (data.by_framework.length > 1 || data.by_age.length > 1) && (
           <div className="flex flex-col gap-1">
-            {data.by_framework.map(g => (
+            {data.by_framework.length > 1 && data.by_framework.map(g => (
               <p key={g.framework} className="text-sub">{t('stats.groupLine', { name: g.framework, count: g.suites, median: g.median_fragile_pct })}</p>
             ))}
-            {data.by_age.map(g => (
+            {data.by_age.length > 1 && data.by_age.map(g => (
               <p key={g.age} className="text-sub">{t('stats.groupLine', { name: t(`stats.age.${g.age}`), count: g.suites, median: g.median_fragile_pct })}</p>
             ))}
           </div>
