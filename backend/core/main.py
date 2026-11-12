@@ -36,7 +36,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://stackme-app.vercel.app"],
+    # Comma-separated list; staging sets its own frontend origin. Defaults to production.
+    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", "https://stackme-app.vercel.app").split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

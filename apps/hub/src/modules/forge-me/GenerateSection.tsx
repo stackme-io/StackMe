@@ -95,7 +95,8 @@ export function GenerateSection({
       }
       if (schemaFields.length > 0) body.schema = schemaFields
 
-      const res = await fetch('https://stackme-production.up.railway.app/forge-me/generate', {
+      const apiBase = import.meta.env.VITE_API_URL || 'https://stackme-production.up.railway.app'
+      const res = await fetch(`${apiBase}/forge-me/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
