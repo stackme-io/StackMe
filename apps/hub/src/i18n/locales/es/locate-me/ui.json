@@ -103,7 +103,7 @@
   },
   "privacy": {
     "title": "Privacidad",
-    "lead": "Por defecto, todo permanece en tu dispositivo - LocateMe lee tus localizadores localmente y no se envía nada a ningún lado. La única excepción: si guardas un informe en tu cuenta - lo mismo que haces a diario en cualquier app - solo ese informe se sube, para que puedas volver a abrirlo más tarde.",
+    "lead": "Por defecto, todo permanece en tu dispositivo - LocateMe lee tus localizadores localmente y no se envía nada a ningún lado. Dos excepciones, ambas solo cuando haces clic: guardar un informe en tu cuenta sube ese informe para que puedas volver a abrirlo, y compartir de forma anónima envía unos pocos números redondeados (sin código ni nombres) a las estadísticas públicas.",
     "verifyTitle": "Compruébalo tú mismo",
     "verifyIntro": "No nos creas sin más - puedes comprobarlo en tu propio navegador:",
     "verifySteps": [
@@ -112,7 +112,8 @@
       "Ejecuta una auditoría: Probar ejemplo, pega un archivo o elige una carpeta",
       "Observa: cero peticiones salientes con tus localizadores o código"
     ],
-    "save": "Un informe guardado incluye sus cadenas de selectores y fragmentos cortos de código. Descargar un informe a tu propio ordenador, en cambio, es totalmente local. Código abierto, MIT."
+    "save": "Un informe guardado incluye sus cadenas de selectores y fragmentos cortos de código. Descargar un informe a tu propio ordenador, en cambio, es totalmente local. Código abierto, MIT.",
+    "stats": "Las estadísticas anónimas son opcionales. Antes de enviar nada, el diálogo muestra los datos exactos. Una fila compartida no tiene cuenta, código, nombres de archivos o de proyecto ni hora exacta, tu IP no se guarda con ella y las filas solo se muestran como resumen."
   },
   "aboutMethodTitle": "Método",
   "ladderTitle": "Escala de prioridad",
@@ -280,5 +281,61 @@
     },
     "textUsageAssert": "Bien aquí - coincidir por texto visible es para lo que sirve una aserción. getByText también normaliza los espacios.",
     "textUsageAction": "Se usa para ejecutar una acción. Para un clic/relleno, getByRole(..., { name }) suele ser más estable que el texto visible (que puede variar con el copy/i18n y quizá no sea único). Confirma que la etiqueta es estable y única."
+  },
+  "stats": {
+    "share": "Compartir de forma anónima",
+    "shareTip": "Añadir los números de esta suite a las estadísticas anónimas",
+    "blocked": {
+      "notFolder": "Disponible para auditorías de tu propia carpeta, no del ejemplo ni de un archivo pegado",
+      "small": "Se necesitan al menos 50 localizadores",
+      "unknownFramework": "Framework no detectado"
+    },
+    "shareTitle": "Compartir de forma anónima",
+    "shareLead": "Añade los números de esta suite a las estadísticas anónimas de LocateMe para que todos puedan comparar sus tests con suites públicas y privadas. No se envía nada hasta que pulses Enviar.",
+    "ageQuestion": "¿Qué antigüedad tiene esta suite de tests? Opcional.",
+    "age": {
+      "<1y": "Menos de 1 año",
+      "1-3y": "1-3 años",
+      "3-5y": "3-5 años",
+      "5y+": "Más de 5 años"
+    },
+    "exactlySent": "Exactamente lo que se enviará:",
+    "notSent": "No se envía: código, selectores, nombres de archivos, rutas, el nombre del proyecto, tu cuenta ni la hora exacta. Tu IP no se guarda con la fila.",
+    "colleagues": "Cualquiera con acceso a este repositorio podría reconocer estos números. Asegúrate de que puedes compartirlos.",
+    "noDelete": "Una fila compartida no se puede borrar después, porque no está vinculada a ti.",
+    "publicOnly": "Las filas nunca se muestran una a una, solo como resumen cuando hay al menos 10 suites compartidas.",
+    "send": "Enviar",
+    "cancel": "Cancelar",
+    "error": "No se pudo enviar. Inténtalo más tarde.",
+    "thanks": "Gracias, tus números ya están dentro.",
+    "seeStats": "Ver las estadísticas",
+    "title": "Estadísticas",
+    "intro": "¿Qué tan frágiles son los localizadores en suites reales? De un lado, proyectos públicos de código abierto; del otro, suites que la gente decidió compartir.",
+    "baselineTitle": "Punto de partida: 296 proyectos públicos",
+    "baselineNote": "Nuestra propia medición de suites de código abierto en Playwright y Cypress, datos del 7 de septiembre de 2026. No son resultados de usuarios.",
+    "tier": {
+      "top": "100+ estrellas",
+      "mid": "10-50 estrellas",
+      "tail": "2-5 estrellas"
+    },
+    "fragileShare": "de los localizadores son frágiles",
+    "baselineHabits": "Cerca del {{position}}% de los localizadores frágiles eligen por posición y el {{text}}% buscan por texto libre. XPath es el {{xpath}}%.",
+    "studyLink": "Los 296 proyectos y el método",
+    "sharedTitle": "Compartido por usuarios",
+    "loadFailed": "No se pudieron cargar las estadísticas ahora.",
+    "notYet_one": "{{count}} suite compartida hasta ahora. El resumen aparecerá cuando haya {{min}}.",
+    "notYet_other": "{{count}} suites compartidas hasta ahora. El resumen aparecerá cuando haya {{min}}.",
+    "colShared_one": "Compartidas ({{count}})",
+    "colShared_other": "Compartidas ({{count}})",
+    "colPublic_one": "Públicas, 50+ localizadores ({{count}})",
+    "colPublic_other": "Públicas, 50+ localizadores ({{count}})",
+    "rowMedian": "Proporción frágil, mediana por suite",
+    "rowPooled": "Proporción frágil, todos los localizadores juntos",
+    "rowNone": "Suites sin localizadores frágiles",
+    "rowPosition": "De los frágiles: por posición",
+    "rowText": "De los frágiles: texto libre",
+    "rowXpath": "De los frágiles: XPath",
+    "groupLine": "{{name}}: {{count}} suites, mediana {{median}}%",
+    "caveat": "Los resultados compartidos vienen de voluntarios, no de una muestra de la industria. Solo se pueden compartir auditorías de carpeta con 50+ localizadores. Un grupo aparece cuando tiene {{min}} suites."
   }
 }

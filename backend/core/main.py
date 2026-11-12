@@ -15,6 +15,7 @@ from core.models.suggestion import Suggestion  # noqa: F401 — registers model
 from core.models.suggestion_vote import SuggestionVote  # noqa: F401 — registers model
 from core.models.notification import Notification, NotificationRead  # noqa: F401 — registers models
 from core.models.locate_report import LocateReport  # noqa: F401 — registers model
+from core.models.locate_stat import LocateStat  # noqa: F401 — registers model
 from core.models.contact_message import ContactMessage  # noqa: F401 — registers model
 from core.routers.users import router as users_router
 from core.routers.modules import router as modules_router
@@ -23,6 +24,7 @@ from core.routers.suggestions import router as suggestions_router
 from core.routers.admin import router as admin_router
 from core.routers.notifications import router as notifications_router
 from core.routers.locate_reports import router as locate_reports_router
+from core.routers.locate_stats import router as locate_stats_router
 from core.routers.contact import router as contact_router
 
 app = FastAPI(
@@ -61,6 +63,7 @@ app.include_router(suggestions_router, prefix="/api", tags=["Suggestions"])
 app.include_router(admin_router, prefix="/api", tags=["Admin"])
 app.include_router(notifications_router, prefix="/api", tags=["Notifications"])
 app.include_router(locate_reports_router, prefix="/api", tags=["LocateReports"])
+app.include_router(locate_stats_router, prefix="/api", tags=["LocateStats"])
 app.include_router(contact_router, prefix="/api", tags=["Contact"])
 
 try:

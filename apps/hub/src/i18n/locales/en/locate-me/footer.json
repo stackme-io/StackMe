@@ -1,11 +1,12 @@
 {
-  "badges": ["no setup", "runs locally", "no data collected", "open source"],
+  "badges": ["no setup", "runs locally", "nothing sent without your click", "open source"],
   "tabs": {
     "audit": "Audit",
     "reports": "Reports",
     "roadmap": "Roadmap",
     "about": "About",
     "privacy": "Privacy",
-    "more": "More"
+    "more": "More",
+    "stats": "Stats"
   }
 }

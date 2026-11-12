@@ -33,8 +33,9 @@ false alarm you cannot dismiss.
 2. Pick a folder with your tests, or paste a single test file
 3. Read the report
 
-No account, no install, no upload. If you want to keep a report, you can optionally save it to an
-account - that is the only thing that ever leaves your machine, and only when you ask.
+No account, no install, no upload. LocateMe sends nothing on its own. Two things can leave your
+machine, and only when you click: a report you choose to save to an account, and an anonymous
+stats row you choose to share.
 
 <!-- TODO at launch: link the stats article here.
      "We scanned 200 open-source test suites: here is what we found" -->
@@ -44,6 +45,13 @@ account - that is the only thing that ever leaves your machine, and only when yo
 Everything runs client-side. Your test code is parsed in your browser and never sent anywhere.
 There is no analytics script, no telemetry, no third-party tracker in the app. Saving a report to
 your account is opt-in, per report, and clearly labelled.
+
+**Anonymous stats (opt-in).** After auditing your own folder you can share one row of rounded
+counts: framework, size range, how many locators fall in each verdict and sub-cause, and,
+if you choose, the age of the suite. The dialog shows the exact data before you send it. No code,
+selectors, paths, file or project names, account or exact time are sent, your IP is not stored
+with the row, and rows are only published as a summary once at least 10 suites are shared. The
+field list lives in [`packages/locateme/src/core/stats.ts`](packages/locateme/src/core/stats.ts).
 
 ## The rest of StackMe
 

@@ -1,11 +1,12 @@
 {
-  "badges": ["sin configuración", "se ejecuta localmente", "sin recopilación de datos", "código abierto"],
+  "badges": ["sin configuración", "se ejecuta localmente", "nada se envía sin tu clic", "código abierto"],
   "tabs": {
     "audit": "Auditoría",
     "reports": "Informes",
     "roadmap": "Roadmap",
     "about": "Acerca de",
     "privacy": "Privacidad",
-    "more": "Más"
+    "more": "Más",
+    "stats": "Estadísticas"
   }
 }
